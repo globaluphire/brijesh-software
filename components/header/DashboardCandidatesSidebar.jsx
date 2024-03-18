@@ -45,7 +45,7 @@ const DashboardCandidatesSidebar = () => {
                                     isActiveLink(item.routePath, router.asPath)
                                         ? "active"
                                         : ""
-                                } mb-1`}
+                                }`}
                                 key={item.id}
                                 onClick={menuToggleHandler}
                             >

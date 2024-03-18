@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import Seo from "../../../components/common/Seo";
 import Router from "next/router";
 import { useEffect } from "react";
-import HiredApplications from "../../../components/dashboard-pages/employers-dashboard/hired-applications";
+import LR from "../../../components/dashboard-pages/employers-dashboard/lr";
 
 const index = () => {
     const user = useSelector((state) => state.candidate.user);
@@ -22,8 +22,8 @@ const index = () => {
             {isEmployer ? (
                 <>
                     {" "}
-                    <Seo pageTitle="Hired Applicants" />
-                    <HiredApplications />
+                    <Seo pageTitle="LR" />
+                    <LR />
                 </>
             ) : (
                 ""

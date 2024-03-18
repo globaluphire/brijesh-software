@@ -6,7 +6,7 @@ import DashboardEmployerSidebar from "../../../header/DashboardEmployerSidebar";
 import BreadCrumb from "../../BreadCrumb";
 import CopyrightFooter from "../../CopyrightFooter";
 import MenuToggler from "../../MenuToggler";
-import HiredApplicationsWidgetContentBox from "./components/HiredApplicationsWidgetContentBox";
+import LR from "./components/lr";
 
 const index = () => {
     return (
@@ -27,7 +27,7 @@ const index = () => {
             {/* <!-- End User Sidebar Menu --> */}
 
             {/* <!-- Dashboard --> */}
-            <section className="user-dashboard">
+            <section className="user-dashboard" style={{marginLeft: "-10.5rem"}}>
                 <div>
                     {/* <BreadCrumb title="Hired Applicants!" /> */}
                     {/* breadCrumb */}
@@ -46,7 +46,7 @@ const index = () => {
                   </div> */}
                                     {/* End top widget filter bar */}
 
-                                    <HiredApplicationsWidgetContentBox />
+                                    <LR />
                                     {/* End widget-content */}
                                 </div>
                             </div>

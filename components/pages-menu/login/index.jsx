@@ -3,11 +3,12 @@ import FormContent from "../../common/form/login/FormContent";
 import LoginPopup from "../../common/form/login/LoginPopup";
 import MobileMenu from "../../header/MobileMenu";
 import Header from "./Header";
+import DefaulHeader from "../../header/DefaulHeader";
 
 const index = () => {
     return (
         <>
-            <Header />
+            <DefaulHeader />
             {/* <!--End Main Header -->  */}
 
             <LoginPopup />

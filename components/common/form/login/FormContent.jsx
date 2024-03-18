@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 import { supabase } from "../../../../config/supabaseClient";
 import { setUserData } from "../../../../features/candidate/candidateSlice";
+import { Router } from "next/router";
 
 const signInWithEmailAndPassword = async (email, password, dispatch) => {
     try {
@@ -44,6 +45,8 @@ const signInWithEmailAndPassword = async (email, password, dispatch) => {
             progress: undefined,
             theme: "colored",
         });
+
+        Router.push("/employers-dashboard/dashboard")
     } catch (err) {
         toast.error(
             "Please check your email address and password then try again!",
@@ -118,7 +121,7 @@ const FormContent = () => {
     const dispatch = useDispatch();
     return (
         <div className="form-inner">
-            <h3>Login to Volare Health Career</h3>
+            <h3>Login to RAFTAAR PVT LTD</h3>
 
             {/* <!--Login Form--> */}
             <form method="post">
@@ -127,7 +130,7 @@ const FormContent = () => {
                     <input
                         type="email"
                         name="Global-UpHire-email"
-                        placeholder="Your Email Address"
+                        placeholder="your email address"
                         value={loginEmail}
                         onChange={(e) => setLoginEmail(e.target.value)}
                         required
@@ -141,7 +144,7 @@ const FormContent = () => {
                         name="Global-UpHire-password"
                         value={loginPassword}
                         onChange={(e) => setLoginPassword(e.target.value)}
-                        placeholder="Password"
+                        placeholder="password"
                         required
                     />
                 </div>
@@ -195,7 +198,7 @@ const FormContent = () => {
             {/* End form */}
 
             <div className="bottom-box">
-                <div className="text">
+                <div>
                     Don&apos;t have an account?{" "}
                     <Link
                         href="#"
@@ -204,7 +207,7 @@ const FormContent = () => {
                         data-bs-target="#registerModal"
                         data-bs-toggle="modal"
                     >
-                        Signup
+                        Sign Up
                     </Link>
                 </div>
 

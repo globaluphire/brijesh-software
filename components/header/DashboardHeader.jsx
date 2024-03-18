@@ -98,7 +98,7 @@ const DashboardHeader = () => {
                     <div className="nav-outer">
                         <div className="logo-box">
                             <div className="logo">
-                                <Link href="/">
+                                <Link href="#">
                                     <Image
                                         alt="brand"
                                         src="/images/logo.svg"

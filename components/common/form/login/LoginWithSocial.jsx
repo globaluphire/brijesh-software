@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { supabase } from "../../../../config/supabaseClient";
+import Router from "next/router";
 
 const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
@@ -66,6 +67,9 @@ const signInWithGoogle = async (dispatch) => {
             progress: undefined,
             theme: "colored",
         });
+
+        Router.push("/employers-dashboard/dashboard")
+
     } catch (err) {
         toast.error(
             "Error while logging with Google, Please try again after some time or contact tech support!",

@@ -50,7 +50,7 @@ const DefaulHeader = () => {
 
                 <div className="outer-box">
                     {/* <!-- Login/Register --> */}
-                    <div className="btn-box">
+                    {/* <div className="btn-box">
                         <a
                             href="#"
                             className="theme-btn btn-style-three call-modal"
@@ -58,14 +58,14 @@ const DefaulHeader = () => {
                             data-bs-target="#loginPopupModal"
                         >
                             Login / Register
-                        </a>
+                        </a> */}
                         {/* <Link
               href="/employers-dashboard/post-jobs"
               className="theme-btn btn-style-one"
             >
               Job Post
             </Link> */}
-                    </div>
+                    {/* </div> */}
                 </div>
             </div>
         </header>
