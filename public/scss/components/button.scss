@@ -210,3 +210,12 @@ Buttons Styles
 .btn-submit:hover {
   background-color: var(--primary-hover-bg-color)
 }
+
+.btn-add-lr {
+  min-height: 40px;
+  padding: 0 30px;
+}
+
+.btn-add-lr:hover {
+  background-color: darkgreen
+}

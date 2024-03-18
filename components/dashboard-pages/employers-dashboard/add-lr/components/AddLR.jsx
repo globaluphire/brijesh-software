@@ -44,7 +44,7 @@ const addJobFields = {
     facility: "",
 };
 
-const PostBoxForm = () => {
+const AddLR = () => {
     // const [jobTitle, setJobTitle] = useState("");
     // const [jobDesc, setJobDesc] = useState("");
     // const [email, setEmail] = useState("");
@@ -818,4 +818,4 @@ const PostBoxForm = () => {
     );
 };
 
-export default PostBoxForm;
+export default AddLR;

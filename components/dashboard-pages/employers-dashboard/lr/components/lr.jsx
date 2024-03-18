@@ -779,134 +779,145 @@ const LR = () => {
                 >
                     <b>All LRs!</b>
                 </div>
-                    <Form>
-                        <Form.Label
-                            className="optional"
+                <Form>
+                    <Form.Label
+                        className="optional"
+                        style={{
+                            marginLeft: "32px",
+                            letterSpacing: "2px",
+                            fontSize: "12px",
+                        }}
+                    >
+                        SEARCH BY
+                    </Form.Label>
+                    <Row className="mx-1" md={4}>
+                        <Col>
+                            <Form.Group className="mb-3 mx-3">
+                                <Form.Label className="chosen-single form-input chosen-container">
+                                    Applicant Name
+                                </Form.Label>
+                                <Form.Control
+                                    className="chosen-single form-input chosen-container"
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => {
+                                        setSearchFilters((previousState) => ({
+                                            ...previousState,
+                                            name: e.target.value,
+                                        }));
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            findApplicant(searchFilters);
+                                        }
+                                    }}
+                                    style={{ maxWidth: "300px" }}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group className="mb-3 mx-3">
+                                <Form.Label className="chosen-single form-input chosen-container">
+                                    Job Title
+                                </Form.Label>
+                                <Form.Control
+                                    className="chosen-single form-input chosen-container"
+                                    type="text"
+                                    value={jobTitle}
+                                    onChange={(e) => {
+                                        setSearchFilters((previousState) => ({
+                                            ...previousState,
+                                            jobTitle: e.target.value,
+                                        }));
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            findApplicant(searchFilters);
+                                        }
+                                    }}
+                                    style={{ maxWidth: "300px" }}
+                                />
+                            </Form.Group>
+                        </Col>
+                        {/* <Form.Group
+                            className="mb-3 mx-3"
                             style={{
-                                marginLeft: "32px",
-                                letterSpacing: "2px",
-                                fontSize: "12px",
+                                width: "20%",
                             }}
                         >
-                            SEARCH BY
-                        </Form.Label>
-                        <Row className="mx-1" md={4}>
-                            <Col>
-                                <Form.Group className="mb-3 mx-3">
-                                    <Form.Label className="chosen-single form-input chosen-container">
-                                        Applicant Name
-                                    </Form.Label>
-                                    <Form.Control
-                                        className="chosen-single form-input chosen-container"
-                                        type="text"
-                                        value={name}
-                                        onChange={(e) => {
-                                            setSearchFilters((previousState) => ({
-                                                ...previousState,
-                                                name: e.target.value,
-                                            }));
-                                        }}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") {
-                                                findApplicant(searchFilters);
-                                            }
-                                        }}
-                                        style={{ maxWidth: "300px" }}
-                                    />
-                                </Form.Group>
-                            </Col>
-                            <Col>
-                                <Form.Group className="mb-3 mx-3">
-                                    <Form.Label className="chosen-single form-input chosen-container">
-                                        Job Title
-                                    </Form.Label>
-                                    <Form.Control
-                                        className="chosen-single form-input chosen-container"
-                                        type="text"
-                                        value={jobTitle}
-                                        onChange={(e) => {
-                                            setSearchFilters((previousState) => ({
-                                                ...previousState,
-                                                jobTitle: e.target.value,
-                                            }));
-                                        }}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") {
-                                                findApplicant(searchFilters);
-                                            }
-                                        }}
-                                        style={{ maxWidth: "300px" }}
-                                    />
-                                </Form.Group>
-                            </Col>
-                            {/* <Form.Group
-                                className="mb-3 mx-3"
-                                style={{
-                                    width: "20%",
-                                }}
+                            <Form.Label className="chosen-single form-input chosen-container">
+                                Per Page Size
+                            </Form.Label>
+                            <Form.Select
+                                onChange={perPageHandler}
+                                className="chosen-single form-select"
                             >
-                                <Form.Label className="chosen-single form-input chosen-container">
-                                    Per Page Size
-                                </Form.Label>
-                                <Form.Select
-                                    onChange={perPageHandler}
-                                    className="chosen-single form-select"
+                                <option
+                                    value={JSON.stringify({
+                                        start: 0,
+                                        end: 10,
+                                    })}
                                 >
-                                    <option
-                                        value={JSON.stringify({
-                                            start: 0,
-                                            end: 10,
-                                        })}
-                                    >
-                                        10 per page
-                                    </option>
-                                    <option
-                                        value={JSON.stringify({
-                                            start: 0,
-                                            end: 20,
-                                        })}
-                                    >
-                                        20 per page
-                                    </option>
-                                    <option
-                                        value={JSON.stringify({
-                                            start: 0,
-                                            end: 30,
-                                        })}
-                                    >
-                                        30 per page
-                                    </option>
-                                </Form.Select>
-                            </Form.Group> */}
-                        </Row>
-                        <Row className="mx-3">
-                            <Col>
-                                <Form.Group className="chosen-single form-input chosen-container mb-3">
-                                    <Button
-                                        variant="primary"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            findApplicant(searchFilters);
-                                        }}
-                                        className="btn btn-submit btn-sm text-nowrap m-1"
-                                    >
-                                        Filter
-                                    </Button>
-                                    <Button
-                                        variant="primary"
-                                        onClick={clearAll}
-                                        className="btn btn-secondary btn-sm text-nowrap mx-2"
-                                        style={{
-                                            minHeight: "40px",
-                                            padding: "0 20px",
-                                        }}
-                                    >
-                                        Clear
-                                    </Button>
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                    </Form>
+                                    10 per page
+                                </option>
+                                <option
+                                    value={JSON.stringify({
+                                        start: 0,
+                                        end: 20,
+                                    })}
+                                >
+                                    20 per page
+                                </option>
+                                <option
+                                    value={JSON.stringify({
+                                        start: 0,
+                                        end: 30,
+                                    })}
+                                >
+                                    30 per page
+                                </option>
+                            </Form.Select>
+                        </Form.Group> */}
+                    </Row>
+                    <Row className="mx-3">
+                        <Col>
+                            <Form.Group className="chosen-single form-input chosen-container mb-3">
+                                <Button
+                                    variant="primary"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        findApplicant(searchFilters);
+                                    }}
+                                    className="btn btn-submit btn-sm text-nowrap m-1"
+                                >
+                                    Filter
+                                </Button>
+                                <Button
+                                    variant="primary"
+                                    onClick={clearAll}
+                                    className="btn btn-secondary btn-sm text-nowrap mx-2"
+                                    style={{
+                                        minHeight: "40px",
+                                        padding: "0 20px"
+                                    }}
+                                >
+                                    Clear
+                                </Button>
+                            </Form.Group>
+                        </Col>
+                        <Col style={{ display: 'relative', textAlign: 'right' }}>
+                            <Form.Group className="chosen-single form-input chosen-container mb-3">
+                                <Button
+                                    variant="success"
+                                    onClick={() => Router.push("/employers-dashboard/add-lr")}
+                                    className="btn btn-add-lr btn-sm text-nowrap m-1"
+                                >
+                                    Add LR
+                                </Button>
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                </Form>
                 {/* End filter top bar */}
 
                 <div
@@ -922,51 +933,53 @@ const LR = () => {
                 </div>
 
             </div>
-            <Table responsive hover>
-                <thead>
-                    <tr>
-                        <th>Actions</th>
-                        <th>LR No</th>
-                        <th>LR Date</th>
-                        <th>Order No</th>
-                        <th>Consignor</th>
-                        <th>Consignee</th>
-                        <th>Pickup Point</th>
-                        <th>Drop Point</th>
-                        <th>Item</th>
-                        <th>Weight(Kg)</th>
-                        <th>Truck No</th>
-                        <th>Driver Details</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                    <td>
-                        <ui>
-                            <li>
-                                <a onClick={() => alert("Print this LR")}><i className="la la-print"></i></a>
-                            </li>
-                        </ui>
-                    </td>
-                    {Array.from({ length: 12 }).map((_, index) => (
-                        <td key={index}>Table cell {index}</td>
-                    ))}
-                    </tr>
-                    <tr>
-                    <td>2</td>
-                    {Array.from({ length: 12 }).map((_, index) => (
-                        <td key={index}>Table cell {index}</td>
-                    ))}
-                    </tr>
-                    <tr>
-                    <td>3</td>
-                    {Array.from({ length: 12 }).map((_, index) => (
-                        <td key={index}>Table cell {index}</td>
-                    ))}
-                    </tr>
-                </tbody>
-            </Table>
+            <div style={{ padding: "0px 30px" }}>
+                <Table responsive hover>
+                    <thead>
+                        <tr>
+                            <th>Actions</th>
+                            <th>LR No</th>
+                            <th>LR Date</th>
+                            <th>Order No</th>
+                            <th>Consignor</th>
+                            <th>Consignee</th>
+                            <th>Pickup Point</th>
+                            <th>Drop Point</th>
+                            <th>Item</th>
+                            <th>Weight(Kg)</th>
+                            <th>Truck No</th>
+                            <th>Driver Details</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                        <td>
+                            <ui>
+                                <li>
+                                    <a onClick={() => alert("Print this LR")}><i className="la la-print"></i></a>
+                                </li>
+                            </ui>
+                        </td>
+                        {Array.from({ length: 12 }).map((_, index) => (
+                            <td key={index}>Table cell {index}</td>
+                        ))}
+                        </tr>
+                        <tr>
+                        <td>2</td>
+                        {Array.from({ length: 12 }).map((_, index) => (
+                            <td key={index}>Table cell {index}</td>
+                        ))}
+                        </tr>
+                        <tr>
+                        <td>3</td>
+                        {Array.from({ length: 12 }).map((_, index) => (
+                            <td key={index}>Table cell {index}</td>
+                        ))}
+                        </tr>
+                    </tbody>
+                </Table>
+            </div>
         </>
     );
 };

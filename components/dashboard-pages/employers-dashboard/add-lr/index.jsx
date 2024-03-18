@@ -6,8 +6,8 @@ import DashboardEmployerSidebar from "../../../header/DashboardEmployerSidebar";
 import BreadCrumb from "../../BreadCrumb";
 import CopyrightFooter from "../../CopyrightFooter";
 import PostJobSteps from "./components/PostJobSteps";
-import PostBoxForm from "./components/PostBoxForm";
 import MenuToggler from "../../MenuToggler";
+import AddLR from "./components/AddLR";
 
 const index = () => {
     return (
@@ -29,8 +29,8 @@ const index = () => {
 
             {/* <!-- Dashboard --> */}
             <section className="user-dashboard">
-                <div className="dashboard-outer">
-                    <BreadCrumb title="Post a New Job!" />
+                <div>
+                    {/* <BreadCrumb title="Post a New Job!" /> */}
                     {/* breadCrumb */}
 
                     <MenuToggler />
@@ -42,13 +42,13 @@ const index = () => {
                             <div className="ls-widget">
                                 <div className="tabs-box">
                                     <div className="widget-title">
-                                        <h4>Post Job</h4>
+                                        <h4><b>Add LR</b></h4>
                                     </div>
 
                                     <div className="widget-content">
-                                        <PostJobSteps />
+                                        {/* <PostJobSteps /> */}
                                         {/* End job steps form */}
-                                        <PostBoxForm />
+                                        <AddLR />
                                         {/* End post box form */}
                                     </div>
                                 </div>

@@ -4,7 +4,7 @@ import Router from "next/router";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import Seo from "../../../components/common/Seo";
-import PostJob from "../../../components/dashboard-pages/employers-dashboard/post-jobs";
+import AddLR from "../../../components/dashboard-pages/employers-dashboard/add-lr";
 
 const index = () => {
     const user = useSelector((state) => state.candidate.user);
@@ -22,7 +22,7 @@ const index = () => {
                 <>
                     {" "}
                     <Seo pageTitle="Post Jobs" />
-                    <PostJob />
+                    <AddLR />
                 </>
             ) : (
                 ""
