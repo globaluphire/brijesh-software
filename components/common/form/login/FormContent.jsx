@@ -46,7 +46,7 @@ const signInWithEmailAndPassword = async (email, password, dispatch) => {
             theme: "colored",
         });
 
-        Router.push("/employers-dashboard/dashboard")
+        Router.push("/employers-dashboard/dashboard");
     } catch (err) {
         toast.error(
             "Please check your email address and password then try again!",

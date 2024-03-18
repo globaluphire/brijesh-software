@@ -68,7 +68,7 @@ const signInWithGoogle = async (dispatch) => {
             theme: "colored",
         });
 
-        Router.push("/employers-dashboard/dashboard")
+        Router.push("/employers-dashboard/dashboard");
 
     } catch (err) {
         toast.error(

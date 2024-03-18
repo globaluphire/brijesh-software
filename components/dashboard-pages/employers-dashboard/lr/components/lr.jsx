@@ -14,7 +14,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { useSelector } from "react-redux";
 import Pagination from "../../../../common/Pagination";
-import Table from 'react-bootstrap/Table';
+import Table from "react-bootstrap/Table";
 
 const addSearchFilters = {
     name: "",
