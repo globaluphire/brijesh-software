@@ -905,7 +905,7 @@ const LR = () => {
                                 </Button>
                             </Form.Group>
                         </Col>
-                        <Col style={{ display: 'relative', textAlign: 'right' }}>
+                        <Col style={{ display: "relative", textAlign: "right" }}>
                             <Form.Group className="chosen-single form-input chosen-container mb-3">
                                 <Button
                                     variant="success"
