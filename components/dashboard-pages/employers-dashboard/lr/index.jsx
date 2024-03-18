@@ -27,7 +27,7 @@ const index = () => {
             {/* <!-- End User Sidebar Menu --> */}
 
             {/* <!-- Dashboard --> */}
-            <section className="user-dashboard" style={{ marginLeft: "-10.5rem" }}>
+            <section className="user-dashboard">
                 <div>
                     {/* <BreadCrumb title="Hired Applicants!" /> */}
                     {/* breadCrumb */}
