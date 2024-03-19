@@ -23,10 +23,10 @@ const index = () => {
         var element = document.getElementById("print-lr");
         var opt = {
             margin:       0,
-            filename:     fetchedLRdata.lr_number + '.pdf',
-            image:        { type: 'jpeg', quality: 1 },
+            filename:     fetchedLRdata.lr_number + ".pdf",
+            image:        { type: "jpeg", quality: 1 },
             html2canvas:  { scale: 2 },
-            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            jsPDF:        { unit: "in", format: "letter", orientation: "portrait" }
           };
 
         html2pdf().from(element).set(opt).save();

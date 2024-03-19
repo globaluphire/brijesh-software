@@ -139,7 +139,7 @@ const LR = () => {
 
             let query = supabase
                 .from("lr")
-                .select("*")
+                .select("*");
 
             // if (name) {
             //     query.ilike("name", "%" + name + "%");

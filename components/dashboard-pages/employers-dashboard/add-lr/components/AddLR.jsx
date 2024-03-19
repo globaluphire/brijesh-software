@@ -331,18 +331,8 @@ const AddLR = () => {
         }
     };
 
-    async function printHtml2pdf() {
-        var element = document.getElementById("element")
-        html2pdf(element)
-    };
-
     return (
         <>
-            <div >
-                <span>Testing First Page PDF</span>
-                <br />
-                <button onClick={() => printHtml2pdf()}>Print</button>
-            </div>
             <form className="default-form">
                 <div className="row">
                     {/* <!-- Input --> */}
