@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import { Table } from "react-bootstrap";
 
 const TableInvoice = () => {
