@@ -29,7 +29,7 @@ const index = () => {
             jsPDF:        { unit: "in", format: "letter", orientation: "portrait" }
           };
 
-        html2pdf().from(element).set(opt).save();
+          window.html2pdf().from(element).set(opt).save();
     };
 
     const fetchLR = async () => {

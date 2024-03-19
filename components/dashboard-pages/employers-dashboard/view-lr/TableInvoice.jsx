@@ -1,3 +1,5 @@
+import { Table } from "react-bootstrap";
+
 const TableInvoice = () => {
     return (
         <div>
