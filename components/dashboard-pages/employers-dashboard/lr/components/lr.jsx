@@ -22,7 +22,11 @@ const addSearchFilters = {
 };
 
 const LR = () => {
+    const router = useRouter();
+
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
+    const [fetchedLRdata, setFetchedLRdata] = useState({});
+
     const [applicationStatus, setApplicationStatus] = useState("");
     const [
         applicationStatusReferenceOptions,
@@ -121,7 +125,7 @@ const LR = () => {
         }
     }
 
-    async function fetchedAllApplicantsView({ name, jobTitle }) {
+    async function fetchedLR({ name, jobTitle }) {
         try {
             // call reference to get applicantStatus options
             const { data, error: e } = await supabase
@@ -134,24 +138,23 @@ const LR = () => {
             }
 
             let query = supabase
-                .from("applicants_view")
+                .from("lr")
                 .select("*")
-                .eq("status", "Hired");
 
-            if (name) {
-                query.ilike("name", "%" + name + "%");
-            }
-            if (jobTitle) {
-                query.ilike("job_title", "%" + jobTitle + "%");
-            }
-            if (facility) {
-                query.ilike("facility_name", "%" + facility + "%");
-            }
+            // if (name) {
+            //     query.ilike("name", "%" + name + "%");
+            // }
+            // if (jobTitle) {
+            //     query.ilike("job_title", "%" + jobTitle + "%");
+            // }
+            // if (facility) {
+            //     query.ilike("facility_name", "%" + facility + "%");
+            // }
 
             // setTotalRecords((await query).data.length);
 
-            let { data: allApplicantsView, error } = await query.order(
-                "hired_date",
+            let { data: lrData, error } = await query.order(
+                "lr_created_date",
                 { ascending: false, nullsFirst: false }
             );
             // .range(
@@ -165,15 +168,13 @@ const LR = () => {
             //     );
             // }
 
-            if (allApplicantsView) {
-                allApplicantsView.forEach(
-                    (i) => (i.hired_date = dateFormat(i.hired_date))
+            if (lrData) {
+                lrData.forEach(
+                    (i) => (i.lr_created_date = dateFormat(i.lr_created_date))
                 );
-                allApplicantsView.forEach(
-                    (i) => (i.created_at = dateFormat(i.created_at))
-                );
-                setFetchedAllApplicantsData(allApplicantsView);
             }
+
+            setFetchedLRdata(lrData);
         } catch (e) {
             toast.error(
                 "System is unavailable.  Please try again later or contact tech support!",
@@ -204,7 +205,7 @@ const LR = () => {
     // }
 
     useEffect(() => {
-        fetchedAllApplicantsView(searchFilters);
+        fetchedLR(searchFilters);
         if (facility) {
             localStorage.setItem("facility", facility);
         } else {
@@ -928,58 +929,138 @@ const LR = () => {
                         marginBottom: "10px",
                     }}
                 >
-                    Showing ({fetchedAllApplicants.length}) Applicants Hired
+                    Showing ({fetchedLRdata.length}) LR(s)
                     {/* Out of ({totalRecords}) <br /> Page: {currentPage} */}
                 </div>
 
             </div>
-            <div style={{ padding: "0px 30px" }}>
-                <Table responsive hover>
-                    <thead>
-                        <tr>
-                            <th>Actions</th>
-                            <th>LR No</th>
-                            <th>LR Date</th>
-                            <th>Order No</th>
-                            <th>Consignor</th>
-                            <th>Consignee</th>
-                            <th>Pickup Point</th>
-                            <th>Drop Point</th>
-                            <th>Item</th>
-                            <th>Weight(Kg)</th>
-                            <th>Truck No</th>
-                            <th>Driver Details</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                        <td>
-                            <ui>
-                                <li>
-                                    <a onClick={() => alert("Print this LR")}><i className="la la-print"></i></a>
-                                </li>
-                            </ui>
-                        </td>
-                        {Array.from({ length: 12 }).map((_, index) => (
-                            <td key={index}>Table cell {index}</td>
-                        ))}
-                        </tr>
-                        <tr>
-                        <td>2</td>
-                        {Array.from({ length: 12 }).map((_, index) => (
-                            <td key={index}>Table cell {index}</td>
-                        ))}
-                        </tr>
-                        <tr>
-                        <td>3</td>
-                        {Array.from({ length: 12 }).map((_, index) => (
-                            <td key={index}>Table cell {index}</td>
-                        ))}
-                        </tr>
-                    </tbody>
-                </Table>
+            {/* Start table widget content */}
+            <div className="widget-content">
+                <div className="table-outer">
+                    <Table className="default-table manage-job-table">
+                        <thead>
+                            <tr>
+                                <th>Actions</th>
+                                <th>LR No</th>
+                                <th>LR Date</th>
+                                <th>Order No</th>
+                                <th>Consignor</th>
+                                <th>Consignee</th>
+                                <th>Pickup Point</th>
+                                <th>Drop Point</th>
+                                <th>Item</th>
+                                <th>Weight(Kg)</th>
+                                <th>Truck No</th>
+                                <th>Driver Details</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        {fetchedLRdata.length === 0 ? (
+                            <tbody
+                                style={{
+                                    fontSize: "1.5rem",
+                                    fontWeight: "500",
+                                }}
+                            >
+                                <tr>
+                                    <td>
+                                        <b>No LR found!</b>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        ) : (
+                            <tbody>
+                                {Array.from(fetchedLRdata).map(
+                                    (lr) => (
+                                        <tr key={lr.id}>
+                                            <td>
+                                            <td>
+                                                <ui>
+                                                    <li>
+                                                        <a onClick={() => router.push(`/employers-dashboard/view-lr/${lr.id}`)}>
+                                                            <i className="la la-print" title="Print LR"></i>
+                                                        </a>
+                                                    </li>
+                                                </ui>
+                                            </td>
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    {lr.lr_number}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    {lr.lr_created_date}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    {lr.order_number}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    {lr.consigner}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    {lr.consignee}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    {lr.pickup_point}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    {lr.drop_point}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    {lr.item}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    {lr.weight}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    {lr.truck_number}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    {lr.driver}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {
+                                                    lr.status == "Final" ? (
+                                                        <span style={{ color: "green" }}>
+                                                            {lr.status}
+                                                        </span>
+                                                    ) : lr.status == "Performa" ? (
+                                                            <span style={{ color: "darkorange" }}>
+                                                                {lr.status}
+                                                            </span>
+                                                    ) : <span>-</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    )
+                                )}
+                            </tbody>
+                        )}
+                    </Table>
+                </div>
             </div>
+            {/* End table widget content */}
         </>
     );
 };

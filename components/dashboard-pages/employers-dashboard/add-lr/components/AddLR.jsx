@@ -331,490 +331,502 @@ const AddLR = () => {
         }
     };
 
+    async function printHtml2pdf() {
+        var element = document.getElementById("element")
+        html2pdf(element)
+    };
+
     return (
-        <form className="default-form">
-            <div className="row">
-                {/* <!-- Input --> */}
-                <div className="form-group col-lg-12 col-md-12">
-                    <label>
-                        Job Title <span className="required">(required)</span>
-                    </label>
-                    <input
-                        type="text"
-                        name="globaluphire-jobTitle"
-                        value={jobData.jobTitle}
-                        required
-                        onChange={(e) => {
-                            setJobData((previousState) => ({
-                                ...previousState,
-                                jobTitle: e.target.value,
-                            }));
-                        }}
-                        placeholder="Job Title"
-                    />
-                </div>
-                {/* <!-- About Company --> */}
-                <div className="form-group col-lg-12 col-md-12">
-                    <label>
-                        Job Description{" "}
-                        <span className="required">(required)</span>
-                    </label>
-                    <SunEditor
-                        setOptions={{
-                            buttonList: [
-                                ["fontSize", "formatBlock"],
-                                [
-                                    "bold",
-                                    "underline",
-                                    "italic",
-                                    "strike",
-                                    "subscript",
-                                    "superscript",
-                                ],
-                                ["align", "horizontalRule", "list", "table"],
-                                ["fontColor", "hiliteColor"],
-                                ["outdent", "indent"],
-                                ["undo", "redo"],
-                                ["removeFormat"],
-                                ["outdent", "indent"],
-                                ["link"],
-                                ["preview", "print"],
-                                ["fullScreen", "showBlocks", "codeView"],
-                            ],
-                        }}
-                        setDefaultStyle="color:black;"
-                        onChange={(e) => {
-                            setJobData((previousState) => ({
-                                ...previousState,
-                                jobDesc: e,
-                            }));
-                        }}
-                    />
-                </div>
-                {/* <!-- Input --> */}
-                {/*
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Email Address <span className="optional">(optional)</span></label>
-          <input
-            type="text"
-            name="name"
-            placeholder="example@test.com"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
-          />
-        </div>
- */}
-                {/* <!-- Input --> */}
-                {/*
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Username</label>
-          <input
-            type="text"
-            name="name"
-            placeholder=""
-            value={username}
-            onChange={(e) => {
-              setUsername(e.target.value);
-            }}
-          />
-        </div>
- */}
-                {/* <!-- Search Select --> */}
-                {/*
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Specialisms </label>
-          <Select
-            defaultValue={[specialisms[2]]}
-            isMulti
-            name="colors"
-            options={specialisms}
-            className="basic-multi-select"
-            classNamePrefix="select"
-            value={specialism}
-            onChange={(e) => {
-              // const updatedOptions = [...e.target.options]
-              //   .filter((option) => option.selected)
-              //   .map((x) => x.value);
-              // console.log("updatedOptions", updatedOptions);
-              // setSpecialism(updatedOptions);
-              setSpecialism(e || []);
-            }}
-          />
-        </div>
- */}
-                <div className="form-group col-lg-6 col-md-12">
-                    <label>
-                        Job Type <span className="required"> (required)</span>
-                    </label>
-                    <select
-                        className="chosen-single form-select"
-                        value={jobData.jobType}
-                        required
-                        onChange={(e) => {
-                            console.log(e.target.value);
-                            setJobData((previousState) => ({
-                                ...previousState,
-                                jobType: e.target.value,
-                            }));
-                        }}
-                    >
-                        <option>Full Time</option>
-                        <option>Part Time</option>
-                        <option>Both</option>
-                        <option>PRN</option>
-                    </select>
-                </div>
-                <div className="form-group col-lg-6 col-md-12">
-                    <label>
-                        Experience<span className="required"> (required)</span>
-                    </label>
-                    <select
-                        className="chosen-single form-select"
-                        value={jobData.exp}
-                        onChange={(e) => {
-                            setJobData((previousState) => ({
-                                ...previousState,
-                                exp: e.target.value,
-                            }));
-                        }}
-                        required
-                    >
-                        <option>0 - 1 year</option>
-                        <option>1 - 3 years</option>
-                        <option>4 - 7 years</option>
-                        <option>7+ years</option>
-                    </select>
-                </div>
-                {/* <!-- Input --> */}
-                <div className="form-group col-lg-6 col-md-12">
-                    <label>Offered Salary </label>
-                    <span className="required">(required)</span>
-                    <span style={{ marginLeft: "1em" }}>
+        <>
+            <div >
+                <span>Testing First Page PDF</span>
+                <br />
+                <button onClick={() => printHtml2pdf()}>Print</button>
+            </div>
+            <form className="default-form">
+                <div className="row">
+                    {/* <!-- Input --> */}
+                    <div className="form-group col-lg-12 col-md-12">
                         <label>
-                            <input
-                                type="radio"
-                                name="salaryType"
-                                value="fixed"
-                                checked={salaryType === "fixed"}
-                                onChange={handleSalaryTypeChange}
-                                style={{ marginRight: "0.5em" }}
-                            />
-                            Exact Amount
+                            Company Name <span className="required">(required)</span>
                         </label>
-                        <label style={{ marginLeft: "2em" }}>
-                            <input
-                                type="radio"
-                                name="salaryType"
-                                value="ranged"
-                                checked={salaryType === "ranged"}
-                                onChange={handleSalaryTypeChange}
-                                style={{ marginRight: "0.5em" }}
-                            />
-                            Ranged
-                        </label>
-                    </span>
-                    {salaryType === "fixed" ? (
                         <input
                             type="text"
-                            name="globaluphire-salary"
-                            value={jobData.salary}
-                            placeholder="$100,000.00"
+                            name="globaluphire-jobTitle"
+                            value={jobData.jobTitle}
+                            required
                             onChange={(e) => {
                                 setJobData((previousState) => ({
                                     ...previousState,
-                                    salary: e.target.value,
+                                    jobTitle: e.target.value,
+                                }));
+                            }}
+                            placeholder="Job Title"
+                        />
+                    </div>
+                    {/* <!-- About Company --> */}
+                    <div className="form-group col-lg-12 col-md-12">
+                        <label>
+                            Job Description{" "}
+                            <span className="required">(required)</span>
+                        </label>
+                        <SunEditor
+                            setOptions={{
+                                buttonList: [
+                                    ["fontSize", "formatBlock"],
+                                    [
+                                        "bold",
+                                        "underline",
+                                        "italic",
+                                        "strike",
+                                        "subscript",
+                                        "superscript",
+                                    ],
+                                    ["align", "horizontalRule", "list", "table"],
+                                    ["fontColor", "hiliteColor"],
+                                    ["outdent", "indent"],
+                                    ["undo", "redo"],
+                                    ["removeFormat"],
+                                    ["outdent", "indent"],
+                                    ["link"],
+                                    ["preview", "print"],
+                                    ["fullScreen", "showBlocks", "codeView"],
+                                ],
+                            }}
+                            setDefaultStyle="color:black;"
+                            onChange={(e) => {
+                                setJobData((previousState) => ({
+                                    ...previousState,
+                                    jobDesc: e,
+                                }));
+                            }}
+                        />
+                    </div>
+                    {/* <!-- Input --> */}
+                    {/*
+            <div className="form-group col-lg-6 col-md-12">
+            <label>Email Address <span className="optional">(optional)</span></label>
+            <input
+                type="text"
+                name="name"
+                placeholder="example@test.com"
+                value={email}
+                onChange={(e) => {
+                setEmail(e.target.value);
+                }}
+            />
+            </div>
+    */}
+                    {/* <!-- Input --> */}
+                    {/*
+            <div className="form-group col-lg-6 col-md-12">
+            <label>Username</label>
+            <input
+                type="text"
+                name="name"
+                placeholder=""
+                value={username}
+                onChange={(e) => {
+                setUsername(e.target.value);
+                }}
+            />
+            </div>
+    */}
+                    {/* <!-- Search Select --> */}
+                    {/*
+            <div className="form-group col-lg-6 col-md-12">
+            <label>Specialisms </label>
+            <Select
+                defaultValue={[specialisms[2]]}
+                isMulti
+                name="colors"
+                options={specialisms}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                value={specialism}
+                onChange={(e) => {
+                // const updatedOptions = [...e.target.options]
+                //   .filter((option) => option.selected)
+                //   .map((x) => x.value);
+                // console.log("updatedOptions", updatedOptions);
+                // setSpecialism(updatedOptions);
+                setSpecialism(e || []);
+                }}
+            />
+            </div>
+    */}
+                    <div className="form-group col-lg-6 col-md-12">
+                        <label>
+                            Job Type <span className="required"> (required)</span>
+                        </label>
+                        <select
+                            className="chosen-single form-select"
+                            value={jobData.jobType}
+                            required
+                            onChange={(e) => {
+                                console.log(e.target.value);
+                                setJobData((previousState) => ({
+                                    ...previousState,
+                                    jobType: e.target.value,
+                                }));
+                            }}
+                        >
+                            <option>Full Time</option>
+                            <option>Part Time</option>
+                            <option>Both</option>
+                            <option>PRN</option>
+                        </select>
+                    </div>
+                    <div className="form-group col-lg-6 col-md-12">
+                        <label>
+                            Experience<span className="required"> (required)</span>
+                        </label>
+                        <select
+                            className="chosen-single form-select"
+                            value={jobData.exp}
+                            onChange={(e) => {
+                                setJobData((previousState) => ({
+                                    ...previousState,
+                                    exp: e.target.value,
                                 }));
                             }}
                             required
+                        >
+                            <option>0 - 1 year</option>
+                            <option>1 - 3 years</option>
+                            <option>4 - 7 years</option>
+                            <option>7+ years</option>
+                        </select>
+                    </div>
+                    {/* <!-- Input --> */}
+                    <div className="form-group col-lg-6 col-md-12">
+                        <label>Offered Salary </label>
+                        <span className="required">(required)</span>
+                        <span style={{ marginLeft: "1em" }}>
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="salaryType"
+                                    value="fixed"
+                                    checked={salaryType === "fixed"}
+                                    onChange={handleSalaryTypeChange}
+                                    style={{ marginRight: "0.5em" }}
+                                />
+                                Exact Amount
+                            </label>
+                            <label style={{ marginLeft: "2em" }}>
+                                <input
+                                    type="radio"
+                                    name="salaryType"
+                                    value="ranged"
+                                    checked={salaryType === "ranged"}
+                                    onChange={handleSalaryTypeChange}
+                                    style={{ marginRight: "0.5em" }}
+                                />
+                                Ranged
+                            </label>
+                        </span>
+                        {salaryType === "fixed" ? (
+                            <input
+                                type="text"
+                                name="globaluphire-salary"
+                                value={jobData.salary}
+                                placeholder="$100,000.00"
+                                onChange={(e) => {
+                                    setJobData((previousState) => ({
+                                        ...previousState,
+                                        salary: e.target.value,
+                                    }));
+                                }}
+                                required
+                            />
+                        ) : (
+                            <Row>
+                                <div className="col-6">
+                                    <input
+                                        type="text"
+                                        name="lowerLimit"
+                                        value={lowerLimit}
+                                        placeholder="$80,000.00"
+                                        onChange={(e) =>
+                                            setLowerLimit(e.target.value)
+                                        }
+                                        required
+                                    />
+                                    <label>Lower Limit</label>
+                                </div>
+                                <div className="col-6">
+                                    <input
+                                        type="text"
+                                        name="upperLimit"
+                                        value={upperLimit}
+                                        placeholder="$120,000.00"
+                                        onChange={(e) =>
+                                            setUpperLimit(e.target.value)
+                                        }
+                                        required
+                                    />
+                                    <label>Upper Limit</label>
+                                </div>
+                            </Row>
+                        )}
+                    </div>
+                    <div className="form-group col-lg-6 col-md-12">
+                        <label>
+                            Salary Rate <span className="required">(required)</span>
+                        </label>
+                        <select
+                            className="chosen-single form-select"
+                            value={jobData.salaryRate}
+                            onChange={(e) => {
+                                setJobData((previousState) => ({
+                                    ...previousState,
+                                    salaryRate: e.target.value,
+                                }));
+                            }}
+                            required
+                        >
+                            <option>Per hour</option>
+                            <option>Per diem</option>
+                            <option>Per month</option>
+                            <option>Per year</option>
+                        </select>
+                    </div>
+                    <div className="form-group col-lg-6 col-md-12">
+                        <label>
+                            Education<span className="optional"> (optional)</span>
+                        </label>
+                        <select
+                            className="chosen-single form-select"
+                            value={jobData.education}
+                            onChange={(e) => {
+                                setJobData((previousState) => ({
+                                    ...previousState,
+                                    education: e.target.value,
+                                }));
+                            }}
+                        >
+                            <option></option>
+                            <option>Certificate</option>
+                            <option>High School</option>
+                            <option>Associate Degree</option>
+                            <option>Bachelor's Degree</option>
+                            <option>Master's Degree</option>
+                        </select>
+                    </div>
+                    {/*
+            <div className="form-group col-lg-6 col-md-12">
+            <label>Gender</label>
+            <select
+                className="chosen-single form-select"
+                value={gender}
+                onChange={(e) => {
+                setGender(e.target.value);
+                }}
+            >
+                <option>Select</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+            </select>
+            </div>
+    */}
+                    {/*
+            <div className="form-group col-lg-6 col-md-12">
+            <label>Industry</label>
+            <select
+                className="chosen-single form-select"
+                value={industy}
+                onChange={(e) => {
+                setIndustry(e.target.value);
+                }}
+            >
+                <option>Select</option>
+                <option>Banking</option>
+                <option>Digital & Creative</option>
+                <option>Retail</option>
+                <option>Human Resources</option>
+                <option>Management</option>
+            </select>
+            </div>
+    */}
+                    {/*
+            <div className="form-group col-lg-6 col-md-12">
+            <label>Qualification</label>
+            <select
+                className="chosen-single form-select"
+                value={qualification}
+                onChange={(e) => {
+                setQualification(e.target.value);
+                }}
+            >
+                <option>Select</option>
+                <option>Banking</option>
+                <option>Digital & Creative</option>
+                <option>Retail</option>
+                <option>Human Resources</option>
+                <option>Management</option>
+            </select>
+            </div>
+    */}
+                    {/* <!-- Input --> */}
+                    {/*
+            <div className="form-group col-lg-12 col-md-12">
+            <label>Application Deadline Date</label>
+            <input
+                type="text"
+                name="name"
+                placeholder="06.04.2020"
+                value={deadline}
+                onChange={(e) => {
+                setDeadline(e.target.value);
+                }}
+            />
+            </div>
+    */}
+                    {/*
+            <div className="form-group col-lg-6 col-md-12">
+            <label>City <span className="required">(required)</span></label>
+            <input
+                type="text"
+                name="globaluphire-city"
+                required
+                value={city}
+                onChange={(e) => {
+                setCity(e.target.value);
+                }}
+                placeholder="City"
+            />
+            </div>
+            */}
+                    {/* <!-- Input --> */}
+                    {/*
+
+            <div className="form-group col-lg-6 col-md-12">
+            <label>Country <span className="required">(required)</span></label>
+            <select
+                className="chosen-single form-select"
+                value={country}
+                required
+                onChange={(e) => {
+                setCountry(e.target.value);
+                }}
+            >
+                <option></option>
+                <option>Australia</option>
+                <option>Pakistan</option>
+                <option>USA</option>
+                <option>Japan</option>
+                <option>India</option>
+            </select>
+            </div>
+    */}
+
+                    {/* <div className="form-group col-lg-12 col-md-12">
+            <label>Complete Address <span className="optional">(optional)</span></label>
+            <input
+                type="text"
+                name="globaluphire-address"
+                value={completeAddress}
+                onChange={(e) => {
+                setJobData((previousState) => ({ 
+                    ...previousState,
+                    completeAddress: e.target.value
+                }))
+                }}
+                placeholder="Address"
+            />
+            </div> */}
+
+                    <div className="form-group col-lg-12 col-md-12">
+                        <label>
+                            Facility Name{" "}
+                            <span className="required">(required)</span>
+                        </label>
+                        <Typeahead
+                            onChange={setFacilitySingleSelections}
+                            id="facilityName"
+                            className="form-group"
+                            placeholder="Facility Name"
+                            options={facilityNames}
+                            selected={facilitySingleSelections}
+                            required
                         />
-                    ) : (
-                        <Row>
-                            <div className="col-6">
-                                <input
-                                    type="text"
-                                    name="lowerLimit"
-                                    value={lowerLimit}
-                                    placeholder="$80,000.00"
-                                    onChange={(e) =>
-                                        setLowerLimit(e.target.value)
-                                    }
-                                    required
-                                />
-                                <label>Lower Limit</label>
-                            </div>
-                            <div className="col-6">
-                                <input
-                                    type="text"
-                                    name="upperLimit"
-                                    value={upperLimit}
-                                    placeholder="$120,000.00"
-                                    onChange={(e) =>
-                                        setUpperLimit(e.target.value)
-                                    }
-                                    required
-                                />
-                                <label>Upper Limit</label>
-                            </div>
-                        </Row>
-                    )}
-                </div>
-                <div className="form-group col-lg-6 col-md-12">
-                    <label>
-                        Salary Rate <span className="required">(required)</span>
-                    </label>
-                    <select
-                        className="chosen-single form-select"
-                        value={jobData.salaryRate}
-                        onChange={(e) => {
-                            setJobData((previousState) => ({
-                                ...previousState,
-                                salaryRate: e.target.value,
-                            }));
-                        }}
-                        required
-                    >
-                        <option>Per hour</option>
-                        <option>Per diem</option>
-                        <option>Per month</option>
-                        <option>Per year</option>
-                    </select>
-                </div>
-                <div className="form-group col-lg-6 col-md-12">
-                    <label>
-                        Education<span className="optional"> (optional)</span>
-                    </label>
-                    <select
-                        className="chosen-single form-select"
-                        value={jobData.education}
-                        onChange={(e) => {
-                            setJobData((previousState) => ({
-                                ...previousState,
-                                education: e.target.value,
-                            }));
-                        }}
-                    >
-                        <option></option>
-                        <option>Certificate</option>
-                        <option>High School</option>
-                        <option>Associate Degree</option>
-                        <option>Bachelor's Degree</option>
-                        <option>Master's Degree</option>
-                    </select>
-                </div>
-                {/*
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Gender</label>
-          <select
-            className="chosen-single form-select"
-            value={gender}
-            onChange={(e) => {
-              setGender(e.target.value);
-            }}
-          >
-            <option>Select</option>
-            <option>Male</option>
-            <option>Female</option>
-            <option>Other</option>
-          </select>
-        </div>
- */}
-                {/*
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Industry</label>
-          <select
-            className="chosen-single form-select"
-            value={industy}
-            onChange={(e) => {
-              setIndustry(e.target.value);
-            }}
-          >
-            <option>Select</option>
-            <option>Banking</option>
-            <option>Digital & Creative</option>
-            <option>Retail</option>
-            <option>Human Resources</option>
-            <option>Management</option>
-          </select>
-        </div>
- */}
-                {/*
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Qualification</label>
-          <select
-            className="chosen-single form-select"
-            value={qualification}
-            onChange={(e) => {
-              setQualification(e.target.value);
-            }}
-          >
-            <option>Select</option>
-            <option>Banking</option>
-            <option>Digital & Creative</option>
-            <option>Retail</option>
-            <option>Human Resources</option>
-            <option>Management</option>
-          </select>
-        </div>
- */}
-                {/* <!-- Input --> */}
-                {/*
-        <div className="form-group col-lg-12 col-md-12">
-          <label>Application Deadline Date</label>
-          <input
-            type="text"
-            name="name"
-            placeholder="06.04.2020"
-            value={deadline}
-            onChange={(e) => {
-              setDeadline(e.target.value);
-            }}
-          />
-        </div>
- */}
-                {/*
-        <div className="form-group col-lg-6 col-md-12">
-          <label>City <span className="required">(required)</span></label>
-          <input
-            type="text"
-            name="globaluphire-city"
-            required
-            value={city}
-            onChange={(e) => {
-              setCity(e.target.value);
-            }}
-            placeholder="City"
-          />
-        </div>
-         */}
-                {/* <!-- Input --> */}
-                {/*
+                    </div>
 
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Country <span className="required">(required)</span></label>
-          <select
-            className="chosen-single form-select"
-            value={country}
-            required
-            onChange={(e) => {
-              setCountry(e.target.value);
-            }}
-          >
-            <option></option>
-            <option>Australia</option>
-            <option>Pakistan</option>
-            <option>USA</option>
-            <option>Japan</option>
-            <option>India</option>
-          </select>
-        </div>
- */}
+                    <div className="form-group col-lg-12 col-md-12">
+                        <label>
+                            Complete Address{" "}
+                            <span className="required">(required)</span>
+                        </label>
+                        <Typeahead
+                            onChange={setSingleSelections}
+                            id="completeAddress"
+                            className="form-group"
+                            placeholder="Address"
+                            options={addresses}
+                            selected={singleSelections}
+                            required
+                        />
+                    </div>
 
-                {/* <div className="form-group col-lg-12 col-md-12">
-          <label>Complete Address <span className="optional">(optional)</span></label>
-          <input
-            type="text"
-            name="globaluphire-address"
-            value={completeAddress}
-            onChange={(e) => {
-              setJobData((previousState) => ({ 
-                ...previousState,
-                completeAddress: e.target.value
-              }))
-            }}
-            placeholder="Address"
-          />
-        </div> */}
+                    {/* <!-- Input --> */}
+                    {/* <div className="form-group col-lg-12 col-md-12">
+            <label>City, State <span className="required">(required)</span></label>
+            <input
+                type="text"
+                name="globaluphire-address"
+                ref={searchInput}            
+                placeholder="City, State"
+                required
+            />
+            </div> */}
 
-                <div className="form-group col-lg-12 col-md-12">
-                    <label>
-                        Facility Name{" "}
-                        <span className="required">(required)</span>
-                    </label>
-                    <Typeahead
-                        onChange={setFacilitySingleSelections}
-                        id="facilityName"
-                        className="form-group"
-                        placeholder="Facility Name"
-                        options={facilityNames}
-                        selected={facilitySingleSelections}
-                        required
-                    />
-                </div>
-
-                <div className="form-group col-lg-12 col-md-12">
-                    <label>
-                        Complete Address{" "}
-                        <span className="required">(required)</span>
-                    </label>
-                    <Typeahead
-                        onChange={setSingleSelections}
-                        id="completeAddress"
-                        className="form-group"
-                        placeholder="Address"
-                        options={addresses}
-                        selected={singleSelections}
-                        required
-                    />
-                </div>
-
-                {/* <!-- Input --> */}
-                {/* <div className="form-group col-lg-12 col-md-12">
-          <label>City, State <span className="required">(required)</span></label>
-          <input
-            type="text"
-            name="globaluphire-address"
-            ref={searchInput}            
-            placeholder="City, State"
-            required
-          />
-        </div> */}
-
-                {/* <!-- Input --> */}
-                {/* <div className="form-group col-lg-6 col-md-12">
-          <label>Find On Map</label>
-          <input
-            type="text"
-            name="name"
-            placeholder="329 Queensberry Street, North Melbourne VIC 3051, Australia."
-          />
-        </div> */}
-                {/* <!-- Input --> */}
-                {/* <div className="form-group col-lg-3 col-md-12">
-          <label>Latitude</label>
-          <input type="text" name="name" placeholder="Melbourne" />
-        </div> */}
-                {/* <!-- Input --> */}
-                {/* <div className="form-group col-lg-3 col-md-12">
-          <label>Longitude</label>
-          <input type="text" name="name" placeholder="Melbourne" />
-        </div> */}
-                {/* <!-- Input --> */}
-                {/* <div className="form-group col-lg-12 col-md-12">
-          <button className="theme-btn btn-style-three">Search Location</button>
-        </div>
-        <div className="form-group col-lg-12 col-md-12">
-          <div className="map-outer">
-            <div style={{ height: "420px", width: "100%" }}>
-              <Map />
+                    {/* <!-- Input --> */}
+                    {/* <div className="form-group col-lg-6 col-md-12">
+            <label>Find On Map</label>
+            <input
+                type="text"
+                name="name"
+                placeholder="329 Queensberry Street, North Melbourne VIC 3051, Australia."
+            />
+            </div> */}
+                    {/* <!-- Input --> */}
+                    {/* <div className="form-group col-lg-3 col-md-12">
+            <label>Latitude</label>
+            <input type="text" name="name" placeholder="Melbourne" />
+            </div> */}
+                    {/* <!-- Input --> */}
+                    {/* <div className="form-group col-lg-3 col-md-12">
+            <label>Longitude</label>
+            <input type="text" name="name" placeholder="Melbourne" />
+            </div> */}
+                    {/* <!-- Input --> */}
+                    {/* <div className="form-group col-lg-12 col-md-12">
+            <button className="theme-btn btn-style-three">Search Location</button>
             </div>
-          </div>
-        </div> */}
-                {/* <!-- Input --> */}
-                <div className="form-group col-lg-12 col-md-12 text-right">
-                    <button
-                        className="theme-btn btn-style-one"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            submitJobPost(jobData, setJobData, user);
-                        }}
-                    >
-                        Post
-                    </button>
+            <div className="form-group col-lg-12 col-md-12">
+            <div className="map-outer">
+                <div style={{ height: "420px", width: "100%" }}>
+                <Map />
                 </div>
             </div>
-        </form>
+            </div> */}
+                    {/* <!-- Input --> */}
+                    <div className="form-group col-lg-12 col-md-12 text-right">
+                        <button
+                            className="theme-btn btn-style-one"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                submitJobPost(jobData, setJobData, user);
+                            }}
+                        >
+                            Post
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </>
     );
 };
 

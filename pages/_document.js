@@ -12,15 +12,17 @@ export default function Document() {
                 <meta httpEquiv="x-ua-compatible" content="ie=edge" />
                 <meta
                     name="keywords"
-                    content="	candidates, career, employment, indeed, job board, job listing, job portal, job postings, job search, job seeker, jobs, recruiters, recruiting, recruitment, resume"
+                    content=""
                 />
                 <meta
                     name="description"
-                    content="Volare Health - Career, Job seeking portal"
+                    content="Raftaar - Truck Transportation Service"
                 />
-                <meta name="volarehealth" content="ATFN" />
+                <meta name="raftaar" content="ATFN" />
 
                 <link rel="icon" href="/favicon.ico" />
+
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
             </Head>
             <body>
                 <Main />
