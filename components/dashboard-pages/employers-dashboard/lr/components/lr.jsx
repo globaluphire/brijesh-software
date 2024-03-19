@@ -70,7 +70,7 @@ const LR = () => {
     // clear all filters
     const clearAll = () => {
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
-        fetchedAllApplicantsView({ name: "", jobTitle: "" });
+        // fetchedAllApplicantsView({ name: "", jobTitle: "" });
     };
 
     async function findApplicant() {
@@ -1041,11 +1041,11 @@ const LR = () => {
                                             </td>
                                             <td>
                                                 {
-                                                    lr.status == "Final" ? (
+                                                    lr.status === "Final" ? (
                                                         <span style={{ color: "green" }}>
                                                             {lr.status}
                                                         </span>
-                                                    ) : lr.status == "Performa" ? (
+                                                    ) : lr.status === "Performa" ? (
                                                             <span style={{ color: "darkorange" }}>
                                                                 {lr.status}
                                                             </span>
