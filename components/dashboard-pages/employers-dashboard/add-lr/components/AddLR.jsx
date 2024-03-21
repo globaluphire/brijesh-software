@@ -279,9 +279,9 @@ const AddLR = () => {
             materialDetails &&
             weight
         ) {
-            return true
+            return true;
         } else {
-            return false
+            return false;
         }
     };
 
@@ -322,8 +322,8 @@ const AddLR = () => {
                 // New Order Number
                 const { data, error } = await supabase.from("lr").insert([
                     {
-                        lr_number: 'RTR240203287', // add logic to create automatic Unique number, ex. RLR(YY)(MM)(DD)(incremented 3 number digit)
-                        order_number: 'BRD240203100', // add logic to create automatic Unique number, ex. (3 digit City Code)(YY)(MM)(DD)(incremented 3 number digit)
+                        lr_number: "RLR240203287", // add logic to create automatic Unique number, ex. RLR(YY)(MM)(DD)(incremented 3 number digit)
+                        order_number: "BRD240203100", // add logic to create automatic Unique number, ex. (3 digit City Code)(YY)(MM)(DD)(incremented 3 number digit)
 
                         // Consignor Fields
                         consignor: consignorName,
@@ -351,7 +351,7 @@ const AddLR = () => {
                         weight: weight,
 
                         // Default fields
-                        status: 'Final'
+                        status: "Final"
                     },
                 ]);
                 if (error) {
@@ -814,7 +814,7 @@ const AddLR = () => {
                     <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">
                         <Button
                             variant="secondary"
-                            onClick={() => {Router.push("/employers-dashboard/lr")}}
+                            onClick={() => {Router.push("/employers-dashboard/lr"); }}
                             className="btn btn-back btn-sm text-nowrap m-1"
                         >
                             Back to LR
