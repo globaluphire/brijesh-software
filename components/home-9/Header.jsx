@@ -33,15 +33,13 @@ const Header = () => {
                     <div className="nav-outer">
                         <div className="logo-box">
                             <div className="logo">
-                                <Link href="/">
-                                    <Image
-                                        src="/images/logo.svg"
-                                        alt="brand"
-                                        width={174}
-                                        height={70}
-                                        priority
-                                    />
-                                </Link>
+                                <Image
+                                    src="/images/logo.svg"
+                                    alt="brand"
+                                    width={174}
+                                    height={70}
+                                    priority
+                                />
                             </div>
                         </div>
                         {/* End .logo-box */}

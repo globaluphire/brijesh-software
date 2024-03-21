@@ -9,14 +9,12 @@ const CopyrightFooter2 = () => {
                 <div className="outer-box">
                     <div className="bottom-left">
                         <div className="logo">
-                            <Link href="/">
-                                <img
-                                    src="images/logo.svg"
-                                    alt="brand"
-                                    width={154}
-                                    height={50}
-                                />
-                            </Link>
+                            <img
+                                src="images/logo.svg"
+                                alt="brand"
+                                width={154}
+                                height={50}
+                            />
                         </div>
                         <div className="copyright-text">
                             © {new Date().getFullYear()} Volare Health{" "}

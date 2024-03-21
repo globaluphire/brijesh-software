@@ -12,12 +12,10 @@ const index = ({ footerStyle = "" }) => {
             <div className="big-column col-xl-4 col-lg-3 col-md-12">
               <div className="footer-column about-widget">
                 <div className="logo">
-                  <a href="#">
-                    <img  src="images/logo.svg"
-                      alt="brand"
-                      width={154}
-                      height={50}/>
-                  </a>
+                  <img  src="images/logo.svg"
+                    alt="brand"
+                    width={154}
+                    height={50}/>
                 </div>
                 <p className="phone-num">
                   <span>Call us </span>

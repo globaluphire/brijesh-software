@@ -4,14 +4,12 @@ import Link from "next/link";
 const SidebarHeader = () => {
     return (
         <div className="pro-header">
-            <Link href="/">
-                <img
-                    src="images/logo.svg"
-                    alt="brand"
-                    width={154}
-                    height={50}
-                />
-            </Link>
+            <img
+                src="../images/logo.svg"
+                alt="brand"
+                width={154}
+                height={50}
+            />
             {/* End logo */}
 
             <div

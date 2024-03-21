@@ -21,9 +21,7 @@ const MobileMenu = () => {
                     <div className="nav-outer">
                         <div className="logo-box">
                             <div className="logo">
-                                <Link href="/">
-                                    <img src="/images/logo.svg" alt="brand" />
-                                </Link>
+                                <img src="/images/logo.svg" alt="brand" />
                             </div>
                         </div>
                         {/* End .logo-box */}
