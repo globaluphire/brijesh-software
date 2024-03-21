@@ -31,62 +31,41 @@ function loadAsyncScript(src) {
     });
 }
 
-const addLRFields = {
-    // Consignor Block Fields
-    consignorName: "",
-    consignorGST: "",
-    consignorPhone: "",
-    consignorAddress: "",
-    consignorEmail: "",
-
-    // Consignor Block Fields
-    consigneeName: "",
-    consigneeGST: "",
-    consigneePhone: "",
-    consigneeAddress: "",
-    consigneeEmail: "",
-
-    // Other Block Fields
-    fromCity: "",
-    toCity: "",
-    vehicalNumber: "",
-    driverName: "",
-    driverPhone: "",
-
-    // Material Details Block Fields
-    materialDetails: "",
-    weight: ""
-};
-
-
 const addJobFields = {
-    // Consignor Block Fields
-    consignorName: "",
-    consignorGST: "",
-    consignorPhone: "",
-    consignorAddress: "",
-    consignorEmail: "",
-
-    // Consignor Block Fields
-    consigneeName: "",
-    consigneeGST: "",
-    consigneePhone: "",
-    consigneeAddress: "",
-    consigneeEmail: "",
-
-    // Other Block Fields
-    fromCity: "",
-    toCity: "",
-    vehicalNumber: "",
-    driverName: "",
-    driverPhone: "",
-
-    // Material Details Block Fields
-    materialDetails: "",
-    weight: ""
+    jobTitle: "",
+    jobDesc: "",
+    jobType: "Full Time",
+    salary: "",
+    salaryRate: "Per Hour",
+    education: "",
+    exp: "0 - 1 year",
+    address: "",
+    completeAddress: "",
+    facility: "",
 };
 
 const AddLR = () => {
+    // Date
+    // LR No
+    // Last Updated On
+
+    // Pickup Address
+    // From
+    // To
+    // Delivery Address
+
+    // Consignor
+    // Address
+    // GST
+    // Vehical No
+    // Driver
+    // Consignee
+    // Address
+    // GST
+
+    // Material Details
+    // Weight(Kg)
+    // Total Amount(Rs)
     // const [jobTitle, setJobTitle] = useState("");
     // const [jobDesc, setJobDesc] = useState("");
     // const [email, setEmail] = useState("");
@@ -116,35 +95,18 @@ const AddLR = () => {
     const [jobData, setJobData] = useState(
         JSON.parse(JSON.stringify(addJobFields))
     );
-    const [lrFormData, setLrFormData] = useState(
-        JSON.parse(JSON.stringify(addLRFields))
-    );
-    const {
-        // Consignor Block Fields
-        consignorName,
-        consignorGST,
-        consignorPhone,
-        consignorAddress,
-        consignorEmail,
-
-        // Consignor Block Fields
-        consigneeName,
-        consigneeGST,
-        consigneePhone,
-        consigneeAddress,
-        consigneeEmail,
-
-        // Other Block Fields
-        fromCity,
-        toCity,
-        vehicalNumber,
-        driverName,
-        driverPhone,
-
-        // Material Details Block Fields
-        materialDetails,
-        weight
-    } = useMemo(() => lrFormData, [lrFormData]);
+    // const {
+    //     jobTitle,
+    //     jobDesc,
+    //     jobType,
+    //     salary,
+    //     salaryRate,
+    //     education,
+    //     exp,
+    //     address,
+    //     completeAddress,
+    //     facility,
+    // } = useMemo(() => jobData, [jobData]);
 
     const searchInput = useRef(null);
 
@@ -259,109 +221,95 @@ const AddLR = () => {
     { value: "Engineer", label: "Engineer" },
   ];
  */
-
-    function checkRequiredFields(lrFormData) {
-        if (
-            // Consignor Block Fields
-            consignorName &&
-            consignorGST &&
-            consignorAddress &&
-
-            // Consignor Block Fields
-            consigneeName &&
-            consigneeGST &&
-            consigneeAddress &&
-
-            // Other Block Fields
-            fromCity &&
-            toCity &&
-            vehicalNumber &&
-            driverName &&
-            driverPhone &&
-
-            // Material Details Block Fields
-            materialDetails &&
-            weight
-        ) {
-            return true
-        } else {
-            return false
-        }
-    };
-
-    const addNewLR = async (
+    const submitJobPost = async (
         {
-            // Consignor Block Fields
-            consignorName,
-            consignorGST,
-            consignorPhone,
-            consignorAddress,
-            consignorEmail,
-
-            // Consignor Block Fields
-            consigneeName,
-            consigneeGST,
-            consigneePhone,
-            consigneeAddress,
-            consigneeEmail,
-
-            // Other Block Fields
-            fromCity,
-            toCity,
-            vehicalNumber,
-            driverName,
-            driverPhone,
-
-            // Material Details Block Fields
-            materialDetails,
-            weight
+            jobTitle,
+            jobDesc,
+            jobType,
+            salary,
+            salaryRate,
+            education,
+            exp,
+            completeAddress,
+            address,
+            facility,
         },
-        setLrFormData,
+        setJobData,
         user
     ) => {
-        if (checkRequiredFields(lrFormData)) {
+        if (salaryType === "ranged") {
+            if (!upperLimit || !lowerLimit) {
+                return;
+            }
+            salary = `${lowerLimit} - ${upperLimit}`;
+        }
+        if (
+            jobTitle &&
+            jobDesc &&
+            jobType &&
+            salary &&
+            salaryRate &&
+            exp &&
+            completeAddress &&
+            facility
+        ) {
             try {
-                // Creating New LR Number
+                const { data: facilityData, error: facilityError } =
+                    await supabase
+                        .from("facility")
+                        .select("facility_id")
+                        .eq("facility_name", facility)
+                        .single();
 
-                // New Order Number
-                const { data, error } = await supabase.from("lr").insert([
-                    {
-                        lr_number: 'RTR240203187', // add logic to create automatic Unique number, ex. RLR(YY)(MM)(DD)(incremented 3 number digit)
-                        order_number: 'BRD240203100', // add logic to create automatic Unique number, ex. (3 digit City Code)(YY)(MM)(DD)(incremented 3 number digit)
-
-                        // Consignor Fields
-                        consignor: consignorName,
-                        pickup_address: consignorAddress,
-                        consignor_gst: consignorGST,
-                        consignor_email: consignorEmail,
-                        consignor_phone: consignorPhone,
-
-                        // Consignee Fields
-                        consignee: consigneeName,
-                        drop_address: consigneeAddress,
-                        consignee_gst: consigneeGST,
-                        consignee_email: consigneeEmail,
-                        consignee_phone: consigneePhone,
-
-                        // Other Block Fields
-                        from_city: fromCity,
-                        to_city: toCity,
-                        vehical_number: vehicalNumber,
-                        driver_name: driverName,
-                        driver_phone: driverPhone,
-
-                        // Material Details Block Fields
-                        material_details: materialDetails,
-                        weight: weight,
-
-                        // Default fields
-                        status: 'Final'
-                    },
-                ]);
-                if (error) {
+                if (facilityData) {
+                    const { data, error } = await supabase.from("jobs").insert([
+                        {
+                            user_id: user.id,
+                            job_title: jobTitle,
+                            job_desc: jobDesc,
+                            job_type: jobType,
+                            experience: exp,
+                            education,
+                            salary,
+                            salary_rate: salaryRate,
+                            job_comp_add: completeAddress,
+                            facility_name: facility,
+                            facility_id: facilityData.facility_id,
+                        },
+                    ]);
+                    if (error) {
+                        // open toast
+                        toast.error(
+                            "Error while fetching facility details, Please try again later or contact tech support",
+                            {
+                                position: "bottom-right",
+                                autoClose: false,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "colored",
+                            }
+                        );
+                    } else {
+                        // open toast
+                        toast.success("Job Posted successfully", {
+                            position: "bottom-right",
+                            autoClose: 8000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        setJobData(JSON.parse(JSON.stringify(addJobFields)));
+                    }
+                } else {
                     // open toast
                     toast.error(
-                        "Error while saving LR details, Please try again later or contact tech support",
+                        "Error while saving your job application, Please try again later or contact tech support",
                         {
                             position: "bottom-right",
                             autoClose: false,
@@ -373,24 +321,11 @@ const AddLR = () => {
                             theme: "colored",
                         }
                     );
-                } else {
-                    // open toast
-                    toast.success("New LR saved successfully", {
-                        position: "bottom-right",
-                        autoClose: 8000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
-                    setLrFormData(JSON.parse(JSON.stringify(addJobFields)));
                 }
             } catch (err) {
                 // open toast
                 toast.error(
-                    "Error while saving LR details, Please try again later or contact tech support",
+                    "Error while saving your job application, Please try again later or contact tech support",
                     {
                         position: "bottom-right",
                         autoClose: false,
@@ -405,20 +340,17 @@ const AddLR = () => {
                 // console.warn(err);
             }
         } else {
-            // open toast for filling required fields
-            toast.error(
-                "Please review form and fill out missing required fields",
-                {
-                    position: "bottom-right",
-                    autoClose: false,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                }
-            );
+            // open toast
+            toast.error("Please fill all the required fields.", {
+                position: "top-center",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
         }
     };
 
@@ -433,8 +365,7 @@ const AddLR = () => {
 
     return (
         <> 
-            <Form noValidate validated={validated}>
-
+            <Form noValidate validated={validated} onSubmit={handleSubmit}>
                 {/* Consigner Block starts */}
                 <div>
                     <div className="divider">
@@ -449,13 +380,6 @@ const AddLR = () => {
                                     type="text"
                                     // placeholder="Consignor"
                                     // defaultValue="Mark"
-                                    value={consignorName}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consignorName: e.target.value,
-                                        }));
-                                    }}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 <Form.Control.Feedback type="invalid">
@@ -469,13 +393,6 @@ const AddLR = () => {
                                     type="text"
                                     // placeholder="GST number"
                                     // defaultValue="Otto"
-                                    value={consignorGST}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consignorGST: e.target.value,
-                                        }));
-                                    }}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 <Form.Control.Feedback type="invalid">
@@ -487,17 +404,10 @@ const AddLR = () => {
                                 <InputGroup>
                                     <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
                                     <Form.Control
-                                        type="text"
-                                        // placeholder="Username"
-                                        aria-describedby="inputGroupPrepend"
-                                        // required
-                                        value={consignorPhone}
-                                        onChange={(e) => {
-                                            setLrFormData((previousState) => ({
-                                                ...previousState,
-                                                consignorPhone: e.target.value,
-                                            }));
-                                        }}
+                                    type="text"
+                                    // placeholder="Username"
+                                    aria-describedby="inputGroupPrepend"
+                                    // required
                                     />
                                 </InputGroup>
                             </Form.Group>
@@ -505,35 +415,14 @@ const AddLR = () => {
                         <Row className="mb-3">
                             <Form.Group as={Col} md="9" controlId="validationCustom03">
                                 <Form.Label>Address</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Pickup Address"
-                                    required
-                                    value={consignorAddress}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consignorAddress: e.target.value,
-                                        }));
-                                    }}
-                                />
+                                <Form.Control type="text" placeholder="Pickup Address" required />
                                 <Form.Control.Feedback type="invalid">
                                     Please provide a valid Consignor's Address.
                                 </Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} md="3" controlId="validationCustom04">
                                 <Form.Label>Email Address</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder=""
-                                    value={consignorEmail}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consignorEmail: e.target.value,
-                                        }));
-                                    }}
-                                />
+                                <Form.Control type="text" placeholder="" />
                             </Form.Group>
                         </Row>
                     </div>
@@ -554,13 +443,6 @@ const AddLR = () => {
                                     type="text"
                                     // placeholder="Consignee"
                                     // defaultValue="Mark"
-                                    value={consigneeName}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consigneeName: e.target.value,
-                                        }));
-                                    }}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 <Form.Control.Feedback type="invalid">
@@ -574,13 +456,6 @@ const AddLR = () => {
                                     type="text"
                                     // placeholder="GST number"
                                     // defaultValue="Otto"
-                                    value={consigneeGST}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consigneeGST: e.target.value,
-                                        }));
-                                    }}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 <Form.Control.Feedback type="invalid">
@@ -592,17 +467,10 @@ const AddLR = () => {
                                 <InputGroup>
                                     <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
                                     <Form.Control
-                                        type="text"
-                                        // placeholder="Username"
-                                        aria-describedby="inputGroupPrepend"
-                                        // required
-                                        value={consigneePhone}
-                                        onChange={(e) => {
-                                            setLrFormData((previousState) => ({
-                                                ...previousState,
-                                                consigneePhone: e.target.value,
-                                            }));
-                                        }}
+                                    type="text"
+                                    // placeholder="Username"
+                                    aria-describedby="inputGroupPrepend"
+                                    // required
                                     />
                                 </InputGroup>
                             </Form.Group>
@@ -610,35 +478,14 @@ const AddLR = () => {
                         <Row className="mb-3">
                             <Form.Group as={Col} md="9" controlId="validationCustom03">
                                 <Form.Label>Address</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Pickup Address"
-                                    required
-                                    value={consigneeAddress}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consigneeAddress: e.target.value,
-                                        }));
-                                    }}
-                                />
+                                <Form.Control type="text" placeholder="Pickup Address" required />
                                 <Form.Control.Feedback type="invalid">
                                     Please provide a valid Consignee's Address.
                                 </Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} md="3" controlId="validationCustom04">
                                 <Form.Label>Email Address</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder=""
-                                    value={consigneeEmail}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consigneeEmail: e.target.value,
-                                        }));
-                                    }}
-                                />
+                                <Form.Control type="text" placeholder="" />
                             </Form.Group>
                         </Row>
                     </div>
@@ -659,13 +506,6 @@ const AddLR = () => {
                                     type="text"
                                     // placeholder="Consignee"
                                     // defaultValue="Mark"
-                                    value={fromCity}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            fromCity: e.target.value,
-                                        }));
-                                    }}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 <Form.Control.Feedback type="invalid">
@@ -679,13 +519,6 @@ const AddLR = () => {
                                     type="text"
                                     // placeholder="To"
                                     // defaultValue="Otto"
-                                    value={toCity}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            toCity: e.target.value,
-                                        }));
-                                    }}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 <Form.Control.Feedback type="invalid">
@@ -699,13 +532,6 @@ const AddLR = () => {
                                     type="text"
                                     // placeholder="GJ011234"
                                     // defaultValue="Otto"
-                                    value={vehicalNumber}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            vehicalNumber: e.target.value,
-                                        }));
-                                    }}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 <Form.Control.Feedback type="invalid">
@@ -721,13 +547,6 @@ const AddLR = () => {
                                     type="text"
                                     // placeholder="Driver Name"
                                     // defaultValue="Otto"
-                                    value={driverName}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            driverName: e.target.value,
-                                        }));
-                                    }}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 <Form.Control.Feedback type="invalid">
@@ -739,17 +558,10 @@ const AddLR = () => {
                                 <InputGroup>
                                     <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
                                     <Form.Control
-                                        type="text"
-                                        // placeholder="Driver Phone Number"
-                                        aria-describedby="inputGroupPrepend"
-                                        required
-                                        value={driverPhone}
-                                        onChange={(e) => {
-                                            setLrFormData((previousState) => ({
-                                                ...previousState,
-                                                driverPhone: e.target.value,
-                                            }));
-                                        }}
+                                    type="text"
+                                    // placeholder="Driver Phone Number"
+                                    aria-describedby="inputGroupPrepend"
+                                    required
                                     />
                                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                     <Form.Control.Feedback type="invalid">
@@ -777,13 +589,6 @@ const AddLR = () => {
                                     type="text"
                                     // placeholder="Material Details"
                                     // defaultValue="Mark"
-                                    value={materialDetails}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            materialDetails: e.target.value,
-                                        }));
-                                    }}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 <Form.Control.Feedback type="invalid">
@@ -799,13 +604,6 @@ const AddLR = () => {
                                     type="number"
                                     // placeholder="Weight"
                                     // defaultValue="Otto"
-                                    value={weight}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            weight: e.target.value,
-                                        }));
-                                    }}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 <Form.Control.Feedback type="invalid">
@@ -825,15 +623,8 @@ const AddLR = () => {
                             variant="success"
                             // onClick={() => Router.push("/employers-dashboard/")}
                             className="btn btn-add-lr btn-sm text-nowrap m-1"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleSubmit(e);
-                                if(validated) {
-                                    addNewLR(lrFormData, setLrFormData, user);
-                                }
-                            }}
                         >
-                            Add New LR
+                            Add LR
                         </Button>
                     </Form.Group>
                     <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">
@@ -843,7 +634,7 @@ const AddLR = () => {
                             // onClick={() => Router.push("/employers-dashboard/")}
                             className="btn btn-add-lr btn-sm text-nowrap m-1"
                         >
-                            Add New LR & Export to PDF
+                            Add LR & Export to PDF
                         </Button>
                     </Form.Group>
                 </Row>
