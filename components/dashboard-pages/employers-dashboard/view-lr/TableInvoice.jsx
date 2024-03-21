@@ -3,7 +3,7 @@ import { Table } from "react-bootstrap";
 
 const TableInvoice = () => {
     return (
-        <div>
+        <div >
             <Table responsive="sm">
                 <thead>
                     <tr>

@@ -21,7 +21,7 @@ const index = () => {
             {isEmployer ? (
                 <>
                     {" "}
-                    <Seo pageTitle="Post Jobs" />
+                    <Seo pageTitle="Add LR" />
                     <AddLR />
                 </>
             ) : (

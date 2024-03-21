@@ -363,6 +363,51 @@ Login Section
   content: "";
 }
 
+.divider {
+  position: relative;
+  display: block;
+  font-size: 24px;
+  line-height: 20px;
+  color: #333;
+  background: #ffffff;
+  margin: 2rem 0 1rem;
+}
+
+.divider span {
+  position: relative;
+  z-index: 9;
+}
+
+.divider:before {
+  position: absolute;
+  left: 0;
+  top: 10px;
+  height: 4px;
+  width: 100%;
+  background: #ecedf2;
+  border-radius: 12px;
+  content: "";
+}
+
+.divider:after {
+  position: absolute;
+  left: 0%;
+  top: 0px;
+  height: 20px;
+  width: 130px;
+  background: #fff;
+  // margin-left: -30px;
+  content: "";
+}
+
+.divider-other:after{
+  width: 70px;
+}
+
+.divider-material:after{
+  width: 180px;
+}
+
 .login-form .bottom-box .btn-box {
   position: relative;
 }

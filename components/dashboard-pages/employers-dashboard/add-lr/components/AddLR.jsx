@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 import "suneditor/dist/css/suneditor.min.css"; // Import Sun Editor's CSS File
 import { Typeahead } from "react-bootstrap-typeahead";
 import { envConfig } from "../../../../../config/env";
-import { Row } from "react-bootstrap";
+import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
     ssr: false,
@@ -45,6 +45,27 @@ const addJobFields = {
 };
 
 const AddLR = () => {
+    // Date
+    // LR No
+    // Last Updated On
+
+    // Pickup Address
+    // From
+    // To
+    // Delivery Address
+
+    // Consignor
+    // Address
+    // GST
+    // Vehical No
+    // Driver
+    // Consignee
+    // Address
+    // GST
+
+    // Material Details
+    // Weight(Kg)
+    // Total Amount(Rs)
     // const [jobTitle, setJobTitle] = useState("");
     // const [jobDesc, setJobDesc] = useState("");
     // const [email, setEmail] = useState("");
@@ -94,6 +115,8 @@ const AddLR = () => {
     const [facilitySingleSelections, setFacilitySingleSelections] = useState(
         []
     );
+    const [validated, setValidated] = useState(false);
+
 
     const addresses = [
         "601 Evergreen Rd., Woodburn, OR 97071",
@@ -331,491 +354,293 @@ const AddLR = () => {
         }
     };
 
+  const handleSubmit = (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    setValidated(true);
+  };
+
     return (
-        <>
-            <form className="default-form">
-                <div className="row">
-                    {/* <!-- Input --> */}
-                    <div className="form-group col-lg-12 col-md-12">
-                        <label>
-                            Company Name <span className="required">(required)</span>
-                        </label>
-                        <input
-                            type="text"
-                            name="globaluphire-jobTitle"
-                            value={jobData.jobTitle}
-                            required
-                            onChange={(e) => {
-                                setJobData((previousState) => ({
-                                    ...previousState,
-                                    jobTitle: e.target.value,
-                                }));
-                            }}
-                            placeholder="Job Title"
-                        />
+        <> 
+            <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                {/* Consigner Block starts */}
+                <div>
+                    <div className="divider">
+                        <span><b>Consignor</b></span>
                     </div>
-                    {/* <!-- About Company --> */}
-                    <div className="form-group col-lg-12 col-md-12">
-                        <label>
-                            Job Description{" "}
-                            <span className="required">(required)</span>
-                        </label>
-                        <SunEditor
-                            setOptions={{
-                                buttonList: [
-                                    ["fontSize", "formatBlock"],
-                                    [
-                                        "bold",
-                                        "underline",
-                                        "italic",
-                                        "strike",
-                                        "subscript",
-                                        "superscript",
-                                    ],
-                                    ["align", "horizontalRule", "list", "table"],
-                                    ["fontColor", "hiliteColor"],
-                                    ["outdent", "indent"],
-                                    ["undo", "redo"],
-                                    ["removeFormat"],
-                                    ["outdent", "indent"],
-                                    ["link"],
-                                    ["preview", "print"],
-                                    ["fullScreen", "showBlocks", "codeView"],
-                                ],
-                            }}
-                            setDefaultStyle="color:black;"
-                            onChange={(e) => {
-                                setJobData((previousState) => ({
-                                    ...previousState,
-                                    jobDesc: e,
-                                }));
-                            }}
-                        />
-                    </div>
-                    {/* <!-- Input --> */}
-                    {/*
-            <div className="form-group col-lg-6 col-md-12">
-            <label>Email Address <span className="optional">(optional)</span></label>
-            <input
-                type="text"
-                name="name"
-                placeholder="example@test.com"
-                value={email}
-                onChange={(e) => {
-                setEmail(e.target.value);
-                }}
-            />
-            </div>
-    */}
-                    {/* <!-- Input --> */}
-                    {/*
-            <div className="form-group col-lg-6 col-md-12">
-            <label>Username</label>
-            <input
-                type="text"
-                name="name"
-                placeholder=""
-                value={username}
-                onChange={(e) => {
-                setUsername(e.target.value);
-                }}
-            />
-            </div>
-    */}
-                    {/* <!-- Search Select --> */}
-                    {/*
-            <div className="form-group col-lg-6 col-md-12">
-            <label>Specialisms </label>
-            <Select
-                defaultValue={[specialisms[2]]}
-                isMulti
-                name="colors"
-                options={specialisms}
-                className="basic-multi-select"
-                classNamePrefix="select"
-                value={specialism}
-                onChange={(e) => {
-                // const updatedOptions = [...e.target.options]
-                //   .filter((option) => option.selected)
-                //   .map((x) => x.value);
-                // console.log("updatedOptions", updatedOptions);
-                // setSpecialism(updatedOptions);
-                setSpecialism(e || []);
-                }}
-            />
-            </div>
-    */}
-                    <div className="form-group col-lg-6 col-md-12">
-                        <label>
-                            Job Type <span className="required"> (required)</span>
-                        </label>
-                        <select
-                            className="chosen-single form-select"
-                            value={jobData.jobType}
-                            required
-                            onChange={(e) => {
-                                console.log(e.target.value);
-                                setJobData((previousState) => ({
-                                    ...previousState,
-                                    jobType: e.target.value,
-                                }));
-                            }}
-                        >
-                            <option>Full Time</option>
-                            <option>Part Time</option>
-                            <option>Both</option>
-                            <option>PRN</option>
-                        </select>
-                    </div>
-                    <div className="form-group col-lg-6 col-md-12">
-                        <label>
-                            Experience<span className="required"> (required)</span>
-                        </label>
-                        <select
-                            className="chosen-single form-select"
-                            value={jobData.exp}
-                            onChange={(e) => {
-                                setJobData((previousState) => ({
-                                    ...previousState,
-                                    exp: e.target.value,
-                                }));
-                            }}
-                            required
-                        >
-                            <option>0 - 1 year</option>
-                            <option>1 - 3 years</option>
-                            <option>4 - 7 years</option>
-                            <option>7+ years</option>
-                        </select>
-                    </div>
-                    {/* <!-- Input --> */}
-                    <div className="form-group col-lg-6 col-md-12">
-                        <label>Offered Salary </label>
-                        <span className="required">(required)</span>
-                        <span style={{ marginLeft: "1em" }}>
-                            <label>
-                                <input
-                                    type="radio"
-                                    name="salaryType"
-                                    value="fixed"
-                                    checked={salaryType === "fixed"}
-                                    onChange={handleSalaryTypeChange}
-                                    style={{ marginRight: "0.5em" }}
+                    <div style={{ padding: "0 2rem" }}>
+                        <Row className="mb-3">
+                            <Form.Group as={Col} md="4" controlId="validationCustom01">
+                                <Form.Label>Name</Form.Label>
+                                <Form.Control
+                                    required
+                                    type="text"
+                                    // placeholder="Consignor"
+                                    // defaultValue="Mark"
                                 />
-                                Exact Amount
-                            </label>
-                            <label style={{ marginLeft: "2em" }}>
-                                <input
-                                    type="radio"
-                                    name="salaryType"
-                                    value="ranged"
-                                    checked={salaryType === "ranged"}
-                                    onChange={handleSalaryTypeChange}
-                                    style={{ marginRight: "0.5em" }}
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please enter Consignor name.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="4" controlId="validationCustom02">
+                                <Form.Label>GST Number</Form.Label>
+                                <Form.Control
+                                    required
+                                    type="text"
+                                    // placeholder="GST number"
+                                    // defaultValue="Otto"
                                 />
-                                Ranged
-                            </label>
-                        </span>
-                        {salaryType === "fixed" ? (
-                            <input
-                                type="text"
-                                name="globaluphire-salary"
-                                value={jobData.salary}
-                                placeholder="$100,000.00"
-                                onChange={(e) => {
-                                    setJobData((previousState) => ({
-                                        ...previousState,
-                                        salary: e.target.value,
-                                    }));
-                                }}
-                                required
-                            />
-                        ) : (
-                            <Row>
-                                <div className="col-6">
-                                    <input
-                                        type="text"
-                                        name="lowerLimit"
-                                        value={lowerLimit}
-                                        placeholder="$80,000.00"
-                                        onChange={(e) =>
-                                            setLowerLimit(e.target.value)
-                                        }
-                                        required
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please enter Consignor's GST Number.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
+                                <Form.Label>Phone Number</Form.Label>
+                                <InputGroup>
+                                    <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
+                                    <Form.Control
+                                    type="text"
+                                    // placeholder="Username"
+                                    aria-describedby="inputGroupPrepend"
+                                    // required
                                     />
-                                    <label>Lower Limit</label>
-                                </div>
-                                <div className="col-6">
-                                    <input
-                                        type="text"
-                                        name="upperLimit"
-                                        value={upperLimit}
-                                        placeholder="$120,000.00"
-                                        onChange={(e) =>
-                                            setUpperLimit(e.target.value)
-                                        }
-                                        required
-                                    />
-                                    <label>Upper Limit</label>
-                                </div>
-                            </Row>
-                        )}
-                    </div>
-                    <div className="form-group col-lg-6 col-md-12">
-                        <label>
-                            Salary Rate <span className="required">(required)</span>
-                        </label>
-                        <select
-                            className="chosen-single form-select"
-                            value={jobData.salaryRate}
-                            onChange={(e) => {
-                                setJobData((previousState) => ({
-                                    ...previousState,
-                                    salaryRate: e.target.value,
-                                }));
-                            }}
-                            required
-                        >
-                            <option>Per hour</option>
-                            <option>Per diem</option>
-                            <option>Per month</option>
-                            <option>Per year</option>
-                        </select>
-                    </div>
-                    <div className="form-group col-lg-6 col-md-12">
-                        <label>
-                            Education<span className="optional"> (optional)</span>
-                        </label>
-                        <select
-                            className="chosen-single form-select"
-                            value={jobData.education}
-                            onChange={(e) => {
-                                setJobData((previousState) => ({
-                                    ...previousState,
-                                    education: e.target.value,
-                                }));
-                            }}
-                        >
-                            <option></option>
-                            <option>Certificate</option>
-                            <option>High School</option>
-                            <option>Associate Degree</option>
-                            <option>Bachelor's Degree</option>
-                            <option>Master's Degree</option>
-                        </select>
-                    </div>
-                    {/*
-            <div className="form-group col-lg-6 col-md-12">
-            <label>Gender</label>
-            <select
-                className="chosen-single form-select"
-                value={gender}
-                onChange={(e) => {
-                setGender(e.target.value);
-                }}
-            >
-                <option>Select</option>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-            </select>
-            </div>
-    */}
-                    {/*
-            <div className="form-group col-lg-6 col-md-12">
-            <label>Industry</label>
-            <select
-                className="chosen-single form-select"
-                value={industy}
-                onChange={(e) => {
-                setIndustry(e.target.value);
-                }}
-            >
-                <option>Select</option>
-                <option>Banking</option>
-                <option>Digital & Creative</option>
-                <option>Retail</option>
-                <option>Human Resources</option>
-                <option>Management</option>
-            </select>
-            </div>
-    */}
-                    {/*
-            <div className="form-group col-lg-6 col-md-12">
-            <label>Qualification</label>
-            <select
-                className="chosen-single form-select"
-                value={qualification}
-                onChange={(e) => {
-                setQualification(e.target.value);
-                }}
-            >
-                <option>Select</option>
-                <option>Banking</option>
-                <option>Digital & Creative</option>
-                <option>Retail</option>
-                <option>Human Resources</option>
-                <option>Management</option>
-            </select>
-            </div>
-    */}
-                    {/* <!-- Input --> */}
-                    {/*
-            <div className="form-group col-lg-12 col-md-12">
-            <label>Application Deadline Date</label>
-            <input
-                type="text"
-                name="name"
-                placeholder="06.04.2020"
-                value={deadline}
-                onChange={(e) => {
-                setDeadline(e.target.value);
-                }}
-            />
-            </div>
-    */}
-                    {/*
-            <div className="form-group col-lg-6 col-md-12">
-            <label>City <span className="required">(required)</span></label>
-            <input
-                type="text"
-                name="globaluphire-city"
-                required
-                value={city}
-                onChange={(e) => {
-                setCity(e.target.value);
-                }}
-                placeholder="City"
-            />
-            </div>
-            */}
-                    {/* <!-- Input --> */}
-                    {/*
-
-            <div className="form-group col-lg-6 col-md-12">
-            <label>Country <span className="required">(required)</span></label>
-            <select
-                className="chosen-single form-select"
-                value={country}
-                required
-                onChange={(e) => {
-                setCountry(e.target.value);
-                }}
-            >
-                <option></option>
-                <option>Australia</option>
-                <option>Pakistan</option>
-                <option>USA</option>
-                <option>Japan</option>
-                <option>India</option>
-            </select>
-            </div>
-    */}
-
-                    {/* <div className="form-group col-lg-12 col-md-12">
-            <label>Complete Address <span className="optional">(optional)</span></label>
-            <input
-                type="text"
-                name="globaluphire-address"
-                value={completeAddress}
-                onChange={(e) => {
-                setJobData((previousState) => ({ 
-                    ...previousState,
-                    completeAddress: e.target.value
-                }))
-                }}
-                placeholder="Address"
-            />
-            </div> */}
-
-                    <div className="form-group col-lg-12 col-md-12">
-                        <label>
-                            Facility Name{" "}
-                            <span className="required">(required)</span>
-                        </label>
-                        <Typeahead
-                            onChange={setFacilitySingleSelections}
-                            id="facilityName"
-                            className="form-group"
-                            placeholder="Facility Name"
-                            options={facilityNames}
-                            selected={facilitySingleSelections}
-                            required
-                        />
-                    </div>
-
-                    <div className="form-group col-lg-12 col-md-12">
-                        <label>
-                            Complete Address{" "}
-                            <span className="required">(required)</span>
-                        </label>
-                        <Typeahead
-                            onChange={setSingleSelections}
-                            id="completeAddress"
-                            className="form-group"
-                            placeholder="Address"
-                            options={addresses}
-                            selected={singleSelections}
-                            required
-                        />
-                    </div>
-
-                    {/* <!-- Input --> */}
-                    {/* <div className="form-group col-lg-12 col-md-12">
-            <label>City, State <span className="required">(required)</span></label>
-            <input
-                type="text"
-                name="globaluphire-address"
-                ref={searchInput}            
-                placeholder="City, State"
-                required
-            />
-            </div> */}
-
-                    {/* <!-- Input --> */}
-                    {/* <div className="form-group col-lg-6 col-md-12">
-            <label>Find On Map</label>
-            <input
-                type="text"
-                name="name"
-                placeholder="329 Queensberry Street, North Melbourne VIC 3051, Australia."
-            />
-            </div> */}
-                    {/* <!-- Input --> */}
-                    {/* <div className="form-group col-lg-3 col-md-12">
-            <label>Latitude</label>
-            <input type="text" name="name" placeholder="Melbourne" />
-            </div> */}
-                    {/* <!-- Input --> */}
-                    {/* <div className="form-group col-lg-3 col-md-12">
-            <label>Longitude</label>
-            <input type="text" name="name" placeholder="Melbourne" />
-            </div> */}
-                    {/* <!-- Input --> */}
-                    {/* <div className="form-group col-lg-12 col-md-12">
-            <button className="theme-btn btn-style-three">Search Location</button>
-            </div>
-            <div className="form-group col-lg-12 col-md-12">
-            <div className="map-outer">
-                <div style={{ height: "420px", width: "100%" }}>
-                <Map />
-                </div>
-            </div>
-            </div> */}
-                    {/* <!-- Input --> */}
-                    <div className="form-group col-lg-12 col-md-12 text-right">
-                        <button
-                            className="theme-btn btn-style-one"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                submitJobPost(jobData, setJobData, user);
-                            }}
-                        >
-                            Post
-                        </button>
+                                </InputGroup>
+                            </Form.Group>
+                        </Row>
+                        <Row className="mb-3">
+                            <Form.Group as={Col} md="9" controlId="validationCustom03">
+                                <Form.Label>Address</Form.Label>
+                                <Form.Control type="text" placeholder="Pickup Address" required />
+                                <Form.Control.Feedback type="invalid">
+                                    Please provide a valid Consignor's Address.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="3" controlId="validationCustom04">
+                                <Form.Label>Email Address</Form.Label>
+                                <Form.Control type="text" placeholder="" />
+                            </Form.Group>
+                        </Row>
                     </div>
                 </div>
-            </form>
+                {/* Consigner Block ends */}
+
+                {/* Consignee Block starts */}
+                <div>
+                    <div className="divider">
+                        <span><b>Consignee</b></span>
+                    </div>
+                    <div style={{ padding: "0 2rem" }}>
+                        <Row className="mb-3">
+                            <Form.Group as={Col} md="4" controlId="validationCustom01">
+                                <Form.Label>Name</Form.Label>
+                                <Form.Control
+                                    required
+                                    type="text"
+                                    // placeholder="Consignee"
+                                    // defaultValue="Mark"
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please enter Consignee's name.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="4" controlId="validationCustom02">
+                                <Form.Label>GST Number</Form.Label>
+                                <Form.Control
+                                    required
+                                    type="text"
+                                    // placeholder="GST number"
+                                    // defaultValue="Otto"
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please enter Consignee's GST Number.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
+                                <Form.Label>Phone Number</Form.Label>
+                                <InputGroup>
+                                    <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
+                                    <Form.Control
+                                    type="text"
+                                    // placeholder="Username"
+                                    aria-describedby="inputGroupPrepend"
+                                    // required
+                                    />
+                                </InputGroup>
+                            </Form.Group>
+                        </Row>
+                        <Row className="mb-3">
+                            <Form.Group as={Col} md="9" controlId="validationCustom03">
+                                <Form.Label>Address</Form.Label>
+                                <Form.Control type="text" placeholder="Pickup Address" required />
+                                <Form.Control.Feedback type="invalid">
+                                    Please provide a valid Consignee's Address.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="3" controlId="validationCustom04">
+                                <Form.Label>Email Address</Form.Label>
+                                <Form.Control type="text" placeholder="" />
+                            </Form.Group>
+                        </Row>
+                    </div>
+                </div>
+                {/* Consignee Block ends */}
+
+                {/* Other Block starts */}
+                <div>
+                    <div className="divider divider-other">
+                        <span><b>Other</b></span>
+                    </div>
+                    <div style={{ padding: "0 2rem" }}>
+                        <Row className="mb-3">
+                            <Form.Group as={Col} md="3" controlId="validationCustom01">
+                                <Form.Label>From</Form.Label>
+                                <Form.Control
+                                    required
+                                    type="text"
+                                    // placeholder="Consignee"
+                                    // defaultValue="Mark"
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please enter Consignment From location.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="3" controlId="validationCustom02">
+                                <Form.Label>To</Form.Label>
+                                <Form.Control
+                                    required
+                                    type="text"
+                                    // placeholder="To"
+                                    // defaultValue="Otto"
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please enter Consignment To location.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="3" controlId="validationCustom02">
+                                <Form.Label>Vehical Number</Form.Label>
+                                <Form.Control
+                                    required
+                                    type="text"
+                                    // placeholder="GJ011234"
+                                    // defaultValue="Otto"
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please enter Vehical Number.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Row>
+                        <Row className="mb-3">
+                            <Form.Group as={Col} md="3" controlId="validationCustom02">
+                                <Form.Label>Driver Name</Form.Label>
+                                <Form.Control
+                                    required
+                                    type="text"
+                                    // placeholder="Driver Name"
+                                    // defaultValue="Otto"
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please enter Consignment's Driver Name.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="4" controlId="validationCustomDriverPhonenumber">
+                                <Form.Label>Driver Phone Number</Form.Label>
+                                <InputGroup>
+                                    <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
+                                    <Form.Control
+                                    type="text"
+                                    // placeholder="Driver Phone Number"
+                                    aria-describedby="inputGroupPrepend"
+                                    required
+                                    />
+                                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                    <Form.Control.Feedback type="invalid">
+                                        Please enter Consignment's Driver Phone Number.
+                                    </Form.Control.Feedback>
+                                </InputGroup>
+                            </Form.Group>
+                        </Row>
+                    </div>
+                </div>
+                {/* Other Block ends */}
+
+
+                {/* Material Details starts */}
+                <div>
+                    <div className="divider divider-material">
+                        <span><b>Material Details</b></span>
+                    </div>
+                    <div style={{ padding: "0 2rem" }}>
+                        <Row className="mb-3">
+                            <Form.Group as={Col} controlId="validationCustom01">
+                                <Form.Label>Material Details</Form.Label>
+                                <Form.Control
+                                    required
+                                    type="text"
+                                    // placeholder="Material Details"
+                                    // defaultValue="Mark"
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please enter Consignment Material Details.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Row>
+                        <Row>
+                            <Form.Group as={Col} md="3" controlId="validationCustom02">
+                                <Form.Label>Weight(Kg)</Form.Label>
+                                <Form.Control
+                                    required
+                                    type="number"
+                                    // placeholder="Weight"
+                                    // defaultValue="Otto"
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please enter Consignment Weight in Kg.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                        </Row>
+                    </div>
+                </div>
+                {/* Material Details ends */}
+
+                {/* Form Submit Buttons Block Starts */}
+                <Row className="mt-5">
+                    <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">
+                        <Button
+                            type="submit"
+                            variant="success"
+                            // onClick={() => Router.push("/employers-dashboard/")}
+                            className="btn btn-add-lr btn-sm text-nowrap m-1"
+                        >
+                            Add LR
+                        </Button>
+                    </Form.Group>
+                    <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">
+                        <Button
+                            type="submit"
+                            variant="success"
+                            // onClick={() => Router.push("/employers-dashboard/")}
+                            className="btn btn-add-lr btn-sm text-nowrap m-1"
+                        >
+                            Add LR & Export to PDF
+                        </Button>
+                    </Form.Group>
+                </Row>
+                {/* Form Submit Buttons Block Ends */}
+
+            </Form>
         </>
     );
 };
