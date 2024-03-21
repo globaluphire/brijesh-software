@@ -1000,28 +1000,28 @@ const LR = () => {
                                                 </span>
                                             </td>
                                             <td>
+                                                <span>{lr.consignor}</span><br />
+                                                <span className="optional">{lr.consignor_phone}</span><br />
+                                                <span className="optional">{lr.consignor_email}</span>
+                                            </td>
+                                            <td>
+                                                <span>{lr.consignee}</span><br />
+                                                <span className="optional">{lr.consignee_phone}</span><br />
+                                                <span className="optional">{lr.consignee_email}</span>
+                                            </td>
+                                            <td>
                                                 <span>
-                                                    {lr.consigner}
+                                                    {lr.pickup_address}
                                                 </span>
                                             </td>
                                             <td>
                                                 <span>
-                                                    {lr.consignee}
+                                                    {lr.drop_address}
                                                 </span>
                                             </td>
                                             <td>
                                                 <span>
-                                                    {lr.pickup_point}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span>
-                                                    {lr.drop_point}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span>
-                                                    {lr.item}
+                                                    {lr.material_details}
                                                 </span>
                                             </td>
                                             <td>
@@ -1031,13 +1031,12 @@ const LR = () => {
                                             </td>
                                             <td>
                                                 <span>
-                                                    {lr.truck_number}
+                                                    {lr.vehical_number}
                                                 </span>
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.driver}
-                                                </span>
+                                                <span>{lr.driver_name}</span><br />
+                                                <span className="optional">{lr.driver_phone}</span>
                                             </td>
                                             <td>
                                                 {
