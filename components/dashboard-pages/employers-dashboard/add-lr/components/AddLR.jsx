@@ -317,13 +317,50 @@ const AddLR = () => {
     ) => {
         if (checkRequiredFields(lrFormData)) {
             try {
-                // Creating New LR Number
+                // Generate LR Number
+                const today = new Date();
+                let date = today.getDate();
+                if (date < 10) {
+                    date = "0" + date;
+                }
+                let month = today.getMonth() + 1;
+                if (month < 10) {
+                    month = "0" + month;
+                }
+                var year = today.getFullYear();
+
+                const { data: sysKeyLRData, error: sysKeyLRError } = await supabase
+                    .from("sys_key")
+                    .select("sys_seq_nbr")
+                    .eq("key_name", "lr_number");
+
+                let lrSeqNbr = sysKeyLRData[0].sys_seq_nbr + 1;
+                if (lrSeqNbr < 10) {
+                    lrSeqNbr = "00" + lrSeqNbr;
+                } else if(lrSeqNbr == 100) {
+                    lrSeqNbr = "0" + lrSeqNbr;
+                }
+                const lrNumber = "RLR" + "" + date + "" + month + "" + year.toString().substring(2) + "" + lrSeqNbr;
 
                 // New Order Number
+                const { data: sysKeyOrderData, error: sysKeyError } = await supabase
+                    .from("sys_key")
+                    .select("sys_seq_nbr")
+                    .eq("key_name", "order_number");
+
+                let orderSeqNbr = sysKeyOrderData[0].sys_seq_nbr + 1;
+                if (orderSeqNbr < 10) {
+                    orderSeqNbr = "00" + orderSeqNbr;
+                } else if(orderSeqNbr == 100) {
+                    orderSeqNbr = "0" + orderSeqNbr;
+                }
+                const orderNumber = "ORD" + "" + date + "" + month + "" + year.toString().substring(2) + "" + orderSeqNbr;
+
+                console.log(orderNumber, " ", lrNumber);
                 const { data, error } = await supabase.from("lr").insert([
                     {
-                        lr_number: "RLR240203287", // add logic to create automatic Unique number, ex. RLR(YY)(MM)(DD)(incremented 3 number digit)
-                        order_number: "BRD240203100", // add logic to create automatic Unique number, ex. (3 digit City Code)(YY)(MM)(DD)(incremented 3 number digit)
+                        lr_number: lrNumber, // add logic to create automatic Unique number, ex. RLR(YY)(MM)(DD)(incremented 3 number digit)
+                        order_number: orderNumber, // add logic to create automatic Unique number, ex. (3 digit City Code)(YY)(MM)(DD)(incremented 3 number digit)
 
                         // Consignor Fields
                         consignor: consignorName,
@@ -381,6 +418,18 @@ const AddLR = () => {
                         progress: undefined,
                         theme: "colored",
                     });
+                    
+                    // increment lr_number key
+                    await supabase.rpc("increment_sys_key", {
+                        x: 1,
+                        keyName: "lr_number",
+                    });
+                    // increment order_number key
+                    await supabase.rpc("increment_sys_key", {
+                        x: 1,
+                        keyName: "order_number",
+                    });
+
                     setLrFormData(JSON.parse(JSON.stringify(addLRFields)));
                 }
             } catch (err) {
