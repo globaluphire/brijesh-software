@@ -200,7 +200,7 @@ Invoice Section
   margin-bottom: 10px;
   grid-template-areas:
     "logo company_name company_name company_name copy"
-    "lr_date . fina_lr lr_number last_modified_date"
+    "lr_date fina_lr fina_lr lr_number last_modified_date"
     "pickup_address pickup_address from_to delivery_address delivery_address"
     "consignor consignor vehicle consignee consignee"
     "material_detail material_detail material_detail weight total_amount"
