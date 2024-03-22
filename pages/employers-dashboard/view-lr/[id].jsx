@@ -26,48 +26,6 @@ const ViewLR = () => {
     const id = router.query.id;
     const isEmployer = ["SUPER_ADMIN", "ADMIN", "MEMBER"].includes(user.role);
 
-    useEffect(() => {
-        if (!isEmployer) {
-            Router.push("/");
-        }
-    }, []);
-
-    const fetchJob = async () => {
-        try {
-            if (id) {
-                const { data: job, error } = await supabase
-                    .from("jobs")
-                    .select("*")
-
-                    // Filters
-                    .eq("job_id", id);
-
-                if (job) {
-                    setFetchedJobData(job[0]);
-                }
-            }
-        } catch (e) {
-            toast.error(
-                "System is unavailable.  Please try again later or contact tech support!",
-                {
-                    position: "bottom-right",
-                    autoClose: false,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                }
-            );
-            console.warn(e);
-        }
-    };
-
-    useEffect(() => {
-        fetchJob();
-    }, [id]);
-
     return isEmployer ? (
         <div className="page-wrapper dashboard">
             <span className="header-span"></span>

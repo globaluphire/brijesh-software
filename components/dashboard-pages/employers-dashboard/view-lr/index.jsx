@@ -32,6 +32,20 @@ const index = () => {
           window.html2pdf().from(element).set(opt).save();
     };
 
+    const dateFormat = (val) => {
+        if (val) {
+            const date = new Date(val);
+            return (
+                date.toLocaleDateString("en-IN", {
+                    month: "long",
+                    day: "numeric",
+                }) +
+                ", " +
+                date.getFullYear()
+            );
+        }
+    };
+
     const fetchLR = async () => {
         try {
             if (id) {
@@ -43,6 +57,10 @@ const index = () => {
                     .eq("id", id);
 
                 if (lrData) {
+                    lrData.forEach(
+                        (lr) =>
+                            (lr.lr_created_date = dateFormat(lr.lr_created_date))
+                    );
                     setFetchedLRdata(lrData[0]);
                 }
             }
@@ -78,7 +96,7 @@ const index = () => {
                             Back to LR
                         </Link>
                         <button className="btn btn-success btn-sm text-nowrap m-1 p-3" onClick={() => savePDF()}>
-                            Export this LR in PDF
+                            Export to PDF
                         </button>
                     </div>
                 </div>
@@ -87,7 +105,7 @@ const index = () => {
                         <div className="invoice-wrap">
                             <div className="invoice-content">
                                 <div className="table-outer">
-                                    <TableInvoice />
+                                    <TableInvoice fetchedLRdata={ fetchedLRdata }/>
                                 </div>
                             </div>
                         </div>
