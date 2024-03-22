@@ -335,10 +335,10 @@ const AddLR = () => {
                     .eq("key_name", "lr_number");
 
                 let lrSeqNbr = sysKeyLRData[0].sys_seq_nbr + 1;
-                if (lrSeqNbr < 100) {
-                    lrSeqNbr = "0" + lrSeqNbr;
-                } else if(lrSeqNbr < 10) {
+                if (lrSeqNbr < 10) {
                     lrSeqNbr = "00" + lrSeqNbr;
+                } else if(lrSeqNbr < 100) {
+                    lrSeqNbr = "0" + lrSeqNbr;
                 }
                 const lrNumber = "RLR" + "" + date + "" + month + "" + year.toString().substring(2) + "" + lrSeqNbr;
 
@@ -349,10 +349,10 @@ const AddLR = () => {
                     .eq("key_name", "order_number");
 
                 let orderSeqNbr = sysKeyOrderData[0].sys_seq_nbr + 1;
-                if (orderSeqNbr < 100) {
-                    orderSeqNbr = "0" + orderSeqNbr;
-                } else if(orderSeqNbr < 10) {
+                if (orderSeqNbr < 10) {
                     orderSeqNbr = "00" + orderSeqNbr;
+                } else if(orderSeqNbr < 100) {
+                    orderSeqNbr = "0" + orderSeqNbr;
                 }
                 const orderNumber = "ORD" + "" + date + "" + month + "" + year.toString().substring(2) + "" + orderSeqNbr;
 
