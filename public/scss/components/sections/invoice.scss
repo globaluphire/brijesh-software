@@ -32,13 +32,12 @@ Invoice Section
   background: #ffffff;
   // border: 1px solid #ecedf2;
   -webkit-box-shadow: 0px 6px 15px rgba(64, 79, 104, 0.05);
-  box-shadow: 0px 6px 15px rgba(64, 79, 104, 0.05);
-  border-radius: 8px;
+  box-shadow: 2px 6px 15px rgba(64, 79, 104, 0.05);
 }
 
 .invoice-wrap .invoice-content {
   position: relative;
-  padding: 10px;
+  padding: 5px;
   font-size: small;
 }
 
@@ -189,4 +188,112 @@ Invoice Section
 
 .invoice-wrap .bottom-links li .link {
   color: var(--primary-color);
+}
+
+.lr-view-table > thead > tr > th {
+  max-width: min-content;
+}
+
+.grid {
+  display: grid;
+  border: 1px solid black;
+  margin-bottom: 10px;
+  grid-template-areas:
+    "logo company_name company_name company_name copy"
+    "lr_date . fina_lr lr_number last_modified_date"
+    "pickup_address pickup_address from_to delivery_address delivery_address"
+    "consignor consignor vehicle consignee consignee"
+    "material_detail material_detail material_detail weight total_amount"
+    "terms_condition terms_condition terms_condition material_receiver_sign authorized_sign";
+}
+
+.item {
+  padding: 5px;
+  font-size: 10px;
+  line-height: normal;
+  border: 1px solid black;
+}
+.logo1 {
+  grid-area: logo;
+  border: none !important;
+  display: block;
+}
+.company_name {
+  grid-area: company_name;
+  display: block;
+  font-size: 12px;
+}
+.copy {
+  display: block;
+  grid-area: copy;
+  font-size: 12px;
+}
+.lr_date {
+  display: block;
+  grid-area: lr_date;
+}
+.fina_lr {
+  display: block;
+  grid-area: fina_lr;
+  color: green;
+  font-size: 12px !important;
+  font-weight: bold;
+  text-align: center;
+}
+.lr_number {
+  display: block;
+  grid-area: lr_number;
+}
+.last_modified_date {
+  display: block;
+  grid-area: last_modified_date;
+}
+.pickup_address {
+  display: block;
+  grid-area: pickup_address;
+}
+.from_to {
+  display: block;
+  grid-area: from_to;
+}
+.delivery_address {
+  display: block;
+  grid-area: delivery_address;
+}
+.consignor {
+  display: block;
+  grid-area: consignor;
+}
+.vehicle {
+  display: block;
+  grid-area: vehicle;
+}
+.consignee {
+  display: block;
+  grid-area: consignee;
+}
+.material_detail {
+  display: block;
+  grid-area: material_detail;
+}
+.weight {
+  display: block;
+  grid-area: weight;
+}
+.total_amount {
+  display: block;
+  grid-area: total_amount;
+}
+.terms_condition {
+  display: block;
+  grid-area: terms_condition;
+  font-size: 8px;
+}
+.material_receiver_sign {
+  display: block;
+  grid-area: material_receiver_sign;
+}
+.authorized_sign {
+  display: block;
+  grid-area: authorized_sign;
 }
