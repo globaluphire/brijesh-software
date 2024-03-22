@@ -335,10 +335,10 @@ const AddLR = () => {
                     .eq("key_name", "lr_number");
 
                 let lrSeqNbr = sysKeyLRData[0].sys_seq_nbr + 1;
-                if (lrSeqNbr < 10) {
-                    lrSeqNbr = "00" + lrSeqNbr;
-                } else if(lrSeqNbr == 100) {
+                if (lrSeqNbr < 100) {
                     lrSeqNbr = "0" + lrSeqNbr;
+                } else if(lrSeqNbr < 10) {
+                    lrSeqNbr = "00" + lrSeqNbr;
                 }
                 const lrNumber = "RLR" + "" + date + "" + month + "" + year.toString().substring(2) + "" + lrSeqNbr;
 
@@ -349,10 +349,10 @@ const AddLR = () => {
                     .eq("key_name", "order_number");
 
                 let orderSeqNbr = sysKeyOrderData[0].sys_seq_nbr + 1;
-                if (orderSeqNbr < 10) {
-                    orderSeqNbr = "00" + orderSeqNbr;
-                } else if(orderSeqNbr == 100) {
+                if (orderSeqNbr < 100) {
                     orderSeqNbr = "0" + orderSeqNbr;
+                } else if(orderSeqNbr < 10) {
+                    orderSeqNbr = "00" + orderSeqNbr;
                 }
                 const orderNumber = "ORD" + "" + date + "" + month + "" + year.toString().substring(2) + "" + orderSeqNbr;
 
@@ -422,12 +422,12 @@ const AddLR = () => {
                     // increment lr_number key
                     await supabase.rpc("increment_sys_key", {
                         x: 1,
-                        keyName: "lr_number",
+                        keyname: "lr_number",
                     });
                     // increment order_number key
                     await supabase.rpc("increment_sys_key", {
                         x: 1,
-                        keyName: "order_number",
+                        keyname: "order_number",
                     });
 
                     setLrFormData(JSON.parse(JSON.stringify(addLRFields)));
