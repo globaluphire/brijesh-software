@@ -85,7 +85,7 @@ const LR = () => {
     // clear all filters
     const clearAll = () => {
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
-        fetchedLR(JSON.parse(JSON.stringify(addSearchFilters)))
+        fetchedLR(JSON.parse(JSON.stringify(addSearchFilters)));
     };
 
     async function findLR() {
