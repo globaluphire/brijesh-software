@@ -69,7 +69,8 @@ const addLRFields = {
 
     // Material Details Block Fields
     materialDetails: "",
-    weight: ""
+    weight: "",
+    status: ""
 };
 const AddLR = () => {
     // const [jobTitle, setJobTitle] = useState("");
@@ -140,7 +141,8 @@ const AddLR = () => {
 
         // Material Details Block Fields
         materialDetails,
-        weight
+        weight,
+        status
     } = useMemo(() => lrFormData, [lrFormData]);
 
     const searchInput = useRef(null);
@@ -151,6 +153,10 @@ const AddLR = () => {
         []
     );
     const [validated, setValidated] = useState(false);
+    const [
+        lRStatusReferenceOptions,
+        setLRStatusReferenceOptions,
+    ] = useState(null);
 
 
     const addresses = [
@@ -174,26 +180,22 @@ const AddLR = () => {
         "4021 Cadillac Street, New Orleans, LA 70122",
     ];
 
-    async function getFacilityNames() {
-        // call reference to get applicantStatus options
-        const { data: refData, error: e } = await supabase
+    async function getLRStatusOptions() {
+        // call reference to get lrStatus options
+        const { data, error: e } = await supabase
             .from("reference")
             .select("*")
-            .eq("ref_nm", "facilityName");
+            .eq("ref_nm", "lrStatus");
 
-        if (refData) {
-            // setFacilityNames(refData)
-            const facilities = [];
-            for (let i = 0; i < refData.length; i++) {
-                facilities.push(refData[i].ref_dspl);
-            }
-            facilities.sort();
-            setFacilityNames(facilities);
+        if (data) {
+            setLRStatusReferenceOptions(data);
+            console.log(lRStatusReferenceOptions)
         }
+
     }
 
     useEffect(() => {
-        getFacilityNames();
+        getLRStatusOptions();
     }, []);
 
     useEffect(() => {
@@ -277,7 +279,8 @@ const AddLR = () => {
 
             // Material Details Block Fields
             materialDetails &&
-            weight
+            weight &&
+            status
         ) {
             return true;
         } else {
@@ -310,7 +313,8 @@ const AddLR = () => {
 
             // Material Details Block Fields
             materialDetails,
-            weight
+            weight,
+            status
         },
         setLrFormData,
         user
@@ -388,7 +392,7 @@ const AddLR = () => {
                         weight: weight,
 
                         // Default fields
-                        status: "Final"
+                        status: status
                     },
                 ]);
                 if (error) {
@@ -475,7 +479,7 @@ const AddLR = () => {
 
     return (
         <> 
-            <Form noValidate validated={validated}>
+            {lRStatusReferenceOptions ? <Form noValidate validated={validated}>
                 {/* Consigner Block starts */}
                 <div>
                     <div className="divider">
@@ -853,6 +857,33 @@ const AddLR = () => {
                                     Please enter Consignment Weight in Kg.
                                 </Form.Control.Feedback>
                             </Form.Group>
+                            <Form.Group as={Col} md="3" controlId="validationCustom02">
+                                <Form.Label>Status</Form.Label>
+                                <Form.Select
+                                    className="chosen-single form-select"
+                                    onChange={(e) => {
+                                        setLrFormData((previousState) => ({
+                                            ...previousState,
+                                            status: e.target.value,
+                                        }));
+                                    }}
+                                    value={status}
+                                    required
+                                >
+                                    <option value=""></option>
+                                    {lRStatusReferenceOptions.map(
+                                        (option) => (
+                                            <option value={option.ref_dspl}>
+                                                {option.ref_dspl}
+                                            </option>
+                                        )
+                                    )}
+                                </Form.Select>
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please enter LR Status.
+                                </Form.Control.Feedback>
+                            </Form.Group>
                         </Row>
                     </div>
                 </div>
@@ -899,6 +930,7 @@ const AddLR = () => {
                 {/* Form Submit Buttons Block Ends */}
 
             </Form>
+            : ''}
         </>
     );
 };

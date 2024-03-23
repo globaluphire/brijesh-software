@@ -157,7 +157,7 @@ const LR = () => {
         status
     }) {
         try {
-            // call reference to get applicantStatus options
+            // call reference to get lrStatus options
             const { data, error: e } = await supabase
                 .from("reference")
                 .select("*")
@@ -920,6 +920,7 @@ const LR = () => {
                                     <Form.Label style={{ marginBottom: "-5px" }}>Status</Form.Label>
                                     <Form.Select
                                         className="chosen-single form-select"
+                                        size="sm"
                                         onChange={(e) => {
                                             setSearchFilters((previousState) => ({
                                                 ...previousState,
