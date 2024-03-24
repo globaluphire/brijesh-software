@@ -189,7 +189,6 @@ const AddLR = () => {
 
         if (data) {
             setLRStatusReferenceOptions(data);
-            console.log(lRStatusReferenceOptions)
         }
 
     }
@@ -930,7 +929,7 @@ const AddLR = () => {
                 {/* Form Submit Buttons Block Ends */}
 
             </Form>
-            : ''}
+            : "" }
         </>
     );
 };
