@@ -18,7 +18,7 @@ module.exports = [
         id: 3,
         name: "Orders",
         icon: "la-paper-plane",
-        routePath: "/employers-dashboard/post-jobs",
+        routePath: "/employers-dashboard/orders",
         active: "",
         access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     },
