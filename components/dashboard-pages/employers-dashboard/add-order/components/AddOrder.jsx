@@ -45,32 +45,24 @@ const addJobFields = {
     facility: "",
 };
 
-const addLRFields = {
-    // Consignor Block Fields
-    consignorName: "",
-    consignorGST: "",
-    consignorPhone: "",
-    consignorAddress: "",
-    consignorEmail: "",
-
-    // Consignor Block Fields
-    consigneeName: "",
-    consigneeGST: "",
-    consigneePhone: "",
-    consigneeAddress: "",
-    consigneeEmail: "",
-
-    // Other Block Fields
-    fromCity: "",
-    toCity: "",
-    vehicalNumber: "",
-    driverName: "",
-    driverPhone: "",
-
-    // Material Details Block Fields
-    materialDetails: "",
+const addOrderFields = {
+    pickupDate: "",
+    orderCity: "",
+    clientName: "",
+    pickupLocation: "",
+    dropLocation: "",
+    nameOfPickupPoint: "",
+    nameOfDroppingPoint: "",
+    marketingContact: "",
+    dispatchContact: "",
+    material: "",
+    size: "",
+    quantity: "",
     weight: "",
-    status: ""
+    priority: "",
+    specialOfferedFreight: "",
+    notes: "",
+    freightNotes: ""
 };
 const AddOrder = () => {
     // const [jobTitle, setJobTitle] = useState("");
@@ -114,36 +106,28 @@ const AddOrder = () => {
     //     completeAddress,
     //     facility,
     // } = useMemo(() => jobData, [jobData]);
-    const [lrFormData, setLrFormData] = useState(
-        JSON.parse(JSON.stringify(addLRFields))
+    const [orderFormData, setOrderFormData] = useState(
+        JSON.parse(JSON.stringify(addOrderFields))
     );
     const {
-        // Consignor Block Fields
-        consignorName,
-        consignorGST,
-        consignorPhone,
-        consignorAddress,
-        consignorEmail,
-
-        // Consignor Block Fields
-        consigneeName,
-        consigneeGST,
-        consigneePhone,
-        consigneeAddress,
-        consigneeEmail,
-
-        // Other Block Fields
-        fromCity,
-        toCity,
-        vehicalNumber,
-        driverName,
-        driverPhone,
-
-        // Material Details Block Fields
-        materialDetails,
+        pickupDate,
+        orderCity,
+        clientName,
+        pickupLocation,
+        dropLocation,
+        nameOfPickupPoint,
+        nameOfDroppingPoint,
+        marketingContact,
+        dispatchContact,
+        material,
+        size,
+        quantity,
         weight,
-        status
-    } = useMemo(() => lrFormData, [lrFormData]);
+        priority,
+        specialOfferedFreight,
+        notes,
+        freightNotes
+    } = useMemo(() => orderFormData, [orderFormData]);
 
     const searchInput = useRef(null);
 
@@ -257,29 +241,14 @@ const AddOrder = () => {
     { value: "Engineer", label: "Engineer" },
   ];
  */
-    function checkRequiredFields(lrFormData) {
+    function checkRequiredFields(orderFormData) {
         if (
-            // Consignor Block Fields
-            consignorName &&
-            consignorGST &&
-            consignorAddress &&
-
-            // Consignor Block Fields
-            consigneeName &&
-            consigneeGST &&
-            consigneeAddress &&
-
-            // Other Block Fields
-            fromCity &&
-            toCity &&
-            vehicalNumber &&
-            driverName &&
-            driverPhone &&
-
-            // Material Details Block Fields
-            materialDetails &&
+            pickupDate &&
+            material &&
+            size &&
+            quantity &&
             weight &&
-            status
+            priority
         ) {
             return true;
         } else {
@@ -287,38 +256,30 @@ const AddOrder = () => {
         }
     };
 
-    const addNewLR = async (
+    const addNewOrder = async (
         {
-            // Consignor Block Fields
-            consignorName,
-            consignorGST,
-            consignorPhone,
-            consignorAddress,
-            consignorEmail,
-
-            // Consignor Block Fields
-            consigneeName,
-            consigneeGST,
-            consigneePhone,
-            consigneeAddress,
-            consigneeEmail,
-
-            // Other Block Fields
-            fromCity,
-            toCity,
-            vehicalNumber,
-            driverName,
-            driverPhone,
-
-            // Material Details Block Fields
-            materialDetails,
+            pickupDate,
+            orderCity,
+            clientName,
+            pickupLocation,
+            dropLocation,
+            nameOfPickupPoint,
+            nameOfDroppingPoint,
+            marketingContact,
+            dispatchContact,
+            material,
+            size,
+            quantity,
             weight,
-            status
+            priority,
+            specialOfferedFreight,
+            notes,
+            freightNotes
         },
-        setLrFormData,
+        setOrderFormData,
         user
     ) => {
-        if (checkRequiredFields(lrFormData)) {
+        if (checkRequiredFields(orderFormData)) {
             try {
                 // Generate LR Number
                 const today = new Date();
@@ -360,38 +321,27 @@ const AddOrder = () => {
                 const orderNumber = "ORD" + "" + date + "" + month + "" + year.toString().substring(2) + "" + orderSeqNbr;
 
                 console.log(orderNumber, " ", lrNumber);
-                const { data, error } = await supabase.from("lr").insert([
+                const { data, error } = await supabase.from("order").insert([
                     {
                         lr_number: lrNumber, // add logic to create automatic Unique number, ex. RLR(YY)(MM)(DD)(incremented 3 number digit)
-                        order_number: orderNumber, // add logic to create automatic Unique number, ex. (3 digit City Code)(YY)(MM)(DD)(incremented 3 number digit)
-
-                        // Consignor Fields
-                        consignor: consignorName,
-                        pickup_address: consignorAddress,
-                        consignor_gst: consignorGST,
-                        consignor_email: consignorEmail,
-                        consignor_phone: consignorPhone,
-
-                        // Consignee Fields
-                        consignee: consigneeName,
-                        drop_address: consigneeAddress,
-                        consignee_gst: consigneeGST,
-                        consignee_email: consigneeEmail,
-                        consignee_phone: consigneePhone,
-
-                        // Other Block Fields
-                        from_city: fromCity,
-                        to_city: toCity,
-                        vehical_number: vehicalNumber,
-                        driver_name: driverName,
-                        driver_phone: driverPhone,
-
-                        // Material Details Block Fields
-                        material_details: materialDetails,
+                        order_number: orderNumber, // add logic to create automatic Unique number, ex. (3 digit City Code)(YY)(MM)(DD)(incremented 3 number digit) 
+                        pickup_date: pickupDate,
+                        order_city: orderCity,
+                        client_name: clientName,
+                        pickup_location: pickupLocation,
+                        drop_location: dropLocation,
+                        pickup_point_name: nameOfPickupPoint,
+                        drop_point_name: nameOfDroppingPoint,
+                        marketing_contact: marketingContact,
+                        dispatch_contact: dispatchContact,
+                        material: material,
+                        size: size,
+                        quantity: quantity,
                         weight: weight,
-
-                        // Default fields
-                        status: status
+                        priority: priority,
+                        special_offered_freight: specialOfferedFreight,
+                        notes: notes,
+                        freightNotes: freightNotes
                     },
                 ]);
                 if (error) {
@@ -433,7 +383,7 @@ const AddOrder = () => {
                         keyname: "order_number",
                     });
 
-                    setLrFormData(JSON.parse(JSON.stringify(addLRFields)));
+                    setOrderFormData(JSON.parse(JSON.stringify(addOrderFields)));
                 }
             } catch (err) {
                 // open toast
