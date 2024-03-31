@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useRef, useState } from "react";
 import { Calendar } from "react-date-range";
 import format from "date-fns/format";
