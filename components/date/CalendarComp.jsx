@@ -35,7 +35,7 @@ const CalendarComp = () => {
   const hideOnEscape = (e) => {
     // console.log(e.key)
     if( e.key === "Escape" ) {
-      setOpen(false)
+      setOpen(false);
     }
   };
 

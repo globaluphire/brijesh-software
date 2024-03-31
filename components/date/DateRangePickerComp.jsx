@@ -76,4 +76,4 @@ const DateRangePickerComp = () => {
   );
 };
 
-export default DateRangePickerComp
+export default DateRangePickerComp;
