@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
-import { DateRangePicker } from 'react-date-range'
+import { useEffect, useRef, useState } from "react";
+import { DateRangePicker } from "react-date-range";
 
-import format from 'date-fns/format'
-import { addDays } from 'date-fns'
+import format from "date-fns/format";
+import { addDays } from "date-fns";
 
-import 'react-date-range/dist/styles.css'
-import 'react-date-range/dist/theme/default.css'
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 
 const DateRangePickerComp = () => {
 
@@ -14,38 +14,38 @@ const DateRangePickerComp = () => {
     {
       startDate: new Date(),
       endDate: addDays(new Date(), 7),
-      key: 'selection'
+      key: "selection"
     }
-  ])
+  ]);
 
   // open close
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   // get the target element to toggle 
-  const refOne = useRef(null)
+  const refOne = useRef(null);
 
   useEffect(() => {
     // event listeners
-    document.addEventListener("keydown", hideOnEscape, true)
-    document.addEventListener("click", hideOnClickOutside, true)
-  }, [])
+    document.addEventListener("keydown", hideOnEscape, true);
+    document.addEventListener("click", hideOnClickOutside, true);
+  }, []);
 
   // hide dropdown on ESC press
   const hideOnEscape = (e) => {
     // console.log(e.key)
     if( e.key === "Escape" ) {
-      setOpen(false)
+      setOpen(false);
     }
-  }
+  };
 
   // Hide dropdown on outside click
   const hideOnClickOutside = (e) => {
     // console.log(refOne.current)
     // console.log(e.target)
     if( refOne.current && !refOne.current.contains(e.target) ) {
-      setOpen(false)
+      setOpen(false);
     }
-  }
+  };
 
   return (
     <div className="calendarWrap">

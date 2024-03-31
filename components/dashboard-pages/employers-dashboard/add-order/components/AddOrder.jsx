@@ -10,7 +10,7 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import { envConfig } from "../../../../../config/env";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import Router from "next/router";
-import CalendarComp from "../../../../../components/date/CalendarComp"
+import CalendarComp from "../../../../../components/date/CalendarComp";
 
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
@@ -632,7 +632,7 @@ const AddOrder = () => {
                                     onClick={(e) => {
                                         setOrderFormData((previousState) => ({
                                             ...previousState,
-                                            material: 'Tiles',
+                                            material: "Tiles",
                                         }));
                                     }}
                                 />
@@ -645,7 +645,7 @@ const AddOrder = () => {
                                     onClick={(e) => {
                                         setOrderFormData((previousState) => ({
                                             ...previousState,
-                                            material: 'Sanitary',
+                                            material: "Sanitary",
                                         }));
                                     }}
                                 />
@@ -658,7 +658,7 @@ const AddOrder = () => {
                                     onClick={(e) => {
                                         setOrderFormData((previousState) => ({
                                             ...previousState,
-                                            material: 'Other',
+                                            material: "Other",
                                         }));
                                     }}
                                 />
@@ -674,7 +674,7 @@ const AddOrder = () => {
                                     onClick={(e) => {
                                         setOrderFormData((previousState) => ({
                                             ...previousState,
-                                            size: 'Small',
+                                            size: "Small",
                                         }));
                                     }}
                                 />
@@ -687,7 +687,7 @@ const AddOrder = () => {
                                     onClick={(e) => {
                                         setOrderFormData((previousState) => ({
                                             ...previousState,
-                                            size: 'Medium',
+                                            size: "Medium",
                                         }));
                                     }}
                                 />
@@ -700,7 +700,7 @@ const AddOrder = () => {
                                     onClick={(e) => {
                                         setOrderFormData((previousState) => ({
                                             ...previousState,
-                                            size: 'Big',
+                                            size: "Big",
                                         }));
                                     }}
                                 />
@@ -752,7 +752,7 @@ const AddOrder = () => {
                                     onClick={(e) => {
                                         setOrderFormData((previousState) => ({
                                             ...previousState,
-                                            priority: 'Low',
+                                            priority: "Low",
                                         }));
                                     }}
                                 />
@@ -765,7 +765,7 @@ const AddOrder = () => {
                                     onClick={(e) => {
                                         setOrderFormData((previousState) => ({
                                             ...previousState,
-                                            priority: 'Normal',
+                                            priority: "Normal",
                                         }));
                                     }}
                                 />
@@ -778,7 +778,7 @@ const AddOrder = () => {
                                     onClick={(e) => {
                                         setOrderFormData((previousState) => ({
                                             ...previousState,
-                                            priority: 'High',
+                                            priority: "High",
                                         }));
                                     }}
                                 />

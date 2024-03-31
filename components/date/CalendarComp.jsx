@@ -1,34 +1,34 @@
-import { useEffect, useRef, useState } from 'react'
-import { Calendar } from 'react-date-range'
-import format from 'date-fns/format'
+import { useEffect, useRef, useState } from "react";
+import { Calendar } from "react-date-range";
+import format from "date-fns/format";
 
-import 'react-date-range/dist/styles.css'
-import 'react-date-range/dist/theme/default.css'
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 
 const CalendarComp = () => {
 
   // date state
-  const [calendar, setCalendar] = useState('')
+  const [calendar, setCalendar] = useState("");
 
   // open close
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   // get the target element to toggle 
-  const refOne = useRef(null)
+  const refOne = useRef(null);
 
   useEffect(() => {
     // set current date on component load
-    setCalendar(format(new Date(), 'MM/dd/yyyy'))
+    setCalendar(format(new Date(), "MM/dd/yyyy"));
 
     // event listeners
-    document.addEventListener("keydown", hideOnEscape, true)
-    document.addEventListener("click", hideOnClickOutside, true)
-  }, [])
+    document.addEventListener("keydown", hideOnEscape, true);
+    document.addEventListener("click", hideOnClickOutside, true);
+  }, []);
 
   useEffect(() => {
     console.log(calendar);
     localStorage.setItem("calendar", calendar);
-  }, [calendar])
+  }, [calendar]);
 
   // hide dropdown on ESC press
   const hideOnEscape = (e) => {
@@ -36,23 +36,23 @@ const CalendarComp = () => {
     if( e.key === "Escape" ) {
       setOpen(false)
     }
-  }
+  };
 
   // Hide on outside click
   const hideOnClickOutside = (e) => {
     // console.log(refOne.current)
     // console.log(e.target)
     if( refOne.current && !refOne.current.contains(e.target) ) {
-      setOpen(false)
+      setOpen(false);
     }
-  }
+  };
 
   // on date change, store date in state
   const handleSelect = (date) => {
     // console.log(date)
-    // console.log(format(date, 'MM/dd/yyyy'))
-    setCalendar(format(date, 'MM/dd/yyyy'))
-  }
+    // console.log(format(date, "MM/dd/yyyy"))
+    setCalendar(format(date, "MM/dd/yyyy"));
+  };
 
   return (
     <div className="calendarWrap">
@@ -79,4 +79,4 @@ const CalendarComp = () => {
   )
 }
 
-export default CalendarComp
+export default CalendarComp;
