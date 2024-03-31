@@ -73,7 +73,7 @@ const DateRangePickerComp = () => {
       </div>
 
     </div>
-  )
-}
+  );
+};
 
 export default DateRangePickerComp

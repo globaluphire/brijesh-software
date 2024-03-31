@@ -73,7 +73,7 @@ const DateRangeComp = () => {
       </div>
 
     </div>
-  )
-}
+  );
+};
 
 export default DateRangeComp;
