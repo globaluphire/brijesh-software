@@ -138,10 +138,15 @@ const AddOrder = () => {
     const [dropCitySelection, setDropCitySelection] = useState([]);
     const [pickupCitySelection, setPickupCitySelection] = useState([]);
     const [validated, setValidated] = useState(false);
+    const [checkAllRefs, setCheckAllRefs] = useState(false);
+    const [formValidatedSuccessfully, setFormValidatedSuccessfully] = useState(false);
     const [lRStatusReferenceOptions, setLRStatusReferenceOptions] = useState(null);
     const [orderCityReferenceOptions, setOrderCityReferenceOptions] = useState(null);
     const [cityReferenceOptions, setCityReferenceOptions] = useState(null);
-    
+    const [sizeReferenceOptions, setSizeReferenceOptions] = useState(null);
+    const [materialTypeReferenceOptions, setMaterialTypeReferenceOptions] = useState(null);
+    const [priorityReferenceOptions, setPriorityReferenceOptions] = useState(null);
+
     const addresses = [
         "601 Evergreen Rd., Woodburn, OR 97071",
         "160 NE Conifer Blvd., Corvallis, OR 97330",
@@ -174,6 +179,7 @@ const AddOrder = () => {
             setOrderCityReferenceOptions(orderCityRefData);
         }
 
+        // call reference to get city options
         const { data: cityRefData, error: err } = await supabase
             .from("reference")
             .select("*")
@@ -189,19 +195,73 @@ const AddOrder = () => {
             setCityRefs(cityNames);
         }
 
-    }
+        // call reference to get lrStatus options
+        const { data: materialTypeRefData, error: materialErr } = await supabase
+            .from("reference")
+            .select("*")
+            .eq("ref_nm", "materialType");
+
+        if (materialTypeRefData) {
+            setMaterialTypeReferenceOptions(materialTypeRefData);
+        }
+
+        // call reference to get lrStatus options
+        const { data: sizeRefData, error: sizeErr } = await supabase
+            .from("reference")
+            .select("*")
+            .eq("ref_nm", "size");
+
+        if (sizeRefData) {
+            setSizeReferenceOptions(sizeRefData);
+        }
+
+        // call reference to get lrStatus options
+        const { data: priorityRefData, error: priorityErr } = await supabase
+            .from("reference")
+            .select("*")
+            .eq("ref_nm", "priority");
+
+        if (priorityRefData) {
+            setPriorityReferenceOptions(priorityRefData);
+        }
+
+    };
+
+    async function checkAllRefsData() {
+        if (
+            cityRefs &&
+            orderCityReferenceOptions &&
+            cityReferenceOptions &&
+            materialTypeReferenceOptions &&
+            sizeReferenceOptions &&
+            priorityReferenceOptions
+        ) {
+            setCheckAllRefs(true);
+        }
+    };
 
     useEffect(() => {
         getReferences();
     }, []);
 
+    useEffect(() => {
+        // validate refs data
+        checkAllRefsData();
+    }, [cityRefs,
+        orderCityReferenceOptions,
+        cityReferenceOptions,
+        materialTypeReferenceOptions,
+        sizeReferenceOptions,
+        priorityReferenceOptions]
+    );
+
     // useEffect(() => {
     //     jobData.facility = facilitySingleSelections[0];
     // }, [facilitySingleSelections]);
 
-    useEffect(() => {
-        jobData.completeAddress = singleSelections[0];
-    }, [singleSelections]);
+    // useEffect(() => {
+    //     jobData.completeAddress = singleSelections[0];
+    // }, [singleSelections]);
 
     // init google map script
     const initMapScript = () => {
@@ -261,14 +321,25 @@ const AddOrder = () => {
             pickupDate: localStorage.getItem("calendar")
         }));
 
-        if (
-            pickupDate &&
-            material &&
-            size &&
-            priority
-        ) {
+        if(pickupDate && material && size && priority) {
             return true;
         } else {
+            if (!material) {
+                setOrderFormData(() => ({
+                    material: ""
+                }));
+            };
+            if (!size) {
+                setOrderFormData(() => ({
+                    size: ""
+                }));
+            };
+            if (!priority) {
+                setOrderFormData(() => ({
+                    priority: ""
+                }));
+            };
+            setValidated(true);
             return false;
         }
     };
@@ -400,6 +471,7 @@ const AddOrder = () => {
                     });
 
                     setOrderFormData(JSON.parse(JSON.stringify(addOrderFields)));
+                    setValidated(false);
                 }
             } catch (err) {
                 // open toast
@@ -433,18 +505,9 @@ const AddOrder = () => {
         }
     };
 
-    const handleSubmit = (event) => {
-        const form = event.currentTarget;
-        if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
-        setValidated(true);
-    };
-
     return (
         <>
-            {cityRefs && orderCityReferenceOptions && cityReferenceOptions ? <Form noValidate validated={validated}>
+            { checkAllRefs ? <Form noValidate validated={validated}>
                 {/* General Details Block starts */}
                 <div>
                     <div className="divider divider-general">
@@ -468,7 +531,7 @@ const AddOrder = () => {
                                     <option value=""></option>
                                     {orderCityReferenceOptions.map(
                                         (option) => (
-                                            <option value={option.ref_dspl}>
+                                            <option key={option.ref_cd} value={option.ref_dspl}>
                                                 {option.ref_dspl}
                                             </option>
                                         )
@@ -483,6 +546,7 @@ const AddOrder = () => {
                                 <Form.Label>Client Name</Form.Label>
                                 <Form.Control
                                     type="text"
+                                    name="order-client-name"
                                     // placeholder="Username"
                                     aria-describedby="inputGroupPrepend"
                                     // required
@@ -515,6 +579,7 @@ const AddOrder = () => {
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
                                 <Form.Label>Pickup Location</Form.Label>
                                 <Typeahead
+                                    id="pickupLocation"
                                     onChange={setPickupCitySelection}
                                     className="form-group"
                                     options={cityRefs}
@@ -526,6 +591,7 @@ const AddOrder = () => {
                                 <Form.Label>Name of Pickup Point</Form.Label>
                                 <Form.Control
                                     type="text"
+                                    name="order-pickup-point"
                                     // placeholder="GST number"
                                     // defaultValue="Otto"
                                     value={nameOfPickupPoint}
@@ -546,6 +612,7 @@ const AddOrder = () => {
                                     type="text"
                                     // placeholder="Username"
                                     aria-describedby="inputGroupPrepend"
+                                    name="order-marketing-contact"
                                     // required
                                     value={marketingContact}
                                     onChange={(e) => {
@@ -561,6 +628,7 @@ const AddOrder = () => {
                                 <Form.Label>Dispatch Contact</Form.Label>
                                 <Form.Control
                                     type="text"
+                                    name="order-dispatch-contact"
                                     value={dispatchContact}
                                     onChange={(e) => {
                                         setOrderFormData((previousState) => ({
@@ -586,6 +654,7 @@ const AddOrder = () => {
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
                                 <Form.Label>Drop Location</Form.Label>
                                 <Typeahead
+                                    id="dropLocation"
                                     onChange={setDropCitySelection}
                                     className="form-group"
                                     options={cityRefs}
@@ -597,6 +666,7 @@ const AddOrder = () => {
                                 <Form.Label>Name of Dropping Party</Form.Label>
                                 <Form.Control
                                     type="text"
+                                    name="order-dropping-party"
                                     // placeholder="To"
                                     // defaultValue="Otto"
                                     value={nameOfDroppingPoint}
@@ -621,89 +691,89 @@ const AddOrder = () => {
                     </div>
                     <div style={{ padding: "0 2rem" }}>
                         <Row className="mb-3">
-                            <Form.Group as={Col} controlId="validationCustom01">
-                                <Form.Label>Material</Form.Label> <br />
-                                <Form.Check
+                            <Form.Group as={Col} md="4" controlId="validationCustom01">
+                                <Form.Label>Material</Form.Label>
+                                <Form.Select
                                     required
-                                    inline
-                                    type="radio"
-                                    label="Tiles"
-                                    name="group1"
-                                    onClick={(e) => {
+                                    className="chosen-single form-select"
+                                    size="md"
+                                    onChange={(e) => {
                                         setOrderFormData((previousState) => ({
                                             ...previousState,
-                                            material: "Tiles",
+                                            material: e.target.value,
                                         }));
                                     }}
-                                />
-                                <Form.Check
-                                    required
-                                    inline
-                                    type="radio"
-                                    label="Sanitary"
-                                    name="group1"
-                                    onClick={(e) => {
-                                        setOrderFormData((previousState) => ({
-                                            ...previousState,
-                                            material: "Sanitary",
-                                        }));
-                                    }}
-                                />
-                                <Form.Check
-                                    required
-                                    inline
-                                    type="radio"
-                                    label="Other"
-                                    name="group1"
-                                    onClick={(e) => {
-                                        setOrderFormData((previousState) => ({
-                                            ...previousState,
-                                            material: "Other",
-                                        }));
-                                    }}
-                                />
+                                    value={material}
+                                >
+                                    <option value=""></option>
+                                    {materialTypeReferenceOptions.map(
+                                        (option) => (
+                                            <option key={option.ref_cd} value={option.ref_dspl}>
+                                                {option.ref_dspl}
+                                            </option>
+                                        )
+                                    )}
+                                </Form.Select>
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please select order material type.
+                                </Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group as={Col} controlId="validationCustom01">
-                                <Form.Label>Size</Form.Label><br />
-                                <Form.Check
+                            <Form.Group as={Col} md="4" controlId="validationCustom01">
+                                <Form.Label>Size</Form.Label>
+                                <Form.Select
                                     required
-                                    inline
-                                    type="radio"
-                                    label="Small"
-                                    name="group2"
-                                    onClick={(e) => {
+                                    className="chosen-single form-select"
+                                    size="md"
+                                    onChange={(e) => {
                                         setOrderFormData((previousState) => ({
                                             ...previousState,
-                                            size: "Small",
+                                            size: e.target.value,
                                         }));
                                     }}
-                                />
-                                <Form.Check
+                                    value={size}
+                                >
+                                    <option value=""></option>
+                                    {sizeReferenceOptions.map(
+                                        (option) => (
+                                            <option key={option.ref_cd} value={option.ref_dspl}>
+                                                {option.ref_dspl}
+                                            </option>
+                                        )
+                                    )}
+                                </Form.Select>
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please select order size.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="4" controlId="validationCustom01">
+                                <Form.Label>Priority</Form.Label>
+                                <Form.Select
                                     required
-                                    inline
-                                    type="radio"
-                                    label="Medium"
-                                    name="group2"
-                                    onClick={(e) => {
+                                    className="chosen-single form-select"
+                                    size="md"
+                                    onChange={(e) => {
                                         setOrderFormData((previousState) => ({
                                             ...previousState,
-                                            size: "Medium",
+                                            priority: e.target.value,
                                         }));
                                     }}
-                                />
-                                <Form.Check
-                                    required
-                                    inline
-                                    type="radio"
-                                    label="Big"
-                                    name="group2"
-                                    onClick={(e) => {
-                                        setOrderFormData((previousState) => ({
-                                            ...previousState,
-                                            size: "Big",
-                                        }));
-                                    }}
-                                />
+                                    value={priority}
+                                >
+                                    <option value=""></option>
+                                    {priorityReferenceOptions.map(
+                                        (option) => (
+                                            <option key={option.ref_cd} value={option.ref_dspl}>
+                                                {option.ref_dspl}
+                                            </option>
+                                        )
+                                    )}
+                                </Form.Select>
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please select order priority.
+                                </Form.Control.Feedback>
                             </Form.Group>
                         </Row>
                         <Row className="mb-3">
@@ -711,6 +781,7 @@ const AddOrder = () => {
                                 <Form.Label>Quantity</Form.Label>
                                 <Form.Control
                                     type="text"
+                                    name="order-quantity"
                                     // placeholder="Material Details"
                                     // defaultValue="Mark"
                                     value={quantity}
@@ -727,6 +798,7 @@ const AddOrder = () => {
                                 <Form.Label>Weight(Kg)</Form.Label>
                                 <Form.Control
                                     type="number"
+                                    name="order-weight"
                                     // placeholder="Weight"
                                     // defaultValue="Otto"
                                     value={weight}
@@ -739,54 +811,11 @@ const AddOrder = () => {
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                             </Form.Group>
-                        </Row>
-                        <Row className="mb-3">
-                            <Form.Group as={Col} controlId="validationCustom01">
-                                <Form.Label>Priority</Form.Label><br />
-                                <Form.Check
-                                    required
-                                    inline
-                                    type="radio"
-                                    label="Low"
-                                    name="group3"
-                                    onClick={(e) => {
-                                        setOrderFormData((previousState) => ({
-                                            ...previousState,
-                                            priority: "Low",
-                                        }));
-                                    }}
-                                />
-                                <Form.Check
-                                    required
-                                    inline
-                                    type="radio"
-                                    label="Normal"
-                                    name="group3"
-                                    onClick={(e) => {
-                                        setOrderFormData((previousState) => ({
-                                            ...previousState,
-                                            priority: "Normal",
-                                        }));
-                                    }}
-                                />
-                                <Form.Check
-                                    required
-                                    inline
-                                    type="radio"
-                                    label="High"
-                                    name="group3"
-                                    onClick={(e) => {
-                                        setOrderFormData((previousState) => ({
-                                            ...previousState,
-                                            priority: "High",
-                                        }));
-                                    }}
-                                />
-                            </Form.Group>
-                            <Form.Group as={Col} controlId="validationCustom02">
+                            <Form.Group as={Col} md="3" controlId="validationCustom02">
                                 <Form.Label>Special Offered Freight</Form.Label>
                                 <Form.Control
                                     type="number"
+                                    name="order-special-offered-freight"
                                     // placeholder="Weight"
                                     // defaultValue="Otto"
                                     value={specialOfferedFreight}
@@ -879,10 +908,7 @@ const AddOrder = () => {
                             variant="success"
                             onClick={(e) => {
                                 e.preventDefault();
-                                handleSubmit(e);
-                                if(validated) {
-                                    addNewOrder(orderFormData, setOrderFormData, user);
-                                }
+                                addNewOrder(orderFormData, setOrderFormData, user);
                             }}
                             className="btn btn-add-lr btn-sm text-nowrap m-1"
                         >
