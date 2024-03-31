@@ -42,7 +42,7 @@ const index = () => {
                             <div className="ls-widget">
                                 <div className="tabs-box">
                                     <div className="widget-title">
-                                        <h2><b>Add New Order</b></h2>
+                                        <h2><b>Place Order</b></h2>
                                     </div>
 
                                     <div className="widget-content">

@@ -408,6 +408,13 @@ Login Section
   width: 180px;
 }
 
+.divider-general:after{
+  width: 100px;
+}
+.divider-additional:after{
+  width: 210px;
+}
+
 .login-form .bottom-box .btn-box {
   position: relative;
 }

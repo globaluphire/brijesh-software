@@ -10,6 +10,8 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import { envConfig } from "../../../../../config/env";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import Router from "next/router";
+import CalendarComp from "../../../../../components/date/CalendarComp"
+
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
     ssr: false,
@@ -132,17 +134,14 @@ const AddOrder = () => {
     const searchInput = useRef(null);
 
     const [singleSelections, setSingleSelections] = useState([]);
-    const [facilityNames, setFacilityNames] = useState([]);
-    const [facilitySingleSelections, setFacilitySingleSelections] = useState(
-        []
-    );
+    const [cityRefs, setCityRefs] = useState([]);
+    const [dropCitySelection, setDropCitySelection] = useState([]);
+    const [pickupCitySelection, setPickupCitySelection] = useState([]);
     const [validated, setValidated] = useState(false);
-    const [
-        lRStatusReferenceOptions,
-        setLRStatusReferenceOptions,
-    ] = useState(null);
-
-
+    const [lRStatusReferenceOptions, setLRStatusReferenceOptions] = useState(null);
+    const [orderCityReferenceOptions, setOrderCityReferenceOptions] = useState(null);
+    const [cityReferenceOptions, setCityReferenceOptions] = useState(null);
+    
     const addresses = [
         "601 Evergreen Rd., Woodburn, OR 97071",
         "160 NE Conifer Blvd., Corvallis, OR 97330",
@@ -164,26 +163,41 @@ const AddOrder = () => {
         "4021 Cadillac Street, New Orleans, LA 70122",
     ];
 
-    async function getLRStatusOptions() {
+    async function getReferences() {
         // call reference to get lrStatus options
-        const { data, error: e } = await supabase
+        const { data: orderCityRefData, error: e } = await supabase
             .from("reference")
             .select("*")
-            .eq("ref_nm", "lrStatus");
+            .eq("ref_nm", "orderCity");
 
-        if (data) {
-            setLRStatusReferenceOptions(data);
+        if (orderCityRefData) {
+            setOrderCityReferenceOptions(orderCityRefData);
+        }
+
+        const { data: cityRefData, error: err } = await supabase
+            .from("reference")
+            .select("*")
+            .eq("ref_nm", "city");
+
+        if (cityRefData) {
+            setCityReferenceOptions(cityRefData);
+            const cityNames = [];
+            for (let i = 0; i < cityRefData.length; i++) {
+                cityNames.push(cityRefData[i].ref_dspl);
+            }
+            cityNames.sort();
+            setCityRefs(cityNames);
         }
 
     }
 
     useEffect(() => {
-        getLRStatusOptions();
+        getReferences();
     }, []);
 
-    useEffect(() => {
-        jobData.facility = facilitySingleSelections[0];
-    }, [facilitySingleSelections]);
+    // useEffect(() => {
+    //     jobData.facility = facilitySingleSelections[0];
+    // }, [facilitySingleSelections]);
 
     useEffect(() => {
         jobData.completeAddress = singleSelections[0];
@@ -242,12 +256,15 @@ const AddOrder = () => {
   ];
  */
     function checkRequiredFields(orderFormData) {
+        console.log("pickupDate", pickupDate);
+        setOrderFormData(() => ({
+            pickupDate: localStorage.getItem("calendar")
+        }));
+
         if (
             pickupDate &&
             material &&
             size &&
-            quantity &&
-            weight &&
             priority
         ) {
             return true;
@@ -320,18 +337,17 @@ const AddOrder = () => {
                 }
                 const orderNumber = "ORD" + "" + date + "" + month + "" + year.toString().substring(2) + "" + orderSeqNbr;
 
-                console.log(orderNumber, " ", lrNumber);
-                const { data, error } = await supabase.from("order").insert([
+                const { data, error } = await supabase.from("orders").insert([
                     {
-                        lr_number: lrNumber, // add logic to create automatic Unique number, ex. RLR(YY)(MM)(DD)(incremented 3 number digit)
-                        order_number: orderNumber, // add logic to create automatic Unique number, ex. (3 digit City Code)(YY)(MM)(DD)(incremented 3 number digit) 
+                        lr_number: lrNumber,
+                        order_number: orderNumber,
                         pickup_date: pickupDate,
                         order_city: orderCity,
                         client_name: clientName,
-                        pickup_location: pickupLocation,
-                        drop_location: dropLocation,
+                        pickup_location: pickupCitySelection[0],
+                        drop_location: dropCitySelection[0],
                         pickup_point_name: nameOfPickupPoint,
-                        drop_point_name: nameOfDroppingPoint,
+                        dropping_point_name: nameOfDroppingPoint,
                         marketing_contact: marketingContact,
                         dispatch_contact: dispatchContact,
                         material: material,
@@ -341,13 +357,13 @@ const AddOrder = () => {
                         priority: priority,
                         special_offered_freight: specialOfferedFreight,
                         notes: notes,
-                        freightNotes: freightNotes
+                        freight_notes: freightNotes
                     },
                 ]);
                 if (error) {
                     // open toast
                     toast.error(
-                        "Error while saving LR details, Please try again later or contact tech support",
+                        "Error while placing order details, Please try again later or contact tech support",
                         {
                             position: "bottom-right",
                             autoClose: false,
@@ -361,7 +377,7 @@ const AddOrder = () => {
                     );
                 } else {
                     // open toast
-                    toast.success("New LR saved successfully", {
+                    toast.success("Order placed successfully", {
                         position: "bottom-right",
                         autoClose: 8000,
                         hideProgressBar: false,
@@ -371,7 +387,7 @@ const AddOrder = () => {
                         progress: undefined,
                         theme: "colored",
                     });
-                    
+
                     // increment lr_number key
                     await supabase.rpc("increment_sys_key", {
                         x: 1,
@@ -417,410 +433,40 @@ const AddOrder = () => {
         }
     };
 
-  const handleSubmit = (event) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    setValidated(true);
-  };
+    const handleSubmit = (event) => {
+        const form = event.currentTarget;
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        setValidated(true);
+    };
 
     return (
-        <> 
-            {lRStatusReferenceOptions ? <Form noValidate validated={validated}>
-                {/* Consigner Block starts */}
+        <>
+            {cityRefs && orderCityReferenceOptions && cityReferenceOptions ? <Form noValidate validated={validated}>
+                {/* General Details Block starts */}
                 <div>
-                    <div className="divider">
-                        <span><b>Consignor</b></span>
+                    <div className="divider divider-general">
+                        <span><b>General</b></span>
                     </div>
                     <div style={{ padding: "0 2rem" }}>
                         <Row className="mb-3">
-                            <Form.Group as={Col} md="4" controlId="validationCustom01">
-                                <Form.Label>Name</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="Consignor"
-                                    // defaultValue="Mark"
-                                    value={consignorName}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consignorName: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignor name.
-                                </Form.Control.Feedback>
-                            </Form.Group>
                             <Form.Group as={Col} md="4" controlId="validationCustom02">
-                                <Form.Label>GST Number</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="GST number"
-                                    // defaultValue="Otto"
-                                    value={consignorGST}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consignorGST: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignor's GST Number.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
-                                <Form.Label>Phone Number</Form.Label>
-                                <InputGroup>
-                                    <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
-                                    <Form.Control
-                                        type="text"
-                                        // placeholder="Username"
-                                        aria-describedby="inputGroupPrepend"
-                                        // required
-                                        value={consignorPhone}
-                                        onChange={(e) => {
-                                            setLrFormData((previousState) => ({
-                                                ...previousState,
-                                                consignorPhone: e.target.value,
-                                            }));
-                                        }}
-                                    />
-                                </InputGroup>
-                            </Form.Group>
-                        </Row>
-                        <Row className="mb-3">
-                            <Form.Group as={Col} md="9" controlId="validationCustom03">
-                                <Form.Label>Address</Form.Label>
-                                <Form.Control 
-                                    type="text"
-                                    placeholder="Pickup Address"
-                                    required
-                                    value={consignorAddress}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consignorAddress: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    Please provide a valid Consignor's Address.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="3" controlId="validationCustom04">
-                                <Form.Label>Email Address</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder=""
-                                    value={consignorEmail}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consignorEmail: e.target.value,
-                                        }));
-                                    }}
-                                />
-                            </Form.Group>
-                        </Row>
-                    </div>
-                </div>
-                {/* Consigner Block ends */}
-
-                {/* Consignee Block starts */}
-                <div>
-                    <div className="divider">
-                        <span><b>Consignee</b></span>
-                    </div>
-                    <div style={{ padding: "0 2rem" }}>
-                        <Row className="mb-3">
-                            <Form.Group as={Col} md="4" controlId="validationCustom01">
-                                <Form.Label>Name</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="Consignee"
-                                    // defaultValue="Mark"
-                                    value={consigneeName}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consigneeName: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignee's name.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="4" controlId="validationCustom02">
-                                <Form.Label>GST Number</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="GST number"
-                                    // defaultValue="Otto"
-                                    value={consigneeGST}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consigneeGST: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignee's GST Number.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
-                                <Form.Label>Phone Number</Form.Label>
-                                <InputGroup>
-                                    <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
-                                    <Form.Control
-                                        type="text"
-                                        // placeholder="Username"
-                                        aria-describedby="inputGroupPrepend"
-                                        // required
-                                        value={consigneePhone}
-                                        onChange={(e) => {
-                                            setLrFormData((previousState) => ({
-                                                ...previousState,
-                                                consigneePhone: e.target.value,
-                                            }));
-                                        }}
-                                    />
-                                </InputGroup>
-                            </Form.Group>
-                        </Row>
-                        <Row className="mb-3">
-                            <Form.Group as={Col} md="9" controlId="validationCustom03">
-                                <Form.Label>Address</Form.Label>
-                                <Form.Control    
-                                    type="text"
-                                    placeholder="Pickup Address"
-                                    required
-                                    value={consigneeAddress}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consigneeAddress: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    Please provide a valid Consignee's Address.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="3" controlId="validationCustom04">
-                                <Form.Label>Email Address</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder=""
-                                    value={consigneeEmail}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consigneeEmail: e.target.value,
-                                        }));
-                                    }}
-                                />
-                            </Form.Group>
-                        </Row>
-                    </div>
-                </div>
-                {/* Consignee Block ends */}
-
-                {/* Other Block starts */}
-                <div>
-                    <div className="divider divider-other">
-                        <span><b>Other</b></span>
-                    </div>
-                    <div style={{ padding: "0 2rem" }}>
-                        <Row className="mb-3">
-                            <Form.Group as={Col} md="3" controlId="validationCustom01">
-                                <Form.Label>From</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="Consignee"
-                                    // defaultValue="Mark"
-                                    value={fromCity}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            fromCity: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignment From location.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="3" controlId="validationCustom02">
-                                <Form.Label>To</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="To"
-                                    // defaultValue="Otto"
-                                    value={toCity}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            toCity: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignment To location.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="3" controlId="validationCustom02">
-                                <Form.Label>Vehical Number</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="GJ011234"
-                                    // defaultValue="Otto"
-                                    value={vehicalNumber}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            vehicalNumber: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Vehical Number.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                        </Row>
-                        <Row className="mb-3">
-                            <Form.Group as={Col} md="3" controlId="validationCustom02">
-                                <Form.Label>Driver Name</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="Driver Name"
-                                    // defaultValue="Otto"
-                                    value={driverName}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            driverName: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignment's Driver Name.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="4" controlId="validationCustomDriverPhonenumber">
-                                <Form.Label>Driver Phone Number</Form.Label>
-                                <InputGroup>
-                                    <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
-                                    <Form.Control
-                                        type="text"
-                                        // placeholder="Driver Phone Number"
-                                        aria-describedby="inputGroupPrepend"
-                                        required
-                                        value={driverPhone}
-                                        onChange={(e) => {
-                                            setLrFormData((previousState) => ({
-                                                ...previousState,
-                                                driverPhone: e.target.value,
-                                            }));
-                                        }}
-                                    />
-                                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                    <Form.Control.Feedback type="invalid">
-                                        Please enter Consignment's Driver Phone Number.
-                                    </Form.Control.Feedback>
-                                </InputGroup>
-                            </Form.Group>
-                        </Row>
-                    </div>
-                </div>
-                {/* Other Block ends */}
-
-
-                {/* Material Details starts */}
-                <div>
-                    <div className="divider divider-material">
-                        <span><b>Material Details</b></span>
-                    </div>
-                    <div style={{ padding: "0 2rem" }}>
-                        <Row className="mb-3">
-                            <Form.Group as={Col} controlId="validationCustom01">
-                                <Form.Label>Material Details</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="Material Details"
-                                    // defaultValue="Mark"
-                                    value={materialDetails}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            materialDetails: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignment Material Details.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                        </Row>
-                        <Row>
-                            <Form.Group as={Col} md="3" controlId="validationCustom02">
-                                <Form.Label>Weight(Kg)</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="number"
-                                    // placeholder="Weight"
-                                    // defaultValue="Otto"
-                                    value={weight}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            weight: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignment Weight in Kg.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="3" controlId="validationCustom02">
-                                <Form.Label>Status</Form.Label>
+                                <Form.Label>Order City</Form.Label>
                                 <Form.Select
                                     className="chosen-single form-select"
+                                    size="md"
                                     onChange={(e) => {
-                                        setLrFormData((previousState) => ({
+                                        setOrderFormData((previousState) => ({
                                             ...previousState,
-                                            status: e.target.value,
+                                            orderCity: e.target.value,
                                         }));
                                     }}
-                                    value={status}
-                                    required
+                                    value={orderCity}
                                 >
                                     <option value=""></option>
-                                    {lRStatusReferenceOptions.map(
+                                    {orderCityReferenceOptions.map(
                                         (option) => (
                                             <option value={option.ref_dspl}>
                                                 {option.ref_dspl}
@@ -830,8 +476,386 @@ const AddOrder = () => {
                                 </Form.Select>
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 <Form.Control.Feedback type="invalid">
-                                    Please enter LR Status.
+                                    Please enter Consignor's GST Number.
                                 </Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
+                                <Form.Label>Client Name</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    // placeholder="Username"
+                                    aria-describedby="inputGroupPrepend"
+                                    // required
+                                    value={clientName}
+                                    onChange={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            clientName: e.target.value,
+                                        }));
+                                    }}
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                            </Form.Group>
+                        </Row>
+                    </div>
+                </div>
+                {/* General Details Block ends */}
+
+                {/* Pickup Details Block starts */}
+                <div>
+                    <div className="divider divider-general">
+                        <span><b>Pickup</b></span>
+                    </div>
+                    <div style={{ padding: "0 2rem" }}>
+                        <Row className="mb-3">
+                            <Form.Group as={Col} md="4" controlId="validationCustom01">
+                                <Form.Label>Pickup Date</Form.Label><br />
+                                <CalendarComp />
+                            </Form.Group>
+                            <Form.Group as={Col} md="4" controlId="validationCustom01">
+                                <Form.Label>Pickup Location</Form.Label>
+                                <Typeahead
+                                    onChange={setPickupCitySelection}
+                                    className="form-group"
+                                    options={cityRefs}
+                                    selected={pickupCitySelection}
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="4" controlId="validationCustom02">
+                                <Form.Label>Name of Pickup Point</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    // placeholder="GST number"
+                                    // defaultValue="Otto"
+                                    value={nameOfPickupPoint}
+                                    onChange={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            nameOfPickupPoint: e.target.value,
+                                        }));
+                                    }}
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                            </Form.Group>
+                        </Row>
+                        <Row className="mb-3">
+                            <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
+                                <Form.Label>Marketing Contact</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    // placeholder="Username"
+                                    aria-describedby="inputGroupPrepend"
+                                    // required
+                                    value={marketingContact}
+                                    onChange={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            marketingContact: e.target.value,
+                                        }));
+                                    }}
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="4" controlId="validationCustom03">
+                                <Form.Label>Dispatch Contact</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    value={dispatchContact}
+                                    onChange={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            dispatchContact: e.target.value,
+                                        }));
+                                    }}
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                            </Form.Group>
+                        </Row>
+                    </div>
+                </div>
+                {/* Pickup Details Block ends */}
+
+                {/* Drop Details Block starts */}
+                <div>
+                    <div className="divider divider-other">
+                        <span><b>Drop</b></span>
+                    </div>
+                    <div style={{ padding: "0 2rem" }}>
+                        <Row className="mb-3">
+                            <Form.Group as={Col} md="4" controlId="validationCustom01">
+                                <Form.Label>Drop Location</Form.Label>
+                                <Typeahead
+                                    onChange={setDropCitySelection}
+                                    className="form-group"
+                                    options={cityRefs}
+                                    selected={dropCitySelection}
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="4" controlId="validationCustom02">
+                                <Form.Label>Name of Dropping Party</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    // placeholder="To"
+                                    // defaultValue="Otto"
+                                    value={nameOfDroppingPoint}
+                                    onChange={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            nameOfDroppingPoint: e.target.value,
+                                        }));
+                                    }}
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                            </Form.Group>
+                        </Row>
+                    </div>
+                </div>
+                {/* Drop Details Block ends */}
+
+                {/* Material Details starts */}
+                <div>
+                    <div className="divider divider-material">
+                        <span><b>Material Details</b></span>
+                    </div>
+                    <div style={{ padding: "0 2rem" }}>
+                        <Row className="mb-3">
+                            <Form.Group as={Col} controlId="validationCustom01">
+                                <Form.Label>Material</Form.Label> <br />
+                                <Form.Check
+                                    required
+                                    inline
+                                    type="radio"
+                                    label="Tiles"
+                                    name="group1"
+                                    onClick={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            material: 'Tiles',
+                                        }));
+                                    }}
+                                />
+                                <Form.Check
+                                    required
+                                    inline
+                                    type="radio"
+                                    label="Sanitary"
+                                    name="group1"
+                                    onClick={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            material: 'Sanitary',
+                                        }));
+                                    }}
+                                />
+                                <Form.Check
+                                    required
+                                    inline
+                                    type="radio"
+                                    label="Other"
+                                    name="group1"
+                                    onClick={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            material: 'Other',
+                                        }));
+                                    }}
+                                />
+                            </Form.Group>
+                            <Form.Group as={Col} controlId="validationCustom01">
+                                <Form.Label>Size</Form.Label><br />
+                                <Form.Check
+                                    required
+                                    inline
+                                    type="radio"
+                                    label="Small"
+                                    name="group2"
+                                    onClick={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            size: 'Small',
+                                        }));
+                                    }}
+                                />
+                                <Form.Check
+                                    required
+                                    inline
+                                    type="radio"
+                                    label="Medium"
+                                    name="group2"
+                                    onClick={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            size: 'Medium',
+                                        }));
+                                    }}
+                                />
+                                <Form.Check
+                                    required
+                                    inline
+                                    type="radio"
+                                    label="Big"
+                                    name="group2"
+                                    onClick={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            size: 'Big',
+                                        }));
+                                    }}
+                                />
+                            </Form.Group>
+                        </Row>
+                        <Row className="mb-3">
+                            <Form.Group as={Col} md="6" controlId="validationCustom01">
+                                <Form.Label>Quantity</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    // placeholder="Material Details"
+                                    // defaultValue="Mark"
+                                    value={quantity}
+                                    onChange={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            quantity: e.target.value,
+                                        }));
+                                    }}
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="3" controlId="validationCustom02">
+                                <Form.Label>Weight(Kg)</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    // placeholder="Weight"
+                                    // defaultValue="Otto"
+                                    value={weight}
+                                    onChange={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            weight: e.target.value,
+                                        }));
+                                    }}
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                            </Form.Group>
+                        </Row>
+                        <Row className="mb-3">
+                            <Form.Group as={Col} controlId="validationCustom01">
+                                <Form.Label>Priority</Form.Label><br />
+                                <Form.Check
+                                    required
+                                    inline
+                                    type="radio"
+                                    label="Low"
+                                    name="group3"
+                                    onClick={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            priority: 'Low',
+                                        }));
+                                    }}
+                                />
+                                <Form.Check
+                                    required
+                                    inline
+                                    type="radio"
+                                    label="Normal"
+                                    name="group3"
+                                    onClick={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            priority: 'Normal',
+                                        }));
+                                    }}
+                                />
+                                <Form.Check
+                                    required
+                                    inline
+                                    type="radio"
+                                    label="High"
+                                    name="group3"
+                                    onClick={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            priority: 'High',
+                                        }));
+                                    }}
+                                />
+                            </Form.Group>
+                            <Form.Group as={Col} controlId="validationCustom02">
+                                <Form.Label>Special Offered Freight</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    // placeholder="Weight"
+                                    // defaultValue="Otto"
+                                    value={specialOfferedFreight}
+                                    onChange={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            specialOfferedFreight: e.target.value,
+                                        }));
+                                    }}
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                            </Form.Group>
+                        </Row>
+                    </div>
+                </div>
+                {/* Material Details ends */}
+
+                {/* Additional Details starts */}
+                <div>
+                    <div className="divider divider-additional">
+                        <span><b>Additional Details</b></span>
+                    </div>
+                    <div style={{ padding: "0 2rem" }}>
+                        <Row className="mb-3">
+                            <Form.Group as={Col} controlId="validationCustom01">
+                                <Form.Label>Notes</Form.Label><br />
+                                <textarea
+                                    value={notes}
+                                    id="notes"
+                                    cols="20"
+                                    rows="2"
+                                    onChange={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            notes: e.target.value,
+                                        }));
+                                    }}
+                                    style={{
+                                        resize: "both",
+                                        overflowY: "auto",
+                                        border: "1px solid #dee2e6",
+                                        padding: "10px",
+                                        maxWidth: "300px"
+                                    }}
+                                ></textarea>
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} controlId="validationCustom01">
+                                <Form.Label>Freight Note</Form.Label><br />
+                                <textarea
+                                    value={freightNotes}
+                                    id="freightNotes"
+                                    cols="20"
+                                    rows="2"
+                                    onChange={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            freightNotes: e.target.value,
+                                        }));
+                                    }}
+                                    style={{
+                                        resize: "both",
+                                        overflowY: "auto",
+                                        border: "1px solid #dee2e6",
+                                        padding: "10px",
+                                        maxWidth: "300px"
+                                    }}
+                                ></textarea>
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                             </Form.Group>
                         </Row>
                     </div>
@@ -843,10 +867,10 @@ const AddOrder = () => {
                     <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">
                         <Button
                             variant="secondary"
-                            onClick={() => {Router.push("/employers-dashboard/lr"); }}
+                            onClick={() => {Router.push("/employers-dashboard/orders"); }}
                             className="btn btn-back btn-sm text-nowrap m-1"
                         >
-                            Back to LR
+                            Back to Order
                         </Button>
                     </Form.Group>
                     <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">
@@ -857,12 +881,12 @@ const AddOrder = () => {
                                 e.preventDefault();
                                 handleSubmit(e);
                                 if(validated) {
-                                    addNewLR(lrFormData, setLrFormData, user);
+                                    addNewOrder(orderFormData, setOrderFormData, user);
                                 }
                             }}
                             className="btn btn-add-lr btn-sm text-nowrap m-1"
                         >
-                            Add New LR
+                            Place Order
                         </Button>
                     </Form.Group>
                     {/* <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">

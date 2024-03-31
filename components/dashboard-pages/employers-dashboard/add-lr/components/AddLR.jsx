@@ -656,7 +656,7 @@ const AddLR = () => {
                                 <Form.Label>Address</Form.Label>
                                 <Form.Control    
                                     type="text"
-                                    placeholder="Pickup Address"
+                                    placeholder="Drop Address"
                                     required
                                     value={consigneeAddress}
                                     onChange={(e) => {
