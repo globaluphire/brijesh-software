@@ -11,6 +11,7 @@ import { envConfig } from "../../../../../config/env";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import Router from "next/router";
 import CalendarComp from "../../../../../components/date/CalendarComp";
+import format from "date-fns/format";
 
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
@@ -48,7 +49,6 @@ const addJobFields = {
 };
 
 const addOrderFields = {
-    pickupDate: "",
     orderCity: "",
     clientName: "",
     pickupLocation: "",
@@ -60,9 +60,9 @@ const addOrderFields = {
     material: "",
     size: "",
     quantity: "",
-    weight: "",
+    weight: null,
     priority: "",
-    specialOfferedFreight: "",
+    specialOfferedFreight: null,
     notes: "",
     freightNotes: ""
 };
@@ -112,7 +112,6 @@ const AddOrder = () => {
         JSON.parse(JSON.stringify(addOrderFields))
     );
     const {
-        pickupDate,
         orderCity,
         clientName,
         pickupLocation,
@@ -302,43 +301,11 @@ const AddOrder = () => {
     useEffect(() => {
         initMapScript().then(() => initAutocomplete());
     }, []);
-    /*
-  const specialisms = [
-    { value: "Banking", label: "Banking" },
-    { value: "Digital & Creative", label: "Digital & Creative" },
-    { value: "Retail", label: "Retail" },
-    { value: "Human Resources", label: "Human Resources" },
-    { value: "Managemnet", label: "Managemnet" },
-    { value: "Accounting & Finance", label: "Accounting & Finance" },
-    { value: "Digital", label: "Digital" },
-    { value: "Creative Art", label: "Creative Art" },
-    { value: "Engineer", label: "Engineer" },
-  ];
- */
-    function checkRequiredFields(orderFormData) {
-        console.log("pickupDate", pickupDate);
-        setOrderFormData(() => ({
-            pickupDate: localStorage.getItem("calendar")
-        }));
 
+    function checkRequiredFields(pickupDate) {
         if(pickupDate && material && size && priority) {
             return true;
         } else {
-            if (!material) {
-                setOrderFormData(() => ({
-                    material: ""
-                }));
-            };
-            if (!size) {
-                setOrderFormData(() => ({
-                    size: ""
-                }));
-            };
-            if (!priority) {
-                setOrderFormData(() => ({
-                    priority: ""
-                }));
-            };
             setValidated(true);
             return false;
         }
@@ -346,7 +313,6 @@ const AddOrder = () => {
 
     const addNewOrder = async (
         {
-            pickupDate,
             orderCity,
             clientName,
             pickupLocation,
@@ -367,7 +333,11 @@ const AddOrder = () => {
         setOrderFormData,
         user
     ) => {
-        if (checkRequiredFields(orderFormData)) {
+
+        // get pickup date from local storage
+        const pickupDate = localStorage.getItem("calendar");
+
+        if (checkRequiredFields(pickupDate)) {
             try {
                 // Generate LR Number
                 const today = new Date();
@@ -428,7 +398,8 @@ const AddOrder = () => {
                         priority: priority,
                         special_offered_freight: specialOfferedFreight,
                         notes: notes,
-                        freight_notes: freightNotes
+                        freight_notes: freightNotes,
+                        status: "Under pickup process"
                     },
                 ]);
                 if (error) {
@@ -502,12 +473,28 @@ const AddOrder = () => {
                 progress: undefined,
                 theme: "colored",
             });
+
+            if (!material) {
+                setOrderFormData(() => ({
+                    material: ""
+                }));
+            };
+            if (!size) {
+                setOrderFormData(() => ({
+                    size: ""
+                }));
+            };
+            if (!priority) {
+                setOrderFormData(() => ({
+                    priority: ""
+                }));
+            };
         }
     };
 
     return (
         <>
-            { checkAllRefs ? <Form noValidate validated={validated}>
+            { checkAllRefs ? <Form validated={validated}>
                 {/* General Details Block starts */}
                 <div>
                     <div className="divider divider-general">

@@ -9,7 +9,7 @@ import "react-date-range/dist/theme/default.css";
 const CalendarComp = () => {
 
   // date state
-  const [calendar, setCalendar] = useState("");
+  const [calendar, setCalendar] = useState(new Date());
 
   // open close
   const [open, setOpen] = useState(false);
@@ -19,7 +19,7 @@ const CalendarComp = () => {
 
   useEffect(() => {
     // set current date on component load
-    setCalendar(format(new Date(), "MM/dd/yyyy"));
+    setCalendar(format(new Date(), "yyyy-MM-dd"));
 
     // event listeners
     document.addEventListener("keydown", hideOnEscape, true);
@@ -27,7 +27,6 @@ const CalendarComp = () => {
   }, []);
 
   useEffect(() => {
-    console.log(calendar);
     localStorage.setItem("calendar", calendar);
   }, [calendar]);
 
@@ -36,6 +35,7 @@ const CalendarComp = () => {
     // console.log(e.key)
     if( e.key === "Escape" ) {
       setOpen(false);
+      // localStorage.setItem("calendar", calendar);
     }
   };
 
@@ -45,6 +45,7 @@ const CalendarComp = () => {
     // console.log(e.target)
     if( refOne.current && !refOne.current.contains(e.target) ) {
       setOpen(false);
+      // localStorage.setItem("calendar", calendar);
     }
   };
 
@@ -52,7 +53,8 @@ const CalendarComp = () => {
   const handleSelect = (date) => {
     // console.log(date)
     // console.log(format(date, "MM/dd/yyyy"))
-    setCalendar(format(date, "MM/dd/yyyy"));
+    setCalendar(format(date, "yyyy-MM-dd"));
+    setOpen(false);
   };
 
   return (
@@ -69,7 +71,7 @@ const CalendarComp = () => {
       <div ref={refOne}>
         {open && 
           <Calendar
-            date={ new Date() }
+            date={ calendar }
             onChange = { handleSelect }
             className="calendarElement"
           />
