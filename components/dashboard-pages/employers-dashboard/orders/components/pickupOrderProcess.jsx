@@ -14,9 +14,6 @@ import Col from "react-bootstrap/Col";
 import { useSelector } from "react-redux";
 import Pagination from "../../../../common/Pagination";
 import Table from "react-bootstrap/Table";
-import { InputGroup } from "react-bootstrap";
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
 
 const addSearchFilters = {
     consignorName: "",

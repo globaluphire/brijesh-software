@@ -1,9 +1,9 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-unused-vars */
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-import DeliveryOrderProcess from './deliveryOrderProcess';
-import OpenOrderProcess from './openOrderProcess';
+import Tab from "react-bootstrap/Tab";
+import Tabs from "react-bootstrap/Tabs";
+import DeliveryOrderProcess from "./deliveryOrderProcess";
+import OpenOrderProcess from "./openOrderProcess";
 import PickupOrderProcess from "./pickupOrderProcess";
 
 const Orders = () => {
