@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars */
+/* eslint-disable no-useless-escape */
+/* eslint-disable no-undef */
 // import Map from "../../../../Map";
 import Select from "react-select";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
@@ -49,8 +51,8 @@ const OrderDetails = (orderDetails) => {
     };
 
     const handleChange=(e)=>{
-        setEwayBillVerified(!ewayBillVerified)
-    }
+        setEwayBillVerified(!ewayBillVerified);
+    };
 
     const fetchOrderData = async () => {
         try {
@@ -64,10 +66,10 @@ const OrderDetails = (orderDetails) => {
 
                 if (orderData) {
                     setFetchedOrderData(orderData[0]);
-                    orderData[0].created_at = dateFormat(orderData[0].created_at)
+                    orderData[0].created_at = dateFormat(orderData[0].created_at);
 
                     if (orderData[0].updated_at) {
-                        orderData[0].updated_at = dateFormat(orderData[0].updated_at)
+                        orderData[0].updated_at = dateFormat(orderData[0].updated_at);
                     }
 
                     setEwayBillNumber(fetchedOrderData.eway_number);
@@ -201,7 +203,7 @@ const OrderDetails = (orderDetails) => {
                                                         // placeholder="Username"
                                                         aria-describedby="inputGroupPrepend"
                                                         disabled
-                                                        value={fetchedOrderData.weight + ' Kg'}
+                                                        value={fetchedOrderData.weight + " Kg"}
                                                     />
                                                 </InputGroup>
                                             </Form.Group>
@@ -322,7 +324,7 @@ const OrderDetails = (orderDetails) => {
                                                             value={fetchedOrderData.eway_number}
                                                             required
                                                             onChange={(e) => {
-                                                                setEwayBillNumber(e.target.value)
+                                                                setEwayBillNumber(e.target.value);
                                                             }}
                                                         />
                                                     </InputGroup>
@@ -336,7 +338,7 @@ const OrderDetails = (orderDetails) => {
                                                             value={ewayBillNumber}
                                                             required
                                                             onChange={(e) => {
-                                                                setEwayBillNumber(e.target.value)
+                                                                setEwayBillNumber(e.target.value);
                                                             }}
                                                         />
                                                     </InputGroup>
