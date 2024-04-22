@@ -62,7 +62,7 @@ const JobListingsTable = () => {
         if (val) {
             const date = new Date(val);
             return (
-                date.toLocaleDateString("en-US", {
+                date.toLocaleDateString("en-IN", {
                     month: "long",
                     day: "numeric",
                 }) +
@@ -240,7 +240,7 @@ const JobListingsTable = () => {
                         //     data: {
                         //       name: firstName + " " + lastName,
                         //       redirectionUrl: `https://globaluphire.com`,
-                        //       time: time.toLocaleString('en-US'),
+                        //       time: time.toLocaleString('en-IN'),
                         //       jobId: jobId,
                         //       jobTitle: company.job_title,
                         //       notifyMeEmail: notifyMeEmail,

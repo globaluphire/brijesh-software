@@ -107,7 +107,7 @@ function makeEnvelope(template, recipient, user, applicant) {
         second: "numeric",
         timeZoneName: "short",
     };
-    const readableDate = dateTime.toLocaleDateString("en-US", options);
+    const readableDate = dateTime.toLocaleDateString("en-IN", options);
 
     // email subject and body
     let emailNotificationHR = {};

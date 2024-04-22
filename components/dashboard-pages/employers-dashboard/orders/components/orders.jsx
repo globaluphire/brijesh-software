@@ -17,7 +17,7 @@ const Orders = () => {
             </div>
             {/* Start table widget content */}
             <Tabs
-                defaultActiveKey="Pickup"
+                defaultActiveKey="Open"
                 transition={true}
                 id="noanim-tab-example"
                 className="mb-3"

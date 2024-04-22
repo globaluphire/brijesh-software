@@ -41,6 +41,7 @@ const OpenOrderProcess = () => {
     ] = useState(null);
     const [noteText, setNoteText] = useState("");
     const [applicationId, setApplicationId] = useState("");
+    const [orderDetails, setOrderDetails] = useState("");
 
     // For Pagination
     // const [totalRecords, setTotalRecords] = useState(0);
@@ -70,7 +71,7 @@ const OpenOrderProcess = () => {
         if (val) {
             const date = new Date(val);
             return (
-                date.toLocaleDateString("en-US", {
+                date.toLocaleDateString("en-IN", {
                     month: "long",
                     day: "numeric",
                 }) +
@@ -236,16 +237,18 @@ const OpenOrderProcess = () => {
 
     const determineBadgeColor = (status) => {
         switch (status?.toLowerCase()) {
-            case "sent":
-                return { color: "orange", tag: "Sent" };
-            case "read":
-                return { color: "#87CEEB", tag: "Read" };
-            case "completed":
-                return { color: "green", tag: "Signed" };
-            case "signed":
-                return { color: "green", tag: "Signed" };
+            case "Pending for approval":
+                return { color: "orange", tag: "Pending for approval" };
+            case "At destination city warehouse":
+                return { color: "#A2C3C8", tag: "At destination city warehouse" };
+            case "In process of departure":
+                return { color: "#91C47C", tag: "In process of departure" };
+            case "Pending for order confirmation":
+                return { color: "yellow", tag: "Pending for order confirmation" };
+            case "Ready for final delivery":
+                return { color: "#CEE0E2", tag: "Ready for final delivery" };
             default:
-                return { color: "red", tag: "Not Sent" };
+                return { color: "#E7B8B0", tag: "Under pickup process" };
         }
     };
 
@@ -272,8 +275,25 @@ const OpenOrderProcess = () => {
             });
     };
 
+    const setOrderDetailsData = async (order) => {
+        console.log(order);
+
+        
+
+        // const { data, error } = await supabase
+        //     .from("applicants_view")
+        //     .select("*")
+        //     .eq("application_id", applicationId);
+
+        // if (data) {
+        //     setNoteText(data[0].notes);
+        //     setApplicationId(data[0].application_id);
+        // }
+    };
+
     return (
         <>
+            {/* Search Filters */}
             <div>
                 { lRStatusReferenceOptions != null ? (
                     <Form>
@@ -496,24 +516,32 @@ const OpenOrderProcess = () => {
                 </div>
 
             </div>
+
+            {/* Table widget content */}
             <div className="widget-content">
                 <div className="table-outer">
                     <Table className="default-table manage-job-table">
                         <thead>
                             <tr>
-                                <th>Actions</th>
-                                <th>LR No</th>
-                                <th>LR Date</th>
-                                <th>Order No</th>
-                                <th>Consignor</th>
-                                <th>Consignee</th>
+                                <th>Created On</th>
+                                <th>Updated On</th>
+                                <th>Pickup Date</th>
+                                <th>ERP Order No</th>
+                                <th>Route</th>
+                                <th>Status</th>
+                                <th>Comment</th>
+                                <th>Client Name</th>
                                 <th>Pickup Point</th>
                                 <th>Drop Point</th>
-                                <th>Item</th>
-                                <th>Weight(Kg)</th>
-                                <th>Truck No</th>
-                                <th>Driver Details</th>
-                                <th>Status</th>
+                                <th>Company</th>
+                                <th>Total Weight</th>
+                                <th>Order Details</th>
+                                <th>Order Notes</th>
+                                <th>LR No</th>
+                                <th>Local Transport</th>
+                                <th>Truck Details</th>
+                                <th>Eway Bill No</th>
+                                <th>Bills</th>
                             </tr>
                         </thead>
                         {fetchedOpenOrderdata.length === 0 ? (
@@ -525,92 +553,92 @@ const OpenOrderProcess = () => {
                             >
                                 <tr>
                                     <td>
-                                        <b>No LR found!</b>
+                                        <b>No Orders found!</b>
                                     </td>
                                 </tr>
                             </tbody>
                         ) : (
                             <tbody>
                                 {Array.from(fetchedOpenOrderdata).map(
-                                    (lr) => (
-                                        <tr key={lr.id}>
+                                    (order) => (
+                                        <tr key={order.id}>
                                             <td>
-                                            <td>
-                                                <ui>
-                                                    <li>
-                                                        <a onClick={() => router.push(`/employers-dashboard/view-lr/${lr.id}`)}>
-                                                            <i className="la la-print" title="Print LR"></i>
-                                                        </a>
-                                                    </li>
-                                                </ui>
-                                            </td>
+                                                {order.created_at}
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.lr_number}
-                                                </span>
+                                                {order.created_at}
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.lr_created_date}
-                                                </span>
+                                                {order.pickup_date}
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.order_number}
-                                                </span>
+                                                <Link
+                                                    href={`/employers-dashboard/order-details/${order.id}`} 
+                                                    style={{ textDecoration: "underline" }}
+                                                >
+                                                    {order.order_number}
+                                                </Link>
                                             </td>
                                             <td>
-                                                <span>{lr.consignor}</span><br />
-                                                <span className="optional">{lr.consignor_phone}</span><br />
-                                                <span className="optional">{lr.consignor_email}</span>
+                                                <span>{order.pickup_location}-{order.drop_location}</span>
                                             </td>
                                             <td>
-                                                <span>{lr.consignee}</span><br />
-                                                <span className="optional">{lr.consignee_phone}</span><br />
-                                                <span className="optional">{lr.consignee_email}</span>
+                                                <div
+                                                    className="badge"
+                                                    style={{
+                                                        backgroundColor:
+                                                            determineBadgeColor(
+                                                                order.status
+                                                            ).color,
+                                                        margin: "auto",
+                                                    }}
+                                                >
+                                                    {
+                                                        determineBadgeColor(
+                                                            order.status
+                                                        ).tag
+                                                    }
+                                                </div>
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.pickup_address}
-                                                </span>
+                                                {/* Write logic to add comments */}
+                                                <span className="la la-comment-alt"></span>
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.drop_address}
-                                                </span>
+                                                {order.client_name}
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.material_details}
-                                                </span>
+                                                {order.pickup_point_name}
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.weight}
-                                                </span>
+                                                {order.dropping_point_name}
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.vehical_number}
-                                                </span>
+                                                {/* Company Name - NA */}
                                             </td>
                                             <td>
-                                                <span>{lr.driver_name}</span><br />
-                                                <span className="optional">{lr.driver_phone}</span>
+                                                {order.weight} KG
                                             </td>
                                             <td>
-                                                {
-                                                    lr.status === "Final" ? (
-                                                        <span style={{ color: "green" }}>
-                                                            {lr.status}
-                                                        </span>
-                                                    ) : lr.status === "Performa" ? (
-                                                            <span style={{ color: "darkorange" }}>
-                                                                {lr.status}
-                                                            </span>
-                                                    ) : <span>-</span>
-                                                }
+                                                {order.quantity}
+                                            </td>
+                                            <td>
+                                                {order.note}
+                                            </td>
+                                            <td>
+                                                {order.lr_number}
+                                            </td>
+                                            <td>
+                                                {/* Local Transport - NA */}
+                                            </td>
+                                            <td>
+                                                {/* Truck Details - NA */}
+                                            </td>
+                                            <td>
+                                                {/* Eway Bill No - NA */}
+                                            </td>
+                                            <td>
+                                                {/* Bills - NA */}
                                             </td>
                                         </tr>
                                     )

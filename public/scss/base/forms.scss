@@ -532,3 +532,8 @@ input:checked + .slider:before {
   background: #34a853;
   color: #fff;
 }
+
+.form-check-input:checked {
+  background-color: green;
+  border-color: green;
+}

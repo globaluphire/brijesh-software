@@ -33,7 +33,7 @@ const JobFavouriteTable = () => {
     const dateFormat = (val) => {
         const date = new Date(val);
         return (
-            date.toLocaleDateString("en-US", {
+            date.toLocaleDateString("en-IN", {
                 month: "long",
                 day: "numeric",
             }) +
