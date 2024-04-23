@@ -31,6 +31,7 @@ const OrderDetails = (orderDetails) => {
     const user = useSelector((state) => state.candidate.user);
     const showLoginButton = useMemo(() => !user?.id, [user]);
     const [fetchedOrderData, setFetchedOrderData] = useState({});
+    const [fetchedOrderCommentData, setFetchedOrderCommentData] = useState([]);
     const [ewayBillVerified, setEwayBillVerified] = useState(false);
     const [open, setOpen] = useState(false);
 
@@ -38,7 +39,7 @@ const OrderDetails = (orderDetails) => {
     const [ewayBillNumber, setEwayBillNumber] = useState("");
     const [orderComment, setOrderComment] = useState("");
     const [cancelOrderData, setCancelOrderData] = useState(JSON.parse(JSON.stringify(cancelOrderDataFields)));
-    const {cancelReason, cancelNote} = useMemo(() => cancelOrderData, [cancelOrderData]);
+    const { cancelReason, cancelNote } = useMemo(() => cancelOrderData, [cancelOrderData]);
 
     // all references state
     const [sortedCancelReasonRefs, setSortedCancelReasonRefs] = useState([]);
@@ -95,7 +96,7 @@ const OrderDetails = (orderDetails) => {
                     .select("*")
 
                     // Filters
-                    .eq("id", id);
+                    .eq("order_id", id);
 
                 if (orderData) {
                     setFetchedOrderData(orderData[0]);
@@ -126,13 +127,36 @@ const OrderDetails = (orderDetails) => {
         }
     };
 
+    const fetchOrderCommentData = async () => {
+
+        const { data: orderCommentData, error: e } = await supabase
+        .from("order_comments_view")
+        .select("*")
+
+        // Filters
+        .eq("order_number", fetchedOrderData.order_number)
+        .order("order_comment_created_at", { ascending: false });
+
+        if (orderCommentData) {
+            orderCommentData.forEach(
+                (orderComment) => (orderComment.order_comment_created_at = dateFormat(orderComment.order_comment_created_at))
+            );
+            setFetchedOrderCommentData(orderCommentData);
+        }
+    };
+
     useEffect(() => {
         fetchOrderData();
+        fetchOrderCommentData();
     }, []);
 
     useEffect(() => {
         fetchOrderData();
     }, [id]);
+
+    useEffect(() => {
+        fetchOrderCommentData();
+    }, [fetchedOrderData]);
 
     const cancelOrder = async (orderId, cancelOrderData) => {
         if (cancelOrderData.cancelReason && cancelOrderData.cancelNote) {
@@ -221,22 +245,6 @@ const OrderDetails = (orderDetails) => {
                 theme: "colored",
             });
 
-        }
-    };
-
-    const setNoteData = async (applicationId) => {
-        // reset NoteText
-        setNoteText("");
-        setApplicationId("");
-
-        const { data, error } = await supabase
-            .from("applicants_view")
-            .select("*")
-            .eq("application_id", applicationId);
-
-        if (data) {
-            setNoteText(data[0].notes);
-            setApplicationId(data[0].application_id);
         }
     };
 
@@ -631,21 +639,7 @@ const OrderDetails = (orderDetails) => {
                                                     </thead>
                                                     {/* might need to add separate table link with order_number as one order can have 
                                                         multiple comments */}
-                                                    {fetchedOrderData.comment ? (
-                                                        <tbody style={{ fontSize: "14px" }}>
-                                                            <tr key={fetchedOrderData.id}>
-                                                                <td>
-                                                                    {fetchedOrderData.created_at}
-                                                                </td>
-                                                                <td>
-                                                                    {user.name}
-                                                                </td>
-                                                                <td>
-                                                                    {fetchedOrderData.comment}
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    ) : (
+                                                    {fetchedOrderCommentData.length === 0 ? (
                                                         <tbody
                                                             style={{
                                                                 fontSize: "14px",
@@ -657,6 +651,24 @@ const OrderDetails = (orderDetails) => {
                                                                     <b> No comment history yet!</b>
                                                                 </td>
                                                             </tr>
+                                                        </tbody>
+                                                    ) : (
+                                                        <tbody style={{ fontSize: "14px" }}>
+                                                            {Array.from(fetchedOrderCommentData).map(
+                                                                (orderComment) => (
+                                                                    <tr key={orderComment.order_comment_id}>
+                                                                        <td>
+                                                                            {orderComment.order_comment_created_at}
+                                                                        </td>
+                                                                        <td>
+                                                                            {orderComment.name}
+                                                                        </td>
+                                                                        <td>
+                                                                            {orderComment.order_comment}
+                                                                        </td>
+                                                                    </tr>
+                                                                )
+                                                                )}
                                                         </tbody>
                                                     )}
                                                 </Table>

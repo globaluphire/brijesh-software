@@ -87,65 +87,65 @@ const OpenOrderProcess = () => {
         // fetchedLR(JSON.parse(JSON.stringify(addSearchFilters)));
     };
 
-    async function findLR() {
-        // call reference to get applicantStatus options
-        // setCurrentPage(1);
-        // const { data: refData, error: e } = await supabase
-        //     .from("reference")
-        //     .select("*")
-        //     .eq("ref_nm", "applicantStatus");
+    // async function findLR() {
+    //     // call reference to get applicantStatus options
+    //     // setCurrentPage(1);
+    //     // const { data: refData, error: e } = await supabase
+    //     //     .from("reference")
+    //     //     .select("*")
+    //     //     .eq("ref_nm", "applicantStatus");
 
-        // if (refData) {
-        //     setApplicationStatusReferenceOptions(refData);
-        // }
+    //     // if (refData) {
+    //     //     setApplicationStatusReferenceOptions(refData);
+    //     // }
 
-        let query = supabase
-            .from("lr")
-            .select("*");
+    //     let query = supabase
+    //         .from("lr")
+    //         .select("*");
 
-        if (consignorName) {
-            query.ilike("consignor", "%" + consignorName + "%");
-        }
-        if (consigneeName) {
-            query.ilike("consignee", "%" + consigneeName + "%");
-        }
-        if (fromCity) {
-            query.ilike("from_city", "%" + fromCity + "%");
-        }
-        if (toCity) {
-            query.ilike("to_city", "%" + toCity + "%");
-        }
-        if (driverName) {
-            query.ilike("driver_name", "%" + driverName + "%");
-        }
-        if (status) {
-            query.ilike("status", "%" + status + "%");
-        }
+    //     if (consignorName) {
+    //         query.ilike("consignor", "%" + consignorName + "%");
+    //     }
+    //     if (consigneeName) {
+    //         query.ilike("consignee", "%" + consigneeName + "%");
+    //     }
+    //     if (fromCity) {
+    //         query.ilike("from_city", "%" + fromCity + "%");
+    //     }
+    //     if (toCity) {
+    //         query.ilike("to_city", "%" + toCity + "%");
+    //     }
+    //     if (driverName) {
+    //         query.ilike("driver_name", "%" + driverName + "%");
+    //     }
+    //     if (status) {
+    //         query.ilike("status", "%" + status + "%");
+    //     }
 
-        // if (facility) {
-        //     query.ilike("facility_name", "%" + facility + "%");
-        // }
+    //     // if (facility) {
+    //     //     query.ilike("facility_name", "%" + facility + "%");
+    //     // }
 
-        // setTotalRecords((await query).data.length);
+    //     // setTotalRecords((await query).data.length);
 
-        let { data, error } = await query.order("lr_created_date", {
-            ascending: false,
-            nullsFirst: false,
-        });
-        // .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
+    //     let { data, error } = await query.order("lr_created_date", {
+    //         ascending: false,
+    //         nullsFirst: false,
+    //     });
+    //     // .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
-        // if (facility) {
-        //     data = data.filter((i) => i.facility_name === facility);
-        // }
+    //     // if (facility) {
+    //     //     data = data.filter((i) => i.facility_name === facility);
+    //     // }
 
-        if (data) {
-            data.forEach(
-                (lr) =>
-                    (lr.lr_created_date = dateFormat(lr.lr_created_date))
-            );
-            setFetchedOpenOrderdata(data);
-        }
-    }
+    //     if (data) {
+    //         data.forEach(
+    //             (lr) =>
+    //                 (lr.lr_created_date = dateFormat(lr.lr_created_date))
+    //         );
+    //         setFetchedOpenOrderdata(data);
+    //     }
+    // }
 
     async function fetchOpenOrder({
         consignorName,
@@ -171,7 +171,7 @@ const OpenOrderProcess = () => {
                 .select("*")
 
             let { data: orderData, error } = await query.order(
-                "created_at",
+                "order_created_at",
                 { ascending: false, nullsFirst: false }
             );
             // .range(
@@ -187,7 +187,7 @@ const OpenOrderProcess = () => {
 
             if (orderData) {
                 orderData.forEach(
-                    (i) => (i.created_at = dateFormat(i.created_at))
+                    (i) => (i.order_created_at = dateFormat(i.order_created_at))
                 );
             }
 
@@ -574,7 +574,7 @@ const OpenOrderProcess = () => {
                                             </td>
                                             <td>
                                                 <Link
-                                                    href={`/employers-dashboard/order-details/${order.id}`} 
+                                                    href={`/employers-dashboard/order-details/${order.order_id}`} 
                                                     style={{ textDecoration: "underline" }}
                                                 >
                                                     {order.order_number}
