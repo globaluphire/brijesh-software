@@ -343,7 +343,7 @@ const OpenOrderProcess = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                // findLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -381,7 +381,7 @@ const OpenOrderProcess = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                // findLR(searchFilters);
                                             }
                                         }}
                                     />
