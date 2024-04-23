@@ -100,10 +100,10 @@ const OrderDetails = (orderDetails) => {
 
                 if (orderData) {
                     setFetchedOrderData(orderData[0]);
-                    orderData[0].created_at = dateFormat(orderData[0].created_at);
+                    orderData[0].order_created_at = dateFormat(orderData[0].order_created_at);
 
-                    if (orderData[0].updated_at) {
-                        orderData[0].updated_at = dateFormat(orderData[0].updated_at);
+                    if (orderData[0].order_updated_at) {
+                        orderData[0].order_updated_at = dateFormat(orderData[0].order_updated_at);
                     }
 
                     setEwayBillNumber(fetchedOrderData.eway_number);
@@ -166,7 +166,7 @@ const OrderDetails = (orderDetails) => {
                     status: "Cancel",
                     cancel_reason: cancelOrderData.cancelReason,
                     cancel_note: cancelOrderData.cancelNote,
-                    updated_at: new Date(),
+                    order_updated_at: new Date(),
                     cancel_date: new Date()
                 })
                 .eq("id", orderId);
@@ -513,7 +513,7 @@ const OrderDetails = (orderDetails) => {
                                                             // placeholder="Username"
                                                             aria-describedby="inputGroupPrepend"
                                                             disabled
-                                                            value={fetchedOrderData.created_at}
+                                                            value={fetchedOrderData.order_created_at}
                                                         />
                                                     </InputGroup>
                                                     <InputGroup size="sm">
@@ -523,7 +523,7 @@ const OrderDetails = (orderDetails) => {
                                                             // placeholder="Username"
                                                             aria-describedby="inputGroupPrepend"
                                                             disabled
-                                                            value={ fetchedOrderData.updated_at ? fetchedOrderData.updated_at : fetchedOrderData.created_at }
+                                                            value={ fetchedOrderData.order_updated_at ? fetchedOrderData.order_updated_at : fetchedOrderData.order_created_at }
                                                         />
                                                     </InputGroup>
                                                 </Form.Group>

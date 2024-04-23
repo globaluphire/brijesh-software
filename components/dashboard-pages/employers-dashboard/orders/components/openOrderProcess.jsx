@@ -189,6 +189,9 @@ const OpenOrderProcess = () => {
                 orderData.forEach(
                     (i) => (i.order_created_at = dateFormat(i.order_created_at))
                 );
+                orderData.forEach(
+                    (i) => (i.order_updated_at = dateFormat(i.order_updated_at))
+                );
             }
 
             setFetchedOpenOrderdata(orderData);
@@ -564,10 +567,10 @@ const OpenOrderProcess = () => {
                                     (order) => (
                                         <tr key={order.id}>
                                             <td>
-                                                {order.created_at}
+                                                {order.order_created_at}
                                             </td>
                                             <td>
-                                                {order.created_at}
+                                                {order.order_updated_at ? order.order_updated_at : order.order_created_at}
                                             </td>
                                             <td>
                                                 {order.pickup_date}
