@@ -169,7 +169,6 @@ const OpenOrderProcess = () => {
             let query = supabase
                 .from("orders")
                 .select("*")
-                .eq("status", "Under pickup process");
 
             let { data: orderData, error } = await query.order(
                 "created_at",
@@ -236,7 +235,7 @@ const OpenOrderProcess = () => {
     ]);
 
     const determineBadgeColor = (status) => {
-        switch (status?.toLowerCase()) {
+        switch (status) {
             case "Pending for approval":
                 return { color: "orange", tag: "Pending for approval" };
             case "At destination city warehouse":
@@ -247,6 +246,8 @@ const OpenOrderProcess = () => {
                 return { color: "yellow", tag: "Pending for order confirmation" };
             case "Ready for final delivery":
                 return { color: "#CEE0E2", tag: "Ready for final delivery" };
+            case "Cancel":
+                return { color: "#dc3545", tag: "Cancel Order" };
             default:
                 return { color: "#E7B8B0", tag: "Under pickup process" };
         }

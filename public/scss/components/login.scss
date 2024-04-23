@@ -415,6 +415,24 @@ Login Section
   width: 210px;
 }
 
+.horizontal-divider {
+  position: relative;
+  display: block;
+  margin-top: 1rem;
+  margin-bottom: 1.8rem;
+}
+
+.horizontal-divider:before {
+  position: absolute;
+  left: 0;
+  top: 10px;
+  height: 2px;
+  width: 100%;
+  background: #ecedf2;
+  border-radius: 12px;
+  content: "";
+}
+
 .login-form .bottom-box .btn-box {
   position: relative;
 }
