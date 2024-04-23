@@ -168,7 +168,7 @@ const OpenOrderProcess = () => {
 
             let query = supabase
                 .from("orders")
-                .select("*")
+                .select("*");
 
             let { data: orderData, error } = await query.order(
                 "order_created_at",
@@ -324,7 +324,7 @@ const OpenOrderProcess = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                // findLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -362,7 +362,7 @@ const OpenOrderProcess = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                // findLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -467,7 +467,7 @@ const OpenOrderProcess = () => {
                                             variant="primary"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                findLR(searchFilters);
+                                                // findLR(searchFilters);
                                             }}
                                             className="btn btn-submit btn-sm text-nowrap m-1"
                                         >
