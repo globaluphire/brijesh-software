@@ -254,54 +254,6 @@ const AddOrder = () => {
         priorityReferenceOptions]
     );
 
-    // useEffect(() => {
-    //     jobData.facility = facilitySingleSelections[0];
-    // }, [facilitySingleSelections]);
-
-    // useEffect(() => {
-    //     jobData.completeAddress = singleSelections[0];
-    // }, [singleSelections]);
-
-    // init google map script
-    const initMapScript = () => {
-        // if script already loaded
-        if (window.google) {
-            return Promise.resolve();
-        }
-        const src = `${mapApiJs}?key=${apiKey}&libraries=places&v=weekly`;
-        return loadAsyncScript(src);
-    };
-
-    // do something on address change
-    const onChangeAddress = (autocomplete) => {
-        const location = autocomplete.getPlace();
-        setJobData((previousState) => ({
-            ...previousState,
-            address: searchInput.current.value,
-        }));
-    };
-
-    // init autocomplete
-    const initAutocomplete = () => {
-        if (!searchInput.current) return;
-
-        const autocomplete = new window.google.maps.places.Autocomplete(
-            searchInput.current,
-            {
-                types: ["(cities)"],
-            }
-        );
-        autocomplete.setFields(["address_component", "geometry"]);
-        autocomplete.addListener("place_changed", () =>
-            onChangeAddress(autocomplete)
-        );
-    };
-
-    // load map script after mounted
-    useEffect(() => {
-        initMapScript().then(() => initAutocomplete());
-    }, []);
-
     function checkRequiredFields(pickupDate) {
         if(pickupDate && material && size && priority) {
             return true;

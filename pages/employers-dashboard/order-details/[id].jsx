@@ -173,7 +173,7 @@ const OrderDetails = (orderDetails) => {
                     order_updated_at: new Date(),
                     cancel_date: new Date()
                 })
-                .eq("id", orderId);
+                .eq("order_id", orderId);
 
             
             setTimeout(() => {
@@ -252,22 +252,118 @@ const OrderDetails = (orderDetails) => {
         }
     };
 
+    const updateOrderStatus = async (newStatus) => {
+        if(newStatus !== "Completed" && ewayBillNumber && fetchedOrderData.eway_verified) {
+            await supabase
+                .from("orders")
+                .update({
+                    status: newStatus,
+                    status_last_updated_at: new Date()
+                })
+                .eq("order_id", id);
+            
+            setTimeout(() => {
+                fetchOrderData();
+            }, 3000);
+
+            toast.success("Order status marked as " + newStatus, {
+                position: "bottom-right",
+                autoClose: 8000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        } else if (newStatus === "Completed") {
+            toast.info("This order already Completed! No further status updates needed.", {
+                position: "top-center",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        }
+    };
+
+    const updateEwayBillNumber = async (newEwayNumber, isVerified) => {
+        console.log(newEwayNumber);
+        if(newEwayNumber) {
+            await supabase
+                .from("orders")
+                .update({
+                    eway_number: newEwayNumber,
+                    eway_verified: isVerified,
+                    order_updated_at: new Date()
+                })
+                .eq("order_id", id);
+            
+            setTimeout(() => {
+                document.getElementById("ewayNumberModalCloseButton").click();
+                fetchOrderData();
+            }, 3000);
+
+            toast.success("Eway Bill Number saved successfully.", {
+                position: "bottom-right",
+                autoClose: 8000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        } else {
+            toast.error("Please fill Eway Bill Number!!!", {
+                position: "bottom-right",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        }
+    };
+
     const determineBadgeColor = (status) => {
         switch (status) {
-            case "Pending for approval":
-                return { color: "orange", tag: "Pending for approval" };
-            case "At destination city warehouse":
-                return { color: "#A2C3C8", tag: "At destination city warehouse" };
+            case "Ready for pickup":
+                return { color: "#157347", tag: "Ready for pickup" };
+            case "Tempo under the process":
+                return { color: "#C44027", tag: "Tempo under the process" };
             case "In process of departure":
                 return { color: "#91C47C", tag: "In process of departure" };
-            case "Pending for order confirmation":
-                return { color: "yellow", tag: "Pending for order confirmation" };
+            case "At destination city warehouse":
+                return { color: "#A2C3C8", tag: "At destination city warehouse" };
             case "Ready for final delivery":
                 return { color: "#CEE0E2", tag: "Ready for final delivery" };
             case "Cancel":
                 return { color: "#dc3545", tag: "Cancel Order" };
             default:
                 return { color: "#E7B8B0", tag: "Under pickup process" };
+        }
+    };
+
+    const determineNextStatus = (status) => {
+        switch (status) {
+            case "Under pickup process":
+                return { color: "orange", tag: "Ready for pickup" };
+            case "Ready for pickup":
+                return { color: "#C44027", tag: "Tempo under the process" };
+            case "Tempo under the process":
+                return { color: "#91C47C", tag: "In process of departure" };
+            case "In process of departure":
+                return { color: "#A2C3C8", tag: "At destination city warehouse" };
+            case "At destination city warehouse":
+                return { color: "#CEE0E2", tag: "Ready for final delivery" };
+            default:
+                return { color: "#E7B8B0", tag: "Completed" };
         }
     };
 
@@ -366,6 +462,24 @@ const OrderDetails = (orderDetails) => {
                                                     style = {{ margin: "10px", backgroundColor: "#10CAF0", border: "1px solid #10CAF0" }}
                                                 >
                                                     Breakage History
+                                                </button>
+                                                <button
+                                                    className="btn btn-sm"
+                                                    style = {{ margin: "10px", backgroundColor: "#0B5ED7", border: "1px solid #0B5ED7" }}
+                                                >
+                                                    <a
+                                                        href="#"
+                                                        style={{ color: "#fff" }}
+                                                        onClick={() => {
+                                                            updateOrderStatus(determineNextStatus(
+                                                                fetchedOrderData.status
+                                                            ).tag)
+                                                        }}
+                                                    >
+                                                        {determineNextStatus(
+                                                                fetchedOrderData.status
+                                                            ).tag}
+                                                    </a>
                                                 </button>
                                                 {/* add buttons functions to update order details */}
                                             </div>
@@ -493,7 +607,8 @@ const OrderDetails = (orderDetails) => {
                                                             <a
                                                                 href="#"
                                                                 data-bs-toggle="modal"
-                                                                data-bs-target="#addNoteModal"
+                                                                data-bs-target="#ewayNumberModal"
+                                                                onClick={() => { setEwayBillNumber(fetchedOrderData.eway_number) }}
                                                             >
                                                                 <span className="la la-plus mx-2 mt-2"></span>
                                                             </a>
@@ -702,7 +817,7 @@ const OrderDetails = (orderDetails) => {
                             {/* Eway Bill Number Modal */}
                             <div
                                 className="modal fade"
-                                id="addNoteModal"
+                                id="ewayNumberModal"
                                 tabIndex="-1"
                                 aria-hidden="true"
                             >
@@ -712,7 +827,7 @@ const OrderDetails = (orderDetails) => {
                                             <h3 className="title">Enter Eway Bill Details For Order #{fetchedOrderData.order_number}</h3>
                                             <button
                                                 type="button"
-                                                id="notesCloseButton"
+                                                id="ewayNumberModalCloseButton"
                                                 className="closed-modal"
                                                 data-bs-dismiss="modal"
                                                 aria-label="Close"
@@ -721,35 +836,19 @@ const OrderDetails = (orderDetails) => {
                                         {/* End modal-header */}
                                         <Row className="pb-3">
                                             <Form.Group as={Col} controlId="validationCustomPhonenumber">
-                                                { fetchedOrderData.eway_number ?
-                                                    <InputGroup size="md">
-                                                        <InputGroup.Text id="inputGroupPrepend">Eway Bill Number</InputGroup.Text>
-                                                        <Form.Control
-                                                            type="text"
-                                                            // placeholder="Username"
-                                                            aria-describedby="inputGroupPrepend"
-                                                            value={fetchedOrderData.eway_number}
-                                                            required
-                                                            onChange={(e) => {
-                                                                setEwayBillNumber(e.target.value);
-                                                            }}
-                                                        />
-                                                    </InputGroup>
-                                                    :
-                                                    <InputGroup size="md">
-                                                        <InputGroup.Text id="inputGroupPrepend">Eway Bill Number</InputGroup.Text>
-                                                        <Form.Control
-                                                            type="text"
-                                                            // placeholder="Username"
-                                                            aria-describedby="inputGroupPrepend"
-                                                            value={ewayBillNumber}
-                                                            required
-                                                            onChange={(e) => {
-                                                                setEwayBillNumber(e.target.value);
-                                                            }}
-                                                        />
-                                                    </InputGroup>
-                                                }
+                                                <InputGroup size="md">
+                                                    <InputGroup.Text id="inputGroupPrepend">Eway Bill Number</InputGroup.Text>
+                                                    <Form.Control
+                                                        type="text"
+                                                        // placeholder="Username"
+                                                        aria-describedby="inputGroupPrepend"
+                                                        value={ewayBillNumber}
+                                                        required
+                                                        onChange={(e) => {
+                                                            setEwayBillNumber(e.target.value);
+                                                        }}
+                                                    />
+                                                </InputGroup>
                                             </Form.Group>
                                         </Row>
                                         <Row className="pb-5">
@@ -772,7 +871,7 @@ const OrderDetails = (orderDetails) => {
                                                 size="md"
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    // addNotes();
+                                                    updateEwayBillNumber(ewayBillNumber, ewayBillVerified);
                                                 }}
                                             >
                                                 Save
