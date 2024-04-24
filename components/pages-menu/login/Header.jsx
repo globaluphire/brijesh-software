@@ -30,7 +30,7 @@ const Header = () => {
                         <div className="logo-box">
                             <div className="logo">
                                 <img
-                                    src="images/logo-2.svg"
+                                    src="images/logo-white.svg"
                                     alt="logo"
                                     title="brand"
                                 />

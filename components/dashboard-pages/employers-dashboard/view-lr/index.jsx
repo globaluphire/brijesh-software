@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { supabase } from "../../../../config/supabaseClient";
 import InfoBox from "./InfoBox";
-import TableInvoice from "./TableInvoice";
+import ViewLR from "./ViewLR";
 
 const index = () => {
 
@@ -105,7 +105,7 @@ const index = () => {
                         <div className="invoice-wrap">
                             <div className="invoice-content">
                                 <div className="table-outer">
-                                    <TableInvoice fetchedLRdata={ fetchedLRdata }/>
+                                    <ViewLR fetchedLRdata={ fetchedLRdata }/>
                                 </div>
                             </div>
                         </div>

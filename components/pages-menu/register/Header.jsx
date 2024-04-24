@@ -29,7 +29,7 @@ const Header = () => {
                     <div className="nav-outer">
                         <div className="logo-box">
                             <div className="logo">
-                                <img src="images/logo-2.svg" alt="logo" title="brand" />
+                                <img src="images/logo-white.svg" alt="logo" title="brand" />
                                 <img src="images/logo.svg" alt="logo" title="brand" />
                             </div>
                         </div>

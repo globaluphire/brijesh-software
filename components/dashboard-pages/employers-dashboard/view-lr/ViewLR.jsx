@@ -1,24 +1,26 @@
 // eslint-disable-next-line
 import { Table } from "react-bootstrap";
 
-const TableInvoice = ({ fetchedLRdata }) => {
+const ViewLR = ({ fetchedLRdata }) => {
     return (
         <>
             <div class="grid">
-                <img src="../../images/logo.svg" alt="logo1" class="logo1 item" />
+                <div class="item">
+                    <img src="../../images/logo.svg" alt="logo1" class="logo1" />
+                </div>
                 <div class="company_name item">
-                    <span><b>Comapny Name: Raftaar Pvt Ltd </b></span><br />
-                    <span><b>Head Office: </b>Baroda, Gujarat, India</span> <br />
-                    <span><b>Mobile No: </b>9876543210</span>
+                    <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
+                    <span><b>Head Office: </b>51 and 52 Sinde Colony S R P Road Navapura Vadodara Gujarat 390001</span> <br />
+                    <span><b>Mobile No: </b>7016229891</span>
                     <span>
                     <t></t> | <t></t><b>Email: </b>info@raftaarlogistics.com
                     </span>
                     <span>
                     <t></t> | <t></t><b>Website: </b>raftaarlogistics.com
                     </span> <br />
-                    <span><b>PAN No: </b>AA12345633</span>
+                    <span><b>PAN No: </b>GFSPS6256B</span>
                     <span>
-                    <t></t> | <t></t><b>GST No: </b>23ASDCDE3345S324
+                    <t></t> | <t></t><b>GST No: </b>24GFSPS6256B1Z1
                     </span>
                 </div>
                 <div class="copy item">
@@ -34,7 +36,10 @@ const TableInvoice = ({ fetchedLRdata }) => {
                 <div class="lr_date item">
                     <span><b>LR Date:</b> {fetchedLRdata.lr_created_date}</span>
                 </div>
-                <span class="fina_lr item"> {fetchedLRdata.status} LR</span>
+                {fetchedLRdata.status === "Final" ?
+                    <span class="fina_lr item" style={{ color: "green" }}> {fetchedLRdata.status} LR</span>
+                    : <span class="fina_lr item" style={{ color: "darkorange" }}> {fetchedLRdata.status} LR</span>
+                }
                 <span class="lr_number item"><b>LR Number:</b> {fetchedLRdata.lr_number}</span>
                 <span class="last_modified_date item"><b>Last Modified Date: </b> {fetchedLRdata.lr_last_modified_date ? fetchedLRdata.lr_last_modified_date : fetchedLRdata.lr_created_date}</span>
                 <div class="pickup_address item">
@@ -97,20 +102,22 @@ const TableInvoice = ({ fetchedLRdata }) => {
             </div>
 
             <div class="grid">
-                <img src="../../images/logo.svg" alt="logo1" class="logo1 item" />
+                <div class="item">
+                    <img src="../../images/logo.svg" alt="logo1" class="logo1" />
+                </div>
                 <div class="company_name item">
-                    <span><b>Comapny Name: Raftaar Pvt Ltd </b></span><br />
-                    <span><b>Head Office: </b>Baroda, Gujarat, India</span> <br />
-                    <span><b>Mobile No: </b>9876543210</span>
+                    <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
+                    <span><b>Head Office: </b>51 and 52 Sinde Colony S R P Road Navapura Vadodara Gujarat 390001</span> <br />
+                    <span><b>Mobile No: </b>7016229891</span>
                     <span>
                     <t></t> | <t></t><b>Email: </b>info@raftaarlogistics.com
                     </span>
                     <span>
                     <t></t> | <t></t><b>Website: </b>raftaarlogistics.com
                     </span> <br />
-                    <span><b>PAN No: </b>AA12345633</span>
+                    <span><b>PAN No: </b>GFSPS6256B</span>
                     <span>
-                    <t></t> | <t></t><b>GST No: </b>23ASDCDE3345S324
+                    <t></t> | <t></t><b>GST No: </b>24GFSPS6256B1Z1
                     </span>
                 </div>
                 <div class="copy item">
@@ -126,7 +133,10 @@ const TableInvoice = ({ fetchedLRdata }) => {
                 <div class="lr_date item">
                     <span><b>LR Date:</b> {fetchedLRdata.lr_created_date}</span>
                 </div>
-                <span class="fina_lr item"> {fetchedLRdata.status} LR</span>
+                {fetchedLRdata.status === "Final" ?
+                    <span class="fina_lr item" style={{ color: "green" }}> {fetchedLRdata.status} LR</span>
+                    : <span class="fina_lr item" style={{ color: "darkorange" }}> {fetchedLRdata.status} LR</span>
+                }
                 <span class="lr_number item"><b>LR Number:</b> {fetchedLRdata.lr_number}</span>
                 <span class="last_modified_date item"><b>Last Modified Date: </b> {fetchedLRdata.lr_last_modified_date ? fetchedLRdata.lr_last_modified_date : fetchedLRdata.lr_created_date}</span>
                 <div class="pickup_address item">
@@ -189,20 +199,22 @@ const TableInvoice = ({ fetchedLRdata }) => {
             </div>
 
             <div class="grid">
-                <img src="../../images/logo.svg" alt="logo1" class="logo1 item" />
+                <div class="item">
+                    <img src="../../images/logo.svg" alt="logo1" class="logo1" />
+                </div>
                 <div class="company_name item">
-                    <span><b>Comapny Name: Raftaar Pvt Ltd </b></span><br />
-                    <span><b>Head Office: </b>Baroda, Gujarat, India</span> <br />
-                    <span><b>Mobile No: </b>9876543210</span>
+                    <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
+                    <span><b>Head Office: </b>51 and 52 Sinde Colony S R P Road Navapura Vadodara Gujarat 390001</span> <br />
+                    <span><b>Mobile No: </b>7016229891</span>
                     <span>
                     <t></t> | <t></t><b>Email: </b>info@raftaarlogistics.com
                     </span>
                     <span>
                     <t></t> | <t></t><b>Website: </b>raftaarlogistics.com
                     </span> <br />
-                    <span><b>PAN No: </b>AA12345633</span>
+                    <span><b>PAN No: </b>GFSPS6256B</span>
                     <span>
-                    <t></t> | <t></t><b>GST No: </b>23ASDCDE3345S324
+                    <t></t> | <t></t><b>GST No: </b>24GFSPS6256B1Z1
                     </span>
                 </div>
                 <div class="copy item">
@@ -218,7 +230,10 @@ const TableInvoice = ({ fetchedLRdata }) => {
                 <div class="lr_date item">
                     <span><b>LR Date:</b> {fetchedLRdata.lr_created_date}</span>
                 </div>
-                <span class="fina_lr item"> {fetchedLRdata.status} LR</span>
+                {fetchedLRdata.status === "Final" ?
+                    <span class="fina_lr item" style={{ color: "green" }}> {fetchedLRdata.status} LR</span>
+                    : <span class="fina_lr item" style={{ color: "darkorange" }}> {fetchedLRdata.status} LR</span>
+                }
                 <span class="lr_number item"><b>LR Number:</b> {fetchedLRdata.lr_number}</span>
                 <span class="last_modified_date item"><b>Last Modified Date: </b> {fetchedLRdata.lr_last_modified_date ? fetchedLRdata.lr_last_modified_date : fetchedLRdata.lr_created_date}</span>
                 <div class="pickup_address item">
@@ -280,8 +295,7 @@ const TableInvoice = ({ fetchedLRdata }) => {
                 </div>
             </div>
         </>
-        
     );
 };
 
-export default TableInvoice;
+export default ViewLR;

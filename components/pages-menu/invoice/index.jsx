@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import Link from "next/link";
 import InfoBox from "./InfoBox";
-import TableInvoice from "./TableInvoice";
+import ViewLR from "./ViewLR";
 
 const index = () => {
     return (
@@ -37,7 +37,7 @@ const index = () => {
                             {/* End infobox */}
 
                             <div className="table-outer">
-                                <TableInvoice />
+                                <ViewLR />
                             </div>
                             {/* End table-outer */}
                         </div>

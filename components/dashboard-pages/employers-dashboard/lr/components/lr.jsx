@@ -1071,15 +1071,15 @@ const LR = () => {
                                     (lr) => (
                                         <tr key={lr.id}>
                                             <td>
-                                            <td>
-                                                <ui>
+                                                <ui className="option-list" style={{ border: "none" }}>
                                                     <li>
-                                                        <a onClick={() => router.push(`/employers-dashboard/view-lr/${lr.id}`)}>
-                                                            <i className="la la-print" title="Print LR"></i>
-                                                        </a>
+                                                        <button>
+                                                            <a onClick={() => router.push(`/employers-dashboard/view-lr/${lr.id}`)}>
+                                                                <span className="la la-print" title="Print LR"></span>
+                                                            </a>
+                                                        </button>
                                                     </li>
                                                 </ui>
-                                            </td>
                                             </td>
                                             <td>
                                                 <span>
