@@ -473,7 +473,7 @@ const OrderDetails = (orderDetails) => {
                                                         onClick={() => {
                                                             updateOrderStatus(determineNextStatus(
                                                                 fetchedOrderData.status
-                                                            ).tag)
+                                                            ).tag);
                                                         }}
                                                     >
                                                         {determineNextStatus(
@@ -608,7 +608,7 @@ const OrderDetails = (orderDetails) => {
                                                                 href="#"
                                                                 data-bs-toggle="modal"
                                                                 data-bs-target="#ewayNumberModal"
-                                                                onClick={() => { setEwayBillNumber(fetchedOrderData.eway_number) }}
+                                                                onClick={() => { setEwayBillNumber(fetchedOrderData.eway_number); }}
                                                             >
                                                                 <span className="la la-plus mx-2 mt-2"></span>
                                                             </a>
