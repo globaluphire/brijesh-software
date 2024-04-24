@@ -80,7 +80,6 @@ const OrderDetails = (orderDetails) => {
             }
             cancelReasons.sort();
             setSortedCancelReasonRefs(cancelReasons);
-            console.log(sortedCancelReasonRefs);
         }
     };
 
@@ -637,53 +636,58 @@ const OrderDetails = (orderDetails) => {
                                                     Order Comments History
                                                     <a
                                                         className="la la-refresh"
-                                                        onClick={() => { fetchOrderCommentData() }}
+                                                        onClick={() => { fetchOrderCommentData(); }}
                                                         style={{ marginLeft: "10px" }}>
                                                     </a>
                                                 </b>
-                                                <Table className="default-table manage-job-table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th style={{ fontSize: "14px" }}>Created On</th>
-                                                            <th style={{ fontSize: "14px" }}>Created By</th>
-                                                            <th style={{ fontSize: "14px" }}>Comment</th>
-                                                        </tr>
-                                                    </thead>
-                                                    {/* might need to add separate table link with order_number as one order can have 
-                                                        multiple comments */}
-                                                    {fetchedOrderCommentData.length === 0 ? (
-                                                        <tbody
-                                                            style={{
-                                                                fontSize: "14px",
-                                                                fontWeight: "500",
-                                                            }}
-                                                        >
-                                                            <tr>
-                                                                <td colSpan={3}>
-                                                                    <b> No comment history yet!</b>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    ) : (
-                                                        <tbody style={{ fontSize: "14px" }}>
-                                                            {Array.from(fetchedOrderCommentData).map(
-                                                                (orderComment) => (
-                                                                    <tr key={orderComment.order_comment_id}>
-                                                                        <td>
-                                                                            {orderComment.order_comment_created_at}
-                                                                        </td>
-                                                                        <td>
-                                                                            {orderComment.name}
-                                                                        </td>
-                                                                        <td>
-                                                                            {orderComment.order_comment}
+
+                                                <div className="widget-content">
+                                                    <div className="table-outer">
+                                                        <Table className="default-table manage-job-table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th style={{ fontSize: "14px" }}>Created On</th>
+                                                                    <th style={{ fontSize: "14px" }}>Created By</th>
+                                                                    <th style={{ fontSize: "14px" }}>Comment</th>
+                                                                </tr>
+                                                            </thead>
+                                                            {/* might need to add separate table link with order_number as one order can have 
+                                                                multiple comments */}
+                                                            {fetchedOrderCommentData.length === 0 ? (
+                                                                <tbody
+                                                                    style={{
+                                                                        fontSize: "14px",
+                                                                        fontWeight: "500",
+                                                                    }}
+                                                                >
+                                                                    <tr>
+                                                                        <td colSpan={3}>
+                                                                            <b> No comment history yet!</b>
                                                                         </td>
                                                                     </tr>
-                                                                )
-                                                                )}
-                                                        </tbody>
-                                                    )}
-                                                </Table>
+                                                                </tbody>
+                                                            ) : (
+                                                                <tbody style={{ fontSize: "14px" }}>
+                                                                    {Array.from(fetchedOrderCommentData).map(
+                                                                        (orderComment) => (
+                                                                            <tr key={orderComment.order_comment_id}>
+                                                                                <td>
+                                                                                    {orderComment.order_comment_created_at}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {orderComment.name}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {orderComment.order_comment}
+                                                                                </td>
+                                                                            </tr>
+                                                                        )
+                                                                        )}
+                                                                </tbody>
+                                                            )}
+                                                        </Table>
+                                                    </div>
+                                                </div>
                                             </Row>
                                             <span className="horizontal-divider">
                                             </span>
