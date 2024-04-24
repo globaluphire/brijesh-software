@@ -107,6 +107,21 @@ const OrderDetails = (orderDetails) => {
                     }
 
                     setEwayBillNumber(fetchedOrderData.eway_number);
+
+                    const { data: orderCommentData, error: e } = await supabase
+                        .from("order_comments_view")
+                        .select("*")
+
+                        // Filters
+                        .eq("order_id", id)
+                        .order("order_comment_created_at", { ascending: false });
+
+                        if (orderCommentData) {
+                            orderCommentData.forEach(
+                                (orderComment) => (orderComment.order_comment_created_at = dateFormat(orderComment.order_comment_created_at))
+                            );
+                            setFetchedOrderCommentData(orderCommentData);
+                        }
                 }
             }
         } catch (e) {
@@ -128,35 +143,25 @@ const OrderDetails = (orderDetails) => {
     };
 
     const fetchOrderCommentData = async () => {
-
         const { data: orderCommentData, error: e } = await supabase
-        .from("order_comments_view")
-        .select("*")
+            .from("order_comments_view")
+            .select("*")
 
-        // Filters
-        .eq("order_number", fetchedOrderData.order_number)
-        .order("order_comment_created_at", { ascending: false });
+            // Filters
+            .eq("order_id", id)
+            .order("order_comment_created_at", { ascending: false });
 
-        if (orderCommentData) {
-            orderCommentData.forEach(
-                (orderComment) => (orderComment.order_comment_created_at = dateFormat(orderComment.order_comment_created_at))
-            );
-            setFetchedOrderCommentData(orderCommentData);
-        }
+            if (orderCommentData) {
+                orderCommentData.forEach(
+                    (orderComment) => (orderComment.order_comment_created_at = dateFormat(orderComment.order_comment_created_at))
+                );
+                setFetchedOrderCommentData(orderCommentData);
+            }
     };
 
     useEffect(() => {
         fetchOrderData();
-        fetchOrderCommentData();
-    }, []);
-
-    useEffect(() => {
-        fetchOrderData();
     }, [id]);
-
-    useEffect(() => {
-        fetchOrderCommentData();
-    }, [fetchedOrderData]);
 
     const cancelOrder = async (orderId, cancelOrderData) => {
         if (cancelOrderData.cancelReason && cancelOrderData.cancelNote) {
@@ -173,7 +178,8 @@ const OrderDetails = (orderDetails) => {
 
             
             setTimeout(() => {
-                location.reload();
+                document.getElementById("cancelOrderCloseButton").click();
+                fetchOrderData();
             }, 3000);
 
             toast.success("Order cancelled successfully!", {
@@ -186,8 +192,6 @@ const OrderDetails = (orderDetails) => {
                 progress: undefined,
                 theme: "colored",
             });
-
-            document.getElementById("cancelOrderCloseButton").click();
 
         } else {
             toast.error("Please fill all fields to cancel this order!!!", {
@@ -212,12 +216,14 @@ const OrderDetails = (orderDetails) => {
                     {
                         order_comment: orderComment,
                         order_number: fetchedOrderData.order_number,
-                        user_id: user.id
+                        user_id: user.id,
+                        order_id: fetchedOrderData.order_id
                     }
                 ]);
             
             setTimeout(() => {
-                location.reload();
+                document.getElementById("orderCommentCloseButton").click();
+                fetchOrderCommentData();
             }, 3000);
 
             toast.success("Order Comment Successfully Added!", {
@@ -231,7 +237,6 @@ const OrderDetails = (orderDetails) => {
                 theme: "colored",
             });
 
-            document.getElementById("orderCommentCloseButton").click();
 
         } else {
             toast.error("Please fill all fields!!!", {
@@ -628,7 +633,14 @@ const OrderDetails = (orderDetails) => {
                                         {/* Order Comment Section */}
                                         <div className="pb-4">
                                             <Row className="mx-2">
-                                                <b className="pb-3">Order Comments History</b>
+                                                <b className="pb-3">
+                                                    Order Comments History
+                                                    <a
+                                                        className="la la-refresh"
+                                                        onClick={() => { fetchOrderCommentData() }}
+                                                        style={{ marginLeft: "10px" }}>
+                                                    </a>
+                                                </b>
                                                 <Table className="default-table manage-job-table">
                                                     <thead>
                                                         <tr>
