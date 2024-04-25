@@ -83,16 +83,18 @@ const OpenOrderProcess = () => {
     };
 
     const dateTimeFormat = (val) => {
-        const date = new Date(val);
-        return (
-            date.toLocaleDateString("en-IN", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit"
-            })
-        );
+        if (val) {
+            const date = new Date(val);
+            return (
+                date.toLocaleDateString("en-IN", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                })
+            );
+        }
     };
 
     // clear all filters
@@ -205,6 +207,9 @@ const OpenOrderProcess = () => {
                 );
                 orderData.forEach(
                     (i) => (i.order_updated_at = dateFormat(i.order_updated_at))
+                );
+                orderData.forEach(
+                    (i) => (i.status_last_updated_at = dateTimeFormat(i.status_last_updated_at))
                 );
             }
 
@@ -610,14 +615,14 @@ const OpenOrderProcess = () => {
                                                                 order.status
                                                             ).color,
                                                         margin: "auto",
+                                                        fontSize: "11px"
                                                     }}
                                                 >
-                                                    {
-                                                        determineBadgeColor(
-                                                            order.status
-                                                        ).tag
-                                                    }
-                                                </div>
+                                                    {determineBadgeColor(order.status).tag}
+                                                </div> <br />
+                                                <span className="optional" style={{ fontSize: "11px" }}>
+                                                    {order.status_last_updated_at ? order.status_last_updated_at : order.order_created_at}
+                                                </span>
                                             </td>
                                             <td>
                                                 <ul className="option-list">
@@ -640,25 +645,25 @@ const OpenOrderProcess = () => {
                                                 </ul>
                                             </td>
                                             <td>
-                                                {order.client_name}
+                                                { order.client_name ? order.client_name : "-" }
                                             </td>
                                             <td>
-                                                {order.pickup_point_name}
+                                                {order.pickup_point_name ? order.pickup_point_name : "-" }
                                             </td>
                                             <td>
-                                                {order.dropping_point_name}
+                                                {order.dropping_point_name ? order.dropping_point_name : "-" }
                                             </td>
                                             <td>
                                                 {/* Company Name - NA */}
                                             </td>
                                             <td>
-                                                {order.weight} KG
+                                                {order.weight? order.weight + 'Kg' : '-' }
                                             </td>
                                             <td>
-                                                {order.quantity}
+                                                {order.quantity ? order.quantity : "-" }
                                             </td>
                                             <td>
-                                                {order.notes}
+                                                {order.notes ? order.notes : "-" }
                                             </td>
                                             <td>
                                                 {order.lr_number}
@@ -670,7 +675,14 @@ const OpenOrderProcess = () => {
                                                 {/* Truck Details - NA */}
                                             </td>
                                             <td>
-                                                {order.eway_number}
+                                                {order.eway_number ? order.eway_number : "-" }<br />
+                                                {order.eway_verified ?  
+                                                    <span 
+                                                        className="badge"
+                                                        style={{ backgroundColor: "green", marginLeft: "5px" }}
+                                                    >
+                                                        Verified
+                                                    </span> : ""}
                                             </td>
                                             <td>
                                                 {/* Bills - NA */}

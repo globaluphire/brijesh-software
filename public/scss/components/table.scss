@@ -17,22 +17,23 @@ default table
 }
 
 .default-table tbody tr:hover {
-  background: #7baebfb6;
+  background: #ADD8E6;
 }
 
 .default-table thead {
-  background-color: #aab9df;
+  background-color: #5F8CAB;
 }
 
 .default-table thead th {
   position: relative;
   padding: 10px 10px;
   font-size: 16px;
-  color: var(--primary-color);
+  color: #fff;
   font-weight: 800;
   line-height: 30px;
   white-space: nowrap;
   border: 1px solid #333;
+  background-color: transparent;
 }
 
 .default-table tbody tr {
@@ -47,8 +48,9 @@ default table
   color: black;
   font-weight: 400;
   border: 1px solid #333;
+  background-color: transparent;
 }
 
 .default-table tr td:hover {
-  background-color: #96d1e5;
+  background-color: #87CEEB;
 }
