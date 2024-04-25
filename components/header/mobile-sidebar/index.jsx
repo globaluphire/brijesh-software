@@ -69,22 +69,22 @@ const Index = () => {
         }
     }
 
-    useEffect(() => {
-        getFacilityNames();
-        if (facility) {
-            const facilityArray = [];
-            facilityArray.push(facility);
-            setFacilitySingleSelections(facilityArray);
-        }
-    }, []);
+    // useEffect(() => {
+    //     getFacilityNames();
+    //     if (facility) {
+    //         const facilityArray = [];
+    //         facilityArray.push(facility);
+    //         setFacilitySingleSelections(facilityArray);
+    //     }
+    // }, []);
 
-    useEffect(() => {
-        if (facilitySingleSelections) {
-            dispatch(setFacility(facilitySingleSelections[0]));
-        } else {
-            dispatch(setFacility(""));
-        }
-    }, [facilitySingleSelections]);
+    // useEffect(() => {
+    //     if (facilitySingleSelections) {
+    //         dispatch(setFacility(facilitySingleSelections[0]));
+    //     } else {
+    //         dispatch(setFacility(""));
+    //     }
+    // }, [facilitySingleSelections]);
 
     return (
         <div
@@ -97,8 +97,7 @@ const Index = () => {
             {/* End pro-header */}
 
             <ProSidebarProvider>
-                <div className="outer-box">
-                    {/* <!-- Dashboard Option --> */}
+                {/* <div className="outer-box">
                     {user.role !== "CANDIDATE" ? (
                         <Form>
                             <Col>
@@ -119,9 +118,8 @@ const Index = () => {
                     ) : (
                         ""
                     )}
-                    {/* End dropdown */}
-                </div>
-                {user.role !== "CANDIDATE" ? (
+                </div> */}
+                {/* {user.role !== "CANDIDATE" ? (
                     <div className="option-box">
                         <a
                             data-tooltip-id="facility-tooltip"
@@ -136,7 +134,7 @@ const Index = () => {
                     </div>
                 ) : (
                     ""
-                )}
+                )} */}
                 {/* <Sidebar> */}
                 {user ? (
                     <Menu>

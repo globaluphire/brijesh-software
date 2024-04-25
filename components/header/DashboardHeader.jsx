@@ -64,21 +64,21 @@ const DashboardHeader = () => {
 
     useEffect(() => {
         window.addEventListener("scroll", changeBackground);
-        getFacilityNames();
-        if (facility) {
-            const facilityArray = [];
-            facilityArray.push(facility);
-            setFacilitySingleSelections(facilityArray);
-        }
+        // getFacilityNames();
+        // if (facility) {
+        //     const facilityArray = [];
+        //     facilityArray.push(facility);
+        //     setFacilitySingleSelections(facilityArray);
+        // }
     }, []);
 
-    useEffect(() => {
-        if (facilitySingleSelections) {
-            dispatch(setFacility(facilitySingleSelections[0]));
-        } else {
-            dispatch(setFacility(""));
-        }
-    }, [facilitySingleSelections]);
+    // useEffect(() => {
+    //     if (facilitySingleSelections) {
+    //         dispatch(setFacility(facilitySingleSelections[0]));
+    //     } else {
+    //         dispatch(setFacility(""));
+    //     }
+    // }, [facilitySingleSelections]);
 
     const user = useSelector((state) => state.candidate.user);
     const menuOptions =
@@ -109,7 +109,7 @@ const DashboardHeader = () => {
                         </div>
                         {/* End .logo-box */}
 
-                        {user.role !== "CANDIDATE" ? (
+                        {/* {user.role !== "CANDIDATE" ? (
                             <div
                                 className="vr"
                                 style={{
@@ -120,10 +120,9 @@ const DashboardHeader = () => {
                             ></div>
                         ) : (
                             ""
-                        )}
+                        )} */}
 
-                        <div className="outer-box">
-                            {/* <!-- Dashboard Option --> */}
+                        {/* <div className="outer-box">
                             {user.role !== "CANDIDATE" ? (
                                 <Form>
                                     <Col>
@@ -148,7 +147,6 @@ const DashboardHeader = () => {
                             ) : (
                                 ""
                             )}
-                            {/* End dropdown */}
                         </div>
                         {user.role !== "CANDIDATE" ? (
                             <div className="option-box">
@@ -168,7 +166,7 @@ const DashboardHeader = () => {
                             </div>
                         ) : (
                             ""
-                        )}
+                        )} */}
                         {/* End outer-box */}
                         {/* <HeaderNavContent /> */}
                         {/* <!-- Main Menu End--> */}

@@ -14,40 +14,6 @@ import CalendarComp from "../../../../../components/date/CalendarComp";
 import format from "date-fns/format";
 
 
-const SunEditor = dynamic(() => import("suneditor-react"), {
-    ssr: false,
-});
-
-const apiKey = envConfig.JOB_PORTAL_GMAP_API_KEY;
-const mapApiJs = "https://maps.googleapis.com/maps/api/js";
-
-// load google map api js
-function loadAsyncScript(src) {
-    return new Promise((resolve) => {
-        const script = document.createElement("Script");
-        Object.assign(script, {
-            type: "text/javascript",
-            async: true,
-            src,
-        });
-        script.addEventListener("load", () => resolve(script));
-        document.head.appendChild(script);
-    });
-}
-
-const addJobFields = {
-    jobTitle: "",
-    jobDesc: "",
-    jobType: "Full Time",
-    salary: "",
-    salaryRate: "Per Hour",
-    education: "",
-    exp: "0 - 1 year",
-    address: "",
-    completeAddress: "",
-    facility: "",
-};
-
 const addOrderFields = {
     orderCity: "",
     clientName: "",
@@ -67,47 +33,8 @@ const addOrderFields = {
     freightNotes: ""
 };
 const AddOrder = () => {
-    // const [jobTitle, setJobTitle] = useState("");
-    // const [jobDesc, setJobDesc] = useState("");
-    // const [email, setEmail] = useState("");
-    // const [username, setUsername] = useState("");
-    // const [specialism, setSpecialism] = useState([]);
-    // const [jobType, setJobType] = useState("");
-    // const [salary, setSalary] = useState("");
-    // const [salaryRate, setSalaryRate] = useState("");
-    // const [education, setEducation] = useState("");
-    // const [exp, setExp] = useState("");
-    // const [gender, setGender] = useState("");
-    // const [industy, setIndustry] = useState("");
-    // const [qualification, setQualification] = useState("");
-    // const [deadline, setDeadline] = useState("");
-    // const [country, setCountry] = useState("");
-    // const [city, setCity] = useState("");
-    // const [address, setAddress] = useState("");
     const user = useSelector((state) => state.candidate.user);
-    const [salaryType, setSalaryType] = useState("fixed");
-    const [lowerLimit, setLowerLimit] = useState("");
-    const [upperLimit, setUpperLimit] = useState("");
 
-    const handleSalaryTypeChange = (e) => {
-        setSalaryType(e.target.value);
-    };
-
-    const [jobData, setJobData] = useState(
-        JSON.parse(JSON.stringify(addJobFields))
-    );
-    // const {
-    //     jobTitle,
-    //     jobDesc,
-    //     jobType,
-    //     salary,
-    //     salaryRate,
-    //     education,
-    //     exp,
-    //     address,
-    //     completeAddress,
-    //     facility,
-    // } = useMemo(() => jobData, [jobData]);
     const [orderFormData, setOrderFormData] = useState(
         JSON.parse(JSON.stringify(addOrderFields))
     );
@@ -130,42 +57,16 @@ const AddOrder = () => {
         freightNotes
     } = useMemo(() => orderFormData, [orderFormData]);
 
-    const searchInput = useRef(null);
-
-    const [singleSelections, setSingleSelections] = useState([]);
     const [cityRefs, setCityRefs] = useState([]);
     const [dropCitySelection, setDropCitySelection] = useState([]);
     const [pickupCitySelection, setPickupCitySelection] = useState([]);
     const [validated, setValidated] = useState(false);
     const [checkAllRefs, setCheckAllRefs] = useState(false);
-    const [formValidatedSuccessfully, setFormValidatedSuccessfully] = useState(false);
-    const [lRStatusReferenceOptions, setLRStatusReferenceOptions] = useState(null);
     const [orderCityReferenceOptions, setOrderCityReferenceOptions] = useState(null);
     const [cityReferenceOptions, setCityReferenceOptions] = useState(null);
     const [sizeReferenceOptions, setSizeReferenceOptions] = useState(null);
     const [materialTypeReferenceOptions, setMaterialTypeReferenceOptions] = useState(null);
     const [priorityReferenceOptions, setPriorityReferenceOptions] = useState(null);
-
-    const addresses = [
-        "601 Evergreen Rd., Woodburn, OR 97071",
-        "160 NE Conifer Blvd., Corvallis, OR 97330",
-        "1735 Adkins St., Eugene, OR 97401",
-        "1201 McLean Blvd., Eugene, OR 97405",
-        "1166 E 28th Ave., Eugene, OR 97403",
-        "740 NW Hill Pl., Roseburg, OR 97471",
-        "525 W Umpqua St., Roseburg, OR 97471",
-        "2075 NW Highland Avenue, Grants Pass, OR 97526",
-        "2201 NW Highland Avenue, Grants Pass, OR 97526",
-        "2901 E Barnett Rd., Medford, OR 97504",
-        "4062 Arleta Ave NE, Keizer,	OR 97303",
-        "2350 Oakmont Way, Suite 204, Eugene, OR 97401",
-        "1677 Pensacola Street, Honolulu, HI 96822",
-        "10503 Timberwood Cir, Suite 200, Louisville, KY 40223",
-        "252 LA Hwy 402, Napoleonville, LA 70390",
-        "5976 Highway 65N, Lake Providence, LA 71254",
-        "1400 Lindberg Street, Slidell, LA 70458",
-        "4021 Cadillac Street, New Orleans, LA 70122",
-    ];
 
     async function getReferences() {
         // call reference to get lrStatus options
@@ -246,11 +147,11 @@ const AddOrder = () => {
     useEffect(() => {
         // validate refs data
         checkAllRefsData();
-    }, [cityRefs,
-        orderCityReferenceOptions,
-        cityReferenceOptions,
-        materialTypeReferenceOptions,
-        sizeReferenceOptions,
+    }, [cityRefs &&
+        orderCityReferenceOptions &&
+        cityReferenceOptions &&
+        materialTypeReferenceOptions &&
+        sizeReferenceOptions &&
         priorityReferenceOptions]
     );
 
