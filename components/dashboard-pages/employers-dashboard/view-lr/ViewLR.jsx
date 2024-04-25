@@ -10,14 +10,15 @@ const ViewLR = ({ fetchedLRdata }) => {
                 </div>
                 <div class="company_name item">
                     <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
-                    <span><b>Head Office: </b>51 and 52 Sinde Colony S R P Road Navapura Vadodara Gujarat 390001</span> <br />
+                    <span><b>Head Office: </b>51 and 52 Sinde Colony, S R P Road, Navapura, Vadodara, Gujarat 390001</span> <br />
                     <span><b>Mobile No: </b>7016229891</span>
-                    <span>
+                    {/* <span>
                     <t></t> | <t></t><b>Email: </b>info@raftaarlogistics.com
-                    </span>
-                    <span>
+                    </span> */}
+                    {/* <span>
                     <t></t> | <t></t><b>Website: </b>raftaarlogistics.com
-                    </span> <br />
+                    </span>  */}
+                    <br />
                     <span><b>PAN No: </b>GFSPS6256B</span>
                     <span>
                     <t></t> | <t></t><b>GST No: </b>24GFSPS6256B1Z1
@@ -63,7 +64,6 @@ const ViewLR = ({ fetchedLRdata }) => {
                 <div class="vehicle item">
                     <span><b>Vehical No: </b>{fetchedLRdata.vehical_number}</span><br />
                     <span><b>Driver: </b>{fetchedLRdata.driver_name}</span><br />
-                    <span><b>Driver Phone: </b>{fetchedLRdata.driver_phone}</span>
                 </div>
                 <div class="consignee item">
                     <span><b>Consignee: {fetchedLRdata.consignee}</b></span><br />
@@ -107,14 +107,15 @@ const ViewLR = ({ fetchedLRdata }) => {
                 </div>
                 <div class="company_name item">
                     <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
-                    <span><b>Head Office: </b>51 and 52 Sinde Colony S R P Road Navapura Vadodara Gujarat 390001</span> <br />
+                    <span><b>Head Office: </b>51 and 52 Sinde Colony, S R P Road, Navapura, Vadodara, Gujarat 390001</span> <br />
                     <span><b>Mobile No: </b>7016229891</span>
-                    <span>
+                    {/* <span>
                     <t></t> | <t></t><b>Email: </b>info@raftaarlogistics.com
-                    </span>
-                    <span>
+                    </span> */}
+                    {/* <span>
                     <t></t> | <t></t><b>Website: </b>raftaarlogistics.com
-                    </span> <br />
+                    </span>  */}
+                    <br />
                     <span><b>PAN No: </b>GFSPS6256B</span>
                     <span>
                     <t></t> | <t></t><b>GST No: </b>24GFSPS6256B1Z1
@@ -160,7 +161,6 @@ const ViewLR = ({ fetchedLRdata }) => {
                 <div class="vehicle item">
                     <span><b>Vehical No: </b>{fetchedLRdata.vehical_number}</span><br />
                     <span><b>Driver: </b>{fetchedLRdata.driver_name}</span><br />
-                    <span><b>Driver Phone: </b>{fetchedLRdata.driver_phone}</span>
                 </div>
                 <div class="consignee item">
                     <span><b>Consignee: {fetchedLRdata.consignee}</b></span><br />
@@ -204,14 +204,15 @@ const ViewLR = ({ fetchedLRdata }) => {
                 </div>
                 <div class="company_name item">
                     <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
-                    <span><b>Head Office: </b>51 and 52 Sinde Colony S R P Road Navapura Vadodara Gujarat 390001</span> <br />
+                    <span><b>Head Office: </b>51 and 52 Sinde Colony, S R P Road, Navapura, Vadodara, Gujarat 390001</span> <br />
                     <span><b>Mobile No: </b>7016229891</span>
-                    <span>
+                    {/* <span>
                     <t></t> | <t></t><b>Email: </b>info@raftaarlogistics.com
-                    </span>
-                    <span>
+                    </span> */}
+                    {/* <span>
                     <t></t> | <t></t><b>Website: </b>raftaarlogistics.com
-                    </span> <br />
+                    </span>  */}
+                    <br />
                     <span><b>PAN No: </b>GFSPS6256B</span>
                     <span>
                     <t></t> | <t></t><b>GST No: </b>24GFSPS6256B1Z1
@@ -257,7 +258,6 @@ const ViewLR = ({ fetchedLRdata }) => {
                 <div class="vehicle item">
                     <span><b>Vehical No: </b>{fetchedLRdata.vehical_number}</span><br />
                     <span><b>Driver: </b>{fetchedLRdata.driver_name}</span><br />
-                    <span><b>Driver Phone: </b>{fetchedLRdata.driver_phone}</span>
                 </div>
                 <div class="consignee item">
                     <span><b>Consignee: {fetchedLRdata.consignee}</b></span><br />
