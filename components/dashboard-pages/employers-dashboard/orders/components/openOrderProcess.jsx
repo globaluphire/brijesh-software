@@ -657,7 +657,7 @@ const OpenOrderProcess = () => {
                                                 {/* Company Name - NA */}
                                             </td>
                                             <td>
-                                                {order.weight? order.weight + 'Kg' : '-' }
+                                                {order.weight? order.weight + "Kg" : "-" }
                                             </td>
                                             <td>
                                                 {order.quantity ? order.quantity : "-" }
