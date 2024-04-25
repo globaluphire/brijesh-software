@@ -253,14 +253,14 @@ const OpenOrderProcess = () => {
 
     const determineBadgeColor = (status) => {
         switch (status) {
-            case "Pending for approval":
-                return { color: "orange", tag: "Pending for approval" };
-            case "At destination city warehouse":
-                return { color: "#A2C3C8", tag: "At destination city warehouse" };
+            case "Ready for pickup":
+                return { color: "#157347", tag: "Ready for pickup" };
+            case "Tempo under the process":
+                return { color: "#C44027", tag: "Tempo under the process" };
             case "In process of departure":
                 return { color: "#91C47C", tag: "In process of departure" };
-            case "Pending for order confirmation":
-                return { color: "yellow", tag: "Pending for order confirmation" };
+            case "At destination city warehouse":
+                return { color: "#A2C3C8", tag: "At destination city warehouse" };
             case "Ready for final delivery":
                 return { color: "#CEE0E2", tag: "Ready for final delivery" };
             case "Cancel":
@@ -658,7 +658,7 @@ const OpenOrderProcess = () => {
                                                 {order.quantity}
                                             </td>
                                             <td>
-                                                {order.note}
+                                                {order.notes}
                                             </td>
                                             <td>
                                                 {order.lr_number}
@@ -670,7 +670,7 @@ const OpenOrderProcess = () => {
                                                 {/* Truck Details - NA */}
                                             </td>
                                             <td>
-                                                {/* Eway Bill No - NA */}
+                                                {order.eway_number}
                                             </td>
                                             <td>
                                                 {/* Bills - NA */}

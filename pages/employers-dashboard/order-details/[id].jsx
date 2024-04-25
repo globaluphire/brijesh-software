@@ -253,7 +253,7 @@ const OrderDetails = (orderDetails) => {
     };
 
     const updateOrderStatus = async (newStatus) => {
-        if(newStatus !== "Completed" && ewayBillNumber && fetchedOrderData.eway_verified) {
+        if(newStatus !== "Completed" && fetchedOrderData.eway_number && fetchedOrderData.eway_verified) {
             await supabase
                 .from("orders")
                 .update({
@@ -278,6 +278,17 @@ const OrderDetails = (orderDetails) => {
             });
         } else if (newStatus === "Completed") {
             toast.info("This order already Completed! No further status updates needed.", {
+                position: "top-center",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        } else {
+            toast.error("Make sure you entered Eway Bill Number and Verified that!", {
                 position: "top-center",
                 autoClose: false,
                 hideProgressBar: false,
