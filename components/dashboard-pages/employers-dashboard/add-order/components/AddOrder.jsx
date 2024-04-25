@@ -252,7 +252,8 @@ const AddOrder = () => {
                         special_offered_freight: specialOfferedFreight,
                         notes: notes,
                         freight_notes: freightNotes,
-                        status: "Under pickup process"
+                        status: "Under pickup process",
+                        order_created_by: user.id
                     },
                 ]);
                 if (error) {

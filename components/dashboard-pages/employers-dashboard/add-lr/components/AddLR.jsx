@@ -391,7 +391,8 @@ const AddLR = () => {
                         weight: weight,
 
                         // Default fields
-                        status: status
+                        status: status,
+                        lr_created_by: user.id
                     },
                 ]);
                 if (error) {
