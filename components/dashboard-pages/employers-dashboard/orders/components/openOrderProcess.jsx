@@ -29,6 +29,7 @@ const OpenOrderProcess = () => {
 
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
     const [fetchedOpenOrderdata, setFetchedOpenOrderdata] = useState({});
+    const [fetchedOrderCommentData, setFetchedOrderCommentData] = useState([]);
 
     const [applicationStatus, setApplicationStatus] = useState("");
     const [
@@ -79,6 +80,19 @@ const OpenOrderProcess = () => {
                 date.getFullYear()
             );
         }
+    };
+
+    const dateTimeFormat = (val) => {
+        const date = new Date(val);
+        return (
+            date.toLocaleDateString("en-IN", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            })
+        );
     };
 
     // clear all filters
@@ -279,20 +293,21 @@ const OpenOrderProcess = () => {
             });
     };
 
-    const setOrderDetailsData = async (order) => {
-        console.log(order);
+    const setOrderCommentModalData = async (orderId) => {
+        const { data: orderCommentData, error: e } = await supabase
+            .from("order_comments_view")
+            .select("*")
 
-        
+            // Filters
+            .eq("order_id", orderId)
+            .order("order_comment_created_at", { ascending: false });
 
-        // const { data, error } = await supabase
-        //     .from("applicants_view")
-        //     .select("*")
-        //     .eq("application_id", applicationId);
-
-        // if (data) {
-        //     setNoteText(data[0].notes);
-        //     setApplicationId(data[0].application_id);
-        // }
+            if (orderCommentData) {
+                orderCommentData.forEach(
+                    (orderComment) => (orderComment.order_comment_created_at = dateTimeFormat(orderComment.order_comment_created_at))
+                );
+                setFetchedOrderCommentData(orderCommentData);
+            }
     };
 
     return (
@@ -605,8 +620,24 @@ const OpenOrderProcess = () => {
                                                 </div>
                                             </td>
                                             <td>
-                                                {/* Write logic to add comments */}
-                                                <span className="la la-comment-alt"></span>
+                                                <ul className="option-list">
+                                                    <li>
+                                                        <button data-text="Add, View, Edit, Delete Notes">
+                                                            <a
+                                                                href="#"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#showOrderCommentsModal"
+                                                                onClick={() => {
+                                                                    setOrderCommentModalData(
+                                                                        order.order_id
+                                                                    );
+                                                                }}
+                                                            >
+                                                                <span className="la la-comment-dots"></span>
+                                                            </a>
+                                                        </button>
+                                                    </li>
+                                                </ul>
                                             </td>
                                             <td>
                                                 {order.client_name}
@@ -650,6 +681,79 @@ const OpenOrderProcess = () => {
                             </tbody>
                         )}
                     </Table>
+
+                    {/* Add Notes Modal Popup */}
+                    <div
+                        className="modal fade"
+                        id="showOrderCommentsModal"
+                        tabIndex="-1"
+                        aria-hidden="true"
+                    >
+                        <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                            <div className="apply-modal-content modal-content">
+                                <div className="text-center">
+                                    <h3 className="title">Order Comments History</h3>
+                                    <button
+                                        type="button"
+                                        id="showOrderCommentsModalCloseButton"
+                                        className="closed-modal"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    ></button>
+                                </div>
+                                {/* End modal-header */}
+                                <div className="widget-content">
+                                    <div className="table-outer">
+                                        <Table className="default-table manage-job-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style={{ fontSize: "14px" }}>Created On</th>
+                                                    <th style={{ fontSize: "14px" }}>Created By</th>
+                                                    <th style={{ fontSize: "14px" }}>Comment</th>
+                                                </tr>
+                                            </thead>
+                                            {/* might need to add separate table link with order_number as one order can have 
+                                                multiple comments */}
+                                            {fetchedOrderCommentData.length === 0 ? (
+                                                <tbody
+                                                    style={{
+                                                        fontSize: "14px",
+                                                        fontWeight: "500",
+                                                    }}
+                                                >
+                                                    <tr>
+                                                        <td colSpan={3}>
+                                                            <b> No comment history yet!</b>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            ) : (
+                                                <tbody style={{ fontSize: "14px" }}>
+                                                    {Array.from(fetchedOrderCommentData).map(
+                                                        (orderComment) => (
+                                                            <tr key={orderComment.order_comment_id}>
+                                                                <td>
+                                                                    {orderComment.order_comment_created_at}
+                                                                </td>
+                                                                <td>
+                                                                    {orderComment.name}
+                                                                </td>
+                                                                <td>
+                                                                    {orderComment.order_comment}
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                        )}
+                                                </tbody>
+                                            )}
+                                        </Table>
+                                    </div>
+                                </div>
+                                {/* End PrivateMessageBox */}
+                            </div>
+                            {/* End .send-private-message-wrapper */}
+                        </div>
+                    </div>
                 </div>
             </div>
             {/* End table widget content */}
