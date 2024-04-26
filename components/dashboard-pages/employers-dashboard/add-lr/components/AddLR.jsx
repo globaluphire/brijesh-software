@@ -510,7 +510,6 @@ const AddLR = () => {
                             <Form.Group as={Col} md="4" controlId="validationCustom02">
                                 <Form.Label>GST Number</Form.Label>
                                 <Form.Control
-                                    required
                                     type="text"
                                     // placeholder="GST number"
                                     // defaultValue="Otto"
@@ -523,9 +522,6 @@ const AddLR = () => {
                                     }}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignor's GST Number.
-                                </Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
                                 <Form.Label>Phone Number</Form.Label>
