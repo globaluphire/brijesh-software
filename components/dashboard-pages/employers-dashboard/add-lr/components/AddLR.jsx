@@ -69,7 +69,7 @@ const addLRFields = {
 
     // Material Details Block Fields
     materialDetails: "",
-    weight: "",
+    weight: null,
     status: ""
 };
 const AddLR = () => {
@@ -318,7 +318,7 @@ const AddLR = () => {
         setLrFormData,
         user
     ) => {
-        if (checkRequiredFields(lrFormData)) {
+        // if (checkRequiredFields(lrFormData)) {
             try {
                 // Generate LR Number
                 const today = new Date();
@@ -453,19 +453,19 @@ const AddLR = () => {
                 );
                 // console.warn(err);
             }
-        } else {
-            // open toast
-            toast.error("Please fill all the required fields.", {
-                position: "top-center",
-                autoClose: false,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
-        }
+        // } else {
+        //     // open toast
+        //     toast.error("Please fill all the required fields.", {
+        //         position: "top-center",
+        //         autoClose: false,
+        //         hideProgressBar: false,
+        //         closeOnClick: true,
+        //         pauseOnHover: true,
+        //         draggable: true,
+        //         progress: undefined,
+        //         theme: "colored",
+        //     });
+        // }
     };
 
   const handleSubmit = (event) => {
@@ -490,7 +490,7 @@ const AddLR = () => {
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
                                 <Form.Label>Name</Form.Label>
                                 <Form.Control
-                                    required
+                                    // required
                                     type="text"
                                     // placeholder="Consignor"
                                     // defaultValue="Mark"
@@ -549,7 +549,7 @@ const AddLR = () => {
                                 <Form.Control 
                                     type="text"
                                     placeholder="Pickup Address"
-                                    required
+                                    // required
                                     value={consignorAddress}
                                     onChange={(e) => {
                                         setLrFormData((previousState) => ({
@@ -591,7 +591,7 @@ const AddLR = () => {
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
                                 <Form.Label>Name</Form.Label>
                                 <Form.Control
-                                    required
+                                    // required
                                     type="text"
                                     // placeholder="Consignee"
                                     // defaultValue="Mark"
@@ -611,7 +611,7 @@ const AddLR = () => {
                             <Form.Group as={Col} md="4" controlId="validationCustom02">
                                 <Form.Label>GST Number</Form.Label>
                                 <Form.Control
-                                    required
+                                    // required
                                     type="text"
                                     // placeholder="GST number"
                                     // defaultValue="Otto"
@@ -654,7 +654,7 @@ const AddLR = () => {
                                 <Form.Control    
                                     type="text"
                                     placeholder="Drop Address"
-                                    required
+                                    // required
                                     value={consigneeAddress}
                                     onChange={(e) => {
                                         setLrFormData((previousState) => ({
@@ -696,7 +696,7 @@ const AddLR = () => {
                             <Form.Group as={Col} md="3" controlId="validationCustom01">
                                 <Form.Label>From</Form.Label>
                                 <Form.Control
-                                    required
+                                    // required
                                     type="text"
                                     // placeholder="Consignee"
                                     // defaultValue="Mark"
@@ -716,7 +716,7 @@ const AddLR = () => {
                             <Form.Group as={Col} md="3" controlId="validationCustom02">
                                 <Form.Label>To</Form.Label>
                                 <Form.Control
-                                    required
+                                    // required
                                     type="text"
                                     // placeholder="To"
                                     // defaultValue="Otto"
@@ -736,7 +736,7 @@ const AddLR = () => {
                             <Form.Group as={Col} md="3" controlId="validationCustom02">
                                 <Form.Label>Vehical Number</Form.Label>
                                 <Form.Control
-                                    required
+                                    // required
                                     type="text"
                                     // placeholder="GJ011234"
                                     // defaultValue="Otto"
@@ -758,7 +758,7 @@ const AddLR = () => {
                             <Form.Group as={Col} md="3" controlId="validationCustom02">
                                 <Form.Label>Driver Name</Form.Label>
                                 <Form.Control
-                                    required
+                                    // required
                                     type="text"
                                     // placeholder="Driver Name"
                                     // defaultValue="Otto"
@@ -783,7 +783,7 @@ const AddLR = () => {
                                         type="text"
                                         // placeholder="Driver Phone Number"
                                         aria-describedby="inputGroupPrepend"
-                                        required
+                                        // required
                                         value={driverPhone}
                                         onChange={(e) => {
                                             setLrFormData((previousState) => ({
@@ -814,7 +814,7 @@ const AddLR = () => {
                             <Form.Group as={Col} controlId="validationCustom01">
                                 <Form.Label>Material Details</Form.Label>
                                 <Form.Control
-                                    required
+                                    // required
                                     type="text"
                                     // placeholder="Material Details"
                                     // defaultValue="Mark"
@@ -836,7 +836,7 @@ const AddLR = () => {
                             <Form.Group as={Col} md="3" controlId="validationCustom02">
                                 <Form.Label>Weight(Kg)</Form.Label>
                                 <Form.Control
-                                    required
+                                    // required
                                     type="number"
                                     // placeholder="Weight"
                                     // defaultValue="Otto"
@@ -864,7 +864,7 @@ const AddLR = () => {
                                         }));
                                     }}
                                     value={status}
-                                    required
+                                    // required
                                 >
                                     <option value=""></option>
                                     {lRStatusReferenceOptions.map(
@@ -902,10 +902,10 @@ const AddLR = () => {
                             variant="success"
                             onClick={(e) => {
                                 e.preventDefault();
-                                handleSubmit(e);
-                                if(validated) {
+                                // handleSubmit(e);
+                                // if(validated) {
                                     addNewLR(lrFormData, setLrFormData, user);
-                                }
+                                // }
                             }}
                             className="btn btn-add-lr btn-sm text-nowrap m-1"
                         >
