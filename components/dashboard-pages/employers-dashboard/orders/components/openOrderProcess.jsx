@@ -627,7 +627,7 @@ const OpenOrderProcess = () => {
                                             <td>
                                                 <ul className="option-list">
                                                     <li>
-                                                        <button data-text="Add, View, Edit, Delete Notes">
+                                                        <button data-text="View Comments">
                                                             <a
                                                                 href="#"
                                                                 data-bs-toggle="modal"

@@ -632,7 +632,7 @@ const PickupOrderProcess = () => {
                                                             <a
                                                                 href="#"
                                                                 data-bs-toggle="modal"
-                                                                data-bs-target="#showOrderCommentsModal"
+                                                                data-bs-target="#showPickupOrderCommentsModal"
                                                                 onClick={() => {
                                                                     setOrderCommentModalData(
                                                                         order.order_id
@@ -698,7 +698,7 @@ const PickupOrderProcess = () => {
                     {/* Add Notes Modal Popup */}
                     <div
                         className="modal fade"
-                        id="showOrderCommentsModal"
+                        id="showPickupOrderCommentsModal"
                         tabIndex="-1"
                         aria-hidden="true"
                     >
@@ -708,7 +708,7 @@ const PickupOrderProcess = () => {
                                     <h3 className="title">Order Comments History</h3>
                                     <button
                                         type="button"
-                                        id="showOrderCommentsModalCloseButton"
+                                        id="showPickupOrderCommentsModalCloseButton"
                                         className="closed-modal"
                                         data-bs-dismiss="modal"
                                         aria-label="Close"
