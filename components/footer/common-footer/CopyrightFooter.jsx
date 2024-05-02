@@ -28,7 +28,7 @@ const CopyrightFooter = () => {
               329 Queensberry Street, North Melbourne VIC <br />
               3051, Australia.
             </span> */}
-                        <span style={{ color: "#f5f5f5" }}>Email us:</span>
+                        {/* <span style={{ color: "#f5f5f5" }}>Email us:</span>
                         <br />
                         <a
                             href="mailto:support@globaluphire.com"
@@ -38,7 +38,7 @@ const CopyrightFooter = () => {
                             <i>
                                 <b>support@globaluphire.com</b>
                             </i>
-                        </a>
+                        </a> */}
                     </div>
                     {/* <div className="social-links">
             <Social />

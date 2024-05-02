@@ -18,13 +18,13 @@ const SidebarFooter = () => {
             329 Queensberry Street, North Melbourne VIC <br />
             3051, Australia.
           </span> */}
-                    <span>Email us </span>
+                    {/* <span>Email us </span>
                     <br />
                     <a href="mailto:support@globaluphire.com" className="email">
                         <b>
                             <i>support@globaluphire.com</i>
                         </b>
-                    </a>
+                    </a> */}
                 </div>
                 {/* End .contact-info */}
 
