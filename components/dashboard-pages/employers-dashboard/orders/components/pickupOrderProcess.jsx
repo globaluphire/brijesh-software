@@ -28,7 +28,8 @@ const PickupOrderProcess = () => {
     const router = useRouter();
 
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
-    const [fetchedLRdata, setFetchedLRdata] = useState({});
+    const [fetchedOpenOrderdata, setFetchedOpenOrderdata] = useState({});
+    const [fetchedOrderCommentData, setFetchedOrderCommentData] = useState([]);
 
     const [applicationStatus, setApplicationStatus] = useState("");
     const [
@@ -41,6 +42,7 @@ const PickupOrderProcess = () => {
     ] = useState(null);
     const [noteText, setNoteText] = useState("");
     const [applicationId, setApplicationId] = useState("");
+    const [orderDetails, setOrderDetails] = useState("");
 
     // For Pagination
     // const [totalRecords, setTotalRecords] = useState(0);
@@ -80,73 +82,88 @@ const PickupOrderProcess = () => {
         }
     };
 
+    const dateTimeFormat = (val) => {
+        if (val) {
+            const date = new Date(val);
+            return (
+                date.toLocaleDateString("en-IN", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                })
+            );
+        }
+    };
+
     // clear all filters
     const clearAll = () => {
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
-        fetchedLR(JSON.parse(JSON.stringify(addSearchFilters)));
+        // fetchedLR(JSON.parse(JSON.stringify(addSearchFilters)));
     };
 
-    async function findLR() {
-        // call reference to get applicantStatus options
-        // setCurrentPage(1);
-        // const { data: refData, error: e } = await supabase
-        //     .from("reference")
-        //     .select("*")
-        //     .eq("ref_nm", "applicantStatus");
+    // async function findLR() {
+    //     // call reference to get applicantStatus options
+    //     // setCurrentPage(1);
+    //     // const { data: refData, error: e } = await supabase
+    //     //     .from("reference")
+    //     //     .select("*")
+    //     //     .eq("ref_nm", "applicantStatus");
 
-        // if (refData) {
-        //     setApplicationStatusReferenceOptions(refData);
-        // }
+    //     // if (refData) {
+    //     //     setApplicationStatusReferenceOptions(refData);
+    //     // }
 
-        let query = supabase
-            .from("lr")
-            .select("*");
+    //     let query = supabase
+    //         .from("lr")
+    //         .select("*");
 
-        if (consignorName) {
-            query.ilike("consignor", "%" + consignorName + "%");
-        }
-        if (consigneeName) {
-            query.ilike("consignee", "%" + consigneeName + "%");
-        }
-        if (fromCity) {
-            query.ilike("from_city", "%" + fromCity + "%");
-        }
-        if (toCity) {
-            query.ilike("to_city", "%" + toCity + "%");
-        }
-        if (driverName) {
-            query.ilike("driver_name", "%" + driverName + "%");
-        }
-        if (status) {
-            query.ilike("status", "%" + status + "%");
-        }
+    //     if (consignorName) {
+    //         query.ilike("consignor", "%" + consignorName + "%");
+    //     }
+    //     if (consigneeName) {
+    //         query.ilike("consignee", "%" + consigneeName + "%");
+    //     }
+    //     if (fromCity) {
+    //         query.ilike("from_city", "%" + fromCity + "%");
+    //     }
+    //     if (toCity) {
+    //         query.ilike("to_city", "%" + toCity + "%");
+    //     }
+    //     if (driverName) {
+    //         query.ilike("driver_name", "%" + driverName + "%");
+    //     }
+    //     if (status) {
+    //         query.ilike("status", "%" + status + "%");
+    //     }
 
-        // if (facility) {
-        //     query.ilike("facility_name", "%" + facility + "%");
-        // }
+    //     // if (facility) {
+    //     //     query.ilike("facility_name", "%" + facility + "%");
+    //     // }
 
-        // setTotalRecords((await query).data.length);
+    //     // setTotalRecords((await query).data.length);
 
-        let { data, error } = await query.order("lr_created_date", {
-            ascending: false,
-            nullsFirst: false,
-        });
-        // .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
+    //     let { data, error } = await query.order("lr_created_date", {
+    //         ascending: false,
+    //         nullsFirst: false,
+    //     });
+    //     // .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
-        // if (facility) {
-        //     data = data.filter((i) => i.facility_name === facility);
-        // }
+    //     // if (facility) {
+    //     //     data = data.filter((i) => i.facility_name === facility);
+    //     // }
 
-        if (data) {
-            data.forEach(
-                (lr) =>
-                    (lr.lr_created_date = dateFormat(lr.lr_created_date))
-            );
-            setFetchedLRdata(data);
-        }
-    }
+    //     if (data) {
+    //         data.forEach(
+    //             (lr) =>
+    //                 (lr.lr_created_date = dateFormat(lr.lr_created_date))
+    //         );
+    //         setFetchedOpenOrderdata(data);
+    //     }
+    // }
 
-    async function fetchedLR({
+    async function fetchOpenOrder({
         consignorName,
         consigneeName,
         fromCity,
@@ -159,30 +176,19 @@ const PickupOrderProcess = () => {
             const { data, error: e } = await supabase
                 .from("reference")
                 .select("*")
-                .eq("ref_nm", "lrStatus");
+                .eq("ref_nm", "orderStatus");
 
             if (data) {
                 setLRStatusReferenceOptions(data);
             }
 
             let query = supabase
-                .from("lr")
-                .select("*");
+                .from("orders")
+                .select("*")
+                .eq("status", "Pickup");
 
-            // if (name) {
-            //     query.ilike("name", "%" + name + "%");
-            // }
-            // if (jobTitle) {
-            //     query.ilike("job_title", "%" + jobTitle + "%");
-            // }
-            // if (facility) {
-            //     query.ilike("facility_name", "%" + facility + "%");
-            // }
-
-            // setTotalRecords((await query).data.length);
-
-            let { data: lrData, error } = await query.order(
-                "lr_created_date",
+            let { data: orderData, error } = await query.order(
+                "order_created_at",
                 { ascending: false, nullsFirst: false }
             );
             // .range(
@@ -196,13 +202,19 @@ const PickupOrderProcess = () => {
             //     );
             // }
 
-            if (lrData) {
-                lrData.forEach(
-                    (i) => (i.lr_created_date = dateFormat(i.lr_created_date))
+            if (orderData) {
+                orderData.forEach(
+                    (i) => (i.order_created_at = dateFormat(i.order_created_at))
+                );
+                orderData.forEach(
+                    (i) => (i.order_updated_at = dateFormat(i.order_updated_at))
+                );
+                orderData.forEach(
+                    (i) => (i.status_last_updated_at = dateTimeFormat(i.status_last_updated_at))
                 );
             }
 
-            setFetchedLRdata(lrData);
+            setFetchedOpenOrderdata(orderData);
         } catch (e) {
             toast.error(
                 "System is unavailable.  Please try again later or contact tech support!",
@@ -233,7 +245,7 @@ const PickupOrderProcess = () => {
     // }
 
     useEffect(() => {
-        fetchedLR(searchFilters);
+        fetchOpenOrder(searchFilters);
         // if (facility) {
         //     localStorage.setItem("facility", facility);
         // } else {
@@ -245,107 +257,22 @@ const PickupOrderProcess = () => {
         // currentPage
     ]);
 
-    const setNoteData = async (applicationId) => {
-        // reset NoteText
-        setNoteText("");
-        setApplicationId("");
-
-        const { data, error } = await supabase
-            .from("applicants_view")
-            .select("*")
-            .eq("application_id", applicationId);
-
-        if (data) {
-            setNoteText(data[0].notes);
-            setApplicationId(data[0].application_id);
-        }
-    };
-
-    const ViewCV = async (applicationId) => {
-        const { data, error } = await supabase
-            .from("applicants_view")
-            .select("*")
-            .eq("application_id", applicationId);
-
-        if (data) {
-            window.open(
-                data[0].doc_dwnld_url.slice(14, -2),
-                "_blank",
-                "noreferrer"
-            );
-        }
-        if (error) {
-            toast.error(
-                "Error while retrieving CV.  Please try again later or contact tech support!",
-                {
-                    position: "bottom-right",
-                    autoClose: false,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                }
-            );
-        }
-    };
-
-    const DownloadHandler = async (applicant) => {
-        const { data, error } = await supabase
-            .from("applicants_view")
-            .select("*")
-            .eq("application_id", applicant.application_id);
-
-        if (data) {
-            const fileName = data[0].doc_dwnld_url.slice(14, -2);
-            fetch(fileName, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/pdf",
-                },
-            })
-                .then((response) => response.blob())
-                .then((blob) => {
-                    const url = window.URL.createObjectURL(new Blob([blob]));
-                    const link = document.createElement("a");
-                    link.href = url;
-                    link.download = fileName;
-                    document.body.appendChild(link);
-                    link.click();
-                    link.parentNode.removeChild(link);
-                });
-            // window.open(data[0].doc_dwnld_url.slice(14, -2), '_blank', 'noreferrer');
-        }
-        if (error) {
-            toast.error(
-                "Error while retrieving CV.  Please try again later or contact tech support!",
-                {
-                    position: "bottom-right",
-                    autoClose: true,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                }
-            );
-        }
-    };
-
     const determineBadgeColor = (status) => {
-        switch (status?.toLowerCase()) {
-            case "sent":
-                return { color: "orange", tag: "Sent" };
-            case "read":
-                return { color: "#87CEEB", tag: "Read" };
-            case "completed":
-                return { color: "green", tag: "Signed" };
-            case "signed":
-                return { color: "green", tag: "Signed" };
+        switch (status) {
+            case "Ready for pickup":
+                return { color: "#157347", tag: "Ready for pickup" };
+            case "Tempo under the process":
+                return { color: "#C44027", tag: "Tempo under the process" };
+            case "In process of departure":
+                return { color: "#91C47C", tag: "In process of departure" };
+            case "At destination city warehouse":
+                return { color: "#A2C3C8", tag: "At destination city warehouse" };
+            case "Ready for final delivery":
+                return { color: "#CEE0E2", tag: "Ready for final delivery" };
+            case "Cancel":
+                return { color: "#dc3545", tag: "Cancel Order" };
             default:
-                return { color: "red", tag: "Not Sent" };
+                return { color: "#E7B8B0", tag: "Under pickup process" };
         }
     };
 
@@ -372,8 +299,26 @@ const PickupOrderProcess = () => {
             });
     };
 
+    const setOrderCommentModalData = async (orderId) => {
+        const { data: orderCommentData, error: e } = await supabase
+            .from("order_comments_view")
+            .select("*")
+
+            // Filters
+            .eq("order_id", orderId)
+            .order("order_comment_created_at", { ascending: false });
+
+            if (orderCommentData) {
+                orderCommentData.forEach(
+                    (orderComment) => (orderComment.order_comment_created_at = dateTimeFormat(orderComment.order_comment_created_at))
+                );
+                setFetchedOrderCommentData(orderCommentData);
+            }
+    };
+
     return (
         <>
+            {/* Search Filters */}
             <div>
                 { lRStatusReferenceOptions != null ? (
                     <Form>
@@ -403,7 +348,7 @@ const PickupOrderProcess = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                // findLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -422,7 +367,7 @@ const PickupOrderProcess = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                // findLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -441,7 +386,7 @@ const PickupOrderProcess = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                // findLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -460,7 +405,7 @@ const PickupOrderProcess = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                // findLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -546,7 +491,7 @@ const PickupOrderProcess = () => {
                                             variant="primary"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                findLR(searchFilters);
+                                                // findLR(searchFilters);
                                             }}
                                             className="btn btn-submit btn-sm text-nowrap m-1"
                                         >
@@ -591,11 +536,13 @@ const PickupOrderProcess = () => {
                         marginBottom: "10px",
                     }}
                 >
-                    Showing ({fetchedLRdata.length}) LR(s)
+                    Showing ({fetchedOpenOrderdata.length}) Order(s)
                     {/* Out of ({totalRecords}) <br /> Page: {currentPage} */}
                 </div>
 
             </div>
+
+            {/* Table widget content */}
             <div className="widget-content">
                 <div className="table-outer">
                     <Table className="default-table manage-job-table">
@@ -612,9 +559,9 @@ const PickupOrderProcess = () => {
                                 <th>Pickup Point</th>
                                 <th>Drop Point</th>
                                 <th>Company</th>
-                                <th>Weight(Kg)</th>
+                                <th>Total Weight</th>
                                 <th>Order Details</th>
-                                <th>Order Note</th>
+                                <th>Order Notes</th>
                                 <th>LR No</th>
                                 <th>Local Transport</th>
                                 <th>Truck Details</th>
@@ -622,101 +569,124 @@ const PickupOrderProcess = () => {
                                 <th>Bills</th>
                             </tr>
                         </thead>
-                        {fetchedLRdata.length === 0 ? (
+                        {fetchedOpenOrderdata.length === 0 ? (
                             <tbody
                                 style={{
                                     fontSize: "1.5rem",
                                     fontWeight: "500",
                                 }}
                             >
-                                <tr>
-                                    <td>
-                                        <b>No LR found!</b>
+                                <tr style={{ border: "1px solid #333" }}>
+                                    <td colSpan={4} style={{ border: "none" }}>
+                                        <span><b>No Orders found!</b></span>
                                     </td>
                                 </tr>
                             </tbody>
                         ) : (
                             <tbody>
-                                {Array.from(fetchedLRdata).map(
-                                    (lr) => (
-                                        <tr key={lr.id}>
+                                {Array.from(fetchedOpenOrderdata).map(
+                                    (order) => (
+                                        <tr key={order.id}>
                                             <td>
+                                                {order.order_created_at}
+                                            </td>
                                             <td>
-                                                <ui>
+                                                {order.order_updated_at ? order.order_updated_at : order.order_created_at}
+                                            </td>
+                                            <td>
+                                                {order.pickup_date}
+                                            </td>
+                                            <td>
+                                                <Link
+                                                    href={`/employers-dashboard/order-details/${order.order_id}`} 
+                                                    style={{ textDecoration: "underline" }}
+                                                >
+                                                    {order.order_number}
+                                                </Link>
+                                            </td>
+                                            <td>
+                                                <span>{order.pickup_location}-{order.drop_location}</span>
+                                            </td>
+                                            <td>
+                                                <div
+                                                    className="badge"
+                                                    style={{
+                                                        backgroundColor:
+                                                            determineBadgeColor(
+                                                                order.status
+                                                            ).color,
+                                                        margin: "auto",
+                                                        fontSize: "11px"
+                                                    }}
+                                                >
+                                                    {determineBadgeColor(order.status).tag}
+                                                </div> <br />
+                                                <span className="optional" style={{ fontSize: "11px" }}>
+                                                    {order.status_last_updated_at ? order.status_last_updated_at : order.order_created_at}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <ul className="option-list">
                                                     <li>
-                                                        <a onClick={() => router.push(`/employers-dashboard/view-lr/${lr.id}`)}>
-                                                            <i className="la la-print" title="Print LR"></i>
-                                                        </a>
+                                                        <button data-text="Add, View, Edit, Delete Notes">
+                                                            <a
+                                                                href="#"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#showOrderCommentsModal"
+                                                                onClick={() => {
+                                                                    setOrderCommentModalData(
+                                                                        order.order_id
+                                                                    );
+                                                                }}
+                                                            >
+                                                                <span className="la la-comment-dots"></span>
+                                                            </a>
+                                                        </button>
                                                     </li>
-                                                </ui>
-                                            </td>
-                                            </td>
-                                            <td>
-                                                <span>
-                                                    {lr.lr_number}
-                                                </span>
+                                                </ul>
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.lr_created_date}
-                                                </span>
+                                                { order.client_name ? order.client_name : "-" }
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.order_number}
-                                                </span>
+                                                {order.pickup_point_name ? order.pickup_point_name : "-" }
                                             </td>
                                             <td>
-                                                <span>{lr.consignor}</span><br />
-                                                <span className="optional">{lr.consignor_phone}</span><br />
-                                                <span className="optional">{lr.consignor_email}</span>
+                                                {order.dropping_point_name ? order.dropping_point_name : "-" }
                                             </td>
                                             <td>
-                                                <span>{lr.consignee}</span><br />
-                                                <span className="optional">{lr.consignee_phone}</span><br />
-                                                <span className="optional">{lr.consignee_email}</span>
+                                                {/* Company Name - NA */}
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.pickup_address}
-                                                </span>
+                                                {order.weight? order.weight + "Kg" : "-" }
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.drop_address}
-                                                </span>
+                                                {order.quantity ? order.quantity : "-" }
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.material_details}
-                                                </span>
+                                                {order.notes ? order.notes : "-" }
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.weight}
-                                                </span>
+                                                {order.lr_number}
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.vehical_number}
-                                                </span>
+                                                {/* Local Transport - NA */}
                                             </td>
                                             <td>
-                                                <span>{lr.driver_name}</span><br />
-                                                <span className="optional">{lr.driver_phone}</span>
+                                                {/* Truck Details - NA */}
                                             </td>
                                             <td>
-                                                {
-                                                    lr.status === "Final" ? (
-                                                        <span style={{ color: "green" }}>
-                                                            {lr.status}
-                                                        </span>
-                                                    ) : lr.status === "Performa" ? (
-                                                            <span style={{ color: "darkorange" }}>
-                                                                {lr.status}
-                                                            </span>
-                                                    ) : <span>-</span>
-                                                }
+                                                {order.eway_number ? order.eway_number : "-" }<br />
+                                                {order.eway_verified ?  
+                                                    <span 
+                                                        className="badge"
+                                                        style={{ backgroundColor: "green", marginLeft: "5px" }}
+                                                    >
+                                                        Verified
+                                                    </span> : ""}
+                                            </td>
+                                            <td>
+                                                {/* Bills - NA */}
                                             </td>
                                         </tr>
                                     )
@@ -724,6 +694,79 @@ const PickupOrderProcess = () => {
                             </tbody>
                         )}
                     </Table>
+
+                    {/* Add Notes Modal Popup */}
+                    <div
+                        className="modal fade"
+                        id="showOrderCommentsModal"
+                        tabIndex="-1"
+                        aria-hidden="true"
+                    >
+                        <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                            <div className="apply-modal-content modal-content">
+                                <div className="text-center">
+                                    <h3 className="title">Order Comments History</h3>
+                                    <button
+                                        type="button"
+                                        id="showOrderCommentsModalCloseButton"
+                                        className="closed-modal"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    ></button>
+                                </div>
+                                {/* End modal-header */}
+                                <div className="widget-content">
+                                    <div className="table-outer">
+                                        <Table className="default-table manage-job-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style={{ fontSize: "14px" }}>Created On</th>
+                                                    <th style={{ fontSize: "14px" }}>Created By</th>
+                                                    <th style={{ fontSize: "14px" }}>Comment</th>
+                                                </tr>
+                                            </thead>
+                                            {/* might need to add separate table link with order_number as one order can have 
+                                                multiple comments */}
+                                            {fetchedOrderCommentData.length === 0 ? (
+                                                <tbody
+                                                    style={{
+                                                        fontSize: "14px",
+                                                        fontWeight: "500",
+                                                    }}
+                                                >
+                                                    <tr>
+                                                        <td colSpan={3}>
+                                                            <b> No comment history yet!</b>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            ) : (
+                                                <tbody style={{ fontSize: "14px" }}>
+                                                    {Array.from(fetchedOrderCommentData).map(
+                                                        (orderComment) => (
+                                                            <tr key={orderComment.order_comment_id}>
+                                                                <td>
+                                                                    {orderComment.order_comment_created_at}
+                                                                </td>
+                                                                <td>
+                                                                    {orderComment.name}
+                                                                </td>
+                                                                <td>
+                                                                    {orderComment.order_comment}
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                        )}
+                                                </tbody>
+                                            )}
+                                        </Table>
+                                    </div>
+                                </div>
+                                {/* End PrivateMessageBox */}
+                            </div>
+                            {/* End .send-private-message-wrapper */}
+                        </div>
+                    </div>
                 </div>
             </div>
             {/* End table widget content */}

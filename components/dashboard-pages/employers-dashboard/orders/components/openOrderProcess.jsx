@@ -535,7 +535,7 @@ const OpenOrderProcess = () => {
                         marginBottom: "10px",
                     }}
                 >
-                    Showing ({fetchedOpenOrderdata.length}) LR(s)
+                    Showing ({fetchedOpenOrderdata.length}) Order(s)
                     {/* Out of ({totalRecords}) <br /> Page: {currentPage} */}
                 </div>
 
