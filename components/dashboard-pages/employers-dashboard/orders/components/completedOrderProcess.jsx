@@ -24,7 +24,7 @@ const addSearchFilters = {
     status: ""
 };
 
-const OpenOrderProcess = () => {
+const CompletedOrderProcess = () => {
     const router = useRouter();
 
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
@@ -125,8 +125,7 @@ const OpenOrderProcess = () => {
             let query = supabase
                 .from("orders")
                 .select("*")
-                .neq("status", "Completed")
-                .neq("status", "Cancel");
+                .eq("status", "Completed");
 
             let { data: orderData, error } = await query.order(
                 "order_created_at",
@@ -213,7 +212,7 @@ const OpenOrderProcess = () => {
             case "Cancel":
                 return { color: "#dc3545", tag: "Cancel Order" };
             case "Completed":
-                return { color: "gray", tag: "Completed" };
+                return { color: "grey", tag: "Completed" };
             default:
                 return { color: "#E7B8B0", tag: "Under pickup process" };
         }
@@ -519,9 +518,9 @@ const OpenOrderProcess = () => {
                                     fontWeight: "500",
                                 }}
                             >
-                                <tr>
-                                    <td>
-                                        <b>No Orders found!</b>
+                                <tr style={{ border: "1px solid #333" }}>
+                                    <td colSpan={4} style={{ border: "none" }}>
+                                        <span><b>No Orders found!</b></span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -571,11 +570,11 @@ const OpenOrderProcess = () => {
                                             <td>
                                                 <ul className="option-list">
                                                     <li>
-                                                        <button data-text="View Comments">
+                                                        <button data-text="Add, View, Edit, Delete Notes">
                                                             <a
                                                                 href="#"
                                                                 data-bs-toggle="modal"
-                                                                data-bs-target="#showOrderCommentsModal"
+                                                                data-bs-target="#showCompletedOrderCommentsModal"
                                                                 onClick={() => {
                                                                     setOrderCommentModalData(
                                                                         order.order_id
@@ -598,7 +597,7 @@ const OpenOrderProcess = () => {
                                                 {order.dropping_point_name ? order.dropping_point_name : "-" }
                                             </td>
                                             <td>
-                                                {order.company_name ? order.company_name : "-" }
+                                                {/* Company Name - NA */}
                                             </td>
                                             <td>
                                                 {order.weight? order.weight + "Kg" : "-" }
@@ -613,10 +612,10 @@ const OpenOrderProcess = () => {
                                                 {order.lr_number}
                                             </td>
                                             <td>
-                                                {order.local_transport ? order.local_transport : "-" }
+                                                {/* Local Transport - NA */}
                                             </td>
                                             <td>
-                                                {order.truck_details ? order.truck_details : "-" }
+                                                {/* Truck Details - NA */}
                                             </td>
                                             <td>
                                                 {order.eway_number ? order.eway_number : "-" }<br />
@@ -641,7 +640,7 @@ const OpenOrderProcess = () => {
                     {/* Add Notes Modal Popup */}
                     <div
                         className="modal fade"
-                        id="showOrderCommentsModal"
+                        id="showCompletedOrderCommentsModal"
                         tabIndex="-1"
                         aria-hidden="true"
                     >
@@ -651,7 +650,7 @@ const OpenOrderProcess = () => {
                                     <h3 className="title">Order Comments History</h3>
                                     <button
                                         type="button"
-                                        id="showOrderCommentsModalCloseButton"
+                                        id="showCompletedOrderCommentsModalCloseButton"
                                         className="closed-modal"
                                         data-bs-dismiss="modal"
                                         aria-label="Close"
@@ -717,4 +716,4 @@ const OpenOrderProcess = () => {
     );
 };
 
-export default OpenOrderProcess;
+export default CompletedOrderProcess;

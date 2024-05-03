@@ -5,6 +5,8 @@ import Tabs from "react-bootstrap/Tabs";
 import DeliveryOrderProcess from "./deliveryOrderProcess";
 import OpenOrderProcess from "./openOrderProcess";
 import PickupOrderProcess from "./pickupOrderProcess";
+import CompletedOrderProcess from "./completedOrderProcess";
+import CancelledOrderProcess from "./cancelledOrderProcess";
 
 const Orders = () => {
     return (
@@ -30,6 +32,12 @@ const Orders = () => {
                 </Tab>
                 <Tab eventKey="Open" title="Open Order Process">
                     <OpenOrderProcess />
+                </Tab>
+                <Tab eventKey="Completed" title="Completed Orders">
+                    <CompletedOrderProcess />
+                </Tab>
+                <Tab eventKey="Cancelled" title="Cancelled Orders">
+                    <CancelledOrderProcess />
                 </Tab>
             </Tabs>
             {/* End table widget content */}

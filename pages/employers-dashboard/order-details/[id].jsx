@@ -37,6 +37,9 @@ const OrderDetails = (orderDetails) => {
 
     // temp action fields data
     const [ewayBillNumber, setEwayBillNumber] = useState("");
+    const [companyName, setCompanyName] = useState("");
+    const [localTransport, setLocalTransport] = useState("");
+    const [truckDetails, setTruckDetails] = useState("");
     const [orderComment, setOrderComment] = useState("");
     const [cancelOrderData, setCancelOrderData] = useState(JSON.parse(JSON.stringify(cancelOrderDataFields)));
     const { cancelReason, cancelNote } = useMemo(() => cancelOrderData, [cancelOrderData]);
@@ -162,8 +165,8 @@ const OrderDetails = (orderDetails) => {
         fetchOrderData();
     }, [id]);
 
-    const cancelOrder = async (orderId, cancelOrderData) => {
-        if (cancelOrderData.cancelReason && cancelOrderData.cancelNote) {
+    const cancelOrder = async (cancelOrderData) => {
+        if (cancelOrderData.cancelReason && cancelOrderData.cancelNote && fetchedOrderData.status !== "Completed") {
             await supabase
                 .from("orders")
                 .update({
@@ -173,7 +176,7 @@ const OrderDetails = (orderDetails) => {
                     order_updated_at: new Date(),
                     cancel_date: new Date()
                 })
-                .eq("order_id", orderId);
+                .eq("order_id", id);
 
             
             setTimeout(() => {
@@ -208,76 +211,64 @@ const OrderDetails = (orderDetails) => {
     };
 
     const addOrderComment = async (orderComment) => {
-        if (orderComment) {
-            await supabase
-                .from("order_comments")
-                .insert([
-                    {
-                        order_comment: orderComment,
-                        order_number: fetchedOrderData.order_number,
-                        user_id: user.id,
-                        order_id: fetchedOrderData.order_id
-                    }
-                ]);
-            
-            setTimeout(() => {
-                document.getElementById("orderCommentCloseButton").click();
-                fetchOrderCommentData();
-            }, 3000);
+        if(fetchedOrderData.status !== "Cancel") {
+            if(fetchedOrderData.status !== "Completed") {
+                if(orderComment) {
+                    await supabase
+                        .from("order_comments")
+                        .insert([
+                            {
+                                order_comment: orderComment,
+                                order_number: fetchedOrderData.order_number,
+                                user_id: user.id,
+                                order_id: fetchedOrderData.order_id
+                            }
+                        ]);
+                    
+                    setTimeout(() => {
+                        document.getElementById("orderCommentCloseButton").click();
+                        fetchOrderCommentData();
+                    }, 3000);
 
-            toast.success("Order Comment Successfully Added!", {
-                position: "bottom-right",
-                autoClose: 8000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
+                    toast.success("Order Comment Successfully Added!", {
+                        position: "bottom-right",
+                        autoClose: 8000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
 
 
+                } else {
+                    toast.error("Please fill all fields!!!", {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+
+                }
+            } else {
+                    toast.info("This order is already Completed! No further status updates needed.", {
+                        position: "top-center",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                }
         } else {
-            toast.error("Please fill all fields!!!", {
-                position: "bottom-right",
-                autoClose: false,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
-
-        }
-    };
-
-    const updateOrderStatus = async (newStatus) => {
-        if(newStatus !== "Completed" && fetchedOrderData.eway_number && fetchedOrderData.eway_verified) {
-            await supabase
-                .from("orders")
-                .update({
-                    status: newStatus,
-                    status_last_updated_at: new Date()
-                })
-                .eq("order_id", id);
-            
-            setTimeout(() => {
-                fetchOrderData();
-            }, 3000);
-
-            toast.success("Order status marked as " + newStatus, {
-                position: "bottom-right",
-                autoClose: 8000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
-        } else if (newStatus === "Completed") {
-            toast.info("This order already Completed! No further status updates needed.", {
+            toast.info("This order is already Cancelled! You cannot change the status.", {
                 position: "top-center",
                 autoClose: false,
                 hideProgressBar: false,
@@ -287,8 +278,61 @@ const OrderDetails = (orderDetails) => {
                 progress: undefined,
                 theme: "colored",
             });
+        }
+    };
+
+    const updateOrderStatus = async (newStatus) => {
+        if(fetchedOrderData.status !== "Cancel") {
+            if (fetchedOrderData.status !== "Completed") {
+                if(newStatus !== "N/A") {
+                    await supabase
+                        .from("orders")
+                        .update({
+                            status: newStatus,
+                            status_last_updated_at: new Date()
+                        })
+                        .eq("order_id", id);
+                    
+                    setTimeout(() => {
+                        fetchOrderData();
+                    }, 3000);
+
+                    toast.success("Order status marked as " + newStatus, {
+                        position: "bottom-right",
+                        autoClose: 8000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                } else {
+                    toast.info("This order is already Completed! No further status updates needed.", {
+                        position: "top-center",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                }
+            } else {
+                toast.info("This order is already Completed! No further status updates needed.", {
+                    position: "top-center",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+            }
         } else {
-            toast.error("Make sure you entered Eway Bill Number and Verified that!", {
+            toast.info("This order is already Cancelled! You cannot change the status.", {
                 position: "top-center",
                 autoClose: false,
                 hideProgressBar: false,
@@ -302,25 +346,61 @@ const OrderDetails = (orderDetails) => {
     };
 
     const updateEwayBillNumber = async (newEwayNumber, isVerified) => {
-        console.log(newEwayNumber);
-        if(newEwayNumber) {
-            await supabase
-                .from("orders")
-                .update({
-                    eway_number: newEwayNumber,
-                    eway_verified: isVerified,
-                    order_updated_at: new Date()
-                })
-                .eq("order_id", id);
-            
-            setTimeout(() => {
-                document.getElementById("ewayNumberModalCloseButton").click();
-                fetchOrderData();
-            }, 3000);
+        if(fetchedOrderData.status !== "Cancel") {
+            if(fetchedOrderData.status !== "Completed") {
+                if(newEwayNumber) {
+                    await supabase
+                        .from("orders")
+                        .update({
+                            eway_number: newEwayNumber,
+                            eway_verified: isVerified,
+                            order_updated_at: new Date()
+                        })
+                        .eq("order_id", id);
+                    
+                    setTimeout(() => {
+                        document.getElementById("ewayNumberModalCloseButton").click();
+                        fetchOrderData();
+                    }, 3000);
 
-            toast.success("Eway Bill Number saved successfully.", {
-                position: "bottom-right",
-                autoClose: 8000,
+                    toast.success("Eway Bill Number saved successfully.", {
+                        position: "bottom-right",
+                        autoClose: 8000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                } else {
+                    toast.error("Please fill Eway Bill Number!!!", {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                }
+            } else {
+                toast.info("This order is already Completed! You cannot change the status.", {
+                    position: "top-center",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+            }
+        } else {
+            toast.info("This order is already Cancelled! You cannot change the status.", {
+                position: "top-center",
+                autoClose: false,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -328,9 +408,193 @@ const OrderDetails = (orderDetails) => {
                 progress: undefined,
                 theme: "colored",
             });
+        }
+    };
+
+    const updateCompanyName = async (newCompanyName) => {
+        if(fetchedOrderData.status !== "Cancel") {
+            if (fetchedOrderData.status !== "Completed") {
+                if(newCompanyName) {
+                    await supabase
+                        .from("orders")
+                        .update({
+                            company_name: newCompanyName,
+                            order_updated_at: new Date()
+                        })
+                        .eq("order_id", id);
+
+                    setTimeout(() => {
+                        document.getElementById("companyNameModalCloseButton").click();
+                        fetchOrderData();
+                    }, 3000);
+
+                    toast.success("Company Name saved successfully.", {
+                        position: "bottom-right",
+                        autoClose: 8000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                } else {
+                    toast.error("Please fill Company Name!!!", {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                }
+            } else {
+                toast.info("This order is already Completed! No further status updates needed.", {
+                    position: "top-center",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+            }
         } else {
-            toast.error("Please fill Eway Bill Number!!!", {
-                position: "bottom-right",
+            toast.info("This order is already Cancelled! You cannot change the status.", {
+                position: "top-center",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        }
+    };
+
+    const updateLocalTransport = async (newLocalTransport) => {
+        if(fetchedOrderData.status !== "Cancel") {
+            if (fetchedOrderData.status !== "Completed") {
+                if(newLocalTransport) {
+                    await supabase
+                        .from("orders")
+                        .update({
+                            local_transport: newLocalTransport,
+                            order_updated_at: new Date()
+                        })
+                        .eq("order_id", id);
+
+                    setTimeout(() => {
+                        document.getElementById("localTransportModalCloseButton").click();
+                        fetchOrderData();
+                    }, 3000);
+
+                    toast.success("Local Transport saved successfully.", {
+                        position: "bottom-right",
+                        autoClose: 8000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                } else {
+                    toast.error("Please fill Local Transport!!!", {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                }
+            } else {
+                toast.info("This order is already Completed! No further status updates needed.", {
+                    position: "top-center",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+            }
+        } else {
+            toast.info("This order is already Cancelled! You cannot change the status.", {
+                position: "top-center",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        }
+    };
+
+    const updateTruckDetails = async (newTruckDetails) => {
+        if(fetchedOrderData.status !== "Cancel") {
+            if (fetchedOrderData.status !== "Completed") {
+                if(newTruckDetails) {
+                    await supabase
+                        .from("orders")
+                        .update({
+                            truck_details: newTruckDetails,
+                            order_updated_at: new Date()
+                        })
+                        .eq("order_id", id);
+
+                    setTimeout(() => {
+                        document.getElementById("truckDetailsModalCloseButton").click();
+                        fetchOrderData();
+                    }, 3000);
+
+                    toast.success("Truck Details saved successfully.", {
+                        position: "bottom-right",
+                        autoClose: 8000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                } else {
+                    toast.error("Please fill Truck Details!!!", {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                }
+            } else {
+                toast.info("This order is already Completed! No further status updates needed.", {
+                    position: "top-center",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+            }
+        } else {
+            toast.info("This order is already Cancelled! You cannot change the status.", {
+                position: "top-center",
                 autoClose: false,
                 hideProgressBar: false,
                 closeOnClick: true,
@@ -355,7 +619,9 @@ const OrderDetails = (orderDetails) => {
             case "Ready for final delivery":
                 return { color: "#CEE0E2", tag: "Ready for final delivery" };
             case "Cancel":
-                return { color: "#dc3545", tag: "Cancel Order" };
+                return { color: "#dc3545", tag: "Cancelled" };
+            case "Completed":
+                return { color: "gray", tag: "Completed" };
             default:
                 return { color: "#E7B8B0", tag: "Under pickup process" };
         }
@@ -373,8 +639,10 @@ const OrderDetails = (orderDetails) => {
                 return { color: "#A2C3C8", tag: "At destination city warehouse" };
             case "At destination city warehouse":
                 return { color: "#CEE0E2", tag: "Ready for final delivery" };
+            case "Ready for final delivery":
+                return { color: "#CEE0E2", tag: "Completed" };
             default:
-                return { color: "#E7B8B0", tag: "Completed" };
+                return { color: "#E9ECEF", tag: "N/A" };
         }
     };
 
@@ -755,8 +1023,129 @@ const OrderDetails = (orderDetails) => {
                                         </div>
                                         {/* End Order Locations and Status fields */}
 
-                                        {/* Order Comment Section */}
+                                        {/* Start Company Name fields */}
                                         <div className="pb-4">
+                                            <Row>
+                                                <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
+                                                    <InputGroup size="sm">
+                                                        <InputGroup.Text id="inputGroupPrepend">
+                                                            Company Name
+                                                        </InputGroup.Text>
+                                                        <Form.Control
+                                                            type="text"
+                                                            // placeholder="Username"
+                                                            aria-describedby="inputGroupPrepend"
+                                                            disabled
+                                                            value={fetchedOrderData.company_name}
+                                                        />
+                                                        <button data-text="Add, View, Edit, Delete Notes">
+                                                            <a
+                                                                href="#"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#companyNameModal"
+                                                                onClick={() => { setCompanyName(fetchedOrderData.company_name); }}
+                                                            >
+                                                                <span className="la la-plus mx-2 mt-2"></span>
+                                                            </a>
+                                                        </button>
+                                                    </InputGroup>
+                                                </Form.Group>
+                                            </Row>
+                                            <span className="horizontal-divider">
+                                            </span>
+                                        </div>
+                                        {/* End Company Name fields */}
+
+                                        {/* Start Local Transport fields */}
+                                        <div className="pb-4">
+                                            <Row>
+                                                <Form.Group as={Col} md="12" controlId="validationCustomPhonenumber">
+                                                    <InputGroup size="sm">
+                                                        <InputGroup.Text id="inputGroupPrepend">
+                                                            Local Transport
+                                                        </InputGroup.Text>
+                                                        <textarea
+                                                            type="text"
+                                                            // placeholder="Username"
+                                                            aria-describedby="inputGroupPrepend"
+                                                            disabled
+                                                            value={fetchedOrderData.local_transport}
+                                                            cols="85"
+                                                            rows="2"
+                                                            style={{
+                                                                resize: "both",
+                                                                overflowY: "scroll",
+                                                                border: "1px solid #dee2e6",
+                                                                padding: "10px",
+                                                                fontSize: "14px",
+                                                                color: "#212529",
+                                                                backgroundColor: "#e9ecef",
+                                                            }}
+                                                        />
+                                                        <button data-text="Add, View, Edit, Delete Notes">
+                                                            <a
+                                                                href="#"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#localTransportModal"
+                                                                onClick={() => { setLocalTransport(fetchedOrderData.local_transport); }}
+                                                            >
+                                                                <span className="la la-plus mx-2 mt-2"></span>
+                                                            </a>
+                                                        </button>
+                                                    </InputGroup>
+                                                </Form.Group>
+                                            </Row>
+                                            <span className="horizontal-divider">
+                                            </span>
+                                        </div>
+                                        {/* End Local Transport fields */}
+
+                                        {/* Start Truck Details fields */}
+                                        <div className="pb-4">
+                                            <Row>
+                                                <Form.Group as={Col} md="12" controlId="validationCustomPhonenumber">
+                                                    <InputGroup size="sm">
+                                                        <InputGroup.Text id="inputGroupPrepend">
+                                                            Truck Details
+                                                        </InputGroup.Text>
+                                                        <textarea
+                                                            type="text"
+                                                            // placeholder="Username"
+                                                            aria-describedby="inputGroupPrepend"
+                                                            disabled
+                                                            value={fetchedOrderData.truck_details}
+                                                            cols="85"
+                                                            rows="2"
+                                                            style={{
+                                                                resize: "both",
+                                                                overflowY: "scroll",
+                                                                border: "1px solid #dee2e6",
+                                                                padding: "10px",
+                                                                fontSize: "14px",
+                                                                color: "#212529",
+                                                                backgroundColor: "#e9ecef",
+                                                            }}
+                                                        />
+                                                        <button data-text="Add, View, Edit, Delete Notes">
+                                                            <a
+                                                                href="#"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#truckDetailsModal"
+                                                                onClick={() => { setTruckDetails(fetchedOrderData.truck_details); }}
+                                                            >
+                                                                <span className="la la-plus mx-2 mt-2"></span>
+                                                            </a>
+                                                        </button>
+                                                    </InputGroup>
+                                                </Form.Group>
+                                            </Row>
+                                            <span className="horizontal-divider">
+                                            </span>
+                                        </div>
+                                        {/* End Truck Details fields */}
+
+                                        {/* Order Comment Section */}
+                                        <div>
                                             <Row className="mx-2">
                                                 <b className="pb-3">
                                                     Order Comments History
@@ -821,6 +1210,18 @@ const OrderDetails = (orderDetails) => {
                                         {/* End of Order Comment Section */}
 
                                     </div>
+                                    {/* Page Navigation Buttons */}
+                                    <Row>
+                                        <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container m-4">
+                                            <Button
+                                                variant="secondary"
+                                                onClick={() => {Router.push("/employers-dashboard/orders"); }}
+                                                className="btn btn-back btn-sm text-nowrap m-1"
+                                            >
+                                                Back to Orders
+                                            </Button>
+                                        </Form.Group>
+                                    </Row>
                                 </div>
                             </div>
 
@@ -985,7 +1386,7 @@ const OrderDetails = (orderDetails) => {
                                                 size="md"
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    cancelOrder(fetchedOrderData.id, cancelOrderData);
+                                                    cancelOrder(cancelOrderData);
                                                 }}
                                             >
                                                 Yes
@@ -998,6 +1399,199 @@ const OrderDetails = (orderDetails) => {
                                 </div>
                             </div>
                             {/* End of Cancel Order Modal */}
+
+                            {/* Order Company Name Modal */}
+                            <div
+                                className="modal fade"
+                                id="companyNameModal"
+                                tabIndex="-1"
+                                aria-hidden="true"
+                            >
+                                <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                    <div className="apply-modal-content modal-content">
+                                        <div className="text-center pb-5">
+                                            <h3 className="title">Enter Company Name</h3>
+                                            <button
+                                                type="button"
+                                                id="companyNameModalCloseButton"
+                                                className="closed-modal"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Close"
+                                            ></button>
+                                        </div>
+                                        {/* End modal-header */}
+                                        <Row className="pb-3">
+                                            <Form.Group as={Col} controlId="validationCustomPhonenumber">
+                                                <InputGroup size="md">
+                                                    <InputGroup.Text id="inputGroupPrepend">Company Name</InputGroup.Text>
+                                                    <Form.Control
+                                                        type="text"
+                                                        // placeholder="Username"
+                                                        aria-describedby="inputGroupPrepend"
+                                                        value={companyName}
+                                                        required
+                                                        onChange={(e) => {
+                                                            setCompanyName(e.target.value);
+                                                        }}
+                                                    />
+                                                </InputGroup>
+                                            </Form.Group>
+                                        </Row>
+                                        <Row>
+                                            <Button
+                                                variant="primary"
+                                                size="md"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    updateCompanyName(companyName);
+                                                }}
+                                            >
+                                                Save
+                                            </Button>
+                                        </Row>
+                                        
+                                        {/* End PrivateMessageBox */}
+                                    </div>
+                                    {/* End .send-private-message-wrapper */}
+                                </div>
+                            </div>
+                            {/* End of Order Company Name Modal */}
+
+                            {/* Order Local Transport Modal */}
+                            <div
+                                className="modal fade"
+                                id="localTransportModal"
+                                tabIndex="-1"
+                                aria-hidden="true"
+                            >
+                                <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                    <div className="apply-modal-content modal-content">
+                                        <div className="text-center pb-5">
+                                            <h3 className="title">Enter Local Transport Details</h3>
+                                            <button
+                                                type="button"
+                                                id="localTransportModalCloseButton"
+                                                className="closed-modal"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Close"
+                                            ></button>
+                                        </div>
+                                        {/* End modal-header */}
+                                        <Row className="pb-3">
+                                            <Form.Group as={Col} controlId="validationCustomPhonenumber">
+                                                <InputGroup size="md">
+                                                    <InputGroup.Text id="inputGroupPrepend">Local Transport</InputGroup.Text>
+                                                    <textarea
+                                                        type="text"
+                                                        // placeholder="Username"
+                                                        aria-describedby="inputGroupPrepend"
+                                                        value={localTransport}
+                                                        required
+                                                        onChange={(e) => {
+                                                            setLocalTransport(e.target.value);
+                                                        }}
+                                                        cols="auto"
+                                                        rows="2"
+                                                        style={{
+                                                            resize: "both",
+                                                            overflowY: "scroll",
+                                                            border: "1px solid #dee2e6",
+                                                            padding: "10px",
+                                                            fontSize: "14px",
+                                                            color: "#212529",
+                                                            maxHeight: "300px"
+                                                        }}
+                                                    />
+                                                </InputGroup>
+                                            </Form.Group>
+                                        </Row>
+                                        <Row>
+                                            <Button
+                                                variant="primary"
+                                                size="md"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    updateLocalTransport(localTransport);
+                                                }}
+                                            >
+                                                Save
+                                            </Button>
+                                        </Row>
+                                        
+                                        {/* End PrivateMessageBox */}
+                                    </div>
+                                    {/* End .send-private-message-wrapper */}
+                                </div>
+                            </div>
+                            {/* End of Order Local Transport Modal */}
+
+                            {/* Order Truck Details Modal */}
+                            <div
+                                className="modal fade"
+                                id="truckDetailsModal"
+                                tabIndex="-1"
+                                aria-hidden="true"
+                            >
+                                <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                    <div className="apply-modal-content modal-content">
+                                        <div className="text-center pb-5">
+                                            <h3 className="title">Enter Truck Details</h3>
+                                            <button
+                                                type="button"
+                                                id="truckDetailsModalCloseButton"
+                                                className="closed-modal"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Close"
+                                            ></button>
+                                        </div>
+                                        {/* End modal-header */}
+                                        <Row className="pb-3">
+                                            <Form.Group as={Col} controlId="validationCustomPhonenumber">
+                                                <InputGroup size="md">
+                                                    <InputGroup.Text id="inputGroupPrepend">Truck Details</InputGroup.Text>
+                                                    <textarea
+                                                        type="text"
+                                                        // placeholder="Username"
+                                                        aria-describedby="inputGroupPrepend"
+                                                        value={truckDetails}
+                                                        required
+                                                        onChange={(e) => {
+                                                            setTruckDetails(e.target.value);
+                                                        }}
+                                                        cols="auto"
+                                                        rows="2"
+                                                        style={{
+                                                            resize: "both",
+                                                            overflowY: "scroll",
+                                                            border: "1px solid #dee2e6",
+                                                            padding: "10px",
+                                                            fontSize: "14px",
+                                                            color: "#212529",
+                                                            maxHeight: "300px"
+                                                        }}
+                                                    />
+                                                </InputGroup>
+                                            </Form.Group>
+                                        </Row>
+                                        <Row>
+                                            <Button
+                                                variant="primary"
+                                                size="md"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    updateTruckDetails(truckDetails);
+                                                }}
+                                            >
+                                                Save
+                                            </Button>
+                                        </Row>
+                                        
+                                        {/* End PrivateMessageBox */}
+                                    </div>
+                                    {/* End .send-private-message-wrapper */}
+                                </div>
+                            </div>
+                            {/* End of Order Truck Details Modal */}
 
                             {/* Order Comment Modal */}
                             <div
