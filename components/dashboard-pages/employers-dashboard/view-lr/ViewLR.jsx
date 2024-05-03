@@ -96,7 +96,7 @@ const ViewLR = ({ fetchedLRdata }) => {
                     <span><b>Signature</b></span><br /><br />
                 </div>
                 <div class="authorized_sign item">
-                    <span><b>For, Raftaar Pvt Ltd</b></span><br />
+                    <span><b>For, Raftaar</b></span><br />
                     <span><b>Authorized Signatory</b></span>
                 </div>
             </div>
@@ -193,7 +193,7 @@ const ViewLR = ({ fetchedLRdata }) => {
                     <span><b>Signature</b></span><br /><br />
                 </div>
                 <div class="authorized_sign item">
-                    <span><b>For, Raftaar Pvt Ltd</b></span><br />
+                    <span><b>For, Raftaar</b></span><br />
                     <span><b>Authorized Signatory</b></span>
                 </div>
             </div>
@@ -290,7 +290,7 @@ const ViewLR = ({ fetchedLRdata }) => {
                     <span><b>Signature</b></span><br /><br />
                 </div>
                 <div class="authorized_sign item">
-                    <span><b>For, Raftaar Pvt Ltd</b></span><br />
+                    <span><b>For, Raftaar</b></span><br />
                     <span><b>Authorized Signatory</b></span>
                 </div>
             </div>
