@@ -14,6 +14,7 @@ import Col from "react-bootstrap/Col";
 import { useSelector } from "react-redux";
 import Pagination from "../../../../common/Pagination";
 import Table from "react-bootstrap/Table";
+import DateRangePickerComp from "../../../../date/DateRangePickerComp";
 
 const addSearchFilters = {
     consignorName: "",
@@ -277,98 +278,6 @@ const OpenOrderProcess = () => {
                         </Form.Label>
                         <div style={{ fontSize: "14px", fontWeight: "bold" }}>
                             <Row className="mb-1 mx-3">
-                                <Form.Group as={Col} md="2" controlId="validationCustom01">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>Consignor</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        size="sm"
-                                        value={consignorName}
-                                        onChange={(e) => {
-                                            setSearchFilters((previousState) => ({
-                                                ...previousState,
-                                                consignorName: e.target.value,
-                                            }));
-                                        }}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") {
-                                                // findLR(searchFilters);
-                                            }
-                                        }}
-                                    />
-                                </Form.Group>
-                                <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>Consignee</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        size="sm"
-                                        value={consigneeName}
-                                        onChange={(e) => {
-                                            setSearchFilters((previousState) => ({
-                                                ...previousState,
-                                                consigneeName: e.target.value,
-                                            }));
-                                        }}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") {
-                                                // findLR(searchFilters);
-                                            }
-                                        }}
-                                    />
-                                </Form.Group>
-                                <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>From</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        size="sm"
-                                        value={fromCity}
-                                        onChange={(e) => {
-                                            setSearchFilters((previousState) => ({
-                                                ...previousState,
-                                                fromCity: e.target.value,
-                                            }));
-                                        }}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") {
-                                                // findLR(searchFilters);
-                                            }
-                                        }}
-                                    />
-                                </Form.Group>
-                                <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>To</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        size="sm"
-                                        value={toCity}
-                                        onChange={(e) => {
-                                            setSearchFilters((previousState) => ({
-                                                ...previousState,
-                                                toCity: e.target.value,
-                                            }));
-                                        }}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") {
-                                                // findLR(searchFilters);
-                                            }
-                                        }}
-                                    />
-                                </Form.Group>
-                                <Form.Group as={Col} md="2" controlId="validationCustom01">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>Driver Name</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        size="sm"
-                                        // placeholder="Consignor"
-                                        // defaultValue="Mark"
-                                        value={driverName}
-                                        onChange={(e) => {
-                                            setSearchFilters((previousState) => ({
-                                                ...previousState,
-                                                driverName: e.target.value,
-                                            }));
-                                        }}
-                                    />
-                                </Form.Group>
                                 <Form.Group as={Col} md="2" controlId="validationCustom02">
                                     <Form.Label style={{ marginBottom: "-5px" }}>Status</Form.Label>
                                     <Form.Select
@@ -392,41 +301,11 @@ const OpenOrderProcess = () => {
                                         )}
                                     </Form.Select>
                                 </Form.Group>
+                                <Form.Group as={Col} md="4" controlId="validationCustom01">
+                                    <Form.Label style={{ marginBottom: "2px" }}>From Date</Form.Label><br />
+                                    <DateRangePickerComp />
+                                </Form.Group>
                             </Row>
-                            {/* <Row className="mb-3 mx-3">
-                                <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>From Date</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        size="sm"
-                                        // placeholder="GST number"
-                                        // defaultValue="Otto"
-                                        // value={consignorGST}
-                                        // onChange={(e) => {
-                                        //     setLrFormData((previousState) => ({
-                                        //         ...previousState,
-                                        //         consignorGST: e.target.value,
-                                        //     }));
-                                        // }}
-                                    />
-                                </Form.Group>
-                                <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>To Date</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        size="sm"
-                                        // placeholder="GST number"
-                                        // defaultValue="Otto"
-                                        // value={consignorGST}
-                                        // onChange={(e) => {
-                                        //     setLrFormData((previousState) => ({
-                                        //         ...previousState,
-                                        //         consignorGST: e.target.value,
-                                        //     }));
-                                        // }}
-                                    />
-                                </Form.Group>
-                            </Row> */}
                             <Row className="mx-3">
                                 <Col>
                                     <Form.Group className="chosen-single form-input chosen-container mb-3">
