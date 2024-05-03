@@ -4,7 +4,7 @@ import Head from "next/head";
 const Seo = ({ pageTitle }) => (
     <>
         <Head>
-            <title>{pageTitle && `${pageTitle} | Raftaar`}</title>
+            <title>{pageTitle && `${pageTitle} | Raftaar Logistics`}</title>
             <meta
                 name="viewport"
                 content="width=device-width, initial-scale=1, shrink-to-fit=no"

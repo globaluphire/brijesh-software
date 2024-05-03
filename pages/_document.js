@@ -16,9 +16,9 @@ export default function Document() {
                 />
                 <meta
                     name="description"
-                    content="Raftaar - Truck Transportation Service"
+                    content="Raftaar Logistics - Truck Transportation Service"
                 />
-                <meta name="raftaar" content="ATFN" />
+                <meta name="raftaarLogistics" content="ATFN" />
 
                 <link rel="icon" href="/favicon.ico" />
 
