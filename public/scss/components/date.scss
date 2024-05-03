@@ -3,6 +3,7 @@ input.inputBox {
   padding: 5px 8px 4px 8px;
   border-radius: 3px;
   border: 1px solid #dee2e6;
+  min-width: 200px;
 }
 
 .calendarWrap {
@@ -12,8 +13,8 @@ input.inputBox {
 
 .calendarElement {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  // left: 50%;
+  // transform: translateX(-50%);
   top: 40px;
   border: 1px solid #ccc;
   z-index: 999;

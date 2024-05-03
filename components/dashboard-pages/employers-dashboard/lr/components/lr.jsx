@@ -91,7 +91,7 @@ const LR = () => {
         fetchedLR(JSON.parse(JSON.stringify(addSearchFilters)));
     };
 
-    async function findLR() {
+    async function findLR(searchFilters) {
         // call reference to get applicantStatus options
         // setCurrentPage(1);
         // const { data: refData, error: e } = await supabase
@@ -107,23 +107,23 @@ const LR = () => {
             .from("lr")
             .select("*");
 
-        if (consignorName) {
-            query.ilike("consignor", "%" + consignorName + "%");
+        if (searchFilters.consignorName) {
+            query.ilike("consignor", "%" + searchFilters.consignorName + "%");
         }
-        if (consigneeName) {
-            query.ilike("consignee", "%" + consigneeName + "%");
+        if (searchFilters.consigneeName) {
+            query.ilike("consignee", "%" + searchFilters.consigneeName + "%");
         }
-        if (fromCity) {
-            query.ilike("from_city", "%" + fromCity + "%");
+        if (searchFilters.fromCity) {
+            query.ilike("from_city", "%" + searchFilters.fromCity + "%");
         }
-        if (toCity) {
-            query.ilike("to_city", "%" + toCity + "%");
+        if (searchFilters.toCity) {
+            query.ilike("to_city", "%" + searchFilters.toCity + "%");
         }
-        if (driverName) {
-            query.ilike("driver_name", "%" + driverName + "%");
+        if (searchFilters.driverName) {
+            query.ilike("driver_name", "%" + searchFilters.driverName + "%");
         }
-        if (status) {
-            query.ilike("status", "%" + status + "%");
+        if (searchFilters.status) {
+            query.ilike("status", "%" + searchFilters.status + "%");
         }
 
         // if (facility) {

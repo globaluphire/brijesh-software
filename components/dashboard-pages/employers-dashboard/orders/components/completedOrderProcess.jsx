@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import Pagination from "../../../../common/Pagination";
 import Table from "react-bootstrap/Table";
 import DateRangePickerComp from "../../../../date/DateRangePickerComp";
+import CalendarComp from "../../../../date/CalendarComp";
 
 const addSearchFilters = {
     consignorName: "",
@@ -277,32 +278,13 @@ const CompletedOrderProcess = () => {
                         </Form.Label>
                         <div style={{ fontSize: "14px", fontWeight: "bold" }}>
                             <Row className="mb-1 mx-3">
-                                <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>Status</Form.Label>
-                                    <Form.Select
-                                        className="chosen-single form-select"
-                                        size="sm"
-                                        onChange={(e) => {
-                                            setSearchFilters((previousState) => ({
-                                                ...previousState,
-                                                status: e.target.value,
-                                            }));
-                                        }}
-                                        value={status}
-                                    >
-                                        <option value=""></option>
-                                        {lRStatusReferenceOptions.map(
-                                            (option) => (
-                                                <option value={option.ref_dspl}>
-                                                    {option.ref_dspl}
-                                                </option>
-                                            )
-                                        )}
-                                    </Form.Select>
+                                <Form.Group as={Col} md="auto" controlId="validationCustom01">
+                                    <Form.Label style={{ marginBottom: "2px" }}>Order Created From Date</Form.Label><br />
+                                    <CalendarComp />
                                 </Form.Group>
-                                <Form.Group as={Col} md="4" controlId="validationCustom01">
-                                    <Form.Label style={{ marginBottom: "2px" }}>From Date</Form.Label><br />
-                                    <DateRangePickerComp />
+                                <Form.Group as={Col} md="auto" controlId="validationCustom01">
+                                    <Form.Label style={{ marginBottom: "2px" }}>Order Created To Date</Form.Label><br />
+                                    <CalendarComp />
                                 </Form.Group>
                             </Row>
                             <Row className="mx-3">

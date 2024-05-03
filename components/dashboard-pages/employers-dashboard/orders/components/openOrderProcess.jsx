@@ -19,11 +19,6 @@ import DateRangePickerComp from "../../../../date/DateRangePickerComp";
 import { CSVLink } from "react-csv";
 
 const addSearchFilters = {
-    consignorName: "",
-    consigneeName: "",
-    fromCity: "",
-    toCity: "",
-    driverName: "",
     status: ""
 };
 
@@ -41,8 +36,8 @@ const OpenOrderProcess = () => {
         setApplicationStatusReferenceOptions,
     ] = useState(null);
     const [
-        lRStatusReferenceOptions,
-        setLRStatusReferenceOptions,
+        orderStatusReferenceOptions,
+        setOrderStatusReferenceOptions,
     ] = useState(null);
     const [noteText, setNoteText] = useState("");
     const [applicationId, setApplicationId] = useState("");
@@ -104,8 +99,46 @@ const OpenOrderProcess = () => {
     // clear all filters
     const clearAll = () => {
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
-        // fetchedLR(JSON.parse(JSON.stringify(addSearchFilters)));
+        findOrder(JSON.parse(JSON.stringify(addSearchFilters)));
     };
+
+    async function findOrder(searchFilters) {
+        let query = supabase
+            .from("orders")
+            .select("*")
+            .neq("status", "Completed")
+            .neq("status", "Cancel");
+
+        if (searchFilters.status) {
+            query.ilike("status", "%" + searchFilters.status + "%");
+        }
+
+        // setTotalRecords((await query).data.length);
+
+        let { data, error } = await query.order("order_created_at", {
+            ascending: false,
+            nullsFirst: false,
+        });
+        // .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
+
+        if (data) {
+            data.forEach(
+                (order) => (order.order_created_at = dateFormat(order.order_created_at))
+            );
+            data.forEach(
+                (order) => (order.order_updated_at = dateFormat(order.order_updated_at))
+            );
+            data.forEach(
+                (order) => (order.status_last_updated_at = dateTimeFormat(order.status_last_updated_at))
+            );
+
+            setFetchedOpenOrderdata(data);
+
+            // creating new array object for CSV export
+            const orderDataCSV = data.map(({ order_id, order_created_by,...rest }) => ({ ...rest }));
+            setFetchedOpenOrderdataCSV(orderDataCSV);
+        }
+    }
 
     async function fetchOpenOrder({
         consignorName,
@@ -123,7 +156,7 @@ const OpenOrderProcess = () => {
                 .eq("ref_nm", "orderStatus");
 
             if (data) {
-                setLRStatusReferenceOptions(data);
+                setOrderStatusReferenceOptions(data);
             }
 
             let query = supabase
@@ -271,7 +304,7 @@ const OpenOrderProcess = () => {
         <>
             {/* Search Filters */}
             <div>
-                { lRStatusReferenceOptions != null ? (
+                { orderStatusReferenceOptions != null ? (
                     <Form>
                         <Form.Label
                             className="optional"
@@ -299,7 +332,7 @@ const OpenOrderProcess = () => {
                                         value={status}
                                     >
                                         <option value=""></option>
-                                        {lRStatusReferenceOptions.map(
+                                        {orderStatusReferenceOptions.map(
                                             (option) => (
                                                 <option value={option.ref_dspl}>
                                                     {option.ref_dspl}
@@ -320,7 +353,7 @@ const OpenOrderProcess = () => {
                                             variant="primary"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                // findLR(searchFilters);
+                                                findOrder(searchFilters);
                                             }}
                                             className="btn btn-submit btn-sm text-nowrap m-1"
                                         >

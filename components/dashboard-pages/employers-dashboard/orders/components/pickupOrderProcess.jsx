@@ -30,6 +30,7 @@ const PickupOrderProcess = () => {
 
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
     const [fetchedOpenOrderdata, setFetchedOpenOrderdata] = useState({});
+    const [fetchedOpenOrderdataCSV, setFetchedOpenOrderdataCSV] = useState({});
     const [fetchedOrderCommentData, setFetchedOrderCommentData] = useState([]);
 
     const [applicationStatus, setApplicationStatus] = useState("");
@@ -38,8 +39,8 @@ const PickupOrderProcess = () => {
         setApplicationStatusReferenceOptions,
     ] = useState(null);
     const [
-        lRStatusReferenceOptions,
-        setLRStatusReferenceOptions,
+        orderStatusReferenceOptions,
+        setOrderStatusReferenceOptions,
     ] = useState(null);
     const [noteText, setNoteText] = useState("");
     const [applicationId, setApplicationId] = useState("");
@@ -101,68 +102,45 @@ const PickupOrderProcess = () => {
     // clear all filters
     const clearAll = () => {
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
-        // fetchedLR(JSON.parse(JSON.stringify(addSearchFilters)));
+        findOrder(JSON.parse(JSON.stringify(addSearchFilters)));
     };
 
-    // async function findLR() {
-    //     // call reference to get applicantStatus options
-    //     // setCurrentPage(1);
-    //     // const { data: refData, error: e } = await supabase
-    //     //     .from("reference")
-    //     //     .select("*")
-    //     //     .eq("ref_nm", "applicantStatus");
+    async function findOrder(searchFilters) {
+        let query = supabase
+            .from("orders")
+            .select("*")
+            .eq("status", "Pickup");
 
-    //     // if (refData) {
-    //     //     setApplicationStatusReferenceOptions(refData);
-    //     // }
+        if (searchFilters.status) {
+            query.ilike("status", "%" + searchFilters.status + "%");
+        }
 
-    //     let query = supabase
-    //         .from("lr")
-    //         .select("*");
+        // setTotalRecords((await query).data.length);
 
-    //     if (consignorName) {
-    //         query.ilike("consignor", "%" + consignorName + "%");
-    //     }
-    //     if (consigneeName) {
-    //         query.ilike("consignee", "%" + consigneeName + "%");
-    //     }
-    //     if (fromCity) {
-    //         query.ilike("from_city", "%" + fromCity + "%");
-    //     }
-    //     if (toCity) {
-    //         query.ilike("to_city", "%" + toCity + "%");
-    //     }
-    //     if (driverName) {
-    //         query.ilike("driver_name", "%" + driverName + "%");
-    //     }
-    //     if (status) {
-    //         query.ilike("status", "%" + status + "%");
-    //     }
+        let { data, error } = await query.order("order_created_at", {
+            ascending: false,
+            nullsFirst: false,
+        });
+        // .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
-    //     // if (facility) {
-    //     //     query.ilike("facility_name", "%" + facility + "%");
-    //     // }
+        if (data) {
+            data.forEach(
+                (order) => (order.order_created_at = dateFormat(order.order_created_at))
+            );
+            data.forEach(
+                (order) => (order.order_updated_at = dateFormat(order.order_updated_at))
+            );
+            data.forEach(
+                (order) => (order.status_last_updated_at = dateTimeFormat(order.status_last_updated_at))
+            );
 
-    //     // setTotalRecords((await query).data.length);
+            setFetchedOpenOrderdata(data);
 
-    //     let { data, error } = await query.order("lr_created_date", {
-    //         ascending: false,
-    //         nullsFirst: false,
-    //     });
-    //     // .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
-
-    //     // if (facility) {
-    //     //     data = data.filter((i) => i.facility_name === facility);
-    //     // }
-
-    //     if (data) {
-    //         data.forEach(
-    //             (lr) =>
-    //                 (lr.lr_created_date = dateFormat(lr.lr_created_date))
-    //         );
-    //         setFetchedOpenOrderdata(data);
-    //     }
-    // }
+            // creating new array object for CSV export
+            const orderDataCSV = data.map(({ order_id, order_created_by,...rest }) => ({ ...rest }));
+            setFetchedOpenOrderdataCSV(orderDataCSV);
+        }
+    }
 
     async function fetchOpenOrder({
         consignorName,
@@ -180,7 +158,7 @@ const PickupOrderProcess = () => {
                 .eq("ref_nm", "orderStatus");
 
             if (data) {
-                setLRStatusReferenceOptions(data);
+                setOrderStatusReferenceOptions(data);
             }
 
             let query = supabase
@@ -321,7 +299,7 @@ const PickupOrderProcess = () => {
         <>
             {/* Search Filters */}
             <div>
-                { lRStatusReferenceOptions != null ? (
+                { orderStatusReferenceOptions != null ? (
                     <Form>
                         <Form.Label
                             className="optional"
@@ -349,7 +327,7 @@ const PickupOrderProcess = () => {
                                         value={status}
                                     >
                                         <option value=""></option>
-                                        {lRStatusReferenceOptions.map(
+                                        {orderStatusReferenceOptions.map(
                                             (option) => (
                                                 <option value={option.ref_dspl}>
                                                     {option.ref_dspl}
@@ -370,7 +348,7 @@ const PickupOrderProcess = () => {
                                             variant="primary"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                // findLR(searchFilters);
+                                                findOrder(searchFilters);
                                             }}
                                             className="btn btn-submit btn-sm text-nowrap m-1"
                                         >

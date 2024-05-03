@@ -52,7 +52,7 @@ const DateRangePickerComp = () => {
     <div className="calendarWrap">
 
       <input
-        value={`${format(range[0].startDate, "MM/dd/yyyy")} to ${format(range[0].endDate, "MM/dd/yyyy")}`}
+        value={`${format(range[0].startDate, "yyyy-MM-dd")} to ${format(range[0].endDate, "yyyy-MM-dd")}`}
         readOnly
         className="inputBox"
         onClick={ () => setOpen(open => !open) }
