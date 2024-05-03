@@ -84,6 +84,21 @@ const Billing = () => {
         }
     };
 
+    const dateTimeFormat = (val) => {
+        if (val) {
+            const date = new Date(val);
+            return (
+                date.toLocaleDateString("en-IN", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                })
+            );
+        }
+    };
+
     // clear all filters
     const clearAll = () => {
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
@@ -421,7 +436,7 @@ const Billing = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                // findLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -440,7 +455,7 @@ const Billing = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                // findLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -459,7 +474,7 @@ const Billing = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                // findLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -478,7 +493,7 @@ const Billing = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                // findLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -531,7 +546,7 @@ const Billing = () => {
                                             variant="primary"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                findLR(searchFilters);
+                                                // findLR(searchFilters);
                                             }}
                                             className="btn btn-submit btn-sm text-nowrap m-1"
                                         >
