@@ -160,8 +160,8 @@ const OpenOrderProcess = () => {
                 setFetchedOpenOrderdata(orderData);
 
                 // creating new array object for CSV export
-                const orderDataCSV = orderData.map(({order_id,order_created_by,...rest}) => ({...rest}));
-                setFetchedOpenOrderdataCSV(orderDataCSV)
+                const orderDataCSV = orderData.map(({ order_id,order_created_by,...rest }) => ({ ...rest }));
+                setFetchedOpenOrderdataCSV(orderDataCSV);
             }
         } catch (e) {
             toast.error(
@@ -348,10 +348,10 @@ const OpenOrderProcess = () => {
                                             >
                                                 Export to CVS
                                             </CSVLink>
-                                        : '' }
+                                        : "" }
                                         <Button
                                             variant="dark"
-                                            onClick={() => exportToPDF()}
+                                            // onClick={() => exportToPDF()}
                                             className="btn btn-export btn-sm text-nowrap m-1"
                                         >
                                             Export to PDF
