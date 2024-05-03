@@ -229,3 +229,24 @@ Buttons Styles
   background-color: #545b62;
 }
 
+.btn-export {
+  min-height: 40px;
+  padding: 0 30px;
+}
+
+.btn-export:hover {
+  background-color: grey;
+}
+
+.btn-export-csv {
+  min-height: 40px;
+  padding: 0 30px;
+  background-color: #212529;
+  color: #ffffff;
+  align-content: center;
+}
+
+.btn-export-csv:hover {
+  background-color: grey;
+  color: #ffffff;
+}

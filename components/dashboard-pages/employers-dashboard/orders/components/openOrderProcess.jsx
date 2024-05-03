@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import Pagination from "../../../../common/Pagination";
 import Table from "react-bootstrap/Table";
 import DateRangePickerComp from "../../../../date/DateRangePickerComp";
+import { CSVLink } from "react-csv";
 
 const addSearchFilters = {
     consignorName: "",
@@ -30,6 +31,7 @@ const OpenOrderProcess = () => {
 
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
     const [fetchedOpenOrderdata, setFetchedOpenOrderdata] = useState({});
+    const [fetchedOpenOrderdataCSV, setFetchedOpenOrderdataCSV] = useState({});
     const [fetchedOrderCommentData, setFetchedOrderCommentData] = useState([]);
 
     const [applicationStatus, setApplicationStatus] = useState("");
@@ -154,9 +156,13 @@ const OpenOrderProcess = () => {
                 orderData.forEach(
                     (i) => (i.status_last_updated_at = dateTimeFormat(i.status_last_updated_at))
                 );
-            }
 
-            setFetchedOpenOrderdata(orderData);
+                setFetchedOpenOrderdata(orderData);
+
+                // creating new array object for CSV export
+                const orderDataCSV = orderData.map(({order_id,order_created_by,...rest}) => ({...rest}));
+                setFetchedOpenOrderdataCSV(orderDataCSV)
+            }
         } catch (e) {
             toast.error(
                 "System is unavailable.  Please try again later or contact tech support!",
@@ -334,6 +340,22 @@ const OpenOrderProcess = () => {
                                 </Col>
                                 <Col style={{ display: "relative", textAlign: "right" }}>
                                     <Form.Group className="chosen-single form-input chosen-container mb-3">
+                                        { fetchedOpenOrderdata.length > 0 ?
+                                            <CSVLink
+                                                data={fetchedOpenOrderdataCSV}
+                                                className="btn btn-export-csv btn-sm text-nowrap m-1"
+                                                filename={"open_orders-" + new Date().toLocaleDateString() + ".csv"}
+                                            >
+                                                Export to CVS
+                                            </CSVLink>
+                                        : '' }
+                                        <Button
+                                            variant="dark"
+                                            onClick={() => exportToPDF()}
+                                            className="btn btn-export btn-sm text-nowrap m-1"
+                                        >
+                                            Export to PDF
+                                        </Button>
                                         <Button
                                             variant="success"
                                             onClick={() => Router.push("/employers-dashboard/add-order")}
