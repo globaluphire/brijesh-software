@@ -1,5 +1,6 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-unused-vars */
+/* eslint-disable camelcase */
 import candidatesData from "../../../../../data/candidates";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import Link from "next/link";
@@ -16,6 +17,7 @@ import { useSelector } from "react-redux";
 import Pagination from "../../../../common/Pagination";
 import Table from "react-bootstrap/Table";
 import { InputGroup } from "react-bootstrap";
+import { CSVLink } from "react-csv";
 
 const addSearchFilters = {
     consignorName: "",
@@ -31,6 +33,7 @@ const LR = () => {
 
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
     const [fetchedLRdata, setFetchedLRdata] = useState({});
+    const [fetchedLRdataCSV, setFetchedLRdataCSV] = useState({});
 
     const [applicationStatus, setApplicationStatus] = useState("");
     const [
@@ -145,6 +148,10 @@ const LR = () => {
                     (lr.lr_created_date = dateFormat(lr.lr_created_date))
             );
             setFetchedLRdata(data);
+
+            // creating new array object for CSV export
+            const lrDataCSV = data.map(({ id, lr_created_by,...rest }) => ({ ...rest }));
+            setFetchedLRdataCSV(lrDataCSV);
         }
     }
 
@@ -202,9 +209,13 @@ const LR = () => {
                 lrData.forEach(
                     (i) => (i.lr_created_date = dateFormat(i.lr_created_date))
                 );
-            }
 
-            setFetchedLRdata(lrData);
+                setFetchedLRdata(lrData);
+
+                // creating new array object for CSV export
+                const lrDataCSV = lrData.map(({ id, lr_created_by,...rest }) => ({ ...rest }));
+                setFetchedLRdataCSV(lrDataCSV);
+            }
         } catch (e) {
             toast.error(
                 "System is unavailable.  Please try again later or contact tech support!",
@@ -1002,6 +1013,15 @@ const LR = () => {
                                 </Col>
                                 <Col style={{ display: "relative", textAlign: "right" }}>
                                     <Form.Group className="chosen-single form-input chosen-container mb-3">
+                                        { fetchedLRdataCSV.length > 0 ?
+                                            <CSVLink
+                                                data={fetchedLRdataCSV}
+                                                className="btn btn-export-csv btn-sm text-nowrap m-1"
+                                                filename={"LR-" + new Date().toLocaleDateString() + ".csv"}
+                                            >
+                                                Export to CVS
+                                            </CSVLink>
+                                        : "" }
                                         <Button
                                             variant="success"
                                             onClick={() => Router.push("/employers-dashboard/add-lr")}

@@ -341,7 +341,7 @@ const OpenOrderProcess = () => {
                                 </Col>
                                 <Col style={{ display: "relative", textAlign: "right" }}>
                                     <Form.Group className="chosen-single form-input chosen-container mb-3">
-                                        { fetchedOpenOrderdata.length > 0 ?
+                                        { fetchedOpenOrderdataCSV.length > 0 ?
                                             <CSVLink
                                                 data={fetchedOpenOrderdataCSV}
                                                 className="btn btn-export-csv btn-sm text-nowrap m-1"
