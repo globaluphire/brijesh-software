@@ -1094,7 +1094,7 @@ const LR = () => {
                                                 <ui className="option-list" style={{ border: "none" }}>
                                                     <li>
                                                         <button>
-                                                            <a onClick={() => router.push(`/employers-dashboard/view-lr/${lr.id}`)}>
+                                                            <a onClick={() => router.push(`/employers-dashboard/view-lr/${lr.lr_id}`)}>
                                                                 <span className="la la-print" title="Print LR"></span>
                                                             </a>
                                                         </button>

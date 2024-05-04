@@ -54,7 +54,7 @@ const index = () => {
                     .select("*")
 
                     // Filters
-                    .eq("id", id);
+                    .eq("lr_id", id);
 
                 if (lrData) {
                     lrData.forEach(
