@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -313,7 +314,7 @@ const AddInvoice = () => {
                 }
                 var year = today.getFullYear();
 
-                const { data: sysKeyInvoiceData, error: sysKeyLRError } = await supabase
+                const { data: sysKeyInvoiceData, error: sysKeyInvoiceError } = await supabase
                     .from("sys_key")
                     .select("sys_seq_nbr")
                     .eq("key_name", "invoice_number");
@@ -321,7 +322,7 @@ const AddInvoice = () => {
                 let invoiceSeqNbr = sysKeyInvoiceData[0].sys_seq_nbr + 1;
                 if (invoiceSeqNbr < 10) {
                     invoiceSeqNbr = "00" + invoiceSeqNbr;
-                } else if(lrSeqNbr < 100) {
+                } else if(invoiceSeqNbr < 100) {
                     invoiceSeqNbr = "0" + invoiceSeqNbr;
                 }
                 const invoiceNumber = "INV" + "" + date + "" + month + "" + year.toString().substring(2) + "" + invoiceSeqNbr;
