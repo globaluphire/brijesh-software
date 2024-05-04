@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { Col, Container, Row, Table } from "react-bootstrap";
 
-const infoBox = () => {
+const infoBox = ({ fetchedInvoicedata }) => {
     return (
         <div className="info-box">
             <div className="left-column">
@@ -22,16 +22,12 @@ const infoBox = () => {
                 <div className="company-details custom-border px-3 py-2">
                     <b>Buyer (Bill to)</b> <br />
                     <div className="px-2">
-                        <span><b>Company Name: SHREE MATOSHREE ENTERPRISE</b></span> <br />
+                        <span><b>Company Name: {fetchedInvoicedata.company_name}</b></span> <br />
                         <span>
-                            <b>Address: </b>Tarsali Bypass, Opp. Hotel Legend,
-                            N H, No 8, Vadodara, Gujarat 390009 Tarsali Bypass, Opp. Hotel Legend,
-                            N H, No 8, Vadodara, Gujarat 390009
+                            <b>Address: </b>{fetchedInvoicedata.company_address}
                         </span> <br />
                         <span>
-                            <b>GSTIN/UIN:</b> 24ADBFS7408J1Z0<br />
-                            <b>Code:</b> 24<br />
-                            <b>Place of Supply:</b> Gujarat
+                            <b>GSTIN/UIN:</b> {fetchedInvoicedata.company_gst}<br />
                         </span>
                     </div>
                 </div>
@@ -41,32 +37,8 @@ const infoBox = () => {
                 <div className="info">
                     <Container className="custom-border">
                         <Row>
-                            <Col className="custom-border">Delivery Note <br /> &nbsp; </Col>
-                            <Col className="custom-border">Mode/Terms of Payment <br /> &nbsp; </Col>
-                        </Row>
-                        <Row>
-                            <Col className="custom-border">Buyer's Order No. <br /> &nbsp; </Col>
-                            <Col className="custom-border">Dated <br /> &nbsp; </Col>
-                        </Row>
-                        <Row>
-                            <Col className="custom-border">Dispatch Doc No. <br /> &nbsp; </Col>
-                            <Col className="custom-border">Delivery Note Date <br /> &nbsp; </Col>
-                        </Row>
-                        <Row>
-                            <Col className="custom-border">Dispatched through <br /> &nbsp; </Col>
-                            <Col className="custom-border">Destination <br /> &nbsp; </Col>
-                        </Row>
-                        <Row>
-                            <Col className="custom-border">Vehicle No. <br /><b>GJ 33 NM 2431</b> </Col>
-                            <Col className="custom-border">Place of receipt by shipper <br /> &nbsp; </Col>
-                        </Row>
-                        <Row>
-                            <Col className="custom-border">City/Port of Loading <br /> &nbsp; </Col>
-                            <Col className="custom-border">City/Port of Discharge <br /> &nbsp; </Col>
-                        </Row>
-                        <Row>
-                            <Col className="custom-border">Bill of Lading/LR-RR No. <br /><b>RLR232323011</b> </Col>
-                            <Col className="custom-border"> <br /> </Col>
+                            <Col className="custom-border">Vehicle No. <br /><b>{fetchedInvoicedata.vehical_number}</b> </Col>
+                            <Col className="custom-border">Bill of Lading/LR-RR No. <br /><b>{fetchedInvoicedata.lr_number}</b> </Col>
                         </Row>
                         <Row>
                             <Col className="custom-border">Terms of Delivery <br /> &nbsp; <br /> &nbsp; <br /> &nbsp; <br /> &nbsp; </Col>

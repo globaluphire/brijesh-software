@@ -50,7 +50,7 @@ const Index = () => {
     const fetchInvoice = async () => {
         try {
             if (id) {
-                const { data: lrData, error } = await supabase
+                const { data: invoiceData, error } = await supabase
                     .from("invoice")
                     .select("*")
 
@@ -92,7 +92,7 @@ const Index = () => {
             <section>
                 <div className="auto-container">
                     <div className="upper-box btn-box mb-3" style={{ textAlign: "right" }}>
-                        <Link href="/employers-dashboard/lr" className="btn btn-danger btn-sm text-nowrap m-1 p-3">
+                        <Link href="/employers-dashboard/billing" className="btn btn-danger btn-sm text-nowrap m-1 p-3">
                             Back to Billing
                         </Link>
                         <button className="btn btn-success btn-sm text-nowrap m-1 p-3" onClick={() => savePDF()}>
@@ -102,51 +102,53 @@ const Index = () => {
                 </div>
                 {/* End auto-container */}
 
-                <div id="export-invoice">
-                    <div className="auto-container">
-                        <div className="invoice-wrap">
-                            <div className="invoice-content">
-                                <div className="logo-box">
-                                    <div className="logo">
-                                        <img src="../../images/logo.svg" alt="logo" />
+                {fetchedInvoicedata ? 
+                    <div id="export-invoice">
+                        <div className="auto-container">
+                            <div className="invoice-wrap">
+                                <div className="invoice-content">
+                                    <div className="logo-box">
+                                        <div className="logo">
+                                            <img src="../../images/logo.svg" alt="logo" />
+                                        </div>
+                                        <div>
+                                            <Container className="custom-border">
+                                                <Row className="custom-border">
+                                                    <Col className="invoice-id">Invoice # <b>{fetchedInvoicedata.invoice_number}</b></Col>
+                                                </Row>
+                                                <Row className="custom-border">
+                                                    <Col>Invoice date: <b>{fetchedInvoicedata.invoice_created_at}</b> </Col>
+                                                </Row>
+                                            </Container>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <Container className="custom-border">
-                                            <Row className="custom-border">
-                                                <Col className="invoice-id">Invoice # <b>0043128641</b></Col>
-                                            </Row>
-                                            <Row className="custom-border">
-                                                <Col>Invoice date: <b>11 Apr 2024</b> </Col>
-                                            </Row>
-                                        </Container>
+                                    {/* End logobox */}
+
+                                    <InfoBox fetchedInvoicedata={ fetchedInvoicedata } />
+                                    {/* End infobox */}
+
+                                    <div className="table-outer">
+                                        <ViewInvoice fetchedInvoicedata={ fetchedInvoicedata } />
                                     </div>
                                 </div>
-                                {/* End logobox */}
 
-                                <InfoBox />
-                                {/* End infobox */}
-
-                                <div className="table-outer">
-                                    <ViewInvoice />
+                                <div className="invoice-footer">
+                                    <ul className="bottom-links">
+                                        <li>
+                                            SUBJECT TO BARODA JURISDICTION
+                                        </li>
+                                        <li>
+                                            This is a Computer Generated Invoice
+                                        </li>
+                                        <li>
+                                            Mobile No: +91 7016229891
+                                        </li>
+                                    </ul>
                                 </div>
-                            </div>
-
-                            <div className="invoice-footer">
-                                <ul className="bottom-links">
-                                    <li>
-                                        SUBJECT TO AHMEDABAD JURISDICTION
-                                    </li>
-                                    <li>
-                                        This is a Computer Generated Invoice
-                                    </li>
-                                    <li>
-                                        Mobile No: +91 7016229891
-                                    </li>
-                                </ul>
                             </div>
                         </div>
                     </div>
-                </div>
+                : "" }
             </section>
             {/* <!-- End Invoice Section -->  */}
         </>

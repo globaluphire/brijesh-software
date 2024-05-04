@@ -578,10 +578,10 @@ const Billing = () => {
                                         : "" }
                                         <Button
                                             variant="success"
-                                            onClick={() => Router.push("/employers-dashboard/add-lr")}
+                                            onClick={() => Router.push("/employers-dashboard/add-invoice")}
                                             className="btn btn-add-lr btn-sm text-nowrap m-1"
                                         >
-                                            Add LR
+                                            Add Invoice
                                         </Button>
                                     </Form.Group>
                                 </Col>
@@ -612,6 +612,7 @@ const Billing = () => {
                         <thead>
                             <tr>
                                 <th>Actions</th>
+                                <th>Created On</th>
                                 <th>Pickup Date</th>
                                 <th>Order No</th>
                                 <th>Order City</th>
@@ -622,7 +623,6 @@ const Billing = () => {
                                 <th>Truck Number</th>
                                 <th>Weight(Kg)</th>
                                 <th>Order Details</th>
-                                <th>Order City Charges</th>
                             </tr>
                         </thead>
                         {fetchedInvoicedata.length === 0 ? (
@@ -656,12 +656,12 @@ const Billing = () => {
                                             </td>
                                             <td>
                                                 <span>
-                                                    {invoice.lr_number}
+                                                    {invoice.invoice_created_at}
                                                 </span>
                                             </td>
                                             <td>
                                                 <span>
-                                                    {invoice.lr_created_date}
+                                                    -
                                                 </span>
                                             </td>
                                             <td>
@@ -670,28 +670,27 @@ const Billing = () => {
                                                 </span>
                                             </td>
                                             <td>
-                                                <span>{invoice.consignor}</span><br />
-                                                <span className="optional">{invoice.consignor_phone}</span><br />
-                                                <span className="optional">{invoice.consignor_email}</span>
+                                                <span>
+                                                    -
+                                                </span>
                                             </td>
                                             <td>
-                                                <span>{invoice.consignee}</span><br />
-                                                <span className="optional">{invoice.consignee_phone}</span><br />
-                                                <span className="optional">{invoice.consignee_email}</span>
+                                                {invoice.company_name}
+                                            </td>
+                                            <td>
+                                                {invoice.from_city} - {invoice.to_city}
+                                            </td>
+                                            <td>
+                                                -
                                             </td>
                                             <td>
                                                 <span>
-                                                    {invoice.pickup_address}
+                                                    {invoice.lr_number}
                                                 </span>
                                             </td>
                                             <td>
                                                 <span>
-                                                    {invoice.drop_address}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span>
-                                                    {invoice.material_details}
+                                                    {invoice.vehical_number}
                                                 </span>
                                             </td>
                                             <td>
@@ -701,12 +700,8 @@ const Billing = () => {
                                             </td>
                                             <td>
                                                 <span>
-                                                    {invoice.vehical_number}
+                                                    -
                                                 </span>
-                                            </td>
-                                            <td>
-                                                <span>{invoice.driver_name}</span><br />
-                                                <span className="optional">{invoice.driver_phone}</span>
                                             </td>
                                         </tr>
                                     )

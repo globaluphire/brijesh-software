@@ -46,14 +46,14 @@ module.exports = [
     //     active: "",
     //     access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     // },
-    // {
-    //     id: 7,
-    //     name: "Billing",
-    //     icon: "la-file-invoice",
-    //     routePath: "/employers-dashboard/billing",
-    //     active: "",
-    //     access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
-    // },
+    {
+        id: 7,
+        name: "Billing",
+        icon: "la-file-invoice",
+        routePath: "/employers-dashboard/billing",
+        active: "",
+        access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
+    },
     {
         id: 8,
         name: "LR",
