@@ -164,7 +164,7 @@ const Billing = () => {
             setFetchedInvoicedata(data);
 
             // creating new array object for CSV export
-            const invoiceDataCSV = data.map(({ invoice_id, order_id, lr_id, ...rest }) => ({ ...rest }));
+            const invoiceDataCSV = data.map(({ invoice_id, order_id, lr_id, invoice_date, ...rest }) => ({ ...rest }));
             setFetchedInvoicedataCSV(invoiceDataCSV);
         }
     }
@@ -227,7 +227,7 @@ const Billing = () => {
                 setFetchedInvoicedata(invoiceData);
 
                 // creating new array object for CSV export
-                const invoiceDataCSV = invoiceData.map(({ id, lr_created_by,...rest }) => ({ ...rest }));
+                const invoiceDataCSV = invoiceData.map(({ invoice_id, order_id, lr_id, invoice_date, ...rest }) => ({ ...rest }));
                 setFetchedInvoicedataCSV(invoiceDataCSV);
             }
         } catch (e) {
@@ -571,7 +571,7 @@ const Billing = () => {
                                             <CSVLink
                                                 data={fetchedInvoicedataCSV}
                                                 className="btn btn-export-csv btn-sm text-nowrap m-1"
-                                                filename={"LR-" + new Date().toLocaleDateString() + ".csv"}
+                                                filename={"Raftaar-Invoice-" + new Date().toLocaleDateString() + ".csv"}
                                             >
                                                 Export to CSV
                                             </CSVLink>

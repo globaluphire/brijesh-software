@@ -1017,7 +1017,7 @@ const LR = () => {
                                             <CSVLink
                                                 data={fetchedLRdataCSV}
                                                 className="btn btn-export-csv btn-sm text-nowrap m-1"
-                                                filename={"LR-" + new Date().toLocaleDateString() + ".csv"}
+                                                filename={"Raftaar-LR-" + new Date().toLocaleDateString() + ".csv"}
                                             >
                                                 Export to CSV
                                             </CSVLink>
