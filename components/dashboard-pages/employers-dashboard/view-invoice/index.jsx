@@ -17,7 +17,7 @@ const Index = () => {
     const router = useRouter();
     const id = router.query.id;
     const isEmployer = ["SUPER_ADMIN", "ADMIN", "MEMBER"].includes(user.role);
-    const [fetchedLRdata, setFetchedLRdata] = useState({});
+    const [fetchedInvoicedata, setFetchedInvoicedata] = useState({});
 
     async function savePDF() {
         var element = document.getElementById("export-invoice");
@@ -46,22 +46,22 @@ const Index = () => {
         }
     };
 
-    const fetchLR = async () => {
+    const fetchInvoice = async () => {
         try {
             if (id) {
                 const { data: lrData, error } = await supabase
-                    .from("lr")
+                    .from("invoice")
                     .select("*")
 
                     // Filters
-                    .eq("id", id);
+                    .eq("invoice_id", id);
 
-                if (lrData) {
-                    lrData.forEach(
-                        (lr) =>
-                            (lr.lr_created_date = dateFormat(lr.lr_created_date))
+                if (invoiceData) {
+                    invoiceData.forEach(
+                        (invoice) =>
+                            (invoice.invoice_created_at = dateFormat(invoice.invoice_created_at))
                     );
-                    setFetchedLRdata(lrData[0]);
+                    setFetchedInvoicedata(invoiceData[0]);
                 }
             }
         } catch (e) {
@@ -83,7 +83,7 @@ const Index = () => {
     };
 
     useEffect(() => {
-        fetchLR();
+        fetchInvoice();
     }, [id]);
 
     return (

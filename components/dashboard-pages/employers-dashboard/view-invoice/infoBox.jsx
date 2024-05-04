@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Col, Container, Row, Table } from "react-bootstrap";
 
 const infoBox = () => {
