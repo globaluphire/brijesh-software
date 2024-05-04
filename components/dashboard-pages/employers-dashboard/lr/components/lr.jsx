@@ -1019,7 +1019,7 @@ const LR = () => {
                                                 className="btn btn-export-csv btn-sm text-nowrap m-1"
                                                 filename={"LR-" + new Date().toLocaleDateString() + ".csv"}
                                             >
-                                                Export to CVS
+                                                Export to CSV
                                             </CSVLink>
                                         : "" }
                                         <Button
