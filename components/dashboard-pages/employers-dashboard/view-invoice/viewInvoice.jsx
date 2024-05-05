@@ -37,12 +37,12 @@ const ViewInvoice = ({ fetchedInvoicedata }) => {
                     <Col md={2} className="custom-border"></Col>
                     <Col md={2} className="custom-border">{fetchedInvoicedata.weight} Kgs</Col>
                     <Col md={2} className="custom-border"><b><i className="las la-rupee-sign"></i>{parseFloat(fetchedInvoicedata.total_amount).toFixed(2)}</b><br />
-                        <div className="line-height-shrink optional">
-                            (INR {convertNumberToWords(parseInt(fetchedInvoicedata.total_amount))} RS 
+                        <div className="line-height-shrink optional" style={{ fontSize: "xx-small" }}>
+                            (INR {convertNumberToWords(parseInt(fetchedInvoicedata.total_amount))} Rs
                                 {parseFloat(fetchedInvoicedata.total_amount).toFixed(2).slice(-2) !== "00" ?
-                                    " and " + convertNumberToWords(parseFloat(fetchedInvoicedata.total_amount).toFixed(2).slice(-2)) + " Paisa "
-                                :  " and Zero Paisa "}
-                            only)
+                                    " And " + convertNumberToWords(parseFloat(fetchedInvoicedata.total_amount).toFixed(2).slice(-2)) + " Paisa "
+                                :  " And Zero Paisa "}
+                            Only)
                             <i> E. & O.E </i>
                         </div>
                     </Col>
@@ -78,15 +78,21 @@ const ViewInvoice = ({ fetchedInvoicedata }) => {
                     <Col md={1} className="custom-border"><b>{parseFloat(fetchedInvoicedata.total_amount * 0.025).toFixed(2)}</b></Col>
                     <Col md={1} className="custom-border"><b></b></Col>
                     <Col md={1} className="custom-border"><b>{parseFloat(fetchedInvoicedata.total_amount * 0.025).toFixed(2)}</b></Col>
-                    <Col md={2} className="custom-border"><b><i className="las la-rupee-sign"></i>{parseFloat(fetchedInvoicedata.total_amount * 0.025 * 2).toFixed(2)}</b>
-                        <span className="line-height-shrink optional">
-                            (INR {convertNumberToWords(parseInt(fetchedInvoicedata.total_amount * 0.025 * 2))} RS
+                    <Col md={2} className="custom-border">
+                        <div className="py-1">
+                            <b>
+                                <i className="las la-rupee-sign"></i>
+                                {parseFloat(fetchedInvoicedata.total_amount * 0.025 * 2).toFixed(2)}
+                            </b>
+                        </div>
+                        <div className="line-height-shrink optional" style={{ fontSize: "xx-small" }}>
+                            (INR {convertNumberToWords(parseInt(fetchedInvoicedata.total_amount * 0.025 * 2))} Rs
                                 {parseFloat(fetchedInvoicedata.total_amount * 0.025 * 2).toFixed(2).slice(-2) !== "00" ?
-                                    " and " + convertNumberToWords(parseFloat(fetchedInvoicedata.total_amount * 0.025 * 2).toFixed(2).slice(-2)) + " Paisa "
-                                :  " and Zero Paisa "}
-                            only)
+                                    " And " + convertNumberToWords(parseFloat(fetchedInvoicedata.total_amount * 0.025 * 2).toFixed(2).slice(-2)) + " Paisa "
+                                :  " And Zero Paisa "}
+                            Only)
                             <i><u> Amount of tax subject to Reverse Charge</u></i>
-                        </span>
+                        </div>
                     </Col>
                 </Row>
             </Container>
@@ -98,7 +104,7 @@ const ViewInvoice = ({ fetchedInvoicedata }) => {
                             Company's Bank Details <br />
                         </b>
                         <div className="px-2 line-height-shrink">
-                            <span><b>A/C Holder's Name: </b>Raftaar logistics</span> <br />
+                            <span><b>A/C Holder's Name: </b>Raftaar Logistics</span> <br />
                             <span><b>Bank Name: </b>HDFC HO - 38410</span> <br />
                             <span><b>A/C No: </b>50200093338410</span> <br />
                             <span><b>Branch & IFS Code: </b>Baroda Raopura Branch & HDFC0000429</span> <br />
@@ -106,9 +112,8 @@ const ViewInvoice = ({ fetchedInvoicedata }) => {
                         </div>
                     </Col>
                     <Col md={3} className="custom-border">
-                        <b>Company's PAN: </b> GFSPS6256B <br />
-                        <div className="optional line-height-shrink">
-                            <div style={{ textDecoration: "underline", marginBottom: "-8px" }}>Declaration</div> <br />
+                        <div className="optional line-height-shrink" style={{ color: "black" }}>
+                            <div className="pt-2" style={{ textDecoration: "underline", marginBottom: "-8px" }}>Declaration</div> <br />
                             <div className="px-1">
                                 We declare that this invoice shows the actual price of
                                 the goods described and that all particulars are true
