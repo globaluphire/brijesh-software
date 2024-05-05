@@ -5,11 +5,12 @@ import format from "date-fns/format";
 
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+import { showFormattedDate } from "../../utils/showFormattedDate";
 
-const CalendarComp = () => {
+const CalendarComp = ({ setDate, date1 }) => {
 
   // date state
-  const [calendar, setCalendar] = useState(new Date());
+  // const [calendar, setCalendar] = useState(new Date());
 
   // open close
   const [open, setOpen] = useState(false);
@@ -19,16 +20,16 @@ const CalendarComp = () => {
 
   useEffect(() => {
     // set current date on component load
-    setCalendar(format(new Date(), "yyyy-MM-dd"));
+    // setCalendar(format(new Date(), "yyyy-MM-dd"));
 
     // event listeners
     document.addEventListener("keydown", hideOnEscape, true);
     document.addEventListener("click", hideOnClickOutside, true);
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("calendar", calendar);
-  }, [calendar]);
+  // useEffect(() => {
+  //   localStorage.setItem("calendar", calendar);
+  // }, [calendar]);
 
   // hide dropdown on ESC press
   const hideOnEscape = (e) => {
@@ -52,8 +53,8 @@ const CalendarComp = () => {
   // on date change, store date in state
   const handleSelect = (date) => {
     // console.log(date)
-    // console.log(format(date, "MM/dd/yyyy"))
-    setCalendar(format(date, "yyyy-MM-dd"));
+    // let dateFormat = format(date, "yyyy-MM-dd");
+    setDate(date);
     setOpen(false);
   };
 
@@ -62,7 +63,7 @@ const CalendarComp = () => {
 
       <input
         required
-        value={ calendar }
+        value={ showFormattedDate(date1) }
         readOnly
         className="inputBox"
         onClick={ () => setOpen(open => !open) }
@@ -71,8 +72,8 @@ const CalendarComp = () => {
       <div ref={refOne}>
         {open && 
           <Calendar
-            date={ calendar }
-            onChange = { handleSelect }
+            date={ date1 }
+            onChange = { (date) => handleSelect(date) }
             className="calendarElement"
           />
         }

@@ -12,6 +12,7 @@ import { envConfig } from "../../../../../config/env";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import Router from "next/router";
 import CalendarComp from "../../../../../components/date/CalendarComp";
+import { format } from "date-fns";
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
     ssr: false,
@@ -108,6 +109,7 @@ const AddInvoice = () => {
     //     completeAddress,
     //     facility,
     // } = useMemo(() => jobData, [jobData]);
+    const [invoiceDate, setInvoiceDate] = useState(new Date());
     const [invoiceFormData, setInvoiceFormData] = useState(
         JSON.parse(JSON.stringify(addInvoiceFields))
     );
@@ -327,7 +329,6 @@ const AddInvoice = () => {
                 const { data, error } = await supabase.from("invoice").insert([
                     {
                         invoice_number: invoiceNumber,
-                        // invoice_date: "",
                         lr_id: "1e6d8fcf-9792-4c21-91c6-fb314c20def7", // DEFAULT LR
                         order_id: "24189c03-dfd1-4a71-8b4e-6ea96bceaa2e", // DEFAULT ORDER
                         company_name: buyerName,
@@ -342,7 +343,8 @@ const AddInvoice = () => {
                         lr_number: lrNumber,
                         order_number: orderNumber,
                         total_amount: amount,
-                        weight: weight
+                        weight: weight,
+                        invoice_date: format(invoiceDate, "yyyy-MM-dd")
                     },
                 ]);
                 if (error) {
@@ -572,6 +574,10 @@ const AddInvoice = () => {
                     </div>
                     <div style={{ padding: "0 2rem" }}>
                         <Row className="mb-3">
+                            <Form.Group as={Col} md="auto" controlId="validationCustom01">
+                                <Form.Label>Invoice Date</Form.Label><br />
+                                <CalendarComp setDate={setInvoiceDate} date1={invoiceDate} />
+                            </Form.Group>
                             <Form.Group as={Col} md="2" controlId="validationCustom01">
                                 <Form.Label>From City</Form.Label>
                                 <Form.Control
@@ -612,7 +618,7 @@ const AddInvoice = () => {
                                     Please enter Consignment To location.
                                 </Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group as={Col} md="4" controlId="validationCustom02">
+                            <Form.Group as={Col} md="auto" controlId="validationCustom02">
                                 <Form.Label>Material</Form.Label>
                                 <Form.Control
                                     // required
