@@ -121,7 +121,7 @@ const Index = () => {
                                                     <Col>
                                                         <span> Invoice date: </span>
                                                         <b>
-                                                            { fetchedInvoicedata.invoice_date ? convertToFullDateFormat(fetchedInvoicedata.invoice_date) : "" }
+                                                            { fetchedInvoicedata.invoice_date ? convertToFullDateFormat(fetchedInvoicedata.invoice_date, true) : "" }
                                                         </b>
                                                 </Col>
                                                 </Row>
