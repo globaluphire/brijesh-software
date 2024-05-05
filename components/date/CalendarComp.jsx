@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-/*eslint no-unneeded-ternary: "error"*/
+/* eslint no-unneeded-ternary: "error" */
 import { useEffect, useRef, useState } from "react";
 import { Calendar } from "react-date-range";
 import format from "date-fns/format";

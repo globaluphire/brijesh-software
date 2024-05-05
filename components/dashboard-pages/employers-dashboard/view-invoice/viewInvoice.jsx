@@ -14,17 +14,17 @@ const ViewInvoice = ({ fetchedInvoicedata }) => {
             ignoreZeroCurrency: false,
             doNotAddOnly: false,
             currencyOptions: {
-            // can be used to override defaults for the selected locale
-            name: "Rupee",
-            singular: "Rupee",
-            plural: "Rupees",
-            symbol: "₹",
-            fractionalUnit: {
-                name: "Paisa",
-                singular: "Paisa",
-                plural: "Paise",
-                symbol: "",
-            },
+                // can be used to override defaults for the selected locale
+                name: "Rupee",
+                singular: "Rupee",
+                plural: "Rupees",
+                symbol: "₹",
+                fractionalUnit: {
+                    name: "Paisa",
+                    singular: "Paisa",
+                    plural: "Paise",
+                    symbol: "",
+                },
             },
         },
     });
