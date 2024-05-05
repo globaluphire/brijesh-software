@@ -1,8 +1,34 @@
 /* eslint-disable no-unused-vars */
 import { Col, Container, Row } from "react-bootstrap";
 import { convertNumberToWords } from "../../../../utils/convertNumberToWords";
+import { ToWords } from 'to-words';
+import { useEffect } from "react";
 
 const ViewInvoice = ({ fetchedInvoicedata }) => {
+
+    const toWords = new ToWords({
+        localeCode: 'en-IN',
+        converterOptions: {
+            currency: true,
+            ignoreDecimal: false,
+            ignoreZeroCurrency: false,
+            doNotAddOnly: false,
+            currencyOptions: {
+            // can be used to override defaults for the selected locale
+            name: 'Rupee',
+            singular: 'Rupee',
+            plural: 'Rupees',
+            symbol: '₹',
+            fractionalUnit: {
+                name: 'Paisa',
+                singular: 'Paisa',
+                plural: 'Paise',
+                symbol: '',
+            },
+            },
+        },
+    });
+
     return (
         <>
             <Container className="custom-border">
@@ -38,11 +64,12 @@ const ViewInvoice = ({ fetchedInvoicedata }) => {
                     <Col md={2} className="custom-border">{fetchedInvoicedata.weight} Kgs</Col>
                     <Col md={2} className="custom-border"><b><i className="las la-rupee-sign"></i>{parseFloat(fetchedInvoicedata.total_amount).toFixed(2)}</b><br />
                         <div className="line-height-shrink optional" style={{ fontSize: "xx-small" }}>
-                            (INR {convertNumberToWords(parseInt(fetchedInvoicedata.total_amount))} Rs
+                            {/* (INR {convertNumberToWords(parseInt(fetchedInvoicedata.total_amount))} Rs
                                 {parseFloat(fetchedInvoicedata.total_amount).toFixed(2).slice(-2) !== "00" ?
                                     " And " + convertNumberToWords(parseFloat(fetchedInvoicedata.total_amount).toFixed(2).slice(-2)) + " Paisa "
                                 :  " And Zero Paisa "}
-                            Only)
+                            Only) */}
+                            (INR {fetchedInvoicedata && fetchedInvoicedata.total_amount ? toWords.convert(fetchedInvoicedata.total_amount) : ''})
                             <i> E. & O.E </i>
                         </div>
                     </Col>
@@ -86,11 +113,12 @@ const ViewInvoice = ({ fetchedInvoicedata }) => {
                             </b>
                         </div>
                         <div className="line-height-shrink optional" style={{ fontSize: "xx-small" }}>
-                            (INR {convertNumberToWords(parseInt(fetchedInvoicedata.total_amount * 0.025 * 2))} Rs
+                            {/* (INR {convertNumberToWords(parseInt(fetchedInvoicedata.total_amount * 0.025 * 2))} Rs
                                 {parseFloat(fetchedInvoicedata.total_amount * 0.025 * 2).toFixed(2).slice(-2) !== "00" ?
                                     " And " + convertNumberToWords(parseFloat(fetchedInvoicedata.total_amount * 0.025 * 2).toFixed(2).slice(-2)) + " Paisa "
                                 :  " And Zero Paisa "}
-                            Only)
+                            Only) */}
+                            (INR {fetchedInvoicedata && fetchedInvoicedata.total_amount ? toWords.convert(fetchedInvoicedata.total_amount * 0.025 * 2) : ''})
                             <i><u> Amount of tax subject to Reverse Charge</u></i>
                         </div>
                     </Col>

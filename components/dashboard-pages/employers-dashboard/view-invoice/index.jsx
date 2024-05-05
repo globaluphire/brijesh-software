@@ -7,6 +7,7 @@ import { Col, Container, Row, Table } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { supabase } from "../../../../config/supabaseClient";
+import { convertToFullDateFormat } from "../../../../utils/convertToFullDateFormat";
 import InfoBox from "./infoBox";
 import ViewInvoice from "./viewInvoice";
 
@@ -114,10 +115,15 @@ const Index = () => {
                                         <div>
                                             <Container className="custom-border">
                                                 <Row className="custom-border">
-                                                    <Col className="invoice-id">Invoice # <b>{fetchedInvoicedata.invoice_number}</b></Col>
+                                                    <Col className="invoice-id"> Invoice # <b>{fetchedInvoicedata.invoice_number}</b></Col>
                                                 </Row>
                                                 <Row className="custom-border">
-                                                    <Col>Invoice date: <b>{fetchedInvoicedata.invoice_created_at}</b> </Col>
+                                                    <Col>
+                                                        <span> Invoice date: </span>
+                                                        <b>
+                                                            { fetchedInvoicedata.invoice_date ? convertToFullDateFormat(fetchedInvoicedata.invoice_date) : "" }
+                                                        </b>
+                                                </Col>
                                                 </Row>
                                             </Container>
                                         </div>
