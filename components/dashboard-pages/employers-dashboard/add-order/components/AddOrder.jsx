@@ -34,6 +34,7 @@ const addOrderFields = {
 };
 const AddOrder = () => {
     const user = useSelector((state) => state.candidate.user);
+    const [pickupDate, setPickupDate] = useState(new Date());
 
     const [orderFormData, setOrderFormData] = useState(
         JSON.parse(JSON.stringify(addOrderFields))
@@ -160,7 +161,7 @@ const AddOrder = () => {
         priorityReferenceOptions]
     );
 
-    function checkRequiredFields(pickupDate) {
+    function checkRequiredFields() {
         if(pickupDate && material && size && priority) {
             return true;
         } else {
@@ -192,10 +193,7 @@ const AddOrder = () => {
         user
     ) => {
 
-        // get pickup date from local storage
-        const pickupDate = localStorage.getItem("calendar");
-
-        if (checkRequiredFields(pickupDate)) {
+        if (checkRequiredFields()) {
             try {
                 // Generate LR Number
                 const today = new Date();
@@ -240,7 +238,7 @@ const AddOrder = () => {
                     {
                         lr_number: lrNumber,
                         order_number: orderNumber,
-                        pickup_date: pickupDate,
+                        pickup_date: format(pickupDate, "yyyy-MM-dd"),
                         order_city: orderCity,
                         client_name: clientName,
                         pickup_location: pickupCitySelection[0],
@@ -420,7 +418,7 @@ const AddOrder = () => {
                         <Row className="mb-3">
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
                                 <Form.Label>Pickup Date</Form.Label><br />
-                                <CalendarComp />
+                                <CalendarComp setDate={setPickupDate} date1={pickupDate} />
                             </Form.Group>
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
                                 <Form.Label>Pickup Location</Form.Label>

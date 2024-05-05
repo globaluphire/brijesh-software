@@ -17,6 +17,7 @@ import Pagination from "../../../../common/Pagination";
 import Table from "react-bootstrap/Table";
 import DateRangePickerComp from "../../../../date/DateRangePickerComp";
 import { CSVLink } from "react-csv";
+import { convertToFullDateFormat } from "../../../../../utils/convertToFullDateFormat";
 
 const addSearchFilters = {
     status: ""
@@ -135,7 +136,40 @@ const OpenOrderProcess = () => {
             setFetchedOpenOrderdata(data);
 
             // creating new array object for CSV export
-            const orderDataCSV = data.map(({ order_id, order_created_by,...rest }) => ({ ...rest }));
+            const orderDataCSV = data.map(({
+                order_created_at: CreatedOn,
+                order_updated_at: UpdatedOn,
+                pickup_date: PickupDate,
+                order_number: ERPOrderNo,
+                status: Status,
+                client_name: ClientName,
+                company_name: Company,
+                weight: TotalWeight,
+                quantity: OrderDetails,
+                notes: OrderNotes,
+                lr_number: LRNo,
+                local_transport: LocalTransport,
+                truck_details: TruckDetails,
+                eway_number: EwayBillNo,
+                bills: Bills,
+                ...rest }) => ({ 
+                    CreatedOn,
+                    UpdatedOn,
+                    PickupDate,
+                    ERPOrderNo,
+                    Status,
+                    ClientName,
+                    Company,
+                    TotalWeight,
+                    OrderDetails,
+                    OrderNotes,
+                    LRNo,
+                    LocalTransport,
+                    TruckDetails,
+                    EwayBillNo,
+                    Bills,
+                    ...rest }));
+
             setFetchedOpenOrderdataCSV(orderDataCSV);
         }
     }
@@ -194,7 +228,40 @@ const OpenOrderProcess = () => {
                 setFetchedOpenOrderdata(orderData);
 
                 // creating new array object for CSV export
-                const orderDataCSV = orderData.map(({ order_id,order_created_by,...rest }) => ({ ...rest }));
+                const orderDataCSV = orderData.map(({
+                    order_created_at: CreatedOn,
+                    order_updated_at: UpdatedOn,
+                    pickup_date: PickupDate,
+                    order_number: ERPOrderNo,
+                    status: Status,
+                    client_name: ClientName,
+                    company_name: Company,
+                    weight: TotalWeight,
+                    quantity: OrderDetails,
+                    notes: OrderNotes,
+                    lr_number: LRNo,
+                    local_transport: LocalTransport,
+                    truck_details: TruckDetails,
+                    eway_number: EwayBillNo,
+                    bills: Bills,
+                    ...rest }) => ({ 
+                        CreatedOn,
+                        UpdatedOn,
+                        PickupDate,
+                        ERPOrderNo,
+                        Status,
+                        ClientName,
+                        Company,
+                        TotalWeight,
+                        OrderDetails,
+                        OrderNotes,
+                        LRNo,
+                        LocalTransport,
+                        TruckDetails,
+                        EwayBillNo,
+                        Bills,
+                        ...rest }));
+
                 setFetchedOpenOrderdataCSV(orderDataCSV);
             }
         } catch (e) {
@@ -465,7 +532,7 @@ const OpenOrderProcess = () => {
                                                 {order.order_updated_at ? order.order_updated_at : order.order_created_at}
                                             </td>
                                             <td>
-                                                {order.pickup_date}
+                                                {convertToFullDateFormat(order.pickup_date, false)}
                                             </td>
                                             <td>
                                                 <Link
