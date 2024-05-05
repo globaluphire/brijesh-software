@@ -384,13 +384,6 @@ const OpenOrderProcess = () => {
                                             </CSVLink>
                                         : "" }
                                         <Button
-                                            variant="dark"
-                                            // onClick={() => exportToPDF()}
-                                            className="btn btn-export btn-sm text-nowrap m-1"
-                                        >
-                                            Export to PDF
-                                        </Button>
-                                        <Button
                                             variant="success"
                                             onClick={() => Router.push("/employers-dashboard/add-order")}
                                             className="btn btn-add-lr btn-sm text-nowrap m-1"
