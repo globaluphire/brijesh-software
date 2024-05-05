@@ -62,7 +62,7 @@ const AddOrder = () => {
     const [pickupCitySelection, setPickupCitySelection] = useState([]);
     const [validated, setValidated] = useState(false);
     const [checkAllRefs, setCheckAllRefs] = useState(false);
-    const [orderCityReferenceOptions, setOrderCityReferenceOptions] = useState(null);
+    const [orderCityReferenceOptions, setOrderCityReferenceOptions] = useState([]);
     const [cityReferenceOptions, setCityReferenceOptions] = useState(null);
     const [sizeReferenceOptions, setSizeReferenceOptions] = useState(null);
     const [materialTypeReferenceOptions, setMaterialTypeReferenceOptions] = useState(null);
@@ -76,7 +76,12 @@ const AddOrder = () => {
             .eq("ref_nm", "orderCity");
 
         if (orderCityRefData) {
-            setOrderCityReferenceOptions(orderCityRefData);
+            const orderCityNames = [];
+            for (let i = 0; i < orderCityRefData.length; i++) {
+                orderCityNames.push(orderCityRefData[i].ref_dspl);
+            }
+            orderCityNames.sort();
+            setOrderCityReferenceOptions(orderCityNames);
         }
 
         // call reference to get city options
@@ -372,8 +377,8 @@ const AddOrder = () => {
                                     <option value=""></option>
                                     {orderCityReferenceOptions.map(
                                         (option) => (
-                                            <option key={option.ref_cd} value={option.ref_dspl}>
-                                                {option.ref_dspl}
+                                            <option key={option} value={option}>
+                                                {option}
                                             </option>
                                         )
                                     )}

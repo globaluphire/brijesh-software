@@ -694,7 +694,7 @@ const OrderDetails = (orderDetails) => {
                                         {/* action buttons */}
                                         <div className="pb-4">
                                             <div>
-                                                { fetchedOrderData.status === "Under pickup process" && sortedCancelReasonRefs ? <>
+                                                { fetchedOrderData.status !== "Completed" && sortedCancelReasonRefs ? <>
                                                     <button
                                                         className="btn btn-sm"
                                                         style = {{ margin: "10px", backgroundColor: "#dc3545", border: "1px solid #dc3545" }}
