@@ -18,6 +18,7 @@ import Pagination from "../../../../common/Pagination";
 import Table from "react-bootstrap/Table";
 import { InputGroup } from "react-bootstrap";
 import { CSVLink } from "react-csv";
+import { convertToFullDateFormat } from "../../../../../utils/convertToFullDateFormat";
 
 const addSearchFilters = {
     consignorName: "",
@@ -613,6 +614,7 @@ const Billing = () => {
                             <tr>
                                 <th>Actions</th>
                                 <th>Created On</th>
+                                <th>Invoice Date</th>
                                 <th>Pickup Date</th>
                                 <th>Order No</th>
                                 <th>Order City</th>
@@ -657,6 +659,11 @@ const Billing = () => {
                                             <td>
                                                 <span>
                                                     {invoice.invoice_created_at}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    {convertToFullDateFormat(invoice.invoice_date, false)}
                                                 </span>
                                             </td>
                                             <td>

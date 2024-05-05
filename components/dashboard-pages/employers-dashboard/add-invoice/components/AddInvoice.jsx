@@ -598,7 +598,7 @@ const AddInvoice = () => {
                                     Please enter Consignment From location.
                                 </Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group as={Col} md="auto" controlId="validationCustom02">
+                            <Form.Group as={Col} md="2" controlId="validationCustom02">
                                 <Form.Label>To City</Form.Label>
                                 <Form.Control
                                     // required
@@ -618,7 +618,7 @@ const AddInvoice = () => {
                                     Please enter Consignment To location.
                                 </Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group as={Col} md="auto" controlId="validationCustom02">
+                            <Form.Group as={Col} md="4" controlId="validationCustom02">
                                 <Form.Label>Material</Form.Label>
                                 <Form.Control
                                     // required
@@ -714,11 +714,11 @@ const AddInvoice = () => {
                     <div style={{ padding: "0 2rem" }}>
                         <Row className="mb-3">
                             <Form.Group as={Col} md="8" controlId="validationCustomPhonenumber">
-                                <Form.Label>Total Amount (in numbers only) <span className="optional">(ex. 12 or 12.00 or 12.01 or 12.12)</span></Form.Label>
+                                <Form.Label>Total Amount <span className="optional">(ex. 12 or 12.00 or 12.01 or 12.12)</span></Form.Label>
                                 <InputGroup>
                                     <InputGroup.Text id="inputGroupPrepend"><i className="las la-rupee-sign"></i></InputGroup.Text>
                                     <Form.Control
-                                        type="text"
+                                        type="number"
                                         // placeholder="900"
                                         aria-describedby="inputGroupPrepend"
                                         // required
