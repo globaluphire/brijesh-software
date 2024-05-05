@@ -27,7 +27,7 @@ const ViewInvoice = ({ fetchedInvoicedata }) => {
                     </Col>
                     <Col md={2} className="custom-border">996791</Col>
                     <Col md={2} className="custom-border">{fetchedInvoicedata.weight} Kgs</Col>
-                    <Col md={2} className="custom-border">{fetchedInvoicedata.total_amount}</Col>
+                    <Col md={2} className="custom-border">{parseFloat(fetchedInvoicedata.total_amount).toFixed(2)}</Col>
                 </Row>
                 <Row>
                     <Col md={1} className="custom-border"></Col>
@@ -36,13 +36,13 @@ const ViewInvoice = ({ fetchedInvoicedata }) => {
                     </Col>
                     <Col md={2} className="custom-border"></Col>
                     <Col md={2} className="custom-border">{fetchedInvoicedata.weight} Kgs</Col>
-                    <Col md={2} className="custom-border"><b><i className="las la-rupee-sign"></i>{fetchedInvoicedata.total_amount}</b><br />
+                    <Col md={2} className="custom-border"><b><i className="las la-rupee-sign"></i>{parseFloat(fetchedInvoicedata.total_amount).toFixed(2)}</b><br />
                         <div className="line-height-shrink optional">
                             (INR {convertNumberToWords(parseInt(fetchedInvoicedata.total_amount))} RS 
-                                {parseFloat(fetchedInvoicedata.total_amount).toFixed(2).slice(-2) !== '00' ? 
-                                    " and " + convertNumberToWords(parseFloat(fetchedInvoicedata.total_amount).toFixed(2).slice(-2)) + " Paisa"
-                                :  ""}
-                            <span> </span>only)
+                                {parseFloat(fetchedInvoicedata.total_amount).toFixed(2).slice(-2) !== "00" ?
+                                    " and " + convertNumberToWords(parseFloat(fetchedInvoicedata.total_amount).toFixed(2).slice(-2)) + " Paisa "
+                                :  " and Zero Paisa "}
+                            only)
                             <i> E. & O.E </i>
                         </div>
                     </Col>
@@ -81,11 +81,11 @@ const ViewInvoice = ({ fetchedInvoicedata }) => {
                     <Col md={2} className="custom-border"><b><i className="las la-rupee-sign"></i>{parseFloat(fetchedInvoicedata.total_amount * 0.025 * 2).toFixed(2)}</b>
                         <span className="line-height-shrink optional">
                             (INR {convertNumberToWords(parseInt(fetchedInvoicedata.total_amount * 0.025 * 2))} RS
-                            {parseFloat(fetchedInvoicedata.total_amount * 0.025 * 2).toFixed(2).slice(-2) !== '00' ? 
-                                " and " + convertNumberToWords(parseFloat(fetchedInvoicedata.total_amount * 0.025 * 2).toFixed(2).slice(-2)) + " Paisa"
-                            :  ""}
-                            <span> </span>only)
-                            Amount of tax subject to Reverse Charge
+                                {parseFloat(fetchedInvoicedata.total_amount * 0.025 * 2).toFixed(2).slice(-2) !== "00" ?
+                                    " and " + convertNumberToWords(parseFloat(fetchedInvoicedata.total_amount * 0.025 * 2).toFixed(2).slice(-2)) + " Paisa "
+                                :  " and Zero Paisa "}
+                            only)
+                            <i><u> Amount of tax subject to Reverse Charge</u></i>
                         </span>
                     </Col>
                 </Row>
@@ -98,11 +98,11 @@ const ViewInvoice = ({ fetchedInvoicedata }) => {
                             Company's Bank Details <br />
                         </b>
                         <div className="px-2 line-height-shrink">
-                            <span><b>A/C Holder's Name: </b>RAFTAAR LOGISTICS - BARODA</span> <br />
-                            <span><b>Bank Name: </b>ICICI HO - 00313</span> <br />
-                            <span><b>A/C No: </b>230805000313</span> <br />
-                            <span><b>Branch & IFS Code: </b>Ahmedabad Bodakdev Branch & ICIC0002308</span> <br />
-                            <span><b>SWIFT Code : </b></span>
+                            <span><b>A/C Holder's Name: </b>Raftaar logistics</span> <br />
+                            <span><b>Bank Name: </b>HDFC HO - 38410</span> <br />
+                            <span><b>A/C No: </b>50200093338410</span> <br />
+                            <span><b>Branch & IFS Code: </b>Baroda Raopura Branch & HDFC0000429</span> <br />
+                            <span><b>SWIFT Code: </b></span>
                         </div>
                     </Col>
                     <Col md={3} className="custom-border">

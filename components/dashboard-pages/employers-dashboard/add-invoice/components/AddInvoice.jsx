@@ -63,9 +63,8 @@ const addInvoiceFields = {
     material: "",
     quantity: "",
     orderNumber: "",
-    amountInNumbers: "",
-    weight: 0,
-    amountInWords: ""
+    amount: 0,
+    weight: 0
 };
 const AddInvoice = () => {
     // const [jobTitle, setJobTitle] = useState("");
@@ -128,9 +127,8 @@ const AddInvoice = () => {
         material,
         quantity,
         orderNumber,
-        amountInNumbers,
-        weight,
-        amountInWords
+        amount,
+        weight
         
     } = useMemo(() => invoiceFormData, [invoiceFormData]);
 
@@ -293,9 +291,8 @@ const AddInvoice = () => {
             material,
             quantity,
             orderNumber,
-            amountInNumbers,
-            weight,
-            amountInWords
+            amount,
+            weight
         },
         setInvoiceFormData,
         user
@@ -344,9 +341,8 @@ const AddInvoice = () => {
                         quantity: quantity,
                         lr_number: lrNumber,
                         order_number: orderNumber,
-                        total_amount: amountInNumbers,
-                        weight: weight,
-                        total_amount_in_words: amountInWords
+                        total_amount: amount,
+                        weight: weight
                     },
                 ]);
                 if (error) {
@@ -711,8 +707,8 @@ const AddInvoice = () => {
                     </div>
                     <div style={{ padding: "0 2rem" }}>
                         <Row className="mb-3">
-                            <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
-                                <Form.Label>Total Amount (in numbers)</Form.Label>
+                            <Form.Group as={Col} md="8" controlId="validationCustomPhonenumber">
+                                <Form.Label>Total Amount (in numbers only) <span className="optional">(ex. 12 or 12.00 or 12.01 or 12.12)</span></Form.Label>
                                 <InputGroup>
                                     <InputGroup.Text id="inputGroupPrepend"><i className="las la-rupee-sign"></i></InputGroup.Text>
                                     <Form.Control
@@ -720,30 +716,11 @@ const AddInvoice = () => {
                                         // placeholder="900"
                                         aria-describedby="inputGroupPrepend"
                                         // required
-                                        value={amountInNumbers}
+                                        value={amount}
                                         onChange={(e) => {
                                             setInvoiceFormData((previousState) => ({
                                                 ...previousState,
-                                                amountInNumbers: e.target.value,
-                                            }));
-                                        }}
-                                    />
-                                </InputGroup>
-                            </Form.Group>
-                            <Form.Group as={Col} md="8" controlId="validationCustomPhonenumber">
-                                <Form.Label>Total Amount (in words)</Form.Label>
-                                <InputGroup>
-                                    <InputGroup.Text id="inputGroupPrepend"><i className="las la-rupee-sign"></i></InputGroup.Text>
-                                    <Form.Control
-                                        type="text"
-                                        // placeholder="Username"
-                                        aria-describedby="inputGroupPrepend"
-                                        // required
-                                        value={amountInWords}
-                                        onChange={(e) => {
-                                            setInvoiceFormData((previousState) => ({
-                                                ...previousState,
-                                                amountInWords: e.target.value,
+                                                amount: e.target.value,
                                             }));
                                         }}
                                     />
