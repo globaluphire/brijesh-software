@@ -24,7 +24,7 @@ const Index = () => {
         var element = document.getElementById("export-invoice");
         var opt = {
             margin:       0,
-            filename:     "RaftaarInvoice.pdf",
+            filename:     "Raftaar-Invoice-" + fetchedInvoicedata.invoice_number + ".pdf",
             image:        { type: "jpeg", quality: 1 },
             html2canvas:  { scale: 2  },
             jsPDF:        { unit: "in", format: "A4", orientation: "portrait" }
