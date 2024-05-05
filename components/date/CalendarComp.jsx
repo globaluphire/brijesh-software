@@ -63,7 +63,7 @@ const CalendarComp = ({ setDate, date1 }) => {
 
       <input
         required
-        value={ showFormattedDate(date1) }
+        value={ date1 ? showFormattedDate(date1) : new Date() }
         readOnly
         className="inputBox"
         onClick={ () => setOpen(open => !open) }
@@ -72,7 +72,7 @@ const CalendarComp = ({ setDate, date1 }) => {
       <div ref={refOne}>
         {open && 
           <Calendar
-            date={ date1 }
+            date={ date1 ? date1 : new Date() }
             onChange = { (date) => handleSelect(date) }
             className="calendarElement"
           />
