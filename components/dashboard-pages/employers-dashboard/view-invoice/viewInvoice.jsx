@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { Col, Container, Row } from "react-bootstrap";
+import { convertNumberToWords } from "../../../../utils/convertNumberToWords";
 
 const ViewInvoice = ({ fetchedInvoicedata }) => {
     return (
@@ -37,7 +38,11 @@ const ViewInvoice = ({ fetchedInvoicedata }) => {
                     <Col md={2} className="custom-border">{fetchedInvoicedata.weight} Kgs</Col>
                     <Col md={2} className="custom-border"><b><i className="las la-rupee-sign"></i>{fetchedInvoicedata.total_amount}</b><br />
                         <div className="line-height-shrink optional">
-                            (INR {fetchedInvoicedata.total_amount_in_words} Only)
+                            (INR {convertNumberToWords(parseInt(fetchedInvoicedata.total_amount))} RS 
+                                {parseFloat(fetchedInvoicedata.total_amount).toFixed(2).slice(-2) !== '00' ? 
+                                    " and " + convertNumberToWords(parseFloat(fetchedInvoicedata.total_amount).toFixed(2).slice(-2)) + " Paisa"
+                                :  ""}
+                            <span> </span>only)
                             <i> E. & O.E </i>
                         </div>
                     </Col>
@@ -74,7 +79,14 @@ const ViewInvoice = ({ fetchedInvoicedata }) => {
                     <Col md={1} className="custom-border"><b></b></Col>
                     <Col md={1} className="custom-border"><b>{parseFloat(fetchedInvoicedata.total_amount * 0.025).toFixed(2)}</b></Col>
                     <Col md={2} className="custom-border"><b><i className="las la-rupee-sign"></i>{parseFloat(fetchedInvoicedata.total_amount * 0.025 * 2).toFixed(2)}</b>
-                        <span className="line-height-shrink optional">(INR Forty Five Only) Amount of tax subject to Reverse Charge</span>
+                        <span className="line-height-shrink optional">
+                            (INR {convertNumberToWords(parseInt(fetchedInvoicedata.total_amount * 0.025 * 2))} RS
+                            {parseFloat(fetchedInvoicedata.total_amount * 0.025 * 2).toFixed(2).slice(-2) !== '00' ? 
+                                " and " + convertNumberToWords(parseFloat(fetchedInvoicedata.total_amount * 0.025 * 2).toFixed(2).slice(-2)) + " Paisa"
+                            :  ""}
+                            <span> </span>only)
+                            Amount of tax subject to Reverse Charge
+                        </span>
                     </Col>
                 </Row>
             </Container>

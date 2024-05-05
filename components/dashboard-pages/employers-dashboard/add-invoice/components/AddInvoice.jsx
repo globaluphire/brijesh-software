@@ -64,7 +64,7 @@ const addInvoiceFields = {
     quantity: "",
     orderNumber: "",
     amountInNumbers: "",
-    weight: "",
+    weight: 0,
     amountInWords: ""
 };
 const AddInvoice = () => {
