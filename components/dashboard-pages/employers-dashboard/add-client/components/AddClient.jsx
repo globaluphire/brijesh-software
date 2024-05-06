@@ -45,32 +45,28 @@ const addJobFields = {
     facility: "",
 };
 
-const addLRFields = {
-    // Consignor Block Fields
-    consignorName: "",
-    consignorGST: "",
-    consignorPhone: "",
-    consignorAddress: "",
-    consignorEmail: "",
+const addClientFields = {
+    // client
+    clientType: "",
+    clientName: "",
+    clientEmail: "",
+    clientPhone: "",
+    clientGST: "",
+    clientPAN: "",
 
-    // Consignor Block Fields
-    consigneeName: "",
-    consigneeGST: "",
-    consigneePhone: "",
-    consigneeAddress: "",
-    consigneeEmail: "",
+    // client address
+    clientAddress1: "",
+    clientAddress2: "",
+    clientCity: "",
+    clientState: "",
+    clientArea: "",
+    clientPIN: "",
 
-    // Other Block Fields
-    fromCity: "",
-    toCity: "",
-    vehicalNumber: "",
-    driverName: "",
-    driverPhone: "",
-
-    // Material Details Block Fields
-    materialDetails: "",
-    weight: "",
-    status: ""
+    // client contact
+    clientContactType: "",
+    clientContactName: "",
+    clientContactPhone: "",
+    clientContactEmail: ""
 };
 const AddClient = () => {
     const user = useSelector((state) => state.candidate.user);
@@ -97,36 +93,32 @@ const AddClient = () => {
     //     completeAddress,
     //     facility,
     // } = useMemo(() => jobData, [jobData]);
-    const [lrFormData, setLrFormData] = useState(
-        JSON.parse(JSON.stringify(addLRFields))
+    const [clientFormData, setClientFormData] = useState(
+        JSON.parse(JSON.stringify(addClientFields))
     );
     const {
-        // Consignor Block Fields
-        consignorName,
-        consignorGST,
-        consignorPhone,
-        consignorAddress,
-        consignorEmail,
-
-        // Consignor Block Fields
-        consigneeName,
-        consigneeGST,
-        consigneePhone,
-        consigneeAddress,
-        consigneeEmail,
-
-        // Other Block Fields
-        fromCity,
-        toCity,
-        vehicalNumber,
-        driverName,
-        driverPhone,
-
-        // Material Details Block Fields
-        materialDetails,
-        weight,
-        status
-    } = useMemo(() => lrFormData, [lrFormData]);
+        // client
+        clientType,
+        clientName,
+        clientEmail,
+        clientPhone,
+        clientGST,
+        clientPAN,
+    
+        // client address
+        clientAddress1,
+        clientAddress2,
+        clientCity,
+        clientState,
+        clientArea,
+        clientPIN,
+    
+        // client contact
+        clientContactType,
+        clientContactName,
+        clientContactPhone,
+        clientContactEmail
+    } = useMemo(() => clientFormData, [clientFormData]);
 
     const searchInput = useRef(null);
 
@@ -136,133 +128,83 @@ const AddClient = () => {
         []
     );
     const [validated, setValidated] = useState(false);
-    const [
-        lRStatusReferenceOptions,
-        setLRStatusReferenceOptions,
-    ] = useState(null);
 
+    const [checkAllRefs, setCheckAllRefs] = useState(false);
+    const [clientTypeReferenceOptions, setClientTypeReferenceOptions] = useState([]);
+    const [clientContactTypeReferenceOptions, setClientContactTypeReferenceOptions] = useState([]);
 
-    const addresses = [
-        "601 Evergreen Rd., Woodburn, OR 97071",
-        "160 NE Conifer Blvd., Corvallis, OR 97330",
-        "1735 Adkins St., Eugene, OR 97401",
-        "1201 McLean Blvd., Eugene, OR 97405",
-        "1166 E 28th Ave., Eugene, OR 97403",
-        "740 NW Hill Pl., Roseburg, OR 97471",
-        "525 W Umpqua St., Roseburg, OR 97471",
-        "2075 NW Highland Avenue, Grants Pass, OR 97526",
-        "2201 NW Highland Avenue, Grants Pass, OR 97526",
-        "2901 E Barnett Rd., Medford, OR 97504",
-        "4062 Arleta Ave NE, Keizer,	OR 97303",
-        "2350 Oakmont Way, Suite 204, Eugene, OR 97401",
-        "1677 Pensacola Street, Honolulu, HI 96822",
-        "10503 Timberwood Cir, Suite 200, Louisville, KY 40223",
-        "252 LA Hwy 402, Napoleonville, LA 70390",
-        "5976 Highway 65N, Lake Providence, LA 71254",
-        "1400 Lindberg Street, Slidell, LA 70458",
-        "4021 Cadillac Street, New Orleans, LA 70122",
-    ];
-
-    async function getLRStatusOptions() {
-        // call reference to get lrStatus options
-        const { data, error: e } = await supabase
+    async function getReferences() {
+        // call reference to get clientType options
+        const { data: clientTypeRefData, error: err } = await supabase
             .from("reference")
             .select("*")
-            .eq("ref_nm", "lrStatus");
+            .eq("ref_nm", "clientType");
 
-        if (data) {
-            setLRStatusReferenceOptions(data);
-        }
-
-    }
-
-    useEffect(() => {
-        getLRStatusOptions();
-    }, []);
-
-    useEffect(() => {
-        jobData.facility = facilitySingleSelections[0];
-    }, [facilitySingleSelections]);
-
-    useEffect(() => {
-        jobData.completeAddress = singleSelections[0];
-    }, [singleSelections]);
-
-    // init google map script
-    const initMapScript = () => {
-        // if script already loaded
-        if (window.google) {
-            return Promise.resolve();
-        }
-        const src = `${mapApiJs}?key=${apiKey}&libraries=places&v=weekly`;
-        return loadAsyncScript(src);
-    };
-
-    // do something on address change
-    const onChangeAddress = (autocomplete) => {
-        const location = autocomplete.getPlace();
-        setJobData((previousState) => ({
-            ...previousState,
-            address: searchInput.current.value,
-        }));
-    };
-
-    // init autocomplete
-    const initAutocomplete = () => {
-        if (!searchInput.current) return;
-
-        const autocomplete = new window.google.maps.places.Autocomplete(
-            searchInput.current,
-            {
-                types: ["(cities)"],
+        if (clientTypeRefData) {
+            const clientTypes = [];
+            for (let i = 0; i < clientTypeRefData.length; i++) {
+                clientTypes.push(clientTypeRefData[i].ref_dspl);
             }
-        );
-        autocomplete.setFields(["address_component", "geometry"]);
-        autocomplete.addListener("place_changed", () =>
-            onChangeAddress(autocomplete)
-        );
+            clientTypes.sort();
+            setClientTypeReferenceOptions(clientTypes);
+        }
+
+        // call reference to get clientContactType options
+        const { data: clientContactTypeRefData, error: e } = await supabase
+            .from("reference")
+            .select("*")
+            .eq("ref_nm", "clientContactType");
+
+        if (clientContactTypeRefData) {
+            const clientContactTypes = [];
+            for (let i = 0; i < clientContactTypeRefData.length; i++) {
+                clientContactTypes.push(clientContactTypeRefData[i].ref_dspl);
+            }
+            clientContactTypes.sort();
+            setClientContactTypeReferenceOptions(clientContactTypes);
+        }
     };
 
-    // load map script after mounted
+    async function checkAllRefsData() {
+        if (clientTypeReferenceOptions && clientContactTypeReferenceOptions) {
+            setCheckAllRefs(true);
+        }
+    };
+
     useEffect(() => {
-        initMapScript().then(() => initAutocomplete());
+        getReferences();
     }, []);
-    /*
-  const specialisms = [
-    { value: "Banking", label: "Banking" },
-    { value: "Digital & Creative", label: "Digital & Creative" },
-    { value: "Retail", label: "Retail" },
-    { value: "Human Resources", label: "Human Resources" },
-    { value: "Managemnet", label: "Managemnet" },
-    { value: "Accounting & Finance", label: "Accounting & Finance" },
-    { value: "Digital", label: "Digital" },
-    { value: "Creative Art", label: "Creative Art" },
-    { value: "Engineer", label: "Engineer" },
-  ];
- */
-    function checkRequiredFields(lrFormData) {
+
+    useEffect(() => {
+        // validate refs data
+        checkAllRefsData();
+    }, [clientTypeReferenceOptions &&
+        clientContactTypeReferenceOptions]
+    );
+
+    function checkRequiredFields(clientFormData) {
         if (
-            // Consignor Block Fields
-            consignorName &&
-            consignorGST &&
-            consignorAddress &&
-
-            // Consignor Block Fields
-            consigneeName &&
-            consigneeGST &&
-            consigneeAddress &&
-
-            // Other Block Fields
-            fromCity &&
-            toCity &&
-            vehicalNumber &&
-            driverName &&
-            driverPhone &&
-
-            // Material Details Block Fields
-            materialDetails &&
-            weight &&
-            status
+            // client
+            clientType &&
+            clientName &&
+            clientEmail &&
+            clientPhone &&
+            clientGST &&
+            clientPAN &&
+        
+            // client address
+            clientAddress1 &&
+            clientAddress2 &&
+            clientCity &&
+            clientState &&
+            clientArea &&
+            clientPIN &&
+        
+            // client contact
+            clientContactType &&
+            clientContactName &&
+            clientContactPhone &&
+            clientContactEmail
         ) {
             return true;
         } else {
@@ -270,40 +212,36 @@ const AddClient = () => {
         }
     };
 
-    const addNewLR = async (
+    const addNewClient = async (
         {
-            // Consignor Block Fields
-            consignorName,
-            consignorGST,
-            consignorPhone,
-            consignorAddress,
-            consignorEmail,
-
-            // Consignor Block Fields
-            consigneeName,
-            consigneeGST,
-            consigneePhone,
-            consigneeAddress,
-            consigneeEmail,
-
-            // Other Block Fields
-            fromCity,
-            toCity,
-            vehicalNumber,
-            driverName,
-            driverPhone,
-
-            // Material Details Block Fields
-            materialDetails,
-            weight,
-            status
+            // client
+            clientType,
+            clientName,
+            clientEmail,
+            clientPhone,
+            clientGST,
+            clientPAN,
+        
+            // client address
+            clientAddress1,
+            clientAddress2,
+            clientCity,
+            clientState,
+            clientArea,
+            clientPIN,
+        
+            // client contact
+            clientContactType,
+            clientContactName,
+            clientContactPhone,
+            clientContactEmail
         },
-        setLrFormData,
+        setClientFormData,
         user
     ) => {
-        if (checkRequiredFields(lrFormData)) {
+        if (checkRequiredFields(clientFormData)) {
             try {
-                // Generate LR Number
+                // Generate client number
                 const today = new Date();
                 let date = today.getDate();
                 if (date < 10) {
@@ -315,73 +253,38 @@ const AddClient = () => {
                 }
                 var year = today.getFullYear();
 
-                const { data: sysKeyLRData, error: sysKeyLRError } = await supabase
+                const { data: sysKeyClientData, error: sysKeyClientError } = await supabase
                     .from("sys_key")
                     .select("sys_seq_nbr")
-                    .eq("key_name", "lr_number");
+                    .eq("key_name", "client_number");
 
-                let lrSeqNbr = sysKeyLRData[0].sys_seq_nbr + 1;
-                if (lrSeqNbr < 10) {
-                    lrSeqNbr = "00" + lrSeqNbr;
-                } else if(lrSeqNbr < 100) {
-                    lrSeqNbr = "0" + lrSeqNbr;
+                let clientSeqNbr = sysKeyClientData[0].sys_seq_nbr + 1;
+                if (clientSeqNbr < 10) {
+                    clientSeqNbr = "00" + clientSeqNbr;
+                } else if(clientSeqNbr < 100) {
+                    clientSeqNbr = "0" + clientSeqNbr;
                 }
-                const lrNumber = "RLR" + "" + date + "" + month + "" + year.toString().substring(2) + "" + lrSeqNbr;
+                const clientNumber = "C" + "" + date + "" + month + "" + year.toString().substring(2) + "" + clientSeqNbr;
 
-                // New Order Number
-                const { data: sysKeyOrderData, error: sysKeyError } = await supabase
-                    .from("sys_key")
-                    .select("sys_seq_nbr")
-                    .eq("key_name", "order_number");
+                console.log(clientNumber, " ", clientNumber);
 
-                let orderSeqNbr = sysKeyOrderData[0].sys_seq_nbr + 1;
-                if (orderSeqNbr < 10) {
-                    orderSeqNbr = "00" + orderSeqNbr;
-                } else if(orderSeqNbr < 100) {
-                    orderSeqNbr = "0" + orderSeqNbr;
-                }
-                const orderNumber = "ORD" + "" + date + "" + month + "" + year.toString().substring(2) + "" + orderSeqNbr;
-
-                console.log(orderNumber, " ", lrNumber);
-                const { data, error } = await supabase.from("lr").insert([
+                // saving client data
+                const { data: clientData, error: clientError } = await supabase.from("client").insert([
                     {
-                        lr_number: lrNumber, // add logic to create automatic Unique number, ex. RLR(YY)(MM)(DD)(incremented 3 number digit)
-                        order_number: orderNumber, // add logic to create automatic Unique number, ex. (3 digit City Code)(YY)(MM)(DD)(incremented 3 number digit)
-
-                        // Consignor Fields
-                        consignor: consignorName,
-                        pickup_address: consignorAddress,
-                        consignor_gst: consignorGST,
-                        consignor_email: consignorEmail,
-                        consignor_phone: consignorPhone,
-
-                        // Consignee Fields
-                        consignee: consigneeName,
-                        drop_address: consigneeAddress,
-                        consignee_gst: consigneeGST,
-                        consignee_email: consigneeEmail,
-                        consignee_phone: consigneePhone,
-
-                        // Other Block Fields
-                        from_city: fromCity,
-                        to_city: toCity,
-                        vehical_number: vehicalNumber,
-                        driver_name: driverName,
-                        driver_phone: driverPhone,
-
-                        // Material Details Block Fields
-                        material_details: materialDetails,
-                        weight: weight,
-
-                        // Default fields
-                        status: status,
-                        lr_created_by: user.id
+                        // client
+                        client_number: clientNumber,
+                        client_type: clientType,
+                        client_name: clientName,
+                        client_email: clientEmail,
+                        client_phone: clientPhone,
+                        client_gst: clientGST,
+                        client_pan: clientPAN
                     },
                 ]);
-                if (error) {
+                if (clientError) {
                     // open toast
                     toast.error(
-                        "Error while saving LR details, Please try again later or contact tech support",
+                        "Error while saving Client, Please try again later or contact tech support",
                         {
                             position: "bottom-right",
                             autoClose: false,
@@ -394,35 +297,88 @@ const AddClient = () => {
                         }
                     );
                 } else {
-                    // open toast
-                    toast.success("New LR saved successfully", {
-                        position: "bottom-right",
-                        autoClose: 8000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
-                    
-                    // increment lr_number key
-                    await supabase.rpc("increment_sys_key", {
-                        x: 1,
-                        keyname: "lr_number",
-                    });
-                    // increment order_number key
-                    await supabase.rpc("increment_sys_key", {
-                        x: 1,
-                        keyname: "order_number",
-                    });
-
-                    setLrFormData(JSON.parse(JSON.stringify(addLRFields)));
+                    // saving client address data
+                    const { data: clientAddressData, error: clientAddressError } = await supabase.from("client_address").insert([
+                        {
+                            // client address
+                            client_number: clientNumber,
+                            client_address1: clientAddress1,
+                            client_address2: clientAddress2,
+                            client_city: clientCity,
+                            client_state: clientState,
+                            client_area: clientArea,
+                            client_pin: clientPIN
+                        },
+                    ]);
+                    if (clientAddressError) {
+                        // open toast
+                        toast.error(
+                            "Error while saving Client Address, Please try again later or contact tech support",
+                            {
+                                position: "bottom-right",
+                                autoClose: false,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "colored",
+                            }
+                        );
+                    } else {
+                        // saving client contact data
+                        const { data: clientContactData, error: clientContactError } = await supabase.from("client_contact").insert([
+                            {
+                                // client contact
+                                client_number: clientNumber,
+                                client_contact_type: clientContactType,
+                                client_contact_name: clientContactName,
+                                client_contact_phone: clientContactPhone,
+                                client_contact_email: clientContactEmail
+                            },
+                        ]);
+                        if (clientAddressError) {
+                            // open toast
+                            toast.error(
+                                "Error while saving Client Contact, Please try again later or contact tech support",
+                                {
+                                    position: "bottom-right",
+                                    autoClose: false,
+                                    hideProgressBar: false,
+                                    closeOnClick: true,
+                                    pauseOnHover: true,
+                                    draggable: true,
+                                    progress: undefined,
+                                    theme: "colored",
+                                }
+                            );
+                        } else {
+                            // open toast
+                            toast.success("New Client saved successfully", {
+                                position: "bottom-right",
+                                autoClose: 8000,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "colored",
+                            });
+                            
+                            // increment lr_number key
+                            await supabase.rpc("increment_sys_key", {
+                                x: 1,
+                                keyname: "client_number",
+                            });
+    
+                            setClientFormData(JSON.parse(JSON.stringify(addClientFields)));
+                        }
+                    }
                 }
             } catch (err) {
                 // open toast
                 toast.error(
-                    "Error while saving LR details, Please try again later or contact tech support",
+                    "Error while saving CLIENT details, Please try again later or contact tech support",
                     {
                         position: "bottom-right",
                         autoClose: false,
@@ -462,439 +418,372 @@ const AddClient = () => {
 
     return (
         <> 
-            {lRStatusReferenceOptions ? <Form noValidate validated={validated}>
-                {/* Consigner Block starts */}
-                <div>
-                    <div className="divider">
-                        <span><b>Details</b></span>
-                    </div>
-                    <div style={{ padding: "0 2rem" }}>
-                        <Row className="mb-3">
-                            <Form.Group as={Col} md="4" controlId="validationCustom01">
-                                <Form.Label>Client Name</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="Consignor"
-                                    // defaultValue="Mark"
-                                    value={consignorName}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consignorName: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignor name.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="4" controlId="validationCustom02">
-                                <Form.Label>GST Number</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="GST number"
-                                    // defaultValue="Otto"
-                                    value={consignorGST}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consignorGST: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignor's GST Number.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
-                                <Form.Label>Phone Number</Form.Label>
-                                <InputGroup>
-                                    <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
-                                    <Form.Control
-                                        type="text"
-                                        // placeholder="Username"
-                                        aria-describedby="inputGroupPrepend"
-                                        // required
-                                        value={consignorPhone}
+            {checkAllRefs ? <Form noValidate validated={validated}>
+                    {/* Client Block starts */}
+                    <div>
+                        <div className="divider">
+                            <span><b>Details</b></span>
+                        </div>
+                        <div style={{ padding: "0 2rem" }}>
+                            <Row className="mb-3">
+                                <Form.Group as={Col} md="4" controlId="validationCustom02">
+                                    <Form.Label>Client Type</Form.Label>
+                                    <Form.Select
+                                        className="chosen-single form-select"
                                         onChange={(e) => {
-                                            setLrFormData((previousState) => ({
+                                            setClientFormData((previousState) => ({
                                                 ...previousState,
-                                                consignorPhone: e.target.value,
+                                                clientType: e.target.value,
                                             }));
                                         }}
-                                    />
-                                </InputGroup>
-                            </Form.Group>
-                        </Row>
-                        <Row className="mb-3">
-                            <Form.Group as={Col} md="3" controlId="validationCustom04">
-                                <Form.Label>Email Address</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder=""
-                                    value={consignorEmail}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consignorEmail: e.target.value,
-                                        }));
-                                    }}
-                                />
-                            </Form.Group>
-                        </Row>
-                    </div>
-                </div>
-                {/* Consigner Block ends */}
-
-                {/* Consignee Block starts */}
-                <div>
-                    <div className="divider">
-                        <span><b>Addresses</b></span>
-                    </div>
-                    <div style={{ padding: "0 2rem" }}>
-                        <Row className="mb-3">
-                            <Form.Group as={Col} md="4" controlId="validationCustom01">
-                                <Form.Label>Name</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="Consignee"
-                                    // defaultValue="Mark"
-                                    value={consigneeName}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consigneeName: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignee's name.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="4" controlId="validationCustom02">
-                                <Form.Label>GST Number</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="GST number"
-                                    // defaultValue="Otto"
-                                    value={consigneeGST}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consigneeGST: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignee's GST Number.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
-                                <Form.Label>Phone Number</Form.Label>
-                                <InputGroup>
-                                    <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
-                                    <Form.Control
-                                        type="text"
-                                        // placeholder="Username"
-                                        aria-describedby="inputGroupPrepend"
-                                        // required
-                                        value={consigneePhone}
-                                        onChange={(e) => {
-                                            setLrFormData((previousState) => ({
-                                                ...previousState,
-                                                consigneePhone: e.target.value,
-                                            }));
-                                        }}
-                                    />
-                                </InputGroup>
-                            </Form.Group>
-                        </Row>
-                        <Row className="mb-3">
-                            <Form.Group as={Col} md="9" controlId="validationCustom03">
-                                <Form.Label>Address</Form.Label>
-                                <Form.Control    
-                                    type="text"
-                                    placeholder="Drop Address"
-                                    required
-                                    value={consigneeAddress}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consigneeAddress: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    Please provide a valid Consignee's Address.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="3" controlId="validationCustom04">
-                                <Form.Label>Email Address</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder=""
-                                    value={consigneeEmail}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            consigneeEmail: e.target.value,
-                                        }));
-                                    }}
-                                />
-                            </Form.Group>
-                        </Row>
-                    </div>
-                </div>
-                {/* Consignee Block ends */}
-
-                {/* Other Block starts */}
-                <div>
-                    <div className="divider divider-other">
-                        <span><b>Other</b></span>
-                    </div>
-                    <div style={{ padding: "0 2rem" }}>
-                        <Row className="mb-3">
-                            <Form.Group as={Col} md="3" controlId="validationCustom01">
-                                <Form.Label>From</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="Consignee"
-                                    // defaultValue="Mark"
-                                    value={fromCity}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            fromCity: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignment From location.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="3" controlId="validationCustom02">
-                                <Form.Label>To</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="To"
-                                    // defaultValue="Otto"
-                                    value={toCity}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            toCity: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignment To location.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="3" controlId="validationCustom02">
-                                <Form.Label>Vehical Number</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="GJ011234"
-                                    // defaultValue="Otto"
-                                    value={vehicalNumber}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            vehicalNumber: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Vehical Number.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                        </Row>
-                        <Row className="mb-3">
-                            <Form.Group as={Col} md="3" controlId="validationCustom02">
-                                <Form.Label>Driver Name</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="Driver Name"
-                                    // defaultValue="Otto"
-                                    value={driverName}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            driverName: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignment's Driver Name.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="4" controlId="validationCustomDriverPhonenumber">
-                                <Form.Label>Driver Phone Number</Form.Label>
-                                <InputGroup>
-                                    <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
-                                    <Form.Control
-                                        type="text"
-                                        // placeholder="Driver Phone Number"
-                                        aria-describedby="inputGroupPrepend"
+                                        value={clientType}
                                         required
-                                        value={driverPhone}
+                                    >
+                                        <option value=""></option>
+                                        {clientTypeReferenceOptions.map(
+                                            (option) => (
+                                                <option value={option}>
+                                                    {option}
+                                                </option>
+                                            )
+                                        )}
+                                    </Form.Select>
+                                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                    <Form.Control.Feedback type="invalid">
+                                        Please enter Client Type.
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group as={Col} md="4" controlId="validationCustom01">
+                                    <Form.Label>Client Name</Form.Label>
+                                    <Form.Control
+                                        required
+                                        type="text"
+                                        // placeholder="Consignor"
+                                        // defaultValue="Mark"
+                                        value={clientName}
                                         onChange={(e) => {
-                                            setLrFormData((previousState) => ({
+                                            setClientFormData((previousState) => ({
                                                 ...previousState,
-                                                driverPhone: e.target.value,
+                                                clientName: e.target.value,
                                             }));
                                         }}
                                     />
                                     <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                     <Form.Control.Feedback type="invalid">
-                                        Please enter Consignment's Driver Phone Number.
+                                        Please enter Client Name.
                                     </Form.Control.Feedback>
-                                </InputGroup>
-                            </Form.Group>
-                        </Row>
+                                </Form.Group>
+                                <Form.Group as={Col} md="4" controlId="validationCustom02">
+                                    <Form.Label>Client GSTIN</Form.Label>
+                                    <Form.Control
+                                        required
+                                        type="text"
+                                        // placeholder="GST number"
+                                        // defaultValue="Otto"
+                                        value={clientGST}
+                                        onChange={(e) => {
+                                            setClientFormData((previousState) => ({
+                                                ...previousState,
+                                                clientGST: e.target.value,
+                                            }));
+                                        }}
+                                    />
+                                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                    <Form.Control.Feedback type="invalid">
+                                        Please enter Client's GST Number.
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                            </Row>
+                            <Row className="mb-3">
+                                <Form.Group as={Col} md="4" controlId="validationCustom02">
+                                    <Form.Label>Client PAN Number</Form.Label>
+                                    <Form.Control
+                                        // required
+                                        type="text"
+                                        // placeholder="GST number"
+                                        // defaultValue="Otto"
+                                        value={clientPAN}
+                                        onChange={(e) => {
+                                            setClientFormData((previousState) => ({
+                                                ...previousState,
+                                                clientPAN: e.target.value,
+                                            }));
+                                        }}
+                                    />
+                                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                    <Form.Control.Feedback type="invalid">
+                                        Please enter Client's PAN Number.
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
+                                    <Form.Label>Client Phone Number</Form.Label>
+                                    <InputGroup>
+                                        <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
+                                        <Form.Control
+                                            type="text"
+                                            // placeholder="Username"
+                                            aria-describedby="inputGroupPrepend"
+                                            // required
+                                            value={clientPhone}
+                                            onChange={(e) => {
+                                                setClientFormData((previousState) => ({
+                                                    ...previousState,
+                                                    clientPhone: e.target.value,
+                                                }));
+                                            }}
+                                        />
+                                    </InputGroup>
+                                </Form.Group>
+                                <Form.Group as={Col} md="4" controlId="validationCustom04">
+                                    <Form.Label>Client Email Address</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder=""
+                                        value={clientEmail}
+                                        onChange={(e) => {
+                                            setClientFormData((previousState) => ({
+                                                ...previousState,
+                                                clientEmail: e.target.value,
+                                            }));
+                                        }}
+                                    />
+                                </Form.Group>
+                            </Row>
+                        </div>
                     </div>
-                </div>
-                {/* Other Block ends */}
+                    {/* Client Block ends */}
 
-
-                {/* Material Details starts */}
-                <div>
-                    <div className="divider divider-material">
-                        <span><b>Material Details</b></span>
+                    {/* Client Address Block starts */}
+                    <div>
+                        <div className="divider">
+                            <span><b>Client Address</b></span>
+                        </div>
+                        <div style={{ padding: "0 2rem" }}>
+                            <Row className="mb-3">
+                                <Form.Group as={Col} md="6" controlId="validationCustom03">
+                                    <Form.Label>Address 1</Form.Label>
+                                    <Form.Control    
+                                        type="text"
+                                        // placeholder=""
+                                        required
+                                        value={clientAddress1}
+                                        onChange={(e) => {
+                                            setClientFormData((previousState) => ({
+                                                ...previousState,
+                                                clientAddress1: e.target.value,
+                                            }));
+                                        }}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        Please provide a valid Client Address 1.
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group as={Col} md="6" controlId="validationCustom03">
+                                    <Form.Label>Address 2</Form.Label>
+                                    <Form.Control    
+                                        type="text"
+                                        // placeholder=""
+                                        // required
+                                        value={clientAddress2}
+                                        onChange={(e) => {
+                                            setClientFormData((previousState) => ({
+                                                ...previousState,
+                                                clientAddress2: e.target.value,
+                                            }));
+                                        }}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        Please provide a valid Client Address 2.
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                            </Row>
+                            <Row className="mb-3">
+                                <Form.Group as={Col} md="2" controlId="validationCustom03">
+                                    <Form.Label>City</Form.Label>
+                                    <Form.Control    
+                                        type="text"
+                                        required
+                                        value={clientCity}
+                                        onChange={(e) => {
+                                            setClientFormData((previousState) => ({
+                                                ...previousState,
+                                                clientCity: e.target.value,
+                                            }));
+                                        }}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        Please provide a valid city.
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group as={Col} md="2" controlId="validationCustom04">
+                                    <Form.Label>State</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        required
+                                        value={clientState}
+                                        onChange={(e) => {
+                                            setClientFormData((previousState) => ({
+                                                ...previousState,
+                                                clientState: e.target.value,
+                                            }));
+                                        }}
+                                    />
+                                </Form.Group>
+                                <Form.Group as={Col} md="2" controlId="validationCustom04">
+                                    <Form.Label>Area</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        required
+                                        value={clientArea}
+                                        onChange={(e) => {
+                                            setClientFormData((previousState) => ({
+                                                ...previousState,
+                                                clientArea: e.target.value,
+                                            }));
+                                        }}
+                                    />
+                                </Form.Group>
+                                <Form.Group as={Col} md="2" controlId="validationCustom04">
+                                    <Form.Label>PIN</Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        required
+                                        value={clientPIN}
+                                        onChange={(e) => {
+                                            setClientFormData((previousState) => ({
+                                                ...previousState,
+                                                clientPIN: e.target.value,
+                                            }));
+                                        }}
+                                    />
+                                </Form.Group>
+                            </Row>
+                        </div>
                     </div>
-                    <div style={{ padding: "0 2rem" }}>
-                        <Row className="mb-3">
-                            <Form.Group as={Col} controlId="validationCustom01">
-                                <Form.Label>Material Details</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="text"
-                                    // placeholder="Material Details"
-                                    // defaultValue="Mark"
-                                    value={materialDetails}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            materialDetails: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignment Material Details.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                        </Row>
-                        <Row>
-                            <Form.Group as={Col} md="3" controlId="validationCustom02">
-                                <Form.Label>Weight(Kg)</Form.Label>
-                                <Form.Control
-                                    required
-                                    type="number"
-                                    // placeholder="Weight"
-                                    // defaultValue="Otto"
-                                    value={weight}
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            weight: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignment Weight in Kg.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="3" controlId="validationCustom02">
-                                <Form.Label>Status</Form.Label>
-                                <Form.Select
-                                    className="chosen-single form-select"
-                                    onChange={(e) => {
-                                        setLrFormData((previousState) => ({
-                                            ...previousState,
-                                            status: e.target.value,
-                                        }));
-                                    }}
-                                    value={status}
-                                    required
-                                >
-                                    <option value=""></option>
-                                    {lRStatusReferenceOptions.map(
-                                        (option) => (
-                                            <option value={option.ref_dspl}>
-                                                {option.ref_dspl}
-                                            </option>
-                                        )
-                                    )}
-                                </Form.Select>
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter LR Status.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                        </Row>
+                    {/* Client Address Block ends */}
+
+                    {/* Client Contact Block starts */}
+                    <div>
+                        <div className="divider divider-other">
+                            <span><b>Client Contact</b></span>
+                        </div>
+                        <div style={{ padding: "0 2rem" }}>
+                            <Row className="mb-3">
+                                <Form.Group as={Col} md="3" controlId="validationCustom02">
+                                    <Form.Label>Contact Type</Form.Label>
+                                    <Form.Select
+                                        className="chosen-single form-select"
+                                        onChange={(e) => {
+                                            setClientFormData((previousState) => ({
+                                                ...previousState,
+                                                clientContactType: e.target.value,
+                                            }));
+                                        }}
+                                        value={clientContactType}
+                                        required
+                                    >
+                                        <option value=""></option>
+                                        {clientContactTypeReferenceOptions.map(
+                                            (option) => (
+                                                <option value={option}>
+                                                    {option}
+                                                </option>
+                                            )
+                                        )}
+                                    </Form.Select>
+                                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                    <Form.Control.Feedback type="invalid">
+                                        Please enter Client Contact Type.
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group as={Col} md="4" controlId="validationCustom02">
+                                    <Form.Label>Contact Name</Form.Label>
+                                    <Form.Control
+                                        required
+                                        type="text"
+                                        // placeholder="To"
+                                        // defaultValue="Otto"
+                                        value={clientContactName}
+                                        onChange={(e) => {
+                                            setClientFormData((previousState) => ({
+                                                ...previousState,
+                                                clientContactName: e.target.value,
+                                            }));
+                                        }}
+                                    />
+                                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                    <Form.Control.Feedback type="invalid">
+                                        Please enter Client Contact.
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                                <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
+                                    <Form.Label>Contact Phone Number</Form.Label>
+                                    <InputGroup>
+                                        <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
+                                        <Form.Control
+                                            type="text"
+                                            // placeholder="Username"
+                                            aria-describedby="inputGroupPrepend"
+                                            // required
+                                            value={clientContactPhone}
+                                            onChange={(e) => {
+                                                setClientFormData((previousState) => ({
+                                                    ...previousState,
+                                                    clientContactPhone: e.target.value,
+                                                }));
+                                            }}
+                                        />
+                                    </InputGroup>
+                                </Form.Group>
+                                <Form.Group as={Col} md="4" controlId="validationCustom04">
+                                    <Form.Label>Client Email Address</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder=""
+                                        value={clientContactEmail}
+                                        onChange={(e) => {
+                                            setClientFormData((previousState) => ({
+                                                ...previousState,
+                                                clientContactEmail: e.target.value,
+                                            }));
+                                        }}
+                                    />
+                                </Form.Group>
+                            </Row>
+                        </div>
                     </div>
-                </div>
-                {/* Material Details ends */}
+                    {/* Client Contact Block ends */}
 
-                {/* Form Submit Buttons Block Starts */}
-                <Row className="mt-5">
-                    <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">
-                        <Button
-                            variant="secondary"
-                            onClick={() => {Router.push("/employers-dashboard/lr"); }}
-                            className="btn btn-back btn-sm text-nowrap m-1"
-                        >
-                            Back to LR
-                        </Button>
-                    </Form.Group>
-                    <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">
-                        <Button
-                            type="submit"
-                            variant="success"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleSubmit(e);
-                                if(validated) {
-                                    addNewLR(lrFormData, setLrFormData, user);
-                                }
-                            }}
-                            className="btn btn-add-lr btn-sm text-nowrap m-1"
-                        >
-                            Add New LR
-                        </Button>
-                    </Form.Group>
-                    {/* <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">
-                        <Button
-                            type="submit"
-                            variant="success"
-                            onClick={() => Router.push("/employers-dashboard/")}
-                            className="btn btn-add-lr btn-sm text-nowrap m-1"
-                        >
-                            Add New LR & Export to PDF
-                        </Button>
-                    </Form.Group> */}
-                </Row>
-                {/* Form Submit Buttons Block Ends */}
-
-            </Form>
+                    {/* Form Submit Buttons Block Starts */}
+                    <Row className="mt-5">
+                        <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">
+                            <Button
+                                variant="secondary"
+                                onClick={() => {Router.push("/employers-dashboard/clients"); }}
+                                className="btn btn-back btn-sm text-nowrap m-1"
+                            >
+                                Back to Clients
+                            </Button>
+                        </Form.Group>
+                        <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mx-3 mb-3">
+                            <Button
+                                type="submit"
+                                variant="success"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleSubmit(e);
+                                    if(validated) {
+                                        addNewClient(clientFormData, setClientFormData, user);
+                                    }
+                                }}
+                                className="btn btn-add-lr btn-sm text-nowrap m-1"
+                            >
+                                Add New Client
+                            </Button>
+                        </Form.Group>
+                    </Row>
+                    {/* Form Submit Buttons Block Ends */}
+                </Form>
             : "" }
         </>
     );

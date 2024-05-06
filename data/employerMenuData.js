@@ -38,14 +38,14 @@ module.exports = [
     //     active: "",
     //     access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     // },
-    // {
-    //     id: 6,
-    //     name: "Clients",
-    //     icon: "la-users",
-    //     routePath: "/employers-dashboard/clients",
-    //     active: "",
-    //     access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
-    // },
+    {
+        id: 6,
+        name: "Clients",
+        icon: "la-users",
+        routePath: "/employers-dashboard/clients",
+        active: "",
+        access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
+    },
     {
         id: 7,
         name: "Billing",

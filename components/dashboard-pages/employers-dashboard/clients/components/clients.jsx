@@ -75,6 +75,21 @@ const Clients = () => {
         }
     };
 
+    const dateTimeFormat = (val) => {
+        if (val) {
+            const date = new Date(val);
+            return (
+                date.toLocaleDateString("en-IN", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                })
+            );
+        }
+    };
+
     // clear all filters
     const clearAll = () => {
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
@@ -149,35 +164,16 @@ const Clients = () => {
         driverName,
         status
     }) {
+        // fetch client data
         try {
-            // call reference to get lrStatus options
-            const { data, error: e } = await supabase
-                .from("reference")
-                .select("*")
-                .eq("ref_nm", "lrStatus");
-
-            if (data) {
-                setLRStatusReferenceOptions(data);
-            }
-
             let query = supabase
-                .from("lr")
+                .from("client_view")
                 .select("*");
-
-            // if (name) {
-            //     query.ilike("name", "%" + name + "%");
-            // }
-            // if (jobTitle) {
-            //     query.ilike("job_title", "%" + jobTitle + "%");
-            // }
-            // if (facility) {
-            //     query.ilike("facility_name", "%" + facility + "%");
-            // }
 
             // setTotalRecords((await query).data.length);
 
-            let { data: lrData, error } = await query.order(
-                "lr_created_date",
+            let { data: clientData, error } = await query.order(
+                "client_created_at",
                 { ascending: false, nullsFirst: false }
             );
             // .range(
@@ -191,16 +187,16 @@ const Clients = () => {
             //     );
             // }
 
-            if (lrData) {
-                lrData.forEach(
-                    (i) => (i.lr_created_date = dateFormat(i.lr_created_date))
+            if (clientData) {
+                clientData.forEach(
+                    (i) => (i.client_created_at = dateTimeFormat(i.client_created_at))
                 );
             }
 
-            setFetchedClientsData(lrData);
+            setFetchedClientsData(clientData);
         } catch (e) {
             toast.error(
-                "System is unavailable.  Please try again later or contact tech support!",
+                "System is unavailable.  Unable to fetch Client Data.  Please try again later or contact tech support!",
                 {
                     position: "bottom-right",
                     autoClose: false,
@@ -352,433 +348,6 @@ const Clients = () => {
     };
 
     return (
-        // <div className="tabs-box">
-        //     <div
-        //         className="widget-title"
-        //         style={{ fontSize: "1.5rem", fontWeight: "500" }}
-        //     >
-        //         <b>Hired Applicants!</b>
-        //     </div>
-        //     {applicationStatusReferenceOptions != null ? (
-        //         <Form>
-        //             <Form.Label
-        //                 className="optional"
-        //                 style={{
-        //                     marginLeft: "32px",
-        //                     letterSpacing: "2px",
-        //                     fontSize: "12px",
-        //                 }}
-        //             >
-        //                 SEARCH BY
-        //             </Form.Label>
-        //             <Row className="mx-1" md={4}>
-        //                 <Col>
-        //                     <Form.Group className="mb-3 mx-3">
-        //                         <Form.Label className="chosen-single form-input chosen-container">
-        //                             Applicant Name
-        //                         </Form.Label>
-        //                         <Form.Control
-        //                             className="chosen-single form-input chosen-container"
-        //                             type="text"
-        //                             value={name}
-        //                             onChange={(e) => {
-        //                                 setSearchFilters((previousState) => ({
-        //                                     ...previousState,
-        //                                     name: e.target.value,
-        //                                 }));
-        //                             }}
-        //                             onKeyDown={(e) => {
-        //                                 if (e.key === "Enter") {
-        //                                     findApplicant(searchFilters);
-        //                                 }
-        //                             }}
-        //                             style={{ maxWidth: "300px" }}
-        //                         />
-        //                     </Form.Group>
-        //                 </Col>
-        //                 <Col>
-        //                     <Form.Group className="mb-3 mx-3">
-        //                         <Form.Label className="chosen-single form-input chosen-container">
-        //                             Job Title
-        //                         </Form.Label>
-        //                         <Form.Control
-        //                             className="chosen-single form-input chosen-container"
-        //                             type="text"
-        //                             value={jobTitle}
-        //                             onChange={(e) => {
-        //                                 setSearchFilters((previousState) => ({
-        //                                     ...previousState,
-        //                                     jobTitle: e.target.value,
-        //                                 }));
-        //                             }}
-        //                             onKeyDown={(e) => {
-        //                                 if (e.key === "Enter") {
-        //                                     findApplicant(searchFilters);
-        //                                 }
-        //                             }}
-        //                             style={{ maxWidth: "300px" }}
-        //                         />
-        //                     </Form.Group>
-        //                 </Col>
-        //                 {/* <Form.Group
-        //                     className="mb-3 mx-3"
-        //                     style={{
-        //                         width: "20%",
-        //                     }}
-        //                 >
-        //                     <Form.Label className="chosen-single form-input chosen-container">
-        //                         Per Page Size
-        //                     </Form.Label>
-        //                     <Form.Select
-        //                         onChange={perPageHandler}
-        //                         className="chosen-single form-select"
-        //                     >
-        //                         <option
-        //                             value={JSON.stringify({
-        //                                 start: 0,
-        //                                 end: 10,
-        //                             })}
-        //                         >
-        //                             10 per page
-        //                         </option>
-        //                         <option
-        //                             value={JSON.stringify({
-        //                                 start: 0,
-        //                                 end: 20,
-        //                             })}
-        //                         >
-        //                             20 per page
-        //                         </option>
-        //                         <option
-        //                             value={JSON.stringify({
-        //                                 start: 0,
-        //                                 end: 30,
-        //                             })}
-        //                         >
-        //                             30 per page
-        //                         </option>
-        //                     </Form.Select>
-        //                 </Form.Group> */}
-        //             </Row>
-        //             <Row className="mx-3">
-        //                 <Col>
-        //                     <Form.Group className="chosen-single form-input chosen-container mb-3">
-        //                         <Button
-        //                             variant="primary"
-        //                             onClick={(e) => {
-        //                                 e.preventDefault();
-        //                                 findApplicant(searchFilters);
-        //                             }}
-        //                             className="btn btn-submit btn-sm text-nowrap m-1"
-        //                         >
-        //                             Filter
-        //                         </Button>
-        //                         <Button
-        //                             variant="primary"
-        //                             onClick={clearAll}
-        //                             className="btn btn-secondary btn-sm text-nowrap mx-2"
-        //                             style={{
-        //                                 minHeight: "40px",
-        //                                 padding: "0 20px",
-        //                             }}
-        //                         >
-        //                             Clear
-        //                         </Button>
-        //                     </Form.Group>
-        //                 </Col>
-        //             </Row>
-        //         </Form>
-        //     ) : (
-        //         ""
-        //     )}
-        //     {/* End filter top bar */}
-
-        //     <div
-        //         className="optional"
-        //         style={{
-        //             textAlign: "right",
-        //             marginRight: "50px",
-        //             marginBottom: "10px",
-        //         }}
-        //     >
-        //         Showing ({fetchedAllApplicants.length}) Applicants Hired
-        //         {/* Out of ({totalRecords}) <br /> Page: {currentPage} */}
-        //     </div>
-
-        //     {/* Start table widget content */}
-        //     <div className="widget-content">
-        //         <div className="table-outer">
-        //             <Table className="default-table manage-job-table">
-        //                 <thead>
-        //                     <tr>
-        //                         <th>Name</th>
-        //                         <th>Applied On</th>
-        //                         <th>Hired On</th>
-        //                         <th>Job Title</th>
-        //                         <th>Facility</th>
-        //                         {/* <th>Status</th> */}
-        //                         <th>Onboarding Status</th>
-        //                         <th>Notes</th>
-        //                         <th>Actions</th>
-        //                     </tr>
-        //                 </thead>
-        //                 {fetchedAllApplicants.length === 0 ? (
-        //                     <tbody
-        //                         style={{
-        //                             fontSize: "1.5rem",
-        //                             fontWeight: "500",
-        //                         }}
-        //                     >
-        //                         <tr>
-        //                             <td>
-        //                                 <b>No results found!</b>
-        //                             </td>
-        //                         </tr>
-        //                     </tbody>
-        //                 ) : (
-        //                     <tbody>
-        //                         {Array.from(fetchedAllApplicants).map(
-        //                             (applicant) => (
-        //                                 <tr key={applicant.application_id}>
-        //                                     <td>
-        //                                         {/* <!-- Job Block --> */}
-        //                                         <div className="job-block">
-        //                                             <div>
-        //                                                 {/* <span className="company-logo">
-        //                                         <img src={item.logo} alt="logo" />
-        //                                         </span> */}
-        //                                                 <h4>
-        //                                                     <Link
-        //                                                         href={{
-        //                                                             pathname:
-        //                                                                 "/employers-dashboard/user-documents",
-        //                                                             query: {
-        //                                                                 applicationId:
-        //                                                                     applicant.application_id,
-        //                                                             },
-        //                                                         }}
-        //                                                         style={{
-        //                                                             whiteSpace:
-        //                                                                 "nowrap",
-        //                                                         }}
-        //                                                     >
-        //                                                         {applicant.name}
-        //                                                     </Link>
-        //                                                 </h4>
-        //                                             </div>
-        //                                         </div>
-        //                                     </td>
-        //                                     <td>
-        //                                         {/* <Link href="/employers-dashboard/all-applicants/${item.job_id}">3+ Applied</Link> */}
-        //                                         <span>
-        //                                             {applicant.created_at}
-        //                                         </span>
-        //                                     </td>
-        //                                     <td>
-        //                                         {applicant.hired_date ? (
-        //                                             <span>
-        //                                                 {applicant.hired_date}
-        //                                             </span>
-        //                                         ) : (
-        //                                             <span>-</span>
-        //                                         )}
-        //                                     </td>
-        //                                     <td>{applicant.job_title}</td>
-        //                                     <td>{applicant.facility_name}</td>
-        //                                     {/* <td>
-        //                                         <select
-        //                                             className="chosen-single form-select"
-        //                                             value={applicant.status}
-        //                                             disabled
-        //                                         >
-        //                                             {applicationStatusReferenceOptions.map(
-        //                                                 (option) => (
-        //                                                     <option
-        //                                                         value={
-        //                                                             option.ref_dspl
-        //                                                         }
-        //                                                     >
-        //                                                         {
-        //                                                             option.ref_dspl
-        //                                                         }
-        //                                                     </option>
-        //                                                 )
-        //                                             )}
-        //                                         </select>
-        //                                     </td> */}
-        //                                     <td>
-        //                                         <div
-        //                                             className="badge"
-        //                                             style={{
-        //                                                 backgroundColor:
-        //                                                     determineBadgeColor(
-        //                                                         applicant.onboarding_status
-        //                                                     ).color,
-        //                                                 margin: "auto",
-        //                                             }}
-        //                                         >
-        //                                             {
-        //                                                 determineBadgeColor(
-        //                                                     applicant.onboarding_status
-        //                                                 ).tag
-        //                                             }
-        //                                         </div>
-        //                                     </td>
-        //                                     <td>
-        //                                         <ul className="option-list">
-        //                                             {applicant.notes ? (
-        //                                                 <li>
-        //                                                     <button data-text="Add, View, Edit, Delete Notes">
-        //                                                         <a
-        //                                                             href="#"
-        //                                                             data-bs-toggle="modal"
-        //                                                             data-bs-target="#addNoteModal"
-        //                                                             onClick={() => {
-        //                                                                 setNoteData(
-        //                                                                     applicant.application_id
-        //                                                                 );
-        //                                                             }}
-        //                                                         >
-        //                                                             <span className="la la-comment-dots"></span>
-        //                                                         </a>
-        //                                                     </button>
-        //                                                 </li>
-        //                                             ) : (
-        //                                                 <li>
-        //                                                     <button data-text="Add, View, Edit, Delete Notes">
-        //                                                         <a
-        //                                                             href="#"
-        //                                                             data-bs-toggle="modal"
-        //                                                             data-bs-target="#addNoteModal"
-        //                                                             onClick={() => {
-        //                                                                 setNoteData(
-        //                                                                     applicant.application_id
-        //                                                                 );
-        //                                                             }}
-        //                                                         >
-        //                                                             <span className="la la-comment-alt"></span>
-        //                                                         </a>
-        //                                                     </button>
-        //                                                 </li>
-        //                                             )}
-        //                                         </ul>
-        //                                     </td>
-        //                                     <td>
-        //                                         <div className="option-box">
-        //                                             <ul className="option-list">
-        //                                                 <li
-        //                                                     onClick={() => {
-        //                                                         ViewCV(
-        //                                                             applicant.application_id
-        //                                                         );
-        //                                                     }}
-        //                                                 >
-        //                                                     <button data-text="View CV">
-        //                                                         <span className="la la-file-download"></span>
-        //                                                     </button>
-        //                                                 </li>
-        //                                                 {/* <li
-        //                                                     onClick={() => {
-        //                                                         CSVSmartLinx(
-        //                                                             applicant
-        //                                                         );
-        //                                                     }}
-        //                                                 >
-        //                                                     <button data-text="Transfer To Smartlinx">
-        //                                                         <span className="la la-file-csv"></span>
-        //                                                     </button>
-        //                                                 </li> */}
-        //                                                 <li
-        //                                                     onClick={() =>
-        //                                                         DownloadHandler(
-        //                                                             applicant
-        //                                                         )
-        //                                                     }
-        //                                                 >
-        //                                                     <button data-text="Download CV">
-        //                                                         <span className="la la-download"></span>
-        //                                                     </button>
-        //                                                 </li>
-        //                                                 {/* <li onClick={()=>{ Qualified(applicant.application_id, applicant.status) }} >
-        //                                             <button data-text="Qualified">
-        //                                             <span className="la la-check"></span>
-        //                                             </button>
-        //                                         </li>
-        //                                         <li onClick={()=>{ NotQualified(applicant.application_id, applicant.status) }} >
-        //                                             <button data-text="Not Qualified">
-        //                                             <span className="la la-times-circle"></span>
-        //                                             </button>
-        //                                         </li>
-        //                                         <li onClick={()=>{ ResetStatus(applicant.application_id, applicant.status) }} >
-        //                                             <button data-text="Reset Status">
-        //                                             <span className="la la-undo-alt"></span>
-        //                                             </button>
-        //                                         </li> */}
-        //                                             </ul>
-        //                                         </div>
-        //                                     </td>
-        //                                 </tr>
-        //                             )
-        //                         )}
-        //                     </tbody>
-        //                 )}
-        //             </Table>
-
-        //             {/* Add Notes Modal Popup */}
-        //             <div
-        //                 className="modal fade"
-        //                 id="addNoteModal"
-        //                 tabIndex="-1"
-        //                 aria-hidden="true"
-        //             >
-        //                 <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        //                     <div className="apply-modal-content modal-content">
-        //                         <div className="text-center">
-        //                             <h3 className="title">Add Notes</h3>
-        //                             <button
-        //                                 type="button"
-        //                                 id="notesCloseButton"
-        //                                 className="closed-modal"
-        //                                 data-bs-dismiss="modal"
-        //                                 aria-label="Close"
-        //                             ></button>
-        //                         </div>
-        //                         {/* End modal-header */}
-        //                         <form>
-        //                             <textarea
-        //                                 value={noteText}
-        //                                 id="notes"
-        //                                 cols="45"
-        //                                 rows="10"
-        //                                 onChange={(e) => {
-        //                                     setNoteText(e.target.value);
-        //                                 }}
-        //                                 style={{
-        //                                     resize: "vertical",
-        //                                     overflowY: "scroll",
-        //                                     border: "1px solid #ccc",
-        //                                     padding: "10px",
-        //                                 }}
-        //                             ></textarea>
-        //                             <br />
-        //                         </form>
-        //                         {/* End PrivateMessageBox */}
-        //                     </div>
-        //                     {/* End .send-private-message-wrapper */}
-        //                 </div>
-        //             </div>
-        //             {/* {!hidePagination ? (
-        //                 <Pagination
-        //                     currentPage={currentPage}
-        //                     totalRecords={totalRecords}
-        //                     pageSize={pageSize}
-        //                     onPageChange={handlePageChange}
-        //                 />
-        //             ) : null} */}
-        //         </div>
-        //     </div>
-        //     {/* End table widget content */}
-        // </div>
         <>
             <div>
                 <div
@@ -787,213 +356,210 @@ const Clients = () => {
                 >
                     <b>All Clients!</b>
                 </div>
-                { lRStatusReferenceOptions != null ? (
-                    <Form>
-                        <Form.Label
-                            className="optional"
-                            style={{
-                                marginLeft: "32px",
-                                letterSpacing: "2px",
-                                fontSize: "12px",
-                            }}
-                        >
-                            SEARCH BY
-                        </Form.Label>
-                        <div style={{ fontSize: "14px", fontWeight: "bold" }}>
-                            <Row className="mb-1 mx-3">
-                                <Form.Group as={Col} md="2" controlId="validationCustom01">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>Consignor</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        size="sm"
-                                        value={consignorName}
-                                        onChange={(e) => {
-                                            setSearchFilters((previousState) => ({
-                                                ...previousState,
-                                                consignorName: e.target.value,
-                                            }));
+
+                <Form>
+                    {/* <Form.Label
+                        className="optional"
+                        style={{
+                            marginLeft: "32px",
+                            letterSpacing: "2px",
+                            fontSize: "12px",
+                        }}
+                    >
+                        SEARCH BY
+                    </Form.Label> */}
+                    <div style={{ fontSize: "14px", fontWeight: "bold" }}>
+                        {/* <Row className="mb-1 mx-3">
+                            <Form.Group as={Col} md="2" controlId="validationCustom01">
+                                <Form.Label style={{ marginBottom: "-5px" }}>Consignor</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    size="sm"
+                                    value={consignorName}
+                                    onChange={(e) => {
+                                        setSearchFilters((previousState) => ({
+                                            ...previousState,
+                                            consignorName: e.target.value,
+                                        }));
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            findLR(searchFilters);
+                                        }
+                                    }}
+                                />
+                            </Form.Group>
+                            <Form.Group as={Col} md="2" controlId="validationCustom02">
+                                <Form.Label style={{ marginBottom: "-5px" }}>Consignee</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    size="sm"
+                                    value={consigneeName}
+                                    onChange={(e) => {
+                                        setSearchFilters((previousState) => ({
+                                            ...previousState,
+                                            consigneeName: e.target.value,
+                                        }));
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            findLR(searchFilters);
+                                        }
+                                    }}
+                                />
+                            </Form.Group>
+                            <Form.Group as={Col} md="2" controlId="validationCustom02">
+                                <Form.Label style={{ marginBottom: "-5px" }}>From</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    size="sm"
+                                    value={fromCity}
+                                    onChange={(e) => {
+                                        setSearchFilters((previousState) => ({
+                                            ...previousState,
+                                            fromCity: e.target.value,
+                                        }));
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            findLR(searchFilters);
+                                        }
+                                    }}
+                                />
+                            </Form.Group>
+                            <Form.Group as={Col} md="2" controlId="validationCustom02">
+                                <Form.Label style={{ marginBottom: "-5px" }}>To</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    size="sm"
+                                    value={toCity}
+                                    onChange={(e) => {
+                                        setSearchFilters((previousState) => ({
+                                            ...previousState,
+                                            toCity: e.target.value,
+                                        }));
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            findLR(searchFilters);
+                                        }
+                                    }}
+                                />
+                            </Form.Group>
+                            <Form.Group as={Col} md="2" controlId="validationCustom01">
+                                <Form.Label style={{ marginBottom: "-5px" }}>Driver Name</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    size="sm"
+                                    // placeholder="Consignor"
+                                    // defaultValue="Mark"
+                                    value={driverName}
+                                    onChange={(e) => {
+                                        setSearchFilters((previousState) => ({
+                                            ...previousState,
+                                            driverName: e.target.value,
+                                        }));
+                                    }}
+                                />
+                            </Form.Group>
+                            <Form.Group as={Col} md="2" controlId="validationCustom02">
+                                <Form.Label style={{ marginBottom: "-5px" }}>Status</Form.Label>
+                                <Form.Select
+                                    className="chosen-single form-select"
+                                    size="sm"
+                                    onChange={(e) => {
+                                        setSearchFilters((previousState) => ({
+                                            ...previousState,
+                                            status: e.target.value,
+                                        }));
+                                    }}
+                                    value={status}
+                                >
+                                    <option value=""></option>
+                                    {lRStatusReferenceOptions.map(
+                                        (option) => (
+                                            <option value={option.ref_dspl}>
+                                                {option.ref_dspl}
+                                            </option>
+                                        )
+                                    )}
+                                </Form.Select>
+                            </Form.Group>
+                        </Row> */}
+                        {/* <Row className="mb-3 mx-3">
+                            <Form.Group as={Col} md="2" controlId="validationCustom02">
+                                <Form.Label style={{ marginBottom: "-5px" }}>From Date</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    size="sm"
+                                    // placeholder="GST number"
+                                    // defaultValue="Otto"
+                                    // value={consignorGST}
+                                    // onChange={(e) => {
+                                    //     setLrFormData((previousState) => ({
+                                    //         ...previousState,
+                                    //         consignorGST: e.target.value,
+                                    //     }));
+                                    // }}
+                                />
+                            </Form.Group>
+                            <Form.Group as={Col} md="2" controlId="validationCustom02">
+                                <Form.Label style={{ marginBottom: "-5px" }}>To Date</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    size="sm"
+                                    // placeholder="GST number"
+                                    // defaultValue="Otto"
+                                    // value={consignorGST}
+                                    // onChange={(e) => {
+                                    //     setLrFormData((previousState) => ({
+                                    //         ...previousState,
+                                    //         consignorGST: e.target.value,
+                                    //     }));
+                                    // }}
+                                />
+                            </Form.Group>
+                        </Row> */}
+                        <Row className="mx-3">
+                            {/* <Col>
+                                <Form.Group className="chosen-single form-input chosen-container mb-3">
+                                    <Button
+                                        variant="primary"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            findLR(searchFilters);
                                         }}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") {
-                                                findLR(searchFilters);
-                                            }
-                                        }}
-                                    />
-                                </Form.Group>
-                                <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>Consignee</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        size="sm"
-                                        value={consigneeName}
-                                        onChange={(e) => {
-                                            setSearchFilters((previousState) => ({
-                                                ...previousState,
-                                                consigneeName: e.target.value,
-                                            }));
-                                        }}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") {
-                                                findLR(searchFilters);
-                                            }
-                                        }}
-                                    />
-                                </Form.Group>
-                                <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>From</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        size="sm"
-                                        value={fromCity}
-                                        onChange={(e) => {
-                                            setSearchFilters((previousState) => ({
-                                                ...previousState,
-                                                fromCity: e.target.value,
-                                            }));
-                                        }}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") {
-                                                findLR(searchFilters);
-                                            }
-                                        }}
-                                    />
-                                </Form.Group>
-                                <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>To</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        size="sm"
-                                        value={toCity}
-                                        onChange={(e) => {
-                                            setSearchFilters((previousState) => ({
-                                                ...previousState,
-                                                toCity: e.target.value,
-                                            }));
-                                        }}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") {
-                                                findLR(searchFilters);
-                                            }
-                                        }}
-                                    />
-                                </Form.Group>
-                                <Form.Group as={Col} md="2" controlId="validationCustom01">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>Driver Name</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        size="sm"
-                                        // placeholder="Consignor"
-                                        // defaultValue="Mark"
-                                        value={driverName}
-                                        onChange={(e) => {
-                                            setSearchFilters((previousState) => ({
-                                                ...previousState,
-                                                driverName: e.target.value,
-                                            }));
-                                        }}
-                                    />
-                                </Form.Group>
-                                <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>Status</Form.Label>
-                                    <Form.Select
-                                        className="chosen-single form-select"
-                                        size="sm"
-                                        onChange={(e) => {
-                                            setSearchFilters((previousState) => ({
-                                                ...previousState,
-                                                status: e.target.value,
-                                            }));
-                                        }}
-                                        value={status}
+                                        className="btn btn-submit btn-sm text-nowrap m-1"
                                     >
-                                        <option value=""></option>
-                                        {lRStatusReferenceOptions.map(
-                                            (option) => (
-                                                <option value={option.ref_dspl}>
-                                                    {option.ref_dspl}
-                                                </option>
-                                            )
-                                        )}
-                                    </Form.Select>
+                                        Filter
+                                    </Button>
+                                    <Button
+                                        variant="primary"
+                                        onClick={clearAll}
+                                        className="btn btn-secondary btn-sm text-nowrap mx-2"
+                                        style={{
+                                            minHeight: "40px",
+                                            padding: "0 20px"
+                                        }}
+                                    >
+                                        Clear
+                                    </Button>
                                 </Form.Group>
-                            </Row>
-                            {/* <Row className="mb-3 mx-3">
-                                <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>From Date</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        size="sm"
-                                        // placeholder="GST number"
-                                        // defaultValue="Otto"
-                                        // value={consignorGST}
-                                        // onChange={(e) => {
-                                        //     setLrFormData((previousState) => ({
-                                        //         ...previousState,
-                                        //         consignorGST: e.target.value,
-                                        //     }));
-                                        // }}
-                                    />
+                            </Col> */}
+                            <Col style={{ display: "relative", textAlign: "right" }}>
+                                <Form.Group className="chosen-single form-input chosen-container mb-3">
+                                    <Button
+                                        variant="success"
+                                        onClick={() => Router.push("/employers-dashboard/add-client")}
+                                        className="btn btn-add-lr btn-sm text-nowrap m-1"
+                                    >
+                                        Add Client
+                                    </Button>
                                 </Form.Group>
-                                <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>To Date</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        size="sm"
-                                        // placeholder="GST number"
-                                        // defaultValue="Otto"
-                                        // value={consignorGST}
-                                        // onChange={(e) => {
-                                        //     setLrFormData((previousState) => ({
-                                        //         ...previousState,
-                                        //         consignorGST: e.target.value,
-                                        //     }));
-                                        // }}
-                                    />
-                                </Form.Group>
-                            </Row> */}
-                            <Row className="mx-3">
-                                <Col>
-                                    <Form.Group className="chosen-single form-input chosen-container mb-3">
-                                        <Button
-                                            variant="primary"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                findLR(searchFilters);
-                                            }}
-                                            className="btn btn-submit btn-sm text-nowrap m-1"
-                                        >
-                                            Filter
-                                        </Button>
-                                        <Button
-                                            variant="primary"
-                                            onClick={clearAll}
-                                            className="btn btn-secondary btn-sm text-nowrap mx-2"
-                                            style={{
-                                                minHeight: "40px",
-                                                padding: "0 20px"
-                                            }}
-                                        >
-                                            Clear
-                                        </Button>
-                                    </Form.Group>
-                                </Col>
-                                <Col style={{ display: "relative", textAlign: "right" }}>
-                                    <Form.Group className="chosen-single form-input chosen-container mb-3">
-                                        <Button
-                                            variant="success"
-                                            onClick={() => Router.push("/employers-dashboard/add-client")}
-                                            className="btn btn-add-lr btn-sm text-nowrap m-1"
-                                        >
-                                            Add Client
-                                        </Button>
-                                    </Form.Group>
-                                </Col>
-                            </Row>
-                        </div>
-                    </Form>
-                ) : ( "" 
-                )}
-                {/* End filter top bar */}
+                            </Col>
+                        </Row>
+                    </div>
+                </Form>
 
                 <div
                     className="optional"
@@ -1003,7 +569,7 @@ const Clients = () => {
                         marginBottom: "10px",
                     }}
                 >
-                    Showing ({fetchedClientsData.length}) LR(s)
+                    Showing ({fetchedClientsData.length}) Client(s)
                     {/* Out of ({totalRecords}) <br /> Page: {currentPage} */}
                 </div>
 
@@ -1015,6 +581,7 @@ const Clients = () => {
                         <thead>
                             <tr>
                                 <th>Actions</th>
+                                <th>Created On</th>
                                 <th>Type</th>
                                 <th>City</th>
                                 <th>Client Name</th>
@@ -1026,7 +593,6 @@ const Clients = () => {
                                 <th>Total Billing</th>
                                 <th>Due Payment</th>
                                 <th>Status</th>
-                                <th>Send SMS</th>
                             </tr>
                         </thead>
                         {fetchedClientsData.length === 0 ? (
@@ -1038,91 +604,80 @@ const Clients = () => {
                             >
                                 <tr>
                                     <td>
-                                        <b>No LR found!</b>
+                                        <b>No Clients found!</b>
                                     </td>
                                 </tr>
                             </tbody>
                         ) : (
                             <tbody>
                                 {Array.from(fetchedClientsData).map(
-                                    (lr) => (
-                                        <tr key={lr.id}>
+                                    (client) => (
+                                        <tr key={client.client_number}>
                                             <td>
                                                 <ui className="option-list" style={{ border: "none" }}>
                                                     <li>
                                                         <button>
-                                                            <a onClick={() => router.push(`/employers-dashboard/view-lr/${lr.id}`)}>
-                                                                <span className="la la-print" title="Print LR"></span>
+                                                        {/* onClick={() => router.push(`/employers-dashboard/edit-client/${client.client_number}`)} */}
+                                                            <a>
+                                                                <span className="la la-pencil" title="Edit Client"></span>
                                                             </a>
                                                         </button>
                                                     </li>
                                                 </ui>
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.lr_number}
-                                                </span>
+                                                <span>{client.client_created_at}</span>
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.lr_created_date}
-                                                </span>
+                                                <span>{client.client_type}</span>
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.order_number}
-                                                </span>
+                                                <span>{client.client_city}</span>
                                             </td>
                                             <td>
-                                                <span>{lr.consignor}</span><br />
-                                                <span className="optional">{lr.consignor_phone}</span><br />
-                                                <span className="optional">{lr.consignor_email}</span>
+                                                <span>{client.client_name}</span> <br />
+                                                <span className="optional">+91 {client.client_phone}</span> <br />
+                                                <span className="optional">{client.client_email}</span> <br />
+
                                             </td>
                                             <td>
-                                                <span>{lr.consignee}</span><br />
-                                                <span className="optional">{lr.consignee_phone}</span><br />
-                                                <span className="optional">{lr.consignee_email}</span>
+                                                <span>{client.client_address1}</span><br />
+                                                <span>{client.client_address2}</span><br />
+                                                <span>{client.client_area}</span>
+                                                <span> {client.client_city}</span><br />
+                                                <span>{client.client_state}</span>
+                                                <span> {client.client_pin}</span>
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.pickup_address}
-                                                </span>
+                                                <span>{client.client_gst}</span>
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.drop_address}
-                                                </span>
+                                                <span>{client.client_pan}</span>
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.material_details}
-                                                </span>
+                                                <span>{client.client_contact_name}</span> <br />
+                                                <span className="optional">{client.client_contact_type}</span> <br />
+                                                <span className="optional">+91 {client.client_contact_phone}</span> <br />
+                                                <span className="optional">{client.client_contact_email}</span> <br />
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.weight}
-                                                </span>
+                                                <span>-</span>
                                             </td>
                                             <td>
-                                                <span>
-                                                    {lr.vehical_number}
-                                                </span>
+                                                <span>-</span>
                                             </td>
                                             <td>
-                                                <span>{lr.driver_name}</span><br />
-                                                <span className="optional">{lr.driver_phone}</span>
+                                                <span>-</span>
                                             </td>
                                             <td>
                                                 {
-                                                    lr.status === "Final" ? (
-                                                        <span style={{ color: "green" }}>
-                                                            {lr.status}
+                                                    client.client_status ?
+                                                        <span className="badge" style={{ backgroundColor: "green" }}>
+                                                            Active
                                                         </span>
-                                                    ) : lr.status === "Performa" ? (
-                                                            <span style={{ color: "darkorange" }}>
-                                                                {lr.status}
-                                                            </span>
-                                                    ) : <span>-</span>
+                                                    :   <span className="badge" style={{ backgroundColor: "red" }}>
+                                                            Not Active
+                                                        </span>
                                                 }
                                             </td>
                                         </tr>
