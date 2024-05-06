@@ -408,11 +408,15 @@ const Billing = () => {
                             <Row className="mb-1 mx-3">
                                 <Form.Group as={Col} md="auto" controlId="validationCustom01">
                                     <Form.Label style={{ marginBottom: "-5px" }}>Invoice Date</Form.Label><br />
-                                    <div className="py-2 px-1" style={{ border: "1px solid #dee2e6" }}>
-                                        <span className="px-2">From</span>
-                                        <CalendarComp setDate={setSearchInvoiceDateFrom} date1={searchInvoiceDateFrom} />
-                                        <span className="px-2">To</span>
-                                        <CalendarComp setDate={setSearchInvoiceDateTo} date1={searchInvoiceDateTo} />
+                                    <div className="p-1" style={{ border: "1px solid #dee2e6" }}>
+                                        <div className="pb-1">
+                                            <span className="px-1">From</span>
+                                            <CalendarComp setDate={setSearchInvoiceDateFrom} date1={searchInvoiceDateFrom} />
+                                        </div>
+                                        <div>
+                                            <span className="px-1">To &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                            <CalendarComp setDate={setSearchInvoiceDateTo} date1={searchInvoiceDateTo} />
+                                        </div>
                                     </div>
                                 </Form.Group>
                                {/* <Form.Group as={Col} md="2" controlId="validationCustom01">
