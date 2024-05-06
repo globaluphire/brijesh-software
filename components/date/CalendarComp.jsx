@@ -64,7 +64,7 @@ const CalendarComp = ({ setDate, date1 }) => {
 
       <input
         required
-        value={ date1 ? showFormattedDate(date1) : new Date() }
+        value={ date1 ? showFormattedDate(date1) : "" }
         readOnly
         className="inputBox"
         onClick={ () => setOpen(open => !open) }

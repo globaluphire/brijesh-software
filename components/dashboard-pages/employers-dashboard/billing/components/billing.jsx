@@ -19,6 +19,8 @@ import Table from "react-bootstrap/Table";
 import { InputGroup } from "react-bootstrap";
 import { CSVLink } from "react-csv";
 import { convertToFullDateFormat } from "../../../../../utils/convertToFullDateFormat";
+import CalendarComp from "../../../../date/CalendarComp";
+import { format } from "date-fns";
 
 const addSearchFilters = {
     consignorName: "",
@@ -54,6 +56,8 @@ const Billing = () => {
     // const [pageSize, setPageSize] = useState(10);
 
     // for search filters
+    const [searchInvoiceDateFrom, setSearchInvoiceDateFrom] = useState();
+    const [searchInvoiceDateTo, setSearchInvoiceDateTo] = useState();
     const [searchFilters, setSearchFilters] = useState(
         JSON.parse(JSON.stringify(addSearchFilters))
     );
@@ -102,48 +106,27 @@ const Billing = () => {
 
     // clear all filters
     const clearAll = () => {
+        setSearchInvoiceDateFrom();
+        setSearchInvoiceDateTo();
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
         fetchedInvoice(JSON.parse(JSON.stringify(addSearchFilters)));
     };
 
-    async function findInvoice(searchFilters) {
-        // call reference to get applicantStatus options
-        // setCurrentPage(1);
-        // const { data: refData, error: e } = await supabase
-        //     .from("reference")
-        //     .select("*")
-        //     .eq("ref_nm", "applicantStatus");
-
-        // if (refData) {
-        //     setApplicationStatusReferenceOptions(refData);
-        // }
-
+    async function findInvoice(searchInvoiceDateFrom, searchInvoiceDateTo) {
         let query = supabase
             .from("invoice")
             .select("*");
 
-        if (searchFilters.consignorName) {
-            query.ilike("consignor", "%" + searchFilters.consignorName + "%");
+        if (searchInvoiceDateFrom) {
+            query.gte("invoice_date", format(searchInvoiceDateFrom, "yyyy-MM-dd"));
         }
-        if (searchFilters.consigneeName) {
-            query.ilike("consignee", "%" + searchFilters.consigneeName + "%");
+        if (searchInvoiceDateTo) {
+            query.lte("invoice_date", format(searchInvoiceDateTo, "yyyy-MM-dd"));
         }
-        if (searchFilters.fromCity) {
-            query.ilike("from_city", "%" + searchFilters.fromCity + "%");
+        if (searchInvoiceDateFrom && searchInvoiceDateTo) {
+            query.gte("invoice_date", format(searchInvoiceDateFrom, "yyyy-MM-dd"));
+            query.lte("invoice_date", format(searchInvoiceDateTo, "yyyy-MM-dd"));
         }
-        if (searchFilters.toCity) {
-            query.ilike("to_city", "%" + searchFilters.toCity + "%");
-        }
-        if (searchFilters.driverName) {
-            query.ilike("driver_name", "%" + searchFilters.driverName + "%");
-        }
-        if (searchFilters.status) {
-            query.ilike("status", "%" + searchFilters.status + "%");
-        }
-
-        // if (facility) {
-        //     query.ilike("facility_name", "%" + facility + "%");
-        // }
 
         // setTotalRecords((await query).data.length);
 
@@ -411,7 +394,7 @@ const Billing = () => {
                 </div>
                 { invoiceStatusReferenceOptions != null ? (
                     <Form>
-                        {/* <Form.Label
+                        <Form.Label
                             className="optional"
                             style={{
                                 marginLeft: "32px",
@@ -420,14 +403,22 @@ const Billing = () => {
                             }}
                         >
                             SEARCH BY
-                        </Form.Label> */}
+                        </Form.Label>
                         <div style={{ fontSize: "14px", fontWeight: "bold" }}>
-                            {/* <Row className="mb-1 mx-3">
-                                <Form.Group as={Col} md="2" controlId="validationCustom01">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>Consignor</Form.Label>
+                            <Row className="mb-1 mx-3">
+                                <Form.Group as={Col} md="auto" controlId="validationCustom01">
+                                    <Form.Label style={{ marginBottom: "-5px" }}>Invoice Date</Form.Label><br />
+                                    <div className="py-2 px-1" style={{ border: "1px solid #dee2e6" }}>
+                                        <span className="px-2">From</span>
+                                        <CalendarComp setDate={setSearchInvoiceDateFrom} date1={searchInvoiceDateFrom} />
+                                        <span className="px-2">To</span>
+                                        <CalendarComp setDate={setSearchInvoiceDateTo} date1={searchInvoiceDateTo} />
+                                    </div>
+                                </Form.Group>
+                               {/* <Form.Group as={Col} md="2" controlId="validationCustom01">
+                                    <Form.Label>Consignor</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        size="sm"
                                         value={consignorName}
                                         onChange={(e) => {
                                             setSearchFilters((previousState) => ({
@@ -537,17 +528,17 @@ const Billing = () => {
                                             )
                                         )}
                                     </Form.Select>
-                                </Form.Group>
-                            </Row> */}
+                                </Form.Group> */}
+                            </Row>
                             
                             <Row className="mx-3">
-                                {/* <Col>
+                                <Col>
                                     <Form.Group className="chosen-single form-input chosen-container mb-3">
                                         <Button
                                             variant="primary"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                // findLR(searchFilters);
+                                                findInvoice(searchInvoiceDateFrom, searchInvoiceDateTo);
                                             }}
                                             className="btn btn-submit btn-sm text-nowrap m-1"
                                         >
@@ -565,7 +556,7 @@ const Billing = () => {
                                             Clear
                                         </Button>
                                     </Form.Group>
-                                </Col> */}
+                                </Col>
                                 <Col style={{ display: "relative", textAlign: "right" }}>
                                     <Form.Group className="chosen-single form-input chosen-container mb-3">
                                         { fetchedInvoicedataCSV.length > 0 ?
