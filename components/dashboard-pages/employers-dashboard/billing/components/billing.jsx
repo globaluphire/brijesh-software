@@ -408,7 +408,7 @@ const Billing = () => {
                             <Row className="mb-1 mx-3">
                                 <Form.Group as={Col} md="auto" controlId="validationCustom01">
                                     <Form.Label style={{ marginBottom: "-5px" }}>Invoice Date</Form.Label><br />
-                                    <div className="p-1" style={{ border: "1px solid #dee2e6" }}>
+                                    <div className="p-1" style={{ border: "1px solid #dee2e6", borderRadius: "3px"  }}>
                                         <div className="pb-1">
                                             <span className="px-1">From</span>
                                             <CalendarComp setDate={setSearchInvoiceDateFrom} date1={searchInvoiceDateFrom} />

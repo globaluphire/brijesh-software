@@ -91,15 +91,15 @@ const Index = () => {
     return (
         <>
             <section>
-                <div className="auto-container">
-                    <div className="upper-box btn-box mb-3" style={{ textAlign: "right" }}>
-                        <Link href="/employers-dashboard/billing" className="btn btn-danger btn-sm text-nowrap m-1 p-3">
-                            Back to Billing
-                        </Link>
-                        <button className="btn btn-success btn-sm text-nowrap m-1 p-3" onClick={() => savePDF()}>
-                            Export to PDF
-                        </button>
-                    </div>
+                <div className="auto-container pb-2">
+                    <span className="px-1"></span>
+                    <Link href="/employers-dashboard/billing" className="btn btn-danger btn-md text-nowrap">
+                        Back to Billing
+                    </Link>
+                    <span className="px-2"></span>
+                    <button className="btn btn-success btn-md text-nowrap" onClick={() => savePDF()}>
+                        Export to PDF
+                    </button>
                 </div>
                 {/* End auto-container */}
 

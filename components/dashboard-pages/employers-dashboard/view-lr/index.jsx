@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
-import { Table } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { supabase } from "../../../../config/supabaseClient";
@@ -90,15 +90,15 @@ const index = () => {
         <>
             {/* <!-- Invoice Section --> */}
             <section>
-                <div className="auto-container">
-                    <div className="upper-box btn-box mb-3" style={{ textAlign: "right" }}>
-                        <Link href="/employers-dashboard/lr" className="btn btn-danger btn-sm text-nowrap m-1 p-3">
-                            Back to LR
-                        </Link>
-                        <button className="btn btn-success btn-sm text-nowrap m-1 p-3" onClick={() => savePDF()}>
-                            Export to PDF
-                        </button>
-                    </div>
+                <div className="auto-container pb-2">
+                    <span className="px-1"></span>
+                    <Link href="/employers-dashboard/lr" className="btn btn-danger btn-md text-nowrap">
+                        Back to LR
+                    </Link>
+                    <span className="px-2"></span>
+                    <Button className="btn btn-success btn-md text-nowrap" onClick={() => savePDF()}>
+                        Export to PDF
+                    </Button>
                 </div>
                 <div id="print-lr">
                     <div className="auto-container">
