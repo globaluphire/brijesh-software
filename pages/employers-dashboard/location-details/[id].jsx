@@ -285,11 +285,11 @@ const LocationDetails = () => {
     };
 
     const deleteSelectedContact = async (locationContactId) => {
-        if(confirm("WARNING!!! Are you sure you want to delete this contact? You cannot recover this once you delete!!!")){
+        if(confirm("WARNING!!! Are you sure you want to DELETE this contact? You cannot recover this once you delete!!!")){
             const { error } = await supabase
-                .from('location_contact')
+                .from("location_contact")
                 .delete()
-                .eq('location_contact_id', locationContactId);
+                .eq("location_contact_id", locationContactId);
             if (!error) {
                 fetchLocationContactData();
             }

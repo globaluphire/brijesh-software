@@ -1,5 +1,6 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 import candidatesData from "../../../../../data/candidates";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import Link from "next/link";
