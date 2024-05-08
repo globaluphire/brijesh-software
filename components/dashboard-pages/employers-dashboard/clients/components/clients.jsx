@@ -96,7 +96,7 @@ const Clients = () => {
         fetchedClients(JSON.parse(JSON.stringify(addSearchFilters)));
     };
 
-    async function findLR() {
+    async function findCLient() {
         // call reference to get applicantStatus options
         // setCurrentPage(1);
         // const { data: refData, error: e } = await supabase
@@ -109,7 +109,7 @@ const Clients = () => {
         // }
 
         let query = supabase
-            .from("lr")
+            .from("client")
             .select("*");
 
         if (consignorName) {
@@ -167,7 +167,7 @@ const Clients = () => {
         // fetch client data
         try {
             let query = supabase
-                .from("client_view")
+                .from("client")
                 .select("*");
 
             // setTotalRecords((await query).data.length);
@@ -632,21 +632,22 @@ const Clients = () => {
                                                 <span>{client.client_type}</span>
                                             </td>
                                             <td>
-                                                <span>{client.client_city}</span>
+                                                <span>{client.city}</span>
                                             </td>
                                             <td>
                                                 <span>{client.client_name}</span> <br />
-                                                <span className="optional">+91 {client.client_phone}</span> <br />
-                                                <span className="optional">{client.client_email}</span> <br />
+                                                {client.client_phone !== 0 ? <><span className="optional">+91 {client.client_phone}</span> <br /></> : "" }
+                                                {client.client_email ? <span className="optional"></span> : "" }
 
                                             </td>
                                             <td>
-                                                <span>{client.client_address1}</span><br />
-                                                <span>{client.client_address2}</span><br />
-                                                <span>{client.client_area}</span>
-                                                <span> {client.client_city}</span><br />
-                                                <span>{client.client_state}</span>
-                                                <span> {client.client_pin}</span>
+                                                <span>{client.address1 ? client.address1 + ", " : ""}</span>
+                                                <span>{client.address2 ? client.address2 + ", " : ""}</span>
+                                                <span>{client.area ? client.area + ", " : ""}</span>
+                                                <span>{client.city ? client.city + ", " : ""}</span>
+                                                <span>{client.state ? client.state + ", " : ""}</span>
+                                                <span>{client.pin ? client.pin + ", " : ""}</span>
+                                                <span>{client.address1 && client.area && client.city && client.state && client.pin ? "" : "-"}</span>
                                             </td>
                                             <td>
                                                 <span>{client.client_gst}</span>
@@ -655,10 +656,9 @@ const Clients = () => {
                                                 <span>{client.client_pan}</span>
                                             </td>
                                             <td>
-                                                <span>{client.client_contact_name}</span> <br />
-                                                <span className="optional">{client.client_contact_type}</span> <br />
-                                                <span className="optional">+91 {client.client_contact_phone}</span> <br />
-                                                <span className="optional">{client.client_contact_email}</span> <br />
+                                                <span>{client.contact_name}</span> <br />
+                                                {client.contact_phone !== 0 ? <><span className="optional">+91 {client.contact_phone}</span> <br /></> : ""}
+                                                <span className="optional">{client.contact_email}</span> <br />
                                             </td>
                                             <td>
                                                 <span>-</span>

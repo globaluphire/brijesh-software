@@ -50,7 +50,7 @@ const addClientFields = {
     clientType: "",
     clientName: "",
     clientEmail: "",
-    clientPhone: "",
+    clientPhone: 0,
     clientGST: "",
     clientPAN: "",
 
@@ -65,7 +65,7 @@ const addClientFields = {
     // client contact
     clientContactType: "",
     clientContactName: "",
-    clientContactPhone: "",
+    clientContactPhone: 0,
     clientContactEmail: ""
 };
 const AddClient = () => {
@@ -132,6 +132,9 @@ const AddClient = () => {
     const [checkAllRefs, setCheckAllRefs] = useState(false);
     const [clientTypeReferenceOptions, setClientTypeReferenceOptions] = useState([]);
     const [clientContactTypeReferenceOptions, setClientContactTypeReferenceOptions] = useState([]);
+    const [clientCitySelection, setClientCitySelection] = useState([]);
+    const [clientCityRequired, setClientCityRequired] = useState(false);
+    const [cityRefs, setCityRefs] = useState([]);
 
     async function getReferences() {
         // call reference to get clientType options
@@ -163,6 +166,22 @@ const AddClient = () => {
             clientContactTypes.sort();
             setClientContactTypeReferenceOptions(clientContactTypes);
         }
+
+        // call reference to get city options
+        const { data: cityRefData, error: error } = await supabase
+            .from("reference")
+            .select("*")
+            .eq("ref_nm", "city");
+
+        if (cityRefData) {
+            const cityNames = [];
+            for (let i = 0; i < cityRefData.length; i++) {
+                cityNames.push(cityRefData[i].ref_dspl);
+            }
+            cityNames.sort();
+            setCityRefs(cityNames);
+        }
+
     };
 
     async function checkAllRefsData() {
@@ -187,27 +206,19 @@ const AddClient = () => {
             // client
             clientType &&
             clientName &&
-            clientEmail &&
             clientPhone &&
             clientGST &&
-            clientPAN &&
         
             // client address
             clientAddress1 &&
-            clientAddress2 &&
-            clientCity &&
+            clientCitySelection[0] &&
             clientState &&
             clientArea &&
-            clientPIN &&
-        
-            // client contact
-            clientContactType &&
-            clientContactName &&
-            clientContactPhone &&
-            clientContactEmail
+            clientPIN
         ) {
             return true;
         } else {
+            setClientCityRequired(false);
             return false;
         }
     };
@@ -278,7 +289,20 @@ const AddClient = () => {
                         client_email: clientEmail,
                         client_phone: clientPhone,
                         client_gst: clientGST,
-                        client_pan: clientPAN
+                        client_pan: clientPAN,
+
+                        // client address
+                        address1: clientAddress1,
+                        address2: clientAddress2,
+                        city: clientCitySelection[0],
+                        state: clientState,
+                        area: clientArea,
+                        pin: clientPIN,
+
+                        // client contact
+                        contact_name: clientContactName,
+                        contact_phone: clientContactPhone,
+                        contact_email: clientContactEmail
                     },
                 ]);
                 if (clientError) {
@@ -297,84 +321,28 @@ const AddClient = () => {
                         }
                     );
                 } else {
-                    // saving client address data
-                    const { data: clientAddressData, error: clientAddressError } = await supabase.from("client_address").insert([
-                        {
-                            // client address
-                            client_number: clientNumber,
-                            client_address1: clientAddress1,
-                            client_address2: clientAddress2,
-                            client_city: clientCity,
-                            client_state: clientState,
-                            client_area: clientArea,
-                            client_pin: clientPIN
-                        },
-                    ]);
-                    if (clientAddressError) {
-                        // open toast
-                        toast.error(
-                            "Error while saving Client Address, Please try again later or contact tech support",
-                            {
-                                position: "bottom-right",
-                                autoClose: false,
-                                hideProgressBar: false,
-                                closeOnClick: true,
-                                pauseOnHover: true,
-                                draggable: true,
-                                progress: undefined,
-                                theme: "colored",
-                            }
-                        );
-                    } else {
-                        // saving client contact data
-                        const { data: clientContactData, error: clientContactError } = await supabase.from("client_contact").insert([
-                            {
-                                // client contact
-                                client_number: clientNumber,
-                                client_contact_type: clientContactType,
-                                client_contact_name: clientContactName,
-                                client_contact_phone: clientContactPhone,
-                                client_contact_email: clientContactEmail
-                            },
-                        ]);
-                        if (clientAddressError) {
-                            // open toast
-                            toast.error(
-                                "Error while saving Client Contact, Please try again later or contact tech support",
-                                {
-                                    position: "bottom-right",
-                                    autoClose: false,
-                                    hideProgressBar: false,
-                                    closeOnClick: true,
-                                    pauseOnHover: true,
-                                    draggable: true,
-                                    progress: undefined,
-                                    theme: "colored",
-                                }
-                            );
-                        } else {
-                            // open toast
-                            toast.success("New Client saved successfully", {
-                                position: "bottom-right",
-                                autoClose: 8000,
-                                hideProgressBar: false,
-                                closeOnClick: true,
-                                pauseOnHover: true,
-                                draggable: true,
-                                progress: undefined,
-                                theme: "colored",
-                            });
-                            
-                            // increment lr_number key
-                            await supabase.rpc("increment_sys_key", {
-                                x: 1,
-                                keyname: "client_number",
-                            });
-    
-                            setClientFormData(JSON.parse(JSON.stringify(addClientFields)));
-                        }
+                        toast.success("New Client saved successfully", {
+                            position: "bottom-right",
+                            autoClose: 8000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        
+                        // increment lr_number key
+                        await supabase.rpc("increment_sys_key", {
+                            x: 1,
+                            keyname: "client_number",
+                        });
+
+                        setClientFormData(JSON.parse(JSON.stringify(addClientFields)));
+                        setValidated(false);
+                        setClientCitySelection([]);
+                        setClientCityRequired(false);
                     }
-                }
             } catch (err) {
                 // open toast
                 toast.error(
@@ -520,10 +488,10 @@ const AddClient = () => {
                                     <InputGroup>
                                         <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
                                         <Form.Control
-                                            type="text"
+                                            type="number"
                                             // placeholder="Username"
                                             aria-describedby="inputGroupPrepend"
-                                            // required
+                                            required
                                             value={clientPhone}
                                             onChange={(e) => {
                                                 setClientFormData((previousState) => ({
@@ -598,22 +566,21 @@ const AddClient = () => {
                                 </Form.Group>
                             </Row>
                             <Row className="mb-3">
-                                <Form.Group as={Col} md="2" controlId="validationCustom03">
+                                <Form.Group as={Col} md="3" controlId="validationCustom02">
                                     <Form.Label>City</Form.Label>
-                                    <Form.Control    
-                                        type="text"
-                                        required
-                                        value={clientCity}
-                                        onChange={(e) => {
-                                            setClientFormData((previousState) => ({
-                                                ...previousState,
-                                                clientCity: e.target.value,
-                                            }));
-                                        }}
+                                    <Typeahead
+                                        id="clientCity"
+                                        onChange={setClientCitySelection}
+                                        className="form-group"
+                                        options={cityRefs}
+                                        selected={clientCity}
+                                        required="true"
                                     />
-                                    <Form.Control.Feedback type="invalid">
-                                        Please provide a valid city.
-                                    </Form.Control.Feedback>
+                                    { !clientCityRequired && clientCitySelection[0] ? <span style={{ color: "green" }}>Looks good!</span> :
+                                        <span  style={{ fontSize: "0.875em", color: "#dc3545" }}>
+                                            Please enter Client City.
+                                        </span>
+                                    }
                                 </Form.Group>
                                 <Form.Group as={Col} md="2" controlId="validationCustom04">
                                     <Form.Label>State</Form.Label>
@@ -669,37 +636,10 @@ const AddClient = () => {
                         </div>
                         <div style={{ padding: "0 2rem" }}>
                             <Row className="mb-3">
-                                <Form.Group as={Col} md="3" controlId="validationCustom02">
-                                    <Form.Label>Contact Type</Form.Label>
-                                    <Form.Select
-                                        className="chosen-single form-select"
-                                        onChange={(e) => {
-                                            setClientFormData((previousState) => ({
-                                                ...previousState,
-                                                clientContactType: e.target.value,
-                                            }));
-                                        }}
-                                        value={clientContactType}
-                                        required
-                                    >
-                                        <option value=""></option>
-                                        {clientContactTypeReferenceOptions.map(
-                                            (option) => (
-                                                <option value={option}>
-                                                    {option}
-                                                </option>
-                                            )
-                                        )}
-                                    </Form.Select>
-                                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                    <Form.Control.Feedback type="invalid">
-                                        Please enter Client Contact Type.
-                                    </Form.Control.Feedback>
-                                </Form.Group>
                                 <Form.Group as={Col} md="4" controlId="validationCustom02">
                                     <Form.Label>Contact Name</Form.Label>
                                     <Form.Control
-                                        required
+                                        // required
                                         type="text"
                                         // placeholder="To"
                                         // defaultValue="Otto"
@@ -721,7 +661,7 @@ const AddClient = () => {
                                     <InputGroup>
                                         <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
                                         <Form.Control
-                                            type="text"
+                                            type="number"
                                             // placeholder="Username"
                                             aria-describedby="inputGroupPrepend"
                                             // required
