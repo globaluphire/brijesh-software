@@ -48,6 +48,14 @@ module.exports = [
     },
     {
         id: 7,
+        name: "Locations",
+        icon: "la-map-marker-alt",
+        routePath: "/employers-dashboard/locations",
+        active: "",
+        access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
+    },
+    {
+        id: 8,
         name: "Billing",
         icon: "la-file-invoice",
         routePath: "/employers-dashboard/billing",
@@ -55,7 +63,7 @@ module.exports = [
         access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     },
     {
-        id: 8,
+        id: 9,
         name: "LR",
         icon: "la-receipt",
         routePath: "/employers-dashboard/lr",
