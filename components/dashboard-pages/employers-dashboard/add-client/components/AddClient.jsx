@@ -168,7 +168,7 @@ const AddClient = () => {
         }
 
         // call reference to get city options
-        const { data: cityRefData, error: error } = await supabase
+        const { data: cityRefData, error } = await supabase
             .from("reference")
             .select("*")
             .eq("ref_nm", "city");
