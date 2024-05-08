@@ -598,7 +598,7 @@ const LocationDetails = () => {
                                                                                 <ui className="option-list" style={{ border: "none" }}>
                                                                                     <li>
                                                                                         <button>
-                                                                                            <a onClick={() => { deleteSelectedContact(contact.location_contact_id) }}>
+                                                                                            <a onClick={() => { deleteSelectedContact(contact.location_contact_id); }}>
                                                                                                 <span className="la la-trash" title="Delete Contact"></span>
                                                                                             </a>
                                                                                         </button>
