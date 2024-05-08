@@ -46,14 +46,14 @@ module.exports = [
     //     active: "",
     //     access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     // },
-    // {
-    //     id: 7,
-    //     name: "Locations",
-    //     icon: "la-map-marker-alt",
-    //     routePath: "/employers-dashboard/locations",
-    //     active: "",
-    //     access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
-    // },
+    {
+        id: 7,
+        name: "Locations",
+        icon: "la-map-marker-alt",
+        routePath: "/employers-dashboard/locations",
+        active: "",
+        access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
+    },
     {
         id: 8,
         name: "Billing",
