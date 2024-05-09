@@ -26,15 +26,39 @@ const addOrderFields = {
     material: "",
     size: "",
     quantity: "",
-    weight: null,
+    weight: 0,
     priority: "",
-    specialOfferedFreight: null,
+    specialOfferedFreight: 0,
     notes: "",
     freightNotes: ""
 };
+
 const AddOrder = () => {
     const user = useSelector((state) => state.candidate.user);
     const [pickupDate, setPickupDate] = useState(new Date());
+
+    // client fields states
+    const [fetchedClientsData, setFetchedClientsData] = useState({});
+
+    // client details selection states
+    const [clientNames, setClientNames] = useState([]);
+    const [selectedClientNumber, setSelectedClientNumber] = useState({});
+    const [selectedClient, setSelectedClient] = useState([]);
+    const [selectedClientData, setSelectedClientData] = useState("");
+
+    // pickup point details selection states
+    const [pickupPointNames, setPickupPointNames] = useState([]);
+    const [pickupLocationData, setPickupLocationData] = useState("");
+    const [selectedPickupPoint, setSelectedPickupPoint] = useState([]);
+    const [selectedPickupPointData, setSelectedPickupPointData] = useState("");
+
+    // pickup point contact details selection states
+    const [pickupMarketingContactNames, setPickupMarketingContactNames] = useState([]);
+    const [selectedPickupMarketingContact, setSelectedPickupMarketingContact] = useState([]);
+    const [pickupDispatchContactNames, setPickupDispatchContactNames] = useState([]);
+    const [selectedPickupDispatchContact, setSelectedPickupDispatchContact] = useState([]);
+    const [pickupLocationContactData, setPickupLocationContactData] = useState("");
+    // const [selectedPickupPointData, setSelectedPickupPointData] = useState("");
 
     const [orderFormData, setOrderFormData] = useState(
         JSON.parse(JSON.stringify(addOrderFields))
@@ -69,8 +93,207 @@ const AddOrder = () => {
     const [materialTypeReferenceOptions, setMaterialTypeReferenceOptions] = useState(null);
     const [priorityReferenceOptions, setPriorityReferenceOptions] = useState(null);
 
+
+    async function getPickupPointDetails() {
+        try {
+            let { data: pickupLocationData, error } = await supabase
+                .from("location")
+                .select("*")
+                .eq("location_type", "Pickup")
+                .eq("pickup_city", pickupCitySelection[0]);
+
+            if (pickupLocationData) {
+                setPickupLocationData(pickupLocationData);
+
+                // set pickup names
+                const allPickupNames = [];
+                for (let i = 0; i < pickupLocationData.length; i++) {
+                    allPickupNames.push(pickupLocationData[i].name_of_pickup_point);
+                }
+                allPickupNames.sort();
+                setPickupPointNames(allPickupNames);
+            }
+
+        } catch (e) {
+            toast.error(
+                "System is unavailable.  Unable to fetch location Data.  Please try again later or contact tech support!",
+                {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
+            console.warn(e);
+        }
+    };
+
+    useEffect(() => {
+        getPickupPointDetails();
+    }, [pickupCitySelection]);
+
+    async function getPickupLocationContactData() {
+        if (selectedPickupPointData) {
+            // get location contact details
+            try {
+                let { data: pickupLocationContactData, error } = await supabase
+                    .from("location_contact")
+                    .select("*")
+                    .eq("location_number", selectedPickupPointData.location_number);
+
+                if (pickupLocationContactData) {
+                    setPickupLocationContactData(pickupLocationContactData);
+
+                    // set pickup names
+                    const allPickupMarketingContactNames = [];
+                    const allPickupDispatchContactNames = [];
+                    for (let i = 0; i < pickupLocationContactData.length; i++) {
+                        if (pickupLocationContactData[i].contact_type === "Marketing") {
+                            allPickupMarketingContactNames.push(pickupLocationContactData[i].contact_name + " - " + pickupLocationContactData[i].contact_phone);
+                        } else {
+                            allPickupDispatchContactNames.push(pickupLocationContactData[i].contact_name + " - " + pickupLocationContactData[i].contact_phone);
+                        }
+                    }
+                    allPickupMarketingContactNames.sort();
+                    allPickupDispatchContactNames.sort();
+                    setPickupMarketingContactNames(allPickupMarketingContactNames);
+                    setPickupDispatchContactNames(allPickupDispatchContactNames);
+                }
+
+            } catch (e) {
+                toast.error(
+                    "System is unavailable.  Unable to fetch location Data.  Please try again later or contact tech support!",
+                    {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    }
+                );
+                console.warn(e);
+            }
+        }
+    };
+
+    useEffect(() => {
+        getPickupLocationContactData();
+    }, [selectedPickupPointData]);
+
+    async function getSelectedPickupPointData() {
+        if(pickupLocationData) {
+            const findSelectedPickupData = pickupLocationData.find((i) => i.name_of_pickup_point == selectedPickupPoint[0]);
+            setSelectedPickupPointData(findSelectedPickupData);
+        }
+    };
+
+    useEffect(() => {
+        getSelectedPickupPointData();
+    }, [selectedPickupPoint]);
+
+    async function getClientDetails() {
+        // fetch client addresses and contacts data
+        try {
+            let { data: clientData, error } = await supabase
+                .from("client")
+                .select("*")
+                .eq("city", orderCity);
+
+            if (clientData) {
+
+                console.log(clientData);
+                setFetchedClientsData(clientData);
+
+                // set client names
+                const allClientNames = [];
+                for (let i = 0; i < clientData.length; i++) {
+                    allClientNames.push(clientData[i].client_name);
+                }
+                allClientNames.sort();
+                setClientNames(allClientNames);
+            }
+
+        } catch (e) {
+            toast.error(
+                "System is unavailable.  Unable to fetch Client Data.  Please try again later or contact tech support!",
+                {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
+            console.warn(e);
+        }
+    };
+
+    useEffect(() => {
+        getClientDetails();
+    }, [orderCity]);
+
+    function getSelectedClientData() {
+        if (fetchedClientsData.length > 0) {
+            const findSelectedClientData = fetchedClientsData.find((client) => client.client_name == selectedClient[0]);
+            setSelectedClientData(findSelectedClientData);
+        }
+    };
+
+    useEffect(() => {
+        getSelectedClientData();
+    }, [selectedClient]);
+
+    async function getClientData() {
+        // fetch client data
+        try {
+            let { data: clientData, error } = await supabase
+                .from("client")
+                .select("*");
+
+            if (clientData) {
+
+                console.log(clientData);
+                setFetchedClientsData(clientData);
+
+                // set client names
+                const allClientNames = [];
+                for (let i = 0; i < clientData.length; i++) {
+                    allClientNames.push(clientData[i].client_name);
+                }
+                allClientNames.sort();
+                setClientNames(allClientNames);
+            }
+
+        } catch (e) {
+            toast.error(
+                "System is unavailable.  Unable to fetch Client Data.  Please try again later or contact tech support!",
+                {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
+            console.warn(e);
+        }
+    };
+
     async function getReferences() {
-        // call reference to get lrStatus options
+        // call reference to get orderCity options
         const { data: orderCityRefData, error: e } = await supabase
             .from("reference")
             .select("*")
@@ -101,7 +324,7 @@ const AddOrder = () => {
             setCityRefs(cityNames);
         }
 
-        // call reference to get lrStatus options
+        // call reference to get materialType options
         const { data: materialTypeRefData, error: materialErr } = await supabase
             .from("reference")
             .select("*")
@@ -111,7 +334,7 @@ const AddOrder = () => {
             setMaterialTypeReferenceOptions(materialTypeRefData);
         }
 
-        // call reference to get lrStatus options
+        // call reference to get size options
         const { data: sizeRefData, error: sizeErr } = await supabase
             .from("reference")
             .select("*")
@@ -121,7 +344,7 @@ const AddOrder = () => {
             setSizeReferenceOptions(sizeRefData);
         }
 
-        // call reference to get lrStatus options
+        // call reference to get priority options
         const { data: priorityRefData, error: priorityErr } = await supabase
             .from("reference")
             .select("*")
@@ -148,6 +371,7 @@ const AddOrder = () => {
 
     useEffect(() => {
         getReferences();
+        getClientData();
     }, []);
 
     useEffect(() => {
@@ -240,13 +464,13 @@ const AddOrder = () => {
                         order_number: orderNumber,
                         pickup_date: format(pickupDate, "yyyy-MM-dd"),
                         order_city: orderCity,
-                        client_name: clientName,
+                        client_name: selectedClient[0],
                         pickup_location: pickupCitySelection[0],
                         drop_location: dropCitySelection[0],
-                        pickup_point_name: nameOfPickupPoint,
-                        dropping_point_name: nameOfDroppingPoint,
-                        marketing_contact: marketingContact,
-                        dispatch_contact: dispatchContact,
+                        pickup_point_name: selectedPickupPoint[0],
+                        // dropping_point_name: nameOfDroppingPoint,
+                        marketing_contact: selectedPickupMarketingContact[0],
+                        dispatch_contact: selectedPickupDispatchContact[0],
                         material: material,
                         size: size,
                         quantity: quantity,
@@ -300,6 +524,13 @@ const AddOrder = () => {
 
                     setOrderFormData(JSON.parse(JSON.stringify(addOrderFields)));
                     setValidated(false);
+                    setSelectedClient([]);
+                    setPickupCitySelection([]);
+                    setDropCitySelection([]);
+                    setSelectedPickupPoint([]);
+                    setSelectedPickupMarketingContact([]);
+                    setSelectedPickupDispatchContact([]);
+                    setPickupDate(new Date());
                 }
             } catch (err) {
                 // open toast
@@ -369,6 +600,7 @@ const AddOrder = () => {
                                             ...previousState,
                                             orderCity: e.target.value,
                                         }));
+                                        setSelectedClient([]);
                                     }}
                                     value={orderCity}
                                 >
@@ -386,23 +618,29 @@ const AddOrder = () => {
                                     Please enter Consignor's GST Number.
                                 </Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
+                            <Form.Group as={Col} md="4" controlId="validationCustom01">
                                 <Form.Label>Client Name</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    name="order-client-name"
-                                    // placeholder="Username"
-                                    aria-describedby="inputGroupPrepend"
-                                    // required
-                                    value={clientName}
-                                    onChange={(e) => {
-                                        setOrderFormData((previousState) => ({
-                                            ...previousState,
-                                            clientName: e.target.value,
-                                        }));
-                                    }}
+                                <Typeahead
+                                    id="clientName"
+                                    disabled = {!orderCity}
+                                    onChange={setSelectedClient}
+                                    className="form-group"
+                                    options={clientNames}
+                                    selected={selectedClient}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                {selectedClientData ?
+                                    <>
+                                        <div className="optional">
+                                            <span>{selectedClientData.address1 ? selectedClientData.address1 + ", " : ""}</span>
+                                            <span>{selectedClientData.address2 ? selectedClientData.address2 + ", " : ""}</span>
+                                            <span>{selectedClientData.area ? selectedClientData.area + ", " : ""}</span>
+                                            <span>{selectedClientData.city ? selectedClientData.city + ", " : ""}</span>
+                                            <span>{selectedClientData.state ? selectedClientData.state + ", " : ""}</span>
+                                            <span>{selectedClientData.pin ? selectedClientData.pin : ""}</span>
+                                        </div>
+                                    </>
+                                : ""}
                             </Form.Group>
                         </Row>
                     </div>
@@ -431,55 +669,53 @@ const AddOrder = () => {
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group as={Col} md="4" controlId="validationCustom02">
+                            <Form.Group as={Col} md="4" controlId="validationCustom01">
                                 <Form.Label>Name of Pickup Point</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    name="order-pickup-point"
-                                    // placeholder="GST number"
-                                    // defaultValue="Otto"
-                                    value={nameOfPickupPoint}
-                                    onChange={(e) => {
-                                        setOrderFormData((previousState) => ({
-                                            ...previousState,
-                                            nameOfPickupPoint: e.target.value,
-                                        }));
-                                    }}
+                                <Typeahead
+                                    id="pickupPoint"
+                                    disabled = {!pickupCitySelection[0]}
+                                    onChange={setSelectedPickupPoint}
+                                    className="form-group"
+                                    options={pickupPointNames}
+                                    selected={selectedPickupPoint}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                {selectedPickupPointData ?
+                                    <>
+                                        <div className="optional">
+                                            <span>{selectedPickupPointData.address1 ? selectedPickupPointData.address1 + ", " : ""}</span>
+                                            <span>{selectedPickupPointData.address2 ? selectedPickupPointData.address2 + ", " : ""}</span>
+                                            <span>{selectedPickupPointData.area ? selectedPickupPointData.area + ", " : ""}</span>
+                                            <span>{selectedPickupPointData.city ? selectedPickupPointData.city + ", " : ""}</span>
+                                            <span>{selectedPickupPointData.state ? selectedPickupPointData.state + ", " : ""}</span>
+                                            <span>{selectedPickupPointData.pin ? selectedPickupPointData.pin : ""}</span>
+                                        </div>
+                                    </>
+                                : ""}
                             </Form.Group>
                         </Row>
                         <Row className="mb-3">
                             <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
                                 <Form.Label>Marketing Contact</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    // placeholder="Username"
-                                    aria-describedby="inputGroupPrepend"
-                                    name="order-marketing-contact"
-                                    // required
-                                    value={marketingContact}
-                                    onChange={(e) => {
-                                        setOrderFormData((previousState) => ({
-                                            ...previousState,
-                                            marketingContact: e.target.value,
-                                        }));
-                                    }}
+                                <Typeahead
+                                    id="marketingContact"
+                                    disabled = {!pickupCitySelection[0]}
+                                    onChange={setSelectedPickupMarketingContact}
+                                    className="form-group"
+                                    options={pickupMarketingContactNames}
+                                    selected={selectedPickupMarketingContact}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} md="4" controlId="validationCustom03">
                                 <Form.Label>Dispatch Contact</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    name="order-dispatch-contact"
-                                    value={dispatchContact}
-                                    onChange={(e) => {
-                                        setOrderFormData((previousState) => ({
-                                            ...previousState,
-                                            dispatchContact: e.target.value,
-                                        }));
-                                    }}
+                                <Typeahead
+                                    id="marketingContact"
+                                    disabled = {!pickupCitySelection[0]}
+                                    onChange={setSelectedPickupDispatchContact}
+                                    className="form-group"
+                                    options={pickupDispatchContactNames}
+                                    selected={selectedPickupDispatchContact}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                             </Form.Group>
@@ -503,23 +739,6 @@ const AddOrder = () => {
                                     className="form-group"
                                     options={cityRefs}
                                     selected={dropCitySelection}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group as={Col} md="4" controlId="validationCustom02">
-                                <Form.Label>Name of Dropping Party</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    name="order-dropping-party"
-                                    // placeholder="To"
-                                    // defaultValue="Otto"
-                                    value={nameOfDroppingPoint}
-                                    onChange={(e) => {
-                                        setOrderFormData((previousState) => ({
-                                            ...previousState,
-                                            nameOfDroppingPoint: e.target.value,
-                                        }));
-                                    }}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                             </Form.Group>

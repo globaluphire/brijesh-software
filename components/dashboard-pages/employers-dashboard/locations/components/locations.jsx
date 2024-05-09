@@ -579,12 +579,13 @@ const Clients = () => {
 
                                             </td>
                                             <td>
-                                                <span>{location.address1}, </span>
-                                                <span>{location.address2}, </span>
-                                                <span>{location.area}, </span>
-                                                <span> {location._city}, </span>
-                                                <span>{location.state}, </span>
-                                                <span> {location.pin}</span>
+                                                <span>{location.address1 ? location.address1 + ", " : ""}</span>
+                                                <span>{location.address2 ? location.address2 + ", " : ""}</span>
+                                                <span>{location.area ? location.area + ", " : ""}</span>
+                                                <span>{location.city ? location.city + ", " : ""}</span>
+                                                <span>{location.state ? location.state + ", " : ""}</span>
+                                                <span>{location.pin ? location.pin : ""}</span>
+                                                <span>{location.address1 && location.area && location.city && location.state && location.pin ? "" : "-"}</span>
                                             </td>
                                             <td>
                                                 <ul className="option-list">

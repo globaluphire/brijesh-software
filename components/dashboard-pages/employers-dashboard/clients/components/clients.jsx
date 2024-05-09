@@ -646,7 +646,7 @@ const Clients = () => {
                                                 <span>{client.area ? client.area + ", " : ""}</span>
                                                 <span>{client.city ? client.city + ", " : ""}</span>
                                                 <span>{client.state ? client.state + ", " : ""}</span>
-                                                <span>{client.pin ? client.pin + ", " : ""}</span>
+                                                <span>{client.pin ? client.pin : ""}</span>
                                                 <span>{client.address1 && client.area && client.city && client.state && client.pin ? "" : "-"}</span>
                                             </td>
                                             <td>
