@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+/* eslint-disable prefer-const */
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -189,7 +190,7 @@ const AddOrder = () => {
 
     async function getSelectedPickupPointData() {
         if(pickupLocationData) {
-            const findSelectedPickupData = pickupLocationData.find((i) => i.name_of_pickup_point == selectedPickupPoint[0]);
+            const findSelectedPickupData = pickupLocationData.find((i) => i.name_of_pickup_point === selectedPickupPoint[0]);
             setSelectedPickupPointData(findSelectedPickupData);
         }
     };
@@ -244,7 +245,7 @@ const AddOrder = () => {
 
     function getSelectedClientData() {
         if (fetchedClientsData.length > 0) {
-            const findSelectedClientData = fetchedClientsData.find((client) => client.client_name == selectedClient[0]);
+            const findSelectedClientData = fetchedClientsData.find((client) => client.client_name === selectedClient[0]);
             setSelectedClientData(findSelectedClientData);
         }
     };
