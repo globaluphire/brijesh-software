@@ -179,7 +179,7 @@ const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactS
                                 {/* Contact Block starts */}
                                 <div>
                                     <div>
-                                        <div style={{ padding: "0.5rem"}}>
+                                        <div style={{ padding: "0.5rem" }}>
                                             <Row className="mb-3">
                                                 <Form.Group as={Col} lg="12" controlId="validationCustom02">
                                                     <Form.Label>Contact Type</Form.Label>
