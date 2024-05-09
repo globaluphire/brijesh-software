@@ -256,7 +256,7 @@ const LocationDetails = () => {
                 }, 3000);
     
                 // open toast
-                toast.success("New " + contactType + " location saved successfully", {
+                toast.success("New " + contactType + " contact saved successfully", {
                     position: "bottom-right",
                     autoClose: 8000,
                     hideProgressBar: false,

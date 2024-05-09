@@ -9,10 +9,12 @@ import dynamic from "next/dynamic";
 import "suneditor/dist/css/suneditor.min.css"; // Import Sun Editor's CSS File
 import { Typeahead } from "react-bootstrap-typeahead";
 import { envConfig } from "../../../../../config/env";
-import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
+import { Button, Col, Collapse, Form, InputGroup, Row } from "react-bootstrap";
 import Router from "next/router";
 import CalendarComp from "../../../../../components/date/CalendarComp";
 import format from "date-fns/format";
+import AddLocationPopup from "../../add-location/components/AddLocationPopup";
+import AddLocationContactPopup from "../../add-location/components/AddLocationContactPopup";
 
 
 const addOrderFields = {
@@ -37,6 +39,10 @@ const addOrderFields = {
 const AddOrder = () => {
     const user = useSelector((state) => state.candidate.user);
     const [pickupDate, setPickupDate] = useState(new Date());
+    const [isLocationSaved, setIsLocationSaved] = useState(false);
+    const [isLocationContactSaved, setIsLocationContactSaved] = useState(false);
+    const [isLocationContactType, setIsLocationContactType] = useState("");
+    const [locationNumber, setLocationNumber] = useState("");
 
     // client fields states
     const [fetchedClientsData, setFetchedClientsData] = useState({});
@@ -52,6 +58,7 @@ const AddOrder = () => {
     const [pickupLocationData, setPickupLocationData] = useState("");
     const [selectedPickupPoint, setSelectedPickupPoint] = useState([]);
     const [selectedPickupPointData, setSelectedPickupPointData] = useState("");
+    const [open, setOpen] = useState(false);
 
     // pickup point contact details selection states
     const [pickupMarketingContactNames, setPickupMarketingContactNames] = useState([]);
@@ -113,6 +120,11 @@ const AddOrder = () => {
                 }
                 allPickupNames.sort();
                 setPickupPointNames(allPickupNames);
+
+                if (isLocationSaved) {
+                    document.getElementById("addLocationModalCloseButton").click();
+                    setIsLocationSaved(false);
+                }
             }
 
         } catch (e) {
@@ -135,7 +147,7 @@ const AddOrder = () => {
 
     useEffect(() => {
         getPickupPointDetails();
-    }, [pickupCitySelection]);
+    }, [pickupCitySelection, isLocationSaved]);
 
     async function getPickupLocationContactData() {
         if (selectedPickupPointData) {
@@ -163,6 +175,11 @@ const AddOrder = () => {
                     allPickupDispatchContactNames.sort();
                     setPickupMarketingContactNames(allPickupMarketingContactNames);
                     setPickupDispatchContactNames(allPickupDispatchContactNames);
+
+                    if (isLocationContactSaved) {
+                        document.getElementById("addLocationContactModalCloseButton").click();
+                        setIsLocationContactSaved(false);
+                    }
                 }
 
             } catch (e) {
@@ -186,7 +203,7 @@ const AddOrder = () => {
 
     useEffect(() => {
         getPickupLocationContactData();
-    }, [selectedPickupPointData]);
+    }, [selectedPickupPointData, isLocationContactSaved]);
 
     async function getSelectedPickupPointData() {
         if(pickupLocationData) {
@@ -354,7 +371,6 @@ const AddOrder = () => {
         if (priorityRefData) {
             setPriorityReferenceOptions(priorityRefData);
         }
-
     };
 
     async function checkAllRefsData() {
@@ -663,15 +679,50 @@ const AddOrder = () => {
                                 <Form.Label>Pickup Location</Form.Label>
                                 <Typeahead
                                     id="pickupLocation"
-                                    onChange={setPickupCitySelection}
+                                    onChange={(e) => {
+                                        setPickupCitySelection(e);
+                                        setSelectedPickupPoint([]);
+                                        setSelectedPickupMarketingContact([]);
+                                        setSelectedPickupDispatchContact([]);
+                                    }}
                                     className="form-group"
                                     options={cityRefs}
                                     selected={pickupCitySelection}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                             </Form.Group>
+                        </Row>
+                        <Row>
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
-                                <Form.Label>Name of Pickup Point</Form.Label>
+                                <Form.Label>
+                                    <ul className="option-list">
+                                        Name of Pickup Point
+                                        <li>
+                                            {/* <button
+                                                aria-controls="example-collapse-text"
+                                                aria-expanded={open}
+                                            >
+                                                <a
+                                                    href="#"
+                                                    onClick={() => setOpen(!open)}
+                                                >
+                                                    <span className="la la-plus mx-2 mt-2"> Add</span>
+                                                </a>
+                                            </button> */}
+                                            { pickupCitySelection[0] ? 
+                                                <button>
+                                                    <a
+                                                        href="#"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#addLocationModal"
+                                                    >
+                                                        <span className="la la-plus mx-2 mt-2"></span>
+                                                    </a>
+                                                </button>
+                                            : "" }
+                                        </li>
+                                    </ul>
+                                </Form.Label>
                                 <Typeahead
                                     id="pickupPoint"
                                     disabled = {!pickupCitySelection[0]}
@@ -695,9 +746,41 @@ const AddOrder = () => {
                                 : ""}
                             </Form.Group>
                         </Row>
-                        <Row className="mb-3">
+                        <Row className="my-3">
                             <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
-                                <Form.Label>Marketing Contact</Form.Label>
+                                <Form.Label>
+                                    <ul className="option-list">
+                                        Marketing Contact
+                                        <li>
+                                            {/* <button
+                                                aria-controls="example-collapse-text"
+                                                aria-expanded={open}
+                                            >
+                                                <a
+                                                    href="#"
+                                                    onClick={() => setOpen(!open)}
+                                                >
+                                                    <span className="la la-plus mx-2 mt-2"> Add</span>
+                                                </a>
+                                            </button> */}
+                                            { selectedPickupPoint[0] ? 
+                                                <button>
+                                                    <a
+                                                        href="#"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#addLocationContactModal"
+                                                        onClick={() => {
+                                                            setIsLocationContactType("Marketing");
+                                                            setLocationNumber(selectedPickupPointData.location_number);
+                                                        }}
+                                                    >
+                                                        <span className="la la-plus mx-2 mt-2"></span>
+                                                    </a>
+                                                </button>
+                                            : "" }
+                                        </li>
+                                    </ul>
+                                </Form.Label>
                                 <Typeahead
                                     id="marketingContact"
                                     disabled = {!pickupCitySelection[0]}
@@ -709,7 +792,39 @@ const AddOrder = () => {
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} md="4" controlId="validationCustom03">
-                                <Form.Label>Dispatch Contact</Form.Label>
+                                <Form.Label>
+                                    <ul className="option-list">
+                                        Dispatch Contact
+                                        <li>
+                                            {/* <button
+                                                aria-controls="example-collapse-text"
+                                                aria-expanded={open}
+                                            >
+                                                <a
+                                                    href="#"
+                                                    onClick={() => setOpen(!open)}
+                                                >
+                                                    <span className="la la-plus mx-2 mt-2"> Add</span>
+                                                </a>
+                                            </button> */}
+                                            { selectedPickupPoint[0] ? 
+                                                <button>
+                                                    <a
+                                                        href="#"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#addLocationContactModal"
+                                                        onClick={() => {
+                                                            setIsLocationContactType("Dispatch");
+                                                            setLocationNumber(selectedPickupPointData.location_number);
+                                                        }}
+                                                    >
+                                                        <span className="la la-plus mx-2 mt-2"></span>
+                                                    </a>
+                                                </button>
+                                            : "" }
+                                        </li>
+                                    </ul>
+                                </Form.Label>
                                 <Typeahead
                                     id="marketingContact"
                                     disabled = {!pickupCitySelection[0]}
@@ -991,6 +1106,65 @@ const AddOrder = () => {
                     </Form.Group> */}
                 </Row>
                 {/* Form Submit Buttons Block Ends */}
+
+                {/* All Popup Modals */}
+                {/* Add Location Modal */}
+                <div
+                    className="modal fade"
+                    id="addLocationModal"
+                    tabIndex="-1"
+                    aria-hidden="true"
+                >
+                    <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                        <div className="apply-modal-content modal-content" style={{ overflow: "auto" }}>
+                            <div className="text-center">
+                                <button
+                                    type="button"
+                                    id="addLocationModalCloseButton"
+                                    className="closed-modal"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                            <AddLocationPopup
+                                setIsLocationSaved={setIsLocationSaved}
+                                isLocationSaved={isLocationSaved}
+                            />
+                        </div>
+                        {/* End .send-private-message-wrapper */}
+                    </div>
+                </div>
+                {/* End of Add Location Modal */}
+
+                {/* Add Location Contact Modal */}
+                <div
+                    className="modal fade"
+                    id="addLocationContactModal"
+                    tabIndex="-1"
+                    aria-hidden="true"
+                >
+                    <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                        <div className="apply-modal-content modal-content" style={{ overflow: "auto" }}>
+                            <div className="text-center">
+                                <button
+                                    type="button"
+                                    id="addLocationContactModalCloseButton"
+                                    className="closed-modal"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                            <AddLocationContactPopup
+                                setIsLocationContactSaved={setIsLocationContactSaved}
+                                isLocationContactSaved={isLocationContactSaved}
+                                isLocationContactType={isLocationContactType}
+                                locationNumber={locationNumber}
+                            />
+                        </div>
+                        {/* End .send-private-message-wrapper */}
+                    </div>
+                </div>
+                {/* End of Add Location Contact Modal */}
 
             </Form>
             : "" }
