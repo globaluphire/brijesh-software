@@ -76,7 +76,7 @@ const ViewInvoice = ({ fetchedInvoicedata }) => {
                 </Row>
             </Container>
 
-            <Container className="custom-border mt-1 line-height-shrink">
+            {/* <Container className="custom-border mt-1 line-height-shrink">
                 <Row>
                     <Col md={6} className="custom-border" style={{ borderBottom: 0 }}><b>Taxable</b></Col>
                     <Col md={2} className="custom-border"><b>CGST</b></Col>
@@ -113,17 +113,17 @@ const ViewInvoice = ({ fetchedInvoicedata }) => {
                             </b>
                         </div>
                         <div className="line-height-shrink optional" style={{ fontSize: "xx-small" }}>
-                            {/* (INR {convertNumberToWords(parseInt(fetchedInvoicedata.total_amount * 0.025 * 2))} Rs
+                            (INR {convertNumberToWords(parseInt(fetchedInvoicedata.total_amount * 0.025 * 2))} Rs
                                 {parseFloat(fetchedInvoicedata.total_amount * 0.025 * 2).toFixed(2).slice(-2) !== "00" ?
                                     " And " + convertNumberToWords(parseFloat(fetchedInvoicedata.total_amount * 0.025 * 2).toFixed(2).slice(-2)) + " Paisa "
                                 :  " And Zero Paisa "}
-                            Only) */}
+                            Only)
                             (INR {fetchedInvoicedata && fetchedInvoicedata.total_amount ? toWords.convert(fetchedInvoicedata.total_amount * 0.025 * 2) : ""})
                             <i><u> Amount of tax subject to Reverse Charge</u></i>
                         </div>
                     </Col>
                 </Row>
-            </Container>
+            </Container> */}
 
             <Container className="custom-border mt-2">
                 <Row>
