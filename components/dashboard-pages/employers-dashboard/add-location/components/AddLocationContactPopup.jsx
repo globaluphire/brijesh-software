@@ -10,6 +10,7 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import { envConfig } from "../../../../../config/env";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import Router from "next/router";
+import { Grid } from "react-loader-spinner";
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
     ssr: false,
@@ -41,6 +42,7 @@ const addLocationContactFields = {
 
 const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactSaved, isLocationContactType, locationNumber }) => {
     const user = useSelector((state) => state.candidate.user);
+    const [isLoading, setIsLoading] = useState(true);
 
     const [locationContactFormData, setLocationContactFormData] = useState(
         JSON.parse(JSON.stringify(addLocationContactFields))
@@ -71,6 +73,7 @@ const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactS
     const [cityRefs, setCityRefs] = useState([]);
 
     async function getReferences() {
+        setIsLoading(true);
         // call reference to get city options
         const { data: cityRefData, error: err } = await supabase
             .from("reference")
@@ -85,7 +88,7 @@ const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactS
             cityNames.sort();
             setCityRefs(cityNames);
         }
-
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -103,6 +106,7 @@ const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactS
         user
     ) => 
     {
+        setIsLoading(true);
         if(locationNumber && isLocationContactType && contactName && contactPhone) {
             // saving location contact data
             const { data: locationContactData, error: locationContactError } = await supabase.from("location_contact").insert([
@@ -130,6 +134,7 @@ const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactS
                         theme: "colored",
                     }
                 );
+                setIsLoading(false);
             } else {
                 // open toast
                 toast.success("New " + isLocationContactType + " contact saved successfully", {
@@ -145,6 +150,7 @@ const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactS
 
                 setLocationContactFormData(JSON.parse(JSON.stringify(addLocationContactFields)));
                 setIsLocationContactSaved(true);
+                setIsLoading(false);
             }
         } else {
             toast.error("Please fill all required fields!!!", {
@@ -157,7 +163,7 @@ const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactS
                 progress: undefined,
                 theme: "colored",
             });
-
+            setIsLoading(false);
         }
     };
 
@@ -272,6 +278,28 @@ const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactS
                         </div>
                     </div>
             </Form>
+            { isLoading ?
+                <div style={{
+                    height: "82%",
+                    width: "86%",
+                    position: "absolute",
+                    background: "rgba(0, 0, 0, 0.3)",
+                    zIndex: "1000",
+                    paddingTop: "25%",
+                    paddingLeft: "35%"
+                }}>
+                    <Grid
+                        visible={true}
+                        height="80"
+                        width="80"
+                        color="#333333"
+                        ariaLabel="grid-loading"
+                        radius="12.5"
+                        wrapperStyle={{}}
+                        wrapperClass="grid-wrapper"
+                    />
+                </div> : ""
+            }
         </>
     );
 };

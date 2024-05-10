@@ -10,6 +10,7 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import { envConfig } from "../../../../../config/env";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import Router from "next/router";
+import { Grid } from "react-loader-spinner";
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
     ssr: false,
@@ -68,6 +69,7 @@ const addLocationFields = {
 
 const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
     const user = useSelector((state) => state.candidate.user);
+    const [isLoading, setIsLoading] = useState(false);
     const [salaryType, setSalaryType] = useState("fixed");
     const [lowerLimit, setLowerLimit] = useState("");
     const [upperLimit, setUpperLimit] = useState("");
@@ -133,6 +135,7 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
     const [cityRefs, setCityRefs] = useState([]);
 
     async function getReferences() {
+        setIsLoading(true);
         // call reference to get clientContactType options
         const { data: clientContactTypeRefData, error: e } = await supabase
             .from("reference")
@@ -162,7 +165,7 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
             cityNames.sort();
             setCityRefs(cityNames);
         }
-
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -218,6 +221,7 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
         setLocationFormData,
         user
     ) => {
+        setIsLoading(true);
         if (checkRequiredFields(locationFormData)) {
             try {
                 // Generate location number
@@ -276,6 +280,7 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                             theme: "colored",
                         }
                     );
+                    setIsLoading(false);
                 } else {
                     // saving location contact data
                     const { data: locationContactData, error: locationContactError } = await supabase.from("location_contact").insert([
@@ -303,6 +308,7 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                 theme: "colored",
                             }
                         );
+                        setIsLoading(false);
                     } else {
                         // open toast
                         toast.success("New " + locationType + " location saved successfully", {
@@ -329,12 +335,13 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
 
                         // once all data saved set the callback state for refresh parent data
                         setIsLocationSaved(true);
+                        setIsLoading(false);
                     }
                 }
             } catch (err) {
                 // open toast
                 toast.error(
-                    "Error while saving CLIENT details, Please try again later or contact tech support",
+                    "Error while saving Location details, Please try again later or contact tech support",
                     {
                         position: "bottom-right",
                         autoClose: false,
@@ -346,6 +353,7 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                         theme: "colored",
                     }
                 );
+                setIsLoading(false);
                 // console.warn(err);
             }
         } else {
@@ -360,6 +368,7 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                 progress: undefined,
                 theme: "colored",
             });
+            setIsLoading(false);
         }
     };
 
@@ -684,6 +693,28 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                         </div>
                     </div>
             </Form>
+            { isLoading ?
+                <div style={{
+                    height: "129%",
+                    width: "83%",
+                    position: "absolute",
+                    background: "rgba(0, 0, 0, 0.3)",
+                    zIndex: 1000,
+                    paddingTop: "100%",
+                    paddingLeft: "30%",
+                }}>
+                    <Grid
+                        visible={true}
+                        height="80"
+                        width="80"
+                        color="#333333"
+                        ariaLabel="grid-loading"
+                        radius="12.5"
+                        wrapperStyle={{}}
+                        wrapperClass="grid-wrapper"
+                    />
+                </div> : ""
+            }
         </>
     );
 };

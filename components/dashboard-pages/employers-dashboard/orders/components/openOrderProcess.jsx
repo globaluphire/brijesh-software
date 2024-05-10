@@ -373,7 +373,7 @@ const OpenOrderProcess = () => {
             <div>
                 { orderStatusReferenceOptions != null ? (
                     <Form>
-                        <Form.Label
+                        {/* <Form.Label
                             className="optional"
                             style={{
                                 marginLeft: "32px",
@@ -382,9 +382,9 @@ const OpenOrderProcess = () => {
                             }}
                         >
                             SEARCH BY
-                        </Form.Label>
+                        </Form.Label> */}
                         <div style={{ fontSize: "14px", fontWeight: "bold" }}>
-                            <Row className="mb-1 mx-3">
+                            {/* <Row className="mb-1 mx-3">
                                 <Form.Group as={Col} md="2" controlId="validationCustom02">
                                     <Form.Label style={{ marginBottom: "-5px" }}>Status</Form.Label>
                                     <Form.Select
@@ -412,9 +412,9 @@ const OpenOrderProcess = () => {
                                     <Form.Label style={{ marginBottom: "2px" }}>From Date</Form.Label><br />
                                     <DateRangePickerComp />
                                 </Form.Group>
-                            </Row>
+                            </Row> */}
                             <Row className="mx-3">
-                                <Col>
+                                {/* <Col>
                                     <Form.Group className="chosen-single form-input chosen-container mb-3">
                                         <Button
                                             variant="primary"
@@ -438,7 +438,7 @@ const OpenOrderProcess = () => {
                                             Clear
                                         </Button>
                                     </Form.Group>
-                                </Col>
+                                </Col> */}
                                 <Col style={{ display: "relative", textAlign: "right" }}>
                                     <Form.Group className="chosen-single form-input chosen-container mb-3">
                                         { fetchedOpenOrderdataCSV.length > 0 ?

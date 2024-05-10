@@ -277,7 +277,7 @@ const CompletedOrderProcess = () => {
                             SEARCH BY
                         </Form.Label>
                         <div style={{ fontSize: "14px", fontWeight: "bold" }}>
-                            <Row className="mb-1 mx-3">
+                            {/* <Row className="mb-1 mx-3">
                                 <Form.Group as={Col} md="auto" controlId="validationCustom01">
                                     <Form.Label style={{ marginBottom: "2px" }}>Order Created From Date</Form.Label><br />
                                     <CalendarComp />
@@ -286,9 +286,9 @@ const CompletedOrderProcess = () => {
                                     <Form.Label style={{ marginBottom: "2px" }}>Order Created To Date</Form.Label><br />
                                     <CalendarComp />
                                 </Form.Group>
-                            </Row>
+                            </Row> */}
                             <Row className="mx-3">
-                                <Col>
+                                {/* <Col>
                                     <Form.Group className="chosen-single form-input chosen-container mb-3">
                                         <Button
                                             variant="primary"
@@ -312,7 +312,7 @@ const CompletedOrderProcess = () => {
                                             Clear
                                         </Button>
                                     </Form.Group>
-                                </Col>
+                                </Col> */}
                                 <Col style={{ display: "relative", textAlign: "right" }}>
                                     <Form.Group className="chosen-single form-input chosen-container mb-3">
                                         <Button

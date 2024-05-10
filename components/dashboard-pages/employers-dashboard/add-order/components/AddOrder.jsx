@@ -15,6 +15,7 @@ import CalendarComp from "../../../../../components/date/CalendarComp";
 import format from "date-fns/format";
 import AddLocationPopup from "../../add-location/components/AddLocationPopup";
 import AddLocationContactPopup from "../../add-location/components/AddLocationContactPopup";
+import { Grid } from "react-loader-spinner";
 
 
 const addOrderFields = {
@@ -37,6 +38,7 @@ const addOrderFields = {
 };
 
 const AddOrder = () => {
+    const [isLoading, setIsLoading] = useState(true);
     const user = useSelector((state) => state.candidate.user);
     const [pickupDate, setPickupDate] = useState(new Date());
     const [isLocationSaved, setIsLocationSaved] = useState(false);
@@ -103,45 +105,49 @@ const AddOrder = () => {
 
 
     async function getPickupPointDetails() {
-        try {
-            let { data: pickupLocationData, error } = await supabase
-                .from("location")
-                .select("*")
-                .eq("location_type", "Pickup")
-                .eq("pickup_city", pickupCitySelection[0]);
+        if(pickupCitySelection[0]) {
+            try {
+                setIsLoading(true);
+                let { data: pickupLocationData, error } = await supabase
+                    .from("location")
+                    .select("*")
+                    .eq("location_type", "Pickup")
+                    .eq("pickup_city", pickupCitySelection[0]);
 
-            if (pickupLocationData) {
-                setPickupLocationData(pickupLocationData);
+                if (pickupLocationData) {
+                    setPickupLocationData(pickupLocationData);
 
-                // set pickup names
-                const allPickupNames = [];
-                for (let i = 0; i < pickupLocationData.length; i++) {
-                    allPickupNames.push(pickupLocationData[i].name_of_pickup_point);
+                    // set pickup names
+                    const allPickupNames = [];
+                    for (let i = 0; i < pickupLocationData.length; i++) {
+                        allPickupNames.push(pickupLocationData[i].name_of_pickup_point);
+                    }
+                    allPickupNames.sort();
+                    setPickupPointNames(allPickupNames);
+
+                    if (isLocationSaved) {
+                        document.getElementById("addLocationModalCloseButton").click();
+                        setIsLocationSaved(false);
+                    }
                 }
-                allPickupNames.sort();
-                setPickupPointNames(allPickupNames);
 
-                if (isLocationSaved) {
-                    document.getElementById("addLocationModalCloseButton").click();
-                    setIsLocationSaved(false);
-                }
+            } catch (e) {
+                toast.error(
+                    "System is unavailable.  Unable to fetch location Data.  Please try again later or contact tech support!",
+                    {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    }
+                );
+            } finally {
+                setIsLoading(false);
             }
-
-        } catch (e) {
-            toast.error(
-                "System is unavailable.  Unable to fetch location Data.  Please try again later or contact tech support!",
-                {
-                    position: "bottom-right",
-                    autoClose: false,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                }
-            );
-            console.warn(e);
         }
     };
 
@@ -150,9 +156,10 @@ const AddOrder = () => {
     }, [pickupCitySelection, isLocationSaved]);
 
     async function getPickupLocationContactData() {
-        if (selectedPickupPointData) {
+        if (selectedPickupPointData && selectedPickupPointData.location_number) {
             // get location contact details
             try {
+                setIsLoading(true);
                 let { data: pickupLocationContactData, error } = await supabase
                     .from("location_contact")
                     .select("*")
@@ -196,7 +203,8 @@ const AddOrder = () => {
                         theme: "colored",
                     }
                 );
-                console.warn(e);
+            } finally {
+                setIsLoading(false);
             }
         }
     };
@@ -206,9 +214,11 @@ const AddOrder = () => {
     }, [selectedPickupPointData, isLocationContactSaved]);
 
     async function getSelectedPickupPointData() {
-        if(pickupLocationData) {
+        if(pickupLocationData && pickupLocationData.length > 0) {
+            setIsLoading(true);
             const findSelectedPickupData = pickupLocationData.find((i) => i.name_of_pickup_point === selectedPickupPoint[0]);
             setSelectedPickupPointData(findSelectedPickupData);
+            setIsLoading(false);
         }
     };
 
@@ -217,42 +227,46 @@ const AddOrder = () => {
     }, [selectedPickupPoint]);
 
     async function getClientDetails() {
-        // fetch client addresses and contacts data
-        try {
-            let { data: clientData, error } = await supabase
-                .from("client")
-                .select("*")
-                .eq("city", orderCity);
+        if (orderCity) {
+            // fetch client addresses and contacts data
+            try {
+                setIsLoading(true);
 
-            if (clientData) {
+                let { data: clientData, error } = await supabase
+                    .from("client")
+                    .select("*")
+                    .eq("city", orderCity);
 
-                console.log(clientData);
-                setFetchedClientsData(clientData);
+                if (clientData) {
+                    setFetchedClientsData(clientData);
 
-                // set client names
-                const allClientNames = [];
-                for (let i = 0; i < clientData.length; i++) {
-                    allClientNames.push(clientData[i].client_name);
+                    // set client names
+                    const allClientNames = [];
+                    for (let i = 0; i < clientData.length; i++) {
+                        allClientNames.push(clientData[i].client_name);
+                    }
+                    allClientNames.sort();
+                    setClientNames(allClientNames);
                 }
-                allClientNames.sort();
-                setClientNames(allClientNames);
+            } catch (e) {
+                toast.error(
+                    "System is unavailable.  Unable to fetch Client Data.  Please try again later or contact tech support!",
+                    {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    }
+                );
+                // console.warn(e);
             }
-
-        } catch (e) {
-            toast.error(
-                "System is unavailable.  Unable to fetch Client Data.  Please try again later or contact tech support!",
-                {
-                    position: "bottom-right",
-                    autoClose: false,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                }
-            );
-            console.warn(e);
+            finally {
+                setIsLoading(false);
+            }
         }
     };
 
@@ -261,9 +275,11 @@ const AddOrder = () => {
     }, [orderCity]);
 
     function getSelectedClientData() {
-        if (fetchedClientsData.length > 0) {
+        if (fetchedClientsData && fetchedClientsData.length > 0) {
+            setIsLoading(true);
             const findSelectedClientData = fetchedClientsData.find((client) => client.client_name === selectedClient[0]);
             setSelectedClientData(findSelectedClientData);
+            setIsLoading(false);
         }
     };
 
@@ -271,46 +287,8 @@ const AddOrder = () => {
         getSelectedClientData();
     }, [selectedClient]);
 
-    async function getClientData() {
-        // fetch client data
-        try {
-            let { data: clientData, error } = await supabase
-                .from("client")
-                .select("*");
-
-            if (clientData) {
-
-                console.log(clientData);
-                setFetchedClientsData(clientData);
-
-                // set client names
-                const allClientNames = [];
-                for (let i = 0; i < clientData.length; i++) {
-                    allClientNames.push(clientData[i].client_name);
-                }
-                allClientNames.sort();
-                setClientNames(allClientNames);
-            }
-
-        } catch (e) {
-            toast.error(
-                "System is unavailable.  Unable to fetch Client Data.  Please try again later or contact tech support!",
-                {
-                    position: "bottom-right",
-                    autoClose: false,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                }
-            );
-            console.warn(e);
-        }
-    };
-
     async function getReferences() {
+        setIsLoading(true);
         // call reference to get orderCity options
         const { data: orderCityRefData, error: e } = await supabase
             .from("reference")
@@ -374,6 +352,7 @@ const AddOrder = () => {
     };
 
     async function checkAllRefsData() {
+        setIsLoading(true);
         if (
             cityRefs &&
             orderCityReferenceOptions &&
@@ -383,12 +362,12 @@ const AddOrder = () => {
             priorityReferenceOptions
         ) {
             setCheckAllRefs(true);
+            setIsLoading(false);
         }
     };
 
     useEffect(() => {
         getReferences();
-        getClientData();
     }, []);
 
     useEffect(() => {
@@ -433,6 +412,7 @@ const AddOrder = () => {
         setOrderFormData,
         user
     ) => {
+        setIsLoading(true);
 
         if (checkRequiredFields()) {
             try {
@@ -515,6 +495,7 @@ const AddOrder = () => {
                             theme: "colored",
                         }
                     );
+                    setIsLoading(false);
                 } else {
                     // open toast
                     toast.success("Order placed successfully", {
@@ -548,11 +529,12 @@ const AddOrder = () => {
                     setSelectedPickupMarketingContact([]);
                     setSelectedPickupDispatchContact([]);
                     setPickupDate(new Date());
+                    setIsLoading(false);
                 }
             } catch (err) {
                 // open toast
                 toast.error(
-                    "Error while saving LR details, Please try again later or contact tech support",
+                    "Error while placing Order, Please try again later or contact tech support",
                     {
                         position: "bottom-right",
                         autoClose: false,
@@ -564,6 +546,7 @@ const AddOrder = () => {
                         theme: "colored",
                     }
                 );
+                setIsLoading(false);
                 // console.warn(err);
             }
         } else {
@@ -594,12 +577,36 @@ const AddOrder = () => {
                     priority: ""
                 }));
             };
+            setIsLoading(false);
         }
     };
 
     return (
         <>
-            { checkAllRefs ? <Form validated={validated}>
+            { checkAllRefs ?
+            <Form validated={validated}>
+                { isLoading ?
+                    <div style={{
+                        height: "100%",
+                        width: "100%",
+                        position: "absolute",
+                        background: "rgba(0, 0, 0, 0.3)",
+                        zIndex: "1000",
+                        paddingTop: "30%",
+                        paddingLeft: "50%",
+                    }}>
+                        <Grid
+                            visible={true}
+                            height="80"
+                            width="80"
+                            color="#333333"
+                            ariaLabel="grid-loading"
+                            radius="12.5"
+                            wrapperStyle={{}}
+                            wrapperClass="grid-wrapper"
+                        />
+                    </div> : ""
+                }
                 {/* General Details Block starts */}
                 <div>
                     <div className="divider divider-general">
@@ -646,6 +653,20 @@ const AddOrder = () => {
                                     selected={selectedClient}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                {/* { isLoading ?
+                                    <div style={{ width: "20%", margin: "auto", marginTop: "-35px", position: "relative" }}>
+                                        <Grid
+                                            visible={true}
+                                            height="30"
+                                            width="30"
+                                            color="#4fa94d"
+                                            ariaLabel="grid-loading"
+                                            radius="12.5"
+                                            wrapperStyle={{}}
+                                            wrapperClass="grid-wrapper"
+                                        />
+                                    </div> : ""
+                                } */}
                                 {selectedClientData ?
                                     <>
                                         <div className="optional">
@@ -657,7 +678,7 @@ const AddOrder = () => {
                                             <span>{selectedClientData.pin ? selectedClientData.pin : ""}</span>
                                         </div>
                                     </>
-                                : ""}
+                                :  ""}
                             </Form.Group>
                         </Row>
                     </div>
@@ -697,18 +718,7 @@ const AddOrder = () => {
                                 <Form.Label>
                                     <ul className="option-list">
                                         Name of Pickup Point
-                                        <li>
-                                            {/* <button
-                                                aria-controls="example-collapse-text"
-                                                aria-expanded={open}
-                                            >
-                                                <a
-                                                    href="#"
-                                                    onClick={() => setOpen(!open)}
-                                                >
-                                                    <span className="la la-plus mx-2 mt-2"> Add</span>
-                                                </a>
-                                            </button> */}
+                                        <li className="mx-2">
                                             { pickupCitySelection[0] ? 
                                                 <button>
                                                     <a
@@ -716,7 +726,7 @@ const AddOrder = () => {
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#addLocationModal"
                                                     >
-                                                        <span className="la la-plus mx-2 mt-2"></span>
+                                                        <span className="la la-plus"></span>
                                                     </a>
                                                 </button>
                                             : "" }
@@ -750,19 +760,8 @@ const AddOrder = () => {
                             <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
                                 <Form.Label>
                                     <ul className="option-list">
-                                        Marketing Contact
-                                        <li>
-                                            {/* <button
-                                                aria-controls="example-collapse-text"
-                                                aria-expanded={open}
-                                            >
-                                                <a
-                                                    href="#"
-                                                    onClick={() => setOpen(!open)}
-                                                >
-                                                    <span className="la la-plus mx-2 mt-2"> Add</span>
-                                                </a>
-                                            </button> */}
+                                        Marketing Contact 
+                                        <li className="mx-2">
                                             { selectedPickupPoint[0] ? 
                                                 <button>
                                                     <a
@@ -774,7 +773,7 @@ const AddOrder = () => {
                                                             setLocationNumber(selectedPickupPointData.location_number);
                                                         }}
                                                     >
-                                                        <span className="la la-plus mx-2 mt-2"></span>
+                                                        <span className="la la-plus"></span>
                                                     </a>
                                                 </button>
                                             : "" }
@@ -794,19 +793,8 @@ const AddOrder = () => {
                             <Form.Group as={Col} md="4" controlId="validationCustom03">
                                 <Form.Label>
                                     <ul className="option-list">
-                                        Dispatch Contact
-                                        <li>
-                                            {/* <button
-                                                aria-controls="example-collapse-text"
-                                                aria-expanded={open}
-                                            >
-                                                <a
-                                                    href="#"
-                                                    onClick={() => setOpen(!open)}
-                                                >
-                                                    <span className="la la-plus mx-2 mt-2"> Add</span>
-                                                </a>
-                                            </button> */}
+                                        Dispatch Contact 
+                                        <li className="mx-2">
                                             { selectedPickupPoint[0] ? 
                                                 <button>
                                                     <a
@@ -818,7 +806,7 @@ const AddOrder = () => {
                                                             setLocationNumber(selectedPickupPointData.location_number);
                                                         }}
                                                     >
-                                                        <span className="la la-plus mx-2 mt-2"></span>
+                                                        <span className="la la-plus"></span>
                                                     </a>
                                                 </button>
                                             : "" }
@@ -1165,9 +1153,31 @@ const AddOrder = () => {
                     </div>
                 </div>
                 {/* End of Add Location Contact Modal */}
-
             </Form>
-            : "" }
+            :   ""
+            }
+            { isLoading && !checkAllRefs ?
+                <div style={{
+                    height: "100%",
+                    width: "100%",
+                    position: "absolute",
+                    background: "rgba(0, 0, 0, 0.3)",
+                    zIndex: 1000,
+                    paddingTop: "30%",
+                    paddingLeft: "50%",
+                }}>
+                    <Grid
+                        visible={true}
+                        height="80"
+                        width="80"
+                        color="#333333"
+                        ariaLabel="grid-loading"
+                        radius="12.5"
+                        wrapperStyle={{}}
+                        wrapperClass="grid-wrapper"
+                    />
+                </div> : ""
+            }
         </>
     );
 };
