@@ -302,17 +302,6 @@ const AddInvoice = () => {
         // if (checkRequiredFields(lrFormData)) {
             try {
                 // Generate Invoice Number
-                const today = new Date();
-                let date = today.getDate();
-                if (date < 10) {
-                    date = "0" + date;
-                }
-                let month = today.getMonth() + 1;
-                if (month < 10) {
-                    month = "0" + month;
-                }
-                var year = today.getFullYear();
-
                 const { data: sysKeyInvoiceData, error: sysKeyInvoiceError } = await supabase
                     .from("sys_key")
                     .select("sys_seq_nbr")
@@ -320,11 +309,15 @@ const AddInvoice = () => {
 
                 let invoiceSeqNbr = sysKeyInvoiceData[0].sys_seq_nbr + 1;
                 if (invoiceSeqNbr < 10) {
-                    invoiceSeqNbr = "00" + invoiceSeqNbr;
+                    invoiceSeqNbr = "0000" + invoiceSeqNbr;
                 } else if(invoiceSeqNbr < 100) {
+                    invoiceSeqNbr = "000" + invoiceSeqNbr;
+                } else if(invoiceSeqNbr < 1000) {
+                    invoiceSeqNbr = "00" + invoiceSeqNbr;
+                } else if(invoiceSeqNbr < 10000) {
                     invoiceSeqNbr = "0" + invoiceSeqNbr;
                 }
-                const invoiceNumber = "INV" + "" + date + "" + month + "" + year.toString().substring(2) + "" + invoiceSeqNbr;
+                const invoiceNumber = "RF" + invoiceSeqNbr;
 
                 const { data, error } = await supabase.from("invoice").insert([
                     {
