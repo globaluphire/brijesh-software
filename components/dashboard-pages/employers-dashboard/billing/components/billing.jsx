@@ -454,6 +454,7 @@ const Billing = () => {
                                     <Form.Label>Client Name</Form.Label>
                                     <Form.Control
                                         type="text"
+                                        name="clientNameFilterBilling"
                                         value={clientName}
                                         onChange={(e) => {
                                             setSearchFilters((previousState) => ({
