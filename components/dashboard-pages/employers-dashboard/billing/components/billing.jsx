@@ -23,7 +23,7 @@ import CalendarComp from "../../../../date/CalendarComp";
 import { format } from "date-fns";
 
 const addSearchFilters = {
-    consignorName: "",
+    clientName: "",
     consigneeName: "",
     fromCity: "",
     toCity: "",
@@ -62,7 +62,7 @@ const Billing = () => {
         JSON.parse(JSON.stringify(addSearchFilters))
     );
     const {
-        consignorName,
+        clientName,
         consigneeName,
         fromCity,
         toCity,
@@ -104,6 +104,16 @@ const Billing = () => {
         }
     };
 
+    // clear from date Filter
+    const clearFromDateFilter = () => {
+        setSearchInvoiceDateFrom();
+    };
+
+    // clear to date Filter
+    const clearToDateFilter = () => {
+        setSearchInvoiceDateTo();
+    };
+
     // clear all filters
     const clearAll = () => {
         setSearchInvoiceDateFrom();
@@ -112,10 +122,11 @@ const Billing = () => {
         fetchedInvoice(JSON.parse(JSON.stringify(addSearchFilters)));
     };
 
-    async function findInvoice(searchInvoiceDateFrom, searchInvoiceDateTo) {
+    async function findInvoice(searchInvoiceDateFrom, searchInvoiceDateTo, searchFilters) {
         let query = supabase
             .from("invoice")
-            .select("*");
+            .select("*")
+            .ilike("company_name", "%" + searchFilters.clientName + "%");
 
         if (searchInvoiceDateFrom) {
             query.gte("invoice_date", format(searchInvoiceDateFrom, "yyyy-MM-dd"));
@@ -407,7 +418,27 @@ const Billing = () => {
                         <div style={{ fontSize: "14px", fontWeight: "bold" }}>
                             <Row className="mb-1 mx-3">
                                 <Form.Group as={Col} md="auto" controlId="validationCustom01">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>Invoice Date</Form.Label><br />
+                                    <Form.Label className="">
+                                        Invoice Date
+                                        <span className="px-1">
+                                            <Button
+                                                className="btn-sm btn-secondary"
+                                                onClick={clearFromDateFilter}
+                                                style={{ fontSize: "10px", margin: "0", padding: "4px" }}
+                                            >
+                                                Clear From Date
+                                            </Button>
+                                        </span>
+                                        <span>
+                                            <Button
+                                                className="btn-sm btn-secondary"
+                                                onClick={clearToDateFilter}
+                                                style={{ fontSize: "10px", margin: "0", padding: "4px" }}
+                                            >
+                                                Clear To Date
+                                            </Button>
+                                        </span>
+                                    </Form.Label><br />
                                     <div className="p-1" style={{ border: "1px solid #dee2e6", borderRadius: "3px"  }}>
                                         <div className="pb-1">
                                             <span className="px-1">From</span>
@@ -419,25 +450,25 @@ const Billing = () => {
                                         </div>
                                     </div>
                                 </Form.Group>
-                               {/* <Form.Group as={Col} md="2" controlId="validationCustom01">
-                                    <Form.Label>Consignor</Form.Label>
+                               <Form.Group as={Col} md="4" controlId="validationCustom01">
+                                    <Form.Label>Client Name</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        value={consignorName}
+                                        value={clientName}
                                         onChange={(e) => {
                                             setSearchFilters((previousState) => ({
                                                 ...previousState,
-                                                consignorName: e.target.value,
+                                                clientName: e.target.value,
                                             }));
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                // findLR(searchFilters);
+                                                findInvoice(searchInvoiceDateFrom, searchInvoiceDateTo, searchFilters);
                                             }
                                         }}
                                     />
                                 </Form.Group>
-                                <Form.Group as={Col} md="2" controlId="validationCustom02">
+                                {/* <Form.Group as={Col} md="2" controlId="validationCustom02">
                                     <Form.Label style={{ marginBottom: "-5px" }}>Consignee</Form.Label>
                                     <Form.Control
                                         type="text"
@@ -542,7 +573,7 @@ const Billing = () => {
                                             variant="primary"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                findInvoice(searchInvoiceDateFrom, searchInvoiceDateTo);
+                                                findInvoice(searchInvoiceDateFrom, searchInvoiceDateTo, searchFilters);
                                             }}
                                             className="btn btn-submit btn-sm text-nowrap m-1"
                                         >
@@ -611,6 +642,7 @@ const Billing = () => {
                                 <th>Created On</th>
                                 <th>Invoice Date</th>
                                 <th>Pickup Date</th>
+                                <th>Invoice No</th>
                                 <th>Order No</th>
                                 <th>Order City</th>
                                 <th>Client Name</th>
@@ -664,6 +696,11 @@ const Billing = () => {
                                             <td>
                                                 <span>
                                                     -
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span>
+                                                    {invoice.invoice_number}
                                                 </span>
                                             </td>
                                             <td>

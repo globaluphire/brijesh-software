@@ -359,7 +359,6 @@ const AddLR = () => {
                 }
                 const orderNumber = "ORD" + "" + date + "" + month + "" + year.toString().substring(2) + "" + orderSeqNbr;
 
-                console.log(orderNumber, " ", lrNumber);
                 const { data, error } = await supabase.from("lr").insert([
                     {
                         lr_number: lrNumber, // add logic to create automatic Unique number, ex. RLR(YY)(MM)(DD)(incremented 3 number digit)
