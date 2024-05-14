@@ -59,11 +59,27 @@ const addLocationFields = {
     pin: "",
     state: "",
 
-    // contact details
+    // pick up contact details
     contactType: "",
     contactName: "",
     contactPhone: "",
-    contactEmail: ""
+    contactEmail: "",
+
+    // Drop details
+    nameOfDropPoint: "",
+    dropCity: "",
+    dropAddress1: "",
+    dropAddress2: "",
+    dropArea: "",
+    dropCity: "",
+    dropPin: "",
+    dropState: "",
+
+    // contact details
+    dropContactType: "",
+    dropContactName: "",
+    dropContactPhone: "",
+    dropContactEmail: ""
 };
 
 const AddLocation = () => {
@@ -112,7 +128,23 @@ const AddLocation = () => {
         contactType,
         contactName,
         contactPhone,
-        contactEmail
+        contactEmail,
+
+        // Drop details
+        nameOfDropPoint,
+        sadfcity,
+        dropAddress1,
+        dropAddress2,
+        dropArea,
+        dropCity,
+        dropPin,
+        dropState,
+
+        // contact details
+        dropContactType,
+        dropContactName,
+        dropContactPhone,
+        dropContactEmail
 
     } = useMemo(() => locationFormData, [locationFormData]);
 
@@ -127,6 +159,9 @@ const AddLocation = () => {
 
     const [pickupCitySelection, setPickupCitySelection] = useState([]);
     const [pickupCityRequired, setPickupCityRequired] = useState(false);
+
+    const [dropCitySelection, setDropCitySelection] = useState([]);
+    const [dropCityRequired, setDropCityRequired] = useState(false);
 
     const [clientTypeReferenceOptions, setClientTypeReferenceOptions] = useState([]);
     const [clientContactTypeReferenceOptions, setClientContactTypeReferenceOptions] = useState([]);
@@ -172,7 +207,7 @@ const AddLocation = () => {
     function checkRequiredFields(locationFormData) {
         if (
             // pickup or drop
-            locationFormData.locationType &&
+            locationFormData.locationType === "Pickup" &&
     
             // pick up details
             locationFormData.nameOfPickupPoint &&
@@ -189,8 +224,28 @@ const AddLocation = () => {
             locationFormData.contactPhone
         ) {
             return true;
+        } else if (
+            // drop
+            locationFormData.locationType === "Drop" &&
+    
+            // pick up details
+            locationFormData.nameOfDropPoint &&
+            dropCitySelection[0] &&
+            locationFormData.dropAddress1 &&
+            locationFormData.dropArea &&
+            locationFormData.dropCity &&
+            locationFormData.dropPin &&
+            locationFormData.dropState &&
+    
+            // contact details
+            locationFormData.dropContactType &&
+            locationFormData.dropContactName &&
+            locationFormData.dropContactPhone
+        ) {
+            return true;
         } else {
             setPickupCityRequired(false);
+            setDropCityRequired(false);
             return false;
         }
     };
@@ -251,14 +306,14 @@ const AddLocation = () => {
                         // client
                         location_number: locationNumber,
                         location_type: locationType,
-                        name_of_pickup_point: nameOfPickupPoint,
-                        pickup_city: pickupCitySelection[0],
-                        address1: address1,
-                        address2: address2,
-                        area: area,
-                        city: city,
-                        pin: pin,
-                        state: state
+                        name_of_pickup_point: locationFormData.locationType === "Pickup" ? nameOfPickupPoint : nameOfDropPoint,
+                        location_city: locationFormData.locationType === "Pickup" ? pickupCitySelection[0] : dropCitySelection[0],
+                        address1: locationFormData.locationType === "Pickup" ? address1 : dropAddress1,
+                        address2: locationFormData.locationType === "Pickup" ? address2 : dropAddress2,
+                        area: locationFormData.locationType === "Pickup" ? area : dropArea,
+                        city: locationFormData.locationType === "Pickup" ? city : dropCity,
+                        pin: locationFormData.locationType === "Pickup" ? pin : dropPin,
+                        state: locationFormData.locationType === "Pickup" ? state : dropState
                     },
                 ]);
                 if (locationError) {
@@ -282,10 +337,10 @@ const AddLocation = () => {
                         {
                             // location contact details
                             location_number: locationNumber,
-                            contact_type: contactType,
-                            contact_name: contactName,
-                            contact_phone: contactPhone,
-                            contact_email: contactEmail
+                            contact_type: locationFormData.locationType === "Pickup" ? contactType : dropContactType,
+                            contact_name: locationFormData.locationType === "Pickup" ? contactName : dropContactName,
+                            contact_phone: locationFormData.locationType === "Pickup" ? contactPhone : dropContactPhone,
+                            contact_email: locationFormData.locationType === "Pickup" ? contactEmail : dropContactEmail
                         },
                     ]);
                     if (locationContactError) {
@@ -325,7 +380,9 @@ const AddLocation = () => {
                         setLocationFormData(JSON.parse(JSON.stringify(addLocationFields)));
                         setValidated(false);
                         setPickupCitySelection([]);
+                        setDropCitySelection([]);
                         setPickupCityRequired(false);
+                        setDropCityRequired(false);
                     }
                 }
             } catch (err) {
@@ -411,7 +468,7 @@ const AddLocation = () => {
                                 <>
                                     {/* Address Block starts */}
                                     <div>
-                                        <div className="horizontal-divider pb-2"></div>
+                                        <div className="horizontal-divider pb-1"></div>
                                         <div style={{ padding: "0 2rem" }}>
                                             <Row className="mb-3">
                                                 <Form.Group as={Col} md="6" controlId="validationCustom02">
@@ -676,7 +733,284 @@ const AddLocation = () => {
                                     </Row>
                                     {/* Form Submit Buttons Block Ends */}
                                 </>
-                            : "" }
+                            :   <>
+                                    {/* Address Block starts */}
+                                    <div>
+                                        <div className="horizontal-divider pb-1"></div>
+                                        <div style={{ padding: "0 2rem" }}>
+                                            <Row className="mb-3">
+                                                <Form.Group as={Col} md="6" controlId="validationCustom02">
+                                                    <Form.Label>Name of Drop Point</Form.Label>
+                                                    <Form.Control
+                                                        required
+                                                        type="text"
+                                                        
+                                                        // placeholder="To"
+                                                        // defaultValue="Otto"
+                                                        value={nameOfDropPoint}
+                                                        onChange={(e) => {
+                                                            setLocationFormData((previousState) => ({
+                                                                ...previousState,
+                                                                nameOfDropPoint: e.target.value,
+                                                            }));
+                                                        }}
+                                                    />
+                                                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                                    <Form.Control.Feedback type="invalid">
+                                                        Please enter Drop Point.
+                                                    </Form.Control.Feedback>
+                                                </Form.Group>
+                                                <Form.Group as={Col} md="3" controlId="validationCustom02">
+                                                    <Form.Label>Drop City</Form.Label>
+                                                    <Typeahead
+                                                        id="dropCity"
+                                                        
+                                                        onChange={setDropCitySelection}
+                                                        className="form-group"
+                                                        options={cityRefs}
+                                                        selected={dropCity}
+                                                        required="true"
+                                                    />
+                                                    { !dropCityRequired && dropCitySelection[0] ? <span style={{ color: "green" }}>Looks good!</span> :
+                                                        <span  style={{ fontSize: "0.875em", color: "#dc3545" }}>
+                                                            Please enter Drop city.
+                                                        </span>
+                                                    }
+                                                </Form.Group>
+                                            </Row>
+                                            <div className="horizontal-divider pb-1"></div>
+                                            <Row>
+                                                <Form.Group as={Col} md="6" controlId="validationCustom03">
+                                                    <Form.Label>Address 1</Form.Label>
+                                                    <Form.Control    
+                                                        type="text"
+                                                        
+                                                        // placeholder=""
+                                                        required
+                                                        value={dropAddress1}
+                                                        onChange={(e) => {
+                                                            setLocationFormData((previousState) => ({
+                                                                ...previousState,
+                                                                dropAddress1: e.target.value,
+                                                            }));
+                                                        }}
+                                                    />
+                                                    <Form.Control.Feedback type="invalid">
+                                                        Please provide a valid Client Address 1.
+                                                    </Form.Control.Feedback>
+                                                </Form.Group>
+                                                <Form.Group as={Col} md="6" controlId="validationCustom03">
+                                                    <Form.Label>Address 2</Form.Label>
+                                                    <Form.Control    
+                                                        type="text"
+                                                        
+                                                        // placeholder=""
+                                                        // required
+                                                        value={dropAddress2}
+                                                        onChange={(e) => {
+                                                            setLocationFormData((previousState) => ({
+                                                                ...previousState,
+                                                                dropAddress2: e.target.value,
+                                                            }));
+                                                        }}
+                                                    />
+                                                    <Form.Control.Feedback type="invalid">
+                                                        Please provide a valid Client Address 2.
+                                                    </Form.Control.Feedback>
+                                                </Form.Group>
+                                            </Row>
+                                            <Row className="mb-3">
+                                                <Form.Group as={Col} md="2" controlId="validationCustom03">
+                                                    <Form.Label>City</Form.Label>
+                                                    <Form.Control    
+                                                        type="text"
+                                                        
+                                                        required
+                                                        value={dropCity}
+                                                        onChange={(e) => {
+                                                            setLocationFormData((previousState) => ({
+                                                                ...previousState,
+                                                                dropCity: e.target.value,
+                                                            }));
+                                                        }}
+                                                    />
+                                                    <Form.Control.Feedback type="invalid">
+                                                        Please provide a valid city.
+                                                    </Form.Control.Feedback>
+                                                </Form.Group>
+                                                <Form.Group as={Col} md="2" controlId="validationCustom04">
+                                                    <Form.Label>State</Form.Label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        
+                                                        required
+                                                        value={dropState}
+                                                        onChange={(e) => {
+                                                            setLocationFormData((previousState) => ({
+                                                                ...previousState,
+                                                                dropState: e.target.value,
+                                                            }));
+                                                        }}
+                                                    />
+                                                </Form.Group>
+                                                <Form.Group as={Col} md="2" controlId="validationCustom04">
+                                                    <Form.Label>Area</Form.Label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        
+                                                        required
+                                                        value={dropArea}
+                                                        onChange={(e) => {
+                                                            setLocationFormData((previousState) => ({
+                                                                ...previousState,
+                                                                dropArea: e.target.value,
+                                                            }));
+                                                        }}
+                                                    />
+                                                </Form.Group>
+                                                <Form.Group as={Col} md="2" controlId="validationCustom04">
+                                                    <Form.Label>PIN</Form.Label>
+                                                    <Form.Control
+                                                        type="number"
+                                                        
+                                                        required
+                                                        value={dropPin}
+                                                        onChange={(e) => {
+                                                            setLocationFormData((previousState) => ({
+                                                                ...previousState,
+                                                                dropPin: e.target.value,
+                                                            }));
+                                                        }}
+                                                    />
+                                                </Form.Group>
+                                            </Row>
+                                            <div className="horizontal-divider pb-1"></div>
+                                        </div>
+                                    </div>
+                                    {/* Address Block ends */}
+
+                                    {/* Contact Block starts */}
+                                    <div>
+                                        <div style={{ padding: "0 2rem" }}>
+                                            <Row className="mb-3">
+                                                <Form.Group as={Col} md="3" controlId="validationCustom02">
+                                                    <Form.Label>Contact Type</Form.Label>
+                                                    <Form.Select
+                                                        className="chosen-single form-select"
+                                                        
+                                                        onChange={(e) => {
+                                                            setLocationFormData((previousState) => ({
+                                                                ...previousState,
+                                                                dropContactType: e.target.value,
+                                                            }));
+                                                        }}
+                                                        value={dropContactType}
+                                                        required
+                                                    >
+                                                        <option value=""></option>
+                                                        {clientContactTypeReferenceOptions.map(
+                                                            (option) => (
+                                                                <option value={option}>
+                                                                    {option}
+                                                                </option>
+                                                            )
+                                                        )}
+                                                    </Form.Select>
+                                                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                                    <Form.Control.Feedback type="invalid">
+                                                        Please enter Client Contact Type.
+                                                    </Form.Control.Feedback>
+                                                </Form.Group>
+                                            </Row>
+                                            <Row>
+                                                <Form.Group as={Col} md="4" controlId="validationCustom02">
+                                                    <Form.Label>Contact Name</Form.Label>
+                                                    <Form.Control
+                                                        required
+                                                        
+                                                        type="text"
+                                                        // placeholder="To"
+                                                        // defaultValue="Otto"
+                                                        value={dropContactName}
+                                                        onChange={(e) => {
+                                                            setLocationFormData((previousState) => ({
+                                                                ...previousState,
+                                                                dropContactName: e.target.value,
+                                                            }));
+                                                        }}
+                                                    />
+                                                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                                    <Form.Control.Feedback type="invalid">
+                                                        Please enter Client Contact.
+                                                    </Form.Control.Feedback>
+                                                </Form.Group>
+                                                <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
+                                                    <Form.Label>Contact Phone Number</Form.Label>
+                                                    <InputGroup >
+                                                        <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
+                                                        <Form.Control
+                                                            type="number"
+                                                            // placeholder="Username"
+                                                            aria-describedby="inputGroupPrepend"
+                                                            required
+                                                            value={dropContactPhone}
+                                                            onChange={(e) => {
+                                                                setLocationFormData((previousState) => ({
+                                                                    ...previousState,
+                                                                    dropContactPhone: e.target.value,
+                                                                }));
+                                                            }}
+                                                        />
+                                                    </InputGroup>
+                                                </Form.Group>
+                                                <Form.Group as={Col} md="4"controlId="validationCustom04">
+                                                    <Form.Label>Client Email Address</Form.Label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        
+                                                        placeholder=""
+                                                        value={dropContactEmail}
+                                                        onChange={(e) => {
+                                                            setLocationFormData((previousState) => ({
+                                                                ...previousState,
+                                                                dropContactEmail: e.target.value,
+                                                            }));
+                                                        }}
+                                                    />
+                                                </Form.Group>
+                                            </Row>
+                                        </div>
+                                    </div>
+                                    {/* Contact Block ends */}
+
+                                    {/* Form Submit Buttons Block Starts */}
+                                    <Row className="mt-5">
+                                        <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">
+                                            <Button
+                                                variant="secondary"
+                                                onClick={() => {Router.push("/employers-dashboard/locations"); }}
+                                                className="btn btn-back btn-sm text-nowrap m-1"
+                                            >
+                                                Back to Locations
+                                            </Button>
+                                        </Form.Group>
+                                        <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mx-3 mb-3 px-4">
+                                            <Button
+                                                type="submit"
+                                                variant="success"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    handleSubmit(e);
+                                                    addNewLocation(locationFormData, setLocationFormData, user);
+                                                }}
+                                                className="btn btn-add-lr btn-sm text-nowrap m-1"
+                                            >
+                                                Add New Location
+                                            </Button>
+                                        </Form.Group>
+                                    </Row>
+                                    {/* Form Submit Buttons Block Ends */}
+                                </> }
                         </div>
                     </div>
             </Form>

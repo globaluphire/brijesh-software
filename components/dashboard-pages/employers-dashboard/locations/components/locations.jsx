@@ -572,7 +572,7 @@ const Clients = () => {
                                                 <span>{location.location_type}</span>
                                             </td>
                                             <td>
-                                                <span>{location.pickup_city}</span>
+                                                <span>{location.location_city}</span>
                                             </td>
                                             <td>
                                                 <span>{location.name_of_pickup_point}</span>
