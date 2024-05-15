@@ -498,7 +498,7 @@ const AddLocation = () => {
                                                         onChange={setPickupCitySelection}
                                                         className="form-group"
                                                         options={cityRefs}
-                                                        selected={pickupCity}
+                                                        selected={pickupPointCity}
                                                         required="true"
                                                     />
                                                     { !pickupCityRequired && pickupCitySelection[0] ? <span style={{ color: "green" }}>Looks good!</span> :
