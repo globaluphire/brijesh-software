@@ -367,7 +367,7 @@ const LocationDetails = () => {
                                                             // placeholder="Username"
                                                             aria-describedby="inputGroupPrepend"
                                                             disabled
-                                                            value={fetchedLocationsData.pickup_city}
+                                                            value={fetchedLocationsData.location_city}
                                                         />
                                                     </InputGroup>
                                                 </Form.Group>

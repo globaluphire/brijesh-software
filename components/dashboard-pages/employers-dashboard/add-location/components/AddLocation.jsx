@@ -51,7 +51,7 @@ const addLocationFields = {
 
     // pick up details
     nameOfPickupPoint: "",
-    pickupCity: "",
+    pickupPointCity: "",
     address1: "",
     address2: "",
     area: "",
@@ -67,7 +67,7 @@ const addLocationFields = {
 
     // Drop details
     nameOfDropPoint: "",
-    dropCity: "",
+    dropPointCity: "",
     dropAddress1: "",
     dropAddress2: "",
     dropArea: "",
@@ -116,7 +116,7 @@ const AddLocation = () => {
 
         // pick up details
         nameOfPickupPoint,
-        pickupCity,
+        pickupPointCity,
         address1,
         address2,
         area,
@@ -132,7 +132,7 @@ const AddLocation = () => {
 
         // Drop details
         nameOfDropPoint,
-        sadfcity,
+        dropPointCity,
         dropAddress1,
         dropAddress2,
         dropArea,
