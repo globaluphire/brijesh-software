@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-undef */
+/* eslint-disable prefer-const */
 // import Map from "../../../../Map";
 import Select from "react-select";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
@@ -71,7 +72,7 @@ const LRDetails = (orderDetails) => {
     const [isConsignorSaved, setIsConsignorSaved] = useState(false);
     const [isConsigneeSaved, setIsConsigneeSaved] = useState(false);
 
-    //LR Details states
+    // LR Details states
     const [fetchedOrderData, setFetchedOrderData] = useState({});
     const [fetchedLRData, setFetchedLRData] = useState({});
     const [fetchedClientData, setFetchedClientData] = useState({});
