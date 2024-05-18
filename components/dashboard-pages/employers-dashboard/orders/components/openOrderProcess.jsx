@@ -31,6 +31,7 @@ const OpenOrderProcess = () => {
     const [fetchedOpenOrderdata, setFetchedOpenOrderdata] = useState({});
     const [fetchedOpenOrderdataCSV, setFetchedOpenOrderdataCSV] = useState({});
     const [fetchedOrderCommentData, setFetchedOrderCommentData] = useState([]);
+    const [fetchedLRsData, setFetchedLRsData] = useState([]);
 
     const [applicationStatus, setApplicationStatus] = useState("");
     const [
@@ -368,6 +369,22 @@ const OpenOrderProcess = () => {
             }
     };
 
+    const setLRsModalData = async (orderId) => {
+        const { data: lrData, error: e } = await supabase
+            .from("lr")
+            .select("*")
+
+            // Filters
+            .eq("order_id", orderId)
+            .order("lr_created_date", { ascending: false });
+
+            if (lrData) {
+                lrData.forEach(
+                    (i) => (i.lr_created_date = dateTimeFormat(i.lr_created_date))
+                );
+                setFetchedLRsData(lrData);
+            }
+    };
     return (
         <>
             {/* Search Filters */}
@@ -623,12 +640,24 @@ const OpenOrderProcess = () => {
                                                 {order.notes ? order.notes : "-" }
                                             </td>
                                             <td>
-                                                <Link
-                                                    href={`/employers-dashboard/lr-details/${order.lr_number}`} 
-                                                    style={{ textDecoration: "underline" }}
-                                                >
-                                                    {order.lr_number}
-                                                </Link>
+                                                <ul className="option-list">
+                                                    <li>
+                                                        <button data-text="View LRs">
+                                                            <a
+                                                                href="#"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#showLRsModal"
+                                                                onClick={() => {
+                                                                    setLRsModalData(
+                                                                        order.order_id
+                                                                    );
+                                                                }}
+                                                            >
+                                                                <span className="la la-receipt"></span>
+                                                            </a>
+                                                        </button>
+                                                    </li>
+                                                </ul>
                                             </td>
                                             <td>
                                                 {order.local_transport ? order.local_transport : "-" }
@@ -656,7 +685,8 @@ const OpenOrderProcess = () => {
                         )}
                     </Table>
 
-                    {/* Add Notes Modal Popup */}
+                    {/* Start All Popup Blocks */}
+                    {/* Start Order Comment Modal Popup */}
                     <div
                         className="modal fade"
                         id="showOrderCommentsModal"
@@ -728,6 +758,91 @@ const OpenOrderProcess = () => {
                             {/* End .send-private-message-wrapper */}
                         </div>
                     </div>
+                    {/* End Order Comment Modal Popup */}
+
+                    {/* Start LRs Modal Popup */}
+                    <div
+                        className="modal fade"
+                        id="showLRsModal"
+                        tabIndex="-1"
+                        aria-hidden="true"
+                    >
+                        <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                            <div className="apply-modal-content modal-content">
+                                <div className="text-center">
+                                    <h3 className="title">LRs History</h3>
+                                    <button
+                                        type="button"
+                                        id="showLRsModalCloseButton"
+                                        className="closed-modal"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    ></button>
+                                </div>
+                                {/* End modal-header */}
+                                <div className="widget-content">
+                                    <div className="table-outer">
+                                        <Table className="default-table manage-job-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style={{ fontSize: "14px" }}>LR No</th>
+                                                    <th style={{ fontSize: "14px" }}>Created On</th>
+                                                    <th style={{ fontSize: "14px" }}>Created By</th>
+                                                </tr>
+                                            </thead>
+                                            {/* might need to add separate table link with order_number as one order can have 
+                                                multiple comments */}
+                                            {fetchedLRsData.length === 0 ? (
+                                                <tbody
+                                                    style={{
+                                                        fontSize: "14px",
+                                                        fontWeight: "500",
+                                                    }}
+                                                >
+                                                    <tr>
+                                                        <td colSpan={3}>
+                                                            <b> No LR created yet!</b>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            ) : (
+                                                <tbody style={{ fontSize: "14px" }}>
+                                                    {Array.from(fetchedLRsData).map(
+                                                        (lr) => (
+                                                            <tr key={lr.lr_id}>
+                                                                <td>
+                                                                    <Link
+                                                                        href={`/employers-dashboard/lr-details/${lr.lr_number}`} 
+                                                                        style={{ textDecoration: "underline" }}
+                                                                        onClick={() => { 
+                                                                            document.getElementById("showLRsModalCloseButton").click();
+                                                                        }}
+                                                                    >
+                                                                        {lr.lr_number}
+                                                                    </Link>
+                                                                </td>
+                                                                <td>
+                                                                    {lr.lr_created_date}
+                                                                </td>
+                                                                <td>
+                                                                    {lr.lr_created_by ? "USER" : "SYSTEM" }
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                        )}
+                                                </tbody>
+                                            )}
+                                        </Table>
+                                    </div>
+                                </div>
+                                {/* End PrivateMessageBox */}
+                            </div>
+                            {/* End .send-private-message-wrapper */}
+                        </div>
+                    </div>
+                    {/* End LRs Modal Popup */}
+                    {/* End All Popup Blocks */}
+
                 </div>
             </div>
             {/* End table widget content */}
