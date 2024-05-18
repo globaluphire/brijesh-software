@@ -486,6 +486,7 @@ const OpenOrderProcess = () => {
                     <Table className="default-table manage-job-table">
                         <thead>
                             <tr>
+                                <th>Action</th>
                                 <th>Created On</th>
                                 <th>Updated On</th>
                                 <th>Pickup Date</th>
@@ -525,6 +526,22 @@ const OpenOrderProcess = () => {
                                 {Array.from(fetchedOpenOrderdata).map(
                                     (order) => (
                                         <tr key={order.id}>
+                                            <td>
+                                                <div className="option-box">
+                                                    <ul className="option-list">
+                                                        <li onClick={() => generateInvoice(order)}>
+                                                            <button data-text="Generate Invoice">
+                                                                <span className="la la-file-invoice"></span>
+                                                            </button>
+                                                        </li>
+                                                        <li onClick={() => generateLR(order)}>
+                                                            <button data-text="Generate LR">
+                                                                <span className="la la-receipt"></span>
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
                                             <td>
                                                 {order.order_created_at}
                                             </td>
@@ -605,7 +622,12 @@ const OpenOrderProcess = () => {
                                                 {order.notes ? order.notes : "-" }
                                             </td>
                                             <td>
-                                                {order.lr_number}
+                                                <Link
+                                                    href={`/employers-dashboard/lr-details/${order.lr_number}`} 
+                                                    style={{ textDecoration: "underline" }}
+                                                >
+                                                    {order.lr_number}
+                                                </Link>
                                             </td>
                                             <td>
                                                 {order.local_transport ? order.local_transport : "-" }
