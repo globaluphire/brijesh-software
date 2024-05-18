@@ -840,6 +840,9 @@ const LRDetails = (orderDetails) => {
                             orderData[0].order_updated_at = dateFormat(orderData[0].order_updated_at);
                         }
 
+                        var preDropCitySelection = [];
+                        preDropCitySelection.push(orderData[0].drop_location);
+                        setDropCitySelection(preDropCitySelection ? preDropCitySelection : []);
                     } else {
                         setIsLoading(false);
                         setLoadingText("");
@@ -879,7 +882,7 @@ const LRDetails = (orderDetails) => {
                         // pickup city
                         var prePickupCitySelection = [];
                         prePickupCitySelection.push(pickupLocationData[0]?.location_city);
-                        setPickupCitySelection(prePickupCitySelection);
+                        setPickupCitySelection(prePickupCitySelection ? prePickupCitySelection : []);
 
                         // set pre selected drop name
                         const preSelectedPickupPoint = [];
@@ -962,7 +965,7 @@ const LRDetails = (orderDetails) => {
                         // drop city
                         var preDropCitySelection = [];
                         preDropCitySelection.push(dropLocationData[0]?.location_city);
-                        setDropCitySelection(preDropCitySelection);
+                        setDropCitySelection(preDropCitySelection ? preDropCitySelection : []);
 
                         // set pre selected drop name
                         const preSelectedDropPoint = [];

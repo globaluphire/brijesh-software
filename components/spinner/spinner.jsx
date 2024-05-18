@@ -1,4 +1,5 @@
 // eslint-disable-next-line no-unused-vars
+/* eslint no-unneeded-ternary: "error" */
 import { Grid, ProgressBar } from "react-loader-spinner";
 
 const Spinner = ({ isLoading, loadingText }) => {

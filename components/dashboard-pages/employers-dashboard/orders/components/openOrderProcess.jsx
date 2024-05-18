@@ -1,6 +1,7 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
+/* eslint-disable no-undef */
 import candidatesData from "../../../../../data/candidates";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
