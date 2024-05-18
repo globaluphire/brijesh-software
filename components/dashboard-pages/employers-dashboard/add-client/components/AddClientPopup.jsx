@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -263,9 +264,9 @@ const AddClientPopup = ({
         if (checkRequiredFields(clientFormData)) {
             setIsLoading(true);
             if (isConsignor) {
-                setLoadingText("New Consignor is saving...")
+                setLoadingText("New Consignor is saving...");
             } else if (isConsignee) {
-                setLoadingText("New Consignee is saving...")
+                setLoadingText("New Consignee is saving...");
             }
             try {
                 // Generate client number

@@ -2,6 +2,7 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-undef */
 /* eslint-disable prefer-const */
+/* eslint no-unneeded-ternary: "error" */
 // import Map from "../../../../Map";
 import Select from "react-select";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
@@ -371,7 +372,7 @@ const LRDetails = (orderDetails) => {
                         for (let i = 0; i < pickupLocationContactData.length; i++) {
                             if (pickupLocationContactData[i].location_contact_id === fetchedLRData.pickup_marketing_contact_id) {
                                 // set pre loaded marketing contact values
-                                var pickupMarketingDetails = []
+                                var pickupMarketingDetails = [];
                                 pickupMarketingDetails.push({
                                     "pickupMarketingContactName": fetchedPickupLocationMarketingData.contact_name + "-" + fetchedPickupLocationMarketingData.contact_phone,
                                     "pickupMarketingContactId": fetchedPickupLocationMarketingData.location_contact_id
@@ -385,7 +386,7 @@ const LRDetails = (orderDetails) => {
                         for (let i = 0; i < pickupLocationContactData.length; i++) {
                             if (pickupLocationContactData[i].location_contact_id === fetchedLRData.pickup_dispatch_contact_id) {
                                 // set pre loaded dispatch contact values
-                                var pickupDispatchDetails = []
+                                var pickupDispatchDetails = [];
                                 pickupDispatchDetails.push({
                                     "pickupDispatchContactName": fetchedpickupLocationDispatchData.contact_name + "-" + fetchedpickupLocationDispatchData.contact_phone,
                                     "pickupDispatchContactId": fetchedpickupLocationDispatchData.location_contact_id
@@ -566,7 +567,7 @@ const LRDetails = (orderDetails) => {
                         for (let i = 0; i < pickupLocationContactData.length; i++) {
                             if (pickupLocationContactData[i].location_contact_id === fetchedLRData.drop_dispatch_contact_id) {
                                 // set pre loaded dispatch contact values
-                                var dropDispatchDetails = []
+                                var dropDispatchDetails = [];
                                 dropDispatchDetails.push({
                                     "dropDispatchContactName": fetchedDropLocationDispatchData.contact_name + "-" + fetchedDropLocationDispatchData.contact_phone,
                                     "dropDispatchContactId": fetchedDropLocationDispatchData.location_contact_id
@@ -839,9 +840,6 @@ const LRDetails = (orderDetails) => {
                             orderData[0].order_updated_at = dateFormat(orderData[0].order_updated_at);
                         }
 
-                        var preDropCitySelection = []
-                        preDropCitySelection.push(orderData[0].drop_location);
-                        setDropCitySelection(preDropCitySelection ? preDropCitySelection : []);
                     } else {
                         setIsLoading(false);
                         setLoadingText("");
@@ -914,7 +912,7 @@ const LRDetails = (orderDetails) => {
                             setFetchedPickupLocationMarketingData(pickupLocationMarketingData[0]);
 
                             // set pre loaded values
-                            var pickupMarketingDetails = []
+                            var pickupMarketingDetails = [];
                             pickupMarketingDetails.push({
                                 "pickupMarketingContactName": pickupLocationMarketingData[0].contact_name + "-" + pickupLocationMarketingData[0].contact_phone,
                                 "pickupMarketingContactId": pickupLocationMarketingData[0].location_contact_id
@@ -936,7 +934,7 @@ const LRDetails = (orderDetails) => {
                             setFetchedPickupLocationDispatchData(pickupLocationDispatchData[0]);
 
                             // set pre loaded values
-                            var pickupDispatchDetails = []
+                            var pickupDispatchDetails = [];
                             pickupDispatchDetails.push({
                                 "pickupDispatchContactName": pickupLocationDispatchData[0].contact_name + "-" + pickupLocationDispatchData[0].contact_phone,
                                 "pickupDispatchContactId": pickupLocationDispatchData[0].location_contact_id
@@ -997,7 +995,7 @@ const LRDetails = (orderDetails) => {
                             setFetchedDropLocationMarketingData(dropLocationMarketingData[0]);
 
                             // set pre loaded values
-                            var dropMarketingDetails = []
+                            var dropMarketingDetails = [];
                             dropMarketingDetails.push({
                                 "dropMarketingContactName": dropLocationMarketingData[0].contact_name + "-" + dropLocationMarketingData[0].contact_phone,
                                 "dropMarketingContactId": dropLocationMarketingData[0].location_contact_id
@@ -1175,8 +1173,8 @@ const LRDetails = (orderDetails) => {
                         status: lrStatus ? lrStatus : "",
                         lr_last_modified_date: new Date()
                     })
-                    .eq("lr_id", fetchedLRData.lr_id)
-                    //.select(); // this will return the updated record in object
+                    .eq("lr_id", fetchedLRData.lr_id);
+                    // .select(); // this will return the updated record in object
 
                 if (!updatedLRError) {
                     // open toast
@@ -1421,7 +1419,7 @@ const LRDetails = (orderDetails) => {
                                                             disabled={!pickupCitySelection}
                                                             onChange={(e) => {
                                                                 setSelectedPickupPoint(e);
-                                                                //add logic to show pre loaded values for contacts if they select same point
+                                                                // add logic to show pre loaded values for contacts if they select same point
                                                                 setSelectedPickupMarketingContactDetails([]);
                                                                 setSelectedPickupDispatchContactDetails([]);
                                                             }}
@@ -1598,7 +1596,7 @@ const LRDetails = (orderDetails) => {
                                                             disabled={!dropCitySelection}
                                                             onChange={(e) => {
                                                                 setSelectedDropPoint(e);
-                                                                //add logic to show pre loaded values for contacts if they select same point
+                                                                // add logic to show pre loaded values for contacts if they select same point
                                                                 setSelectedDropMarketingContactDetails([]);
                                                                 setSelectedDropDispatchContactDetails([]);
                                                             }}
