@@ -3,6 +3,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable prefer-const */
 /* eslint no-unneeded-ternary: "error" */
+/* eslint-disable no-redeclare */
 // import Map from "../../../../Map";
 import Select from "react-select";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
