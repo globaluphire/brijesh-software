@@ -841,6 +841,13 @@ const LRDetails = (orderDetails) => {
                             orderData[0].order_updated_at = dateFormat(orderData[0].order_updated_at);
                         }
 
+                        // set pre loaded values
+                        // pickup city
+                        var prePickupCitySelection = [];
+                        prePickupCitySelection.push(orderData[0]?.pickup_location);
+                        setPickupCitySelection(prePickupCitySelection ? prePickupCitySelection : []);
+
+                        // drop city
                         var preDropCitySelection = [];
                         preDropCitySelection.push(orderData[0].drop_location);
                         setDropCitySelection(preDropCitySelection ? preDropCitySelection : []);

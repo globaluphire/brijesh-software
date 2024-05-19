@@ -19,6 +19,7 @@ import Table from "react-bootstrap/Table";
 import DateRangePickerComp from "../../../../date/DateRangePickerComp";
 import { CSVLink } from "react-csv";
 import { convertToFullDateFormat } from "../../../../../utils/convertToFullDateFormat";
+import Spinner from "../../../../spinner/spinner";
 
 const addSearchFilters = {
     status: ""
@@ -26,6 +27,11 @@ const addSearchFilters = {
 
 const OpenOrderProcess = () => {
     const router = useRouter();
+    const user = useSelector((state) => state.candidate.user);
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [isLRGenerating, setIsLRGenerating] = useState(false);
+    const [loadingText, setLoadingText] = useState("");
 
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
     const [fetchedOpenOrderdata, setFetchedOpenOrderdata] = useState({});
@@ -265,6 +271,10 @@ const OpenOrderProcess = () => {
                         ...rest }));
 
                 setFetchedOpenOrderdataCSV(orderDataCSV);
+
+                setIsLoading(false);
+            } else {
+                setIsLoading(false);
             }
         } catch (e) {
             toast.error(
@@ -280,7 +290,8 @@ const OpenOrderProcess = () => {
                     theme: "colored",
                 }
             );
-            console.warn(e);
+            // console.warn(e);
+            setIsLoading(false);
         }
     }
     // const handlePageChange = (newPage) => {
@@ -307,6 +318,108 @@ const OpenOrderProcess = () => {
         // pageSize,
         // currentPage
     ]);
+
+    async function generateLR(order) {
+        setIsLRGenerating(true);
+        const { data: lrData, count } = await supabase
+            .from("lr")
+            .select('*', { count: 'exact', head: true })
+
+            // Filters
+            .eq("order_id", order.order_id)
+
+        if (confirm("This order have " + count + " LR(s)! Are you sure want to create new LR?")) {
+            // Generate LR Number
+            const today = new Date();
+            let date = today.getDate();
+            if (date < 10) {
+                date = "0" + date;
+            }
+            let month = today.getMonth() + 1;
+            if (month < 10) {
+                month = "0" + month;
+            }
+            var year = today.getFullYear();
+
+            const { data: sysKeyLRData, error: sysKeyLRError } = await supabase
+                .from("sys_key")
+                .select("sys_seq_nbr")
+                .eq("key_name", "lr_number");
+
+            let lrSeqNbr = sysKeyLRData[0].sys_seq_nbr + 1;
+            if (lrSeqNbr < 10) {
+                lrSeqNbr = "00" + lrSeqNbr;
+            } else if(lrSeqNbr < 100) {
+                lrSeqNbr = "0" + lrSeqNbr;
+            }
+            const lrNumber = "RLR" + "" + date + "" + month + "" + year.toString().substring(2) + "" + lrSeqNbr;
+
+            try {
+                const { data, error } = await supabase.from("lr").insert([
+                    {
+                        lr_number: lrNumber,
+                        order_id: order.order_id,
+                        status: "Performa",
+                        lr_created_by: user.id
+                    },
+                ]);
+                if (error) {
+                    // open toast
+                    toast.error(
+                        "Error while generating LR, Please try again later or contact tech support",
+                        {
+                            position: "bottom-right",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        }
+                    );
+                    setIsLRGenerating(false);
+                } else {
+                    // open toast
+                    toast.success("New LR generated successfully", {
+                        position: "bottom-right",
+                        autoClose: 8000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+
+                    // increment lr_number key
+                    await supabase.rpc("increment_sys_key", {
+                        x: 1,
+                        keyname: "lr_number",
+                    });
+
+                    setIsLRGenerating(false);
+                }
+                setIsLRGenerating(false);
+            } catch (e) {
+                // open toast
+                toast.error(
+                    "Error while fetching required details to generate LR, Please try again later or contact tech support",
+                    {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    }
+                );
+                setIsLRGenerating(false);
+            }
+        }
+    };
 
     const determineBadgeColor = (status) => {
         switch (status) {
@@ -353,6 +466,8 @@ const OpenOrderProcess = () => {
     };
 
     const setOrderCommentModalData = async (orderId) => {
+        setIsLoading(true);
+
         const { data: orderCommentData, error: e } = await supabase
             .from("order_comments_view")
             .select("*")
@@ -366,10 +481,17 @@ const OpenOrderProcess = () => {
                     (orderComment) => (orderComment.order_comment_created_at = dateTimeFormat(orderComment.order_comment_created_at))
                 );
                 setFetchedOrderCommentData(orderCommentData);
+
+                setIsLoading(false);
+
+            } else {
+                setIsLoading(false);
             }
     };
 
     const setLRsModalData = async (orderId) => {
+        setIsLoading(true);
+
         const { data: lrData, error: e } = await supabase
             .from("lr")
             .select("*")
@@ -383,14 +505,19 @@ const OpenOrderProcess = () => {
                     (i) => (i.lr_created_date = dateTimeFormat(i.lr_created_date))
                 );
                 setFetchedLRsData(lrData);
+                setIsLoading(false);
+            } else {
+                setIsLoading(false);
             }
     };
+
     return (
         <>
             {/* Search Filters */}
             <div>
                 { orderStatusReferenceOptions != null ? (
                     <Form>
+                        <Spinner isLoading={isLoading} loadingText={loadingText} />
                         {/* <Form.Label
                             className="optional"
                             style={{

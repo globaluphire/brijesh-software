@@ -16,6 +16,7 @@ import format from "date-fns/format";
 import AddLocationPopup from "../../add-location/components/AddLocationPopup";
 import AddLocationContactPopup from "../../add-location/components/AddLocationContactPopup";
 import { Grid } from "react-loader-spinner";
+import Spinner from "../../../../spinner/spinner";
 
 
 const addOrderFields = {
@@ -39,6 +40,8 @@ const addOrderFields = {
 
 const AddOrder = () => {
     const [isLoading, setIsLoading] = useState(true);
+    const [loadingText, setLoadingText] = useState("");
+    const [isLRGenerating, setIsLRGenerating] = useState(false);
     const user = useSelector((state) => state.candidate.user);
     const [pickupDate, setPickupDate] = useState(new Date());
     const [isLocationSaved, setIsLocationSaved] = useState(false);
@@ -63,12 +66,11 @@ const AddOrder = () => {
     const [open, setOpen] = useState(false);
 
     // pickup point contact details selection states
-    const [pickupMarketingContactNames, setPickupMarketingContactNames] = useState([]);
-    const [selectedPickupMarketingContact, setSelectedPickupMarketingContact] = useState([]);
-    const [pickupDispatchContactNames, setPickupDispatchContactNames] = useState([]);
-    const [selectedPickupDispatchContact, setSelectedPickupDispatchContact] = useState([]);
+    const [pickupMarketingContactDetails, setPickupMarketingContactDetails] = useState([]);
+    const [selectedPickupMarketingContactDetails, setSelectedPickupMarketingContactDetails] = useState([]);
+    const [pickupDispatchContactDetails, setPickupDispatchContactDetails] = useState([]);
+    const [selectedPickupDispatchContactDetails, setSelectedPickupDispatchContactDetails] = useState([]);
     const [pickupLocationContactData, setPickupLocationContactData] = useState("");
-    // const [selectedPickupPointData, setSelectedPickupPointData] = useState("");
 
     const [orderFormData, setOrderFormData] = useState(
         JSON.parse(JSON.stringify(addOrderFields))
@@ -104,23 +106,34 @@ const AddOrder = () => {
     const [priorityReferenceOptions, setPriorityReferenceOptions] = useState(null);
 
 
+    // start of pick up point details
     async function getPickupPointDetails() {
         if(pickupCitySelection[0]) {
             try {
                 setIsLoading(true);
+                setLoadingText("Pickup Point Details are Loading...");
                 let { data: pickupLocationData, error } = await supabase
                     .from("location")
                     .select("*")
                     .eq("location_type", "Pickup")
-                    .eq("pickup_city", pickupCitySelection[0]);
+                    .eq("location_city", pickupCitySelection[0]);
 
                 if (pickupLocationData) {
                     setPickupLocationData(pickupLocationData);
-
+                    
                     // set pickup names
                     const allPickupNames = [];
                     for (let i = 0; i < pickupLocationData.length; i++) {
-                        allPickupNames.push(pickupLocationData[i].name_of_pickup_point);
+                        allPickupNames.push({
+                            "pickupName": pickupLocationData[i].name_of_pickup_point,
+                            "pickupAddress": pickupLocationData[i].address1 + ", " +
+                                            pickupLocationData[i].address2 + ", " +
+                                            pickupLocationData[i].area + ", " +
+                                            pickupLocationData[i].city + ", " +
+                                            pickupLocationData[i].state + ", " +
+                                            pickupLocationData[i].pin,
+                            "pickupLocationNumber": pickupLocationData[i].location_number
+                        });
                     }
                     allPickupNames.sort();
                     setPickupPointNames(allPickupNames);
@@ -129,6 +142,11 @@ const AddOrder = () => {
                         document.getElementById("addLocationModalCloseButton").click();
                         setIsLocationSaved(false);
                     }
+                    setIsLoading(false);
+                    setLoadingText("");
+                } else {
+                    setIsLoading(false);
+                    setLoadingText("");
                 }
 
             } catch (e) {
@@ -145,12 +163,9 @@ const AddOrder = () => {
                         theme: "colored",
                     }
                 );
-            } finally {
-                setIsLoading(false);
             }
         }
     };
-
     useEffect(() => {
         getPickupPointDetails();
     }, [pickupCitySelection, isLocationSaved]);
@@ -160,6 +175,7 @@ const AddOrder = () => {
             // get location contact details
             try {
                 setIsLoading(true);
+                setLoadingText("Pickup Point Contact Details are Loading...");
                 let { data: pickupLocationContactData, error } = await supabase
                     .from("location_contact")
                     .select("*")
@@ -173,20 +189,33 @@ const AddOrder = () => {
                     const allPickupDispatchContactNames = [];
                     for (let i = 0; i < pickupLocationContactData.length; i++) {
                         if (pickupLocationContactData[i].contact_type === "Marketing") {
-                            allPickupMarketingContactNames.push(pickupLocationContactData[i].contact_name + " - " + pickupLocationContactData[i].contact_phone);
+                            allPickupMarketingContactNames.push({
+                                "pickupMarketingContactName": pickupLocationContactData[i].contact_name + "-" + pickupLocationContactData[i].contact_phone,
+                                "pickupMarketingContactId": pickupLocationContactData[i].location_contact_id
+                            });
                         } else {
-                            allPickupDispatchContactNames.push(pickupLocationContactData[i].contact_name + " - " + pickupLocationContactData[i].contact_phone);
+                            allPickupDispatchContactNames.push({
+                                "pickupDispatchContactName": pickupLocationContactData[i].contact_name + "-" + pickupLocationContactData[i].contact_phone,
+                                "pickupDispatchContactId": pickupLocationContactData[i].location_contact_id
+                            });
                         }
                     }
                     allPickupMarketingContactNames.sort();
                     allPickupDispatchContactNames.sort();
-                    setPickupMarketingContactNames(allPickupMarketingContactNames);
-                    setPickupDispatchContactNames(allPickupDispatchContactNames);
+                    setPickupMarketingContactDetails(allPickupMarketingContactNames);
+                    setPickupDispatchContactDetails(allPickupDispatchContactNames);
+
 
                     if (isLocationContactSaved) {
                         document.getElementById("addLocationContactModalCloseButton").click();
                         setIsLocationContactSaved(false);
+                        setLoadingText("");
                     }
+                    setIsLoading(false);
+                    setLoadingText("");
+                } else {
+                    setIsLoading(false);
+                    setLoadingText("");
                 }
 
             } catch (e) {
@@ -203,28 +232,30 @@ const AddOrder = () => {
                         theme: "colored",
                     }
                 );
-            } finally {
-                setIsLoading(false);
             }
         }
     };
-
     useEffect(() => {
         getPickupLocationContactData();
     }, [selectedPickupPointData, isLocationContactSaved]);
 
     async function getSelectedPickupPointData() {
-        if(pickupLocationData && pickupLocationData.length > 0) {
+        if(pickupLocationData && pickupLocationData.length > 0 && selectedPickupPoint.length > 0) {
             setIsLoading(true);
-            const findSelectedPickupData = pickupLocationData.find((i) => i.name_of_pickup_point === selectedPickupPoint[0]);
+            setLoadingText("Selected Pickup Point Details are Loading...");
+            const findSelectedPickupData = pickupLocationData.find((i) => i.location_number === selectedPickupPoint[0].pickupLocationNumber);
             setSelectedPickupPointData(findSelectedPickupData);
             setIsLoading(false);
+            setLoadingText("");
+        } else if (selectedPickupPoint.length === 0) {
+            setSelectedPickupPointData([]);
         }
     };
-
     useEffect(() => {
         getSelectedPickupPointData();
     }, [selectedPickupPoint]);
+    // end of pick up point details
+
 
     async function getClientDetails() {
         if (orderCity) {
@@ -390,6 +421,80 @@ const AddOrder = () => {
         }
     };
 
+    async function generateLR(lrNumber, orderId) {
+
+        try {
+            const { data, error } = await supabase.from("lr").insert([
+                {
+                    lr_number: lrNumber,
+                    order_id: orderId,
+                    lr_created_by: user.id,
+                    status: "Performa",
+
+                    // pick up location details
+                    pickup_location_id: selectedPickupPointData ? selectedPickupPointData.location_id : null,
+                    pickup_marketing_contact_id: selectedPickupMarketingContactDetails.length > 0 ? selectedPickupMarketingContactDetails[0].pickupMarketingContactId : null,
+                    pickup_dispatch_contact_id: selectedPickupDispatchContactDetails.length > 0 ? selectedPickupDispatchContactDetails[0].pickupDispatchContactId : null,
+                    
+                },
+            ]);
+            if (error) {
+                // open toast
+                toast.error(
+                    "Error while generating LR, Please try again later or contact tech support",
+                    {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    }
+                );
+                setIsLRGenerating(false);
+            } else {
+                // open toast
+                toast.success("New LR generated successfully", {
+                    position: "bottom-right",
+                    autoClose: 8000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+
+                // increment lr_number key
+                await supabase.rpc("increment_sys_key", {
+                    x: 1,
+                    keyname: "lr_number",
+                });
+
+                setIsLRGenerating(false);
+            }
+            setIsLRGenerating(false);
+        } catch (e) {
+            // open toast
+            toast.error(
+                "Errors while generating LR, Please try again later or contact tech support",
+                {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
+            setIsLRGenerating(false);
+        }
+    };
+
     const addNewOrder = async (
         {
             orderCity,
@@ -415,6 +520,7 @@ const AddOrder = () => {
         setIsLoading(true);
 
         if (checkRequiredFields()) {
+            // generate order
             try {
                 // Generate LR Number
                 const today = new Date();
@@ -455,19 +561,15 @@ const AddOrder = () => {
                 }
                 const orderNumber = "ORD" + "" + date + "" + month + "" + year.toString().substring(2) + "" + orderSeqNbr;
 
+
                 const { data, error } = await supabase.from("orders").insert([
                     {
-                        lr_number: lrNumber,
                         order_number: orderNumber,
                         pickup_date: format(pickupDate, "yyyy-MM-dd"),
                         order_city: orderCity,
                         client_name: selectedClient[0],
                         pickup_location: pickupCitySelection[0],
                         drop_location: dropCitySelection[0],
-                        pickup_point_name: selectedPickupPoint[0],
-                        // dropping_point_name: nameOfDroppingPoint,
-                        marketing_contact: selectedPickupMarketingContact[0],
-                        dispatch_contact: selectedPickupDispatchContact[0],
                         material: material,
                         size: size,
                         quantity: quantity,
@@ -477,9 +579,10 @@ const AddOrder = () => {
                         notes: notes,
                         freight_notes: freightNotes,
                         status: "Under pickup process",
-                        order_created_by: user.id
-                    },
-                ]);
+                        order_created_by: user.id,
+                        client_number: selectedClientData.client_number
+                    }
+                ]).select();
                 if (error) {
                     // open toast
                     toast.error(
@@ -509,11 +612,6 @@ const AddOrder = () => {
                         theme: "colored",
                     });
 
-                    // increment lr_number key
-                    await supabase.rpc("increment_sys_key", {
-                        x: 1,
-                        keyname: "lr_number",
-                    });
                     // increment order_number key
                     await supabase.rpc("increment_sys_key", {
                         x: 1,
@@ -526,10 +624,52 @@ const AddOrder = () => {
                     setPickupCitySelection([]);
                     setDropCitySelection([]);
                     setSelectedPickupPoint([]);
-                    setSelectedPickupMarketingContact([]);
-                    setSelectedPickupDispatchContact([]);
+                    setSelectedPickupMarketingContactDetails([]);
+                    setSelectedPickupDispatchContactDetails([]);
                     setPickupDate(new Date());
                     setIsLoading(false);
+
+                    if (data[0].order_id) {
+                        // generate LR
+                        try {
+                            setIsLRGenerating(true);
+                            generateLR(lrNumber, data[0].order_id);
+                        } catch {
+                            // open toast
+                            toast.error(
+                                "Error while generating LR, Please try to generate manually from Open Orders page",
+                                {
+                                    position: "bottom-right",
+                                    autoClose: false,
+                                    hideProgressBar: false,
+                                    closeOnClick: true,
+                                    pauseOnHover: true,
+                                    draggable: true,
+                                    progress: undefined,
+                                    theme: "colored",
+                                }
+                            );
+                            setIsLoading(false);
+                            // console.warn(err);
+                        }
+                    } else {
+                        // open toast
+                        toast.error(
+                            "Unable to find required details to generate LR, Please try to generate manually from Open Orders page",
+                            {
+                                position: "bottom-right",
+                                autoClose: false,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "colored",
+                            }
+                        );
+                        setIsLoading(false);
+                        // console.warn(err);
+                    }
                 }
             } catch (err) {
                 // open toast
@@ -549,6 +689,7 @@ const AddOrder = () => {
                 setIsLoading(false);
                 // console.warn(err);
             }
+
         } else {
             // open toast
             toast.error("Please fill all the required fields.", {
@@ -585,28 +726,7 @@ const AddOrder = () => {
         <>
             { checkAllRefs ?
             <Form validated={validated}>
-                { isLoading ?
-                    <div style={{
-                        height: "100%",
-                        width: "100%",
-                        position: "absolute",
-                        background: "rgba(0, 0, 0, 0.3)",
-                        zIndex: "1000",
-                        paddingTop: "30%",
-                        paddingLeft: "50%",
-                    }}>
-                        <Grid
-                            visible={true}
-                            height="80"
-                            width="80"
-                            color="#333333"
-                            ariaLabel="grid-loading"
-                            radius="12.5"
-                            wrapperStyle={{}}
-                            wrapperClass="grid-wrapper"
-                        />
-                    </div> : ""
-                }
+                <Spinner isLoading={isLoading} loadingText={loadingText} />
                 {/* General Details Block starts */}
                 <div>
                     <div className="divider divider-general">
@@ -703,8 +823,8 @@ const AddOrder = () => {
                                     onChange={(e) => {
                                         setPickupCitySelection(e);
                                         setSelectedPickupPoint([]);
-                                        setSelectedPickupMarketingContact([]);
-                                        setSelectedPickupDispatchContact([]);
+                                        setSelectedPickupMarketingContactDetails([]);
+                                        setSelectedPickupDispatchContactDetails([]);
                                     }}
                                     className="form-group"
                                     options={cityRefs}
@@ -736,10 +856,28 @@ const AddOrder = () => {
                                 <Typeahead
                                     id="pickupPoint"
                                     disabled = {!pickupCitySelection[0]}
-                                    onChange={setSelectedPickupPoint}
+                                    onChange={(e) => {
+                                        setSelectedPickupPoint(e);
+                                        // add logic to show pre loaded values for contacts if they select same point
+                                        setSelectedPickupMarketingContactDetails([]);
+                                        setSelectedPickupDispatchContactDetails([]);
+                                    }}
                                     className="form-group"
                                     options={pickupPointNames}
                                     selected={selectedPickupPoint}
+                                    highlightOnlyResult
+                                    labelKey="pickupName"
+                                    renderMenuItemChildren={(option) => (
+                                        <div>
+                                            <b>
+                                                {option.pickupName}
+                                            </b>
+                                            <div className="px-1" style={{ fontSize: "small", whiteSpace: "normal" }}>
+                                                {option.pickupAddress}
+                                            </div>
+                                        </div>
+                                    )}
+                                    style={{ lineHeight: "normal" }}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 {selectedPickupPointData ?
@@ -782,11 +920,17 @@ const AddOrder = () => {
                                 </Form.Label>
                                 <Typeahead
                                     id="marketingContact"
-                                    disabled = {!pickupCitySelection[0]}
-                                    onChange={setSelectedPickupMarketingContact}
+                                    disabled = {!selectedPickupPoint[0]}
+                                    onChange={setSelectedPickupMarketingContactDetails}
                                     className="form-group"
-                                    options={pickupMarketingContactNames}
-                                    selected={selectedPickupMarketingContact}
+                                    options={pickupMarketingContactDetails}
+                                    selected={selectedPickupMarketingContactDetails}
+                                    labelKey="pickupMarketingContactName"
+                                    renderMenuItemChildren={(option) => (
+                                        <div>
+                                            {option.pickupMarketingContactName}
+                                        </div>
+                                    )}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                             </Form.Group>
@@ -815,11 +959,17 @@ const AddOrder = () => {
                                 </Form.Label>
                                 <Typeahead
                                     id="marketingContact"
-                                    disabled = {!pickupCitySelection[0]}
-                                    onChange={setSelectedPickupDispatchContact}
+                                    disabled = {!selectedPickupPoint[0]}
+                                    onChange={setSelectedPickupDispatchContactDetails}
                                     className="form-group"
-                                    options={pickupDispatchContactNames}
-                                    selected={selectedPickupDispatchContact}
+                                    options={pickupDispatchContactDetails}
+                                    selected={selectedPickupDispatchContactDetails}
+                                    labelKey="pickupDispatchContactName"
+                                    renderMenuItemChildren={(option) => (
+                                        <div>
+                                            {option.pickupDispatchContactName}
+                                        </div>
+                                    )}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                             </Form.Group>
@@ -1155,28 +1305,6 @@ const AddOrder = () => {
                 {/* End of Add Location Contact Modal */}
             </Form>
             :   ""
-            }
-            { isLoading && !checkAllRefs ?
-                <div style={{
-                    height: "100%",
-                    width: "100%",
-                    position: "absolute",
-                    background: "rgba(0, 0, 0, 0.3)",
-                    zIndex: 1000,
-                    paddingTop: "30%",
-                    paddingLeft: "50%",
-                }}>
-                    <Grid
-                        visible={true}
-                        height="80"
-                        width="80"
-                        color="#333333"
-                        ariaLabel="grid-loading"
-                        radius="12.5"
-                        wrapperStyle={{}}
-                        wrapperClass="grid-wrapper"
-                    />
-                </div> : ""
             }
         </>
     );

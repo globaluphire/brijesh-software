@@ -11,6 +11,7 @@ import { envConfig } from "../../../../../config/env";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import Router from "next/router";
 import { Grid } from "react-loader-spinner";
+import Spinner from "../../../../spinner/spinner";
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
     ssr: false,
@@ -42,7 +43,8 @@ const addLocationContactFields = {
 
 const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactSaved, isLocationContactType, locationNumber }) => {
     const user = useSelector((state) => state.candidate.user);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadingText, setLoadingText] = useState("");
 
     const [locationContactFormData, setLocationContactFormData] = useState(
         JSON.parse(JSON.stringify(addLocationContactFields))
@@ -107,6 +109,7 @@ const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactS
     ) => 
     {
         setIsLoading(true);
+        setLoadingText("Saving location contact details...");
         if(locationNumber && isLocationContactType && contactName && contactPhone) {
             // saving location contact data
             const { data: locationContactData, error: locationContactError } = await supabase.from("location_contact").insert([
@@ -135,6 +138,7 @@ const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactS
                     }
                 );
                 setIsLoading(false);
+                setLoadingText("");
             } else {
                 // open toast
                 toast.success("New " + isLocationContactType + " contact saved successfully", {
@@ -151,6 +155,7 @@ const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactS
                 setLocationContactFormData(JSON.parse(JSON.stringify(addLocationContactFields)));
                 setIsLocationContactSaved(true);
                 setIsLoading(false);
+                setLoadingText("");
             }
         } else {
             toast.error("Please fill all required fields!!!", {
@@ -164,6 +169,7 @@ const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactS
                 theme: "colored",
             });
             setIsLoading(false);
+            setLoadingText("");
         }
     };
 
@@ -179,127 +185,106 @@ const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactS
     return (
         <> 
             <Form validated={validated}>
+                <Spinner isLoading={isLoading} loadingText={loadingText} />
+                <div>
                     <div>
-                        <div>
-                            <Row>
-                                {/* Contact Block starts */}
+                        <Row>
+                            {/* Contact Block starts */}
+                            <div>
                                 <div>
-                                    <div>
-                                        <div style={{ padding: "0.5rem" }}>
-                                            <Row className="mb-3">
-                                                <Form.Group as={Col} lg="12" controlId="validationCustom02">
-                                                    <Form.Label>Contact Type</Form.Label>
+                                    <div style={{ padding: "0.5rem" }}>
+                                        <Row className="mb-3">
+                                            <Form.Group as={Col} lg="12" controlId="validationCustom02">
+                                                <Form.Label>Contact Type</Form.Label>
+                                                <Form.Control
+                                                    size="sm"
+                                                    disabled
+                                                    className="chosen-single form-select"
+                                                    value={isLocationContactType}
+                                                    required
+                                                />
+                                            </Form.Group>
+                                        </Row>
+                                        <Row>
+                                            <Form.Group as={Col} lg="12" controlId="validationCustom02">
+                                                <Form.Label>Contact Name</Form.Label>
+                                                <Form.Control
+                                                    size="sm"
+                                                    required
+                                                    type="text"
+                                                    // placeholder="To"
+                                                    // defaultValue="Otto"
+                                                    value={contactName}
+                                                    onChange={(e) => {
+                                                        setLocationContactFormData((previousState) => ({
+                                                            ...previousState,
+                                                            contactName: e.target.value,
+                                                        }));
+                                                    }}
+                                                />
+                                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                                <Form.Control.Feedback type="invalid">
+                                                    Please enter Client Contact.
+                                                </Form.Control.Feedback>
+                                            </Form.Group>
+                                            <Form.Group as={Col} lg="12" controlId="validationCustomPhonenumber">
+                                                <Form.Label>Contact Phone Number</Form.Label>
+                                                <InputGroup size="sm">
+                                                    <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
                                                     <Form.Control
-                                                        size="sm"
-                                                        disabled
-                                                        className="chosen-single form-select"
-                                                        value={isLocationContactType}
+                                                        type="number"
+                                                        // placeholder="Username"
+                                                        aria-describedby="inputGroupPrepend"
                                                         required
-                                                    />
-                                                </Form.Group>
-                                            </Row>
-                                            <Row>
-                                                <Form.Group as={Col} lg="12" controlId="validationCustom02">
-                                                    <Form.Label>Contact Name</Form.Label>
-                                                    <Form.Control
-                                                        size="sm"
-                                                        required
-                                                        type="text"
-                                                        // placeholder="To"
-                                                        // defaultValue="Otto"
-                                                        value={contactName}
+                                                        value={contactPhone}
                                                         onChange={(e) => {
                                                             setLocationContactFormData((previousState) => ({
                                                                 ...previousState,
-                                                                contactName: e.target.value,
+                                                                contactPhone: e.target.value,
                                                             }));
                                                         }}
                                                     />
-                                                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                                    <Form.Control.Feedback type="invalid">
-                                                        Please enter Client Contact.
-                                                    </Form.Control.Feedback>
-                                                </Form.Group>
-                                                <Form.Group as={Col} lg="12" controlId="validationCustomPhonenumber">
-                                                    <Form.Label>Contact Phone Number</Form.Label>
-                                                    <InputGroup size="sm">
-                                                        <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
-                                                        <Form.Control
-                                                            type="number"
-                                                            // placeholder="Username"
-                                                            aria-describedby="inputGroupPrepend"
-                                                            required
-                                                            value={contactPhone}
-                                                            onChange={(e) => {
-                                                                setLocationContactFormData((previousState) => ({
-                                                                    ...previousState,
-                                                                    contactPhone: e.target.value,
-                                                                }));
-                                                            }}
-                                                        />
-                                                    </InputGroup>
-                                                </Form.Group>
-                                                <Form.Group as={Col} lg="12" controlId="validationCustom04">
-                                                    <Form.Label>Client Email Address</Form.Label>
-                                                    <Form.Control
-                                                        type="text"
-                                                        size="sm"
-                                                        placeholder=""
-                                                        value={contactEmail}
-                                                        onChange={(e) => {
-                                                            setLocationContactFormData((previousState) => ({
-                                                                ...previousState,
-                                                                contactEmail: e.target.value,
-                                                            }));
-                                                        }}
-                                                    />
-                                                </Form.Group>
-                                            </Row>
-                                            <Row>
-                                                <Form.Group as={Col} lg="12" className="chosen-single form-input chosen-container mt-3">
-                                                    <Button
-                                                        type="submit"
-                                                        variant="success"
-                                                        onClick={(e) => {
-                                                            e.preventDefault();
-                                                            addNewLocationContact(locationContactFormData, setLocationContactFormData, user);
-                                                        }}
-                                                        className="btn btn-sm text-nowrap m-1"
-                                                    >
-                                                        Add New Contact
-                                                    </Button>
-                                                </Form.Group>
-                                            </Row>
-                                        </div>
+                                                </InputGroup>
+                                            </Form.Group>
+                                            <Form.Group as={Col} lg="12" controlId="validationCustom04">
+                                                <Form.Label>Client Email Address</Form.Label>
+                                                <Form.Control
+                                                    type="text"
+                                                    size="sm"
+                                                    placeholder=""
+                                                    value={contactEmail}
+                                                    onChange={(e) => {
+                                                        setLocationContactFormData((previousState) => ({
+                                                            ...previousState,
+                                                            contactEmail: e.target.value,
+                                                        }));
+                                                    }}
+                                                />
+                                            </Form.Group>
+                                        </Row>
+                                        <Row>
+                                            <Form.Group as={Col} lg="12" className="chosen-single form-input chosen-container mt-3">
+                                                <Button
+                                                    type="submit"
+                                                    variant="success"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        addNewLocationContact(locationContactFormData, setLocationContactFormData, user);
+                                                    }}
+                                                    className="btn btn-sm text-nowrap m-1"
+                                                >
+                                                    Add New Contact
+                                                </Button>
+                                            </Form.Group>
+                                        </Row>
                                     </div>
                                 </div>
-                                {/* Contact Block ends */}
-                            </Row>
-                        </div>
+                            </div>
+                            {/* Contact Block ends */}
+                        </Row>
                     </div>
+                </div>
             </Form>
-            { isLoading ?
-                <div style={{
-                    height: "82%",
-                    width: "86%",
-                    position: "absolute",
-                    background: "rgba(0, 0, 0, 0.3)",
-                    zIndex: "1000",
-                    paddingTop: "25%",
-                    paddingLeft: "35%"
-                }}>
-                    <Grid
-                        visible={true}
-                        height="80"
-                        width="80"
-                        color="#333333"
-                        ariaLabel="grid-loading"
-                        radius="12.5"
-                        wrapperStyle={{}}
-                        wrapperClass="grid-wrapper"
-                    />
-                </div> : ""
-            }
         </>
     );
 };
