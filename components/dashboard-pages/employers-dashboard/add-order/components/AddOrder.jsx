@@ -726,7 +726,6 @@ const AddOrder = () => {
         <>
             { checkAllRefs ?
             <Form validated={validated}>
-                <Spinner isLoading={isLoading} loadingText={loadingText} />
                 {/* General Details Block starts */}
                 <div>
                     <div className="divider divider-general">
@@ -1306,6 +1305,7 @@ const AddOrder = () => {
             </Form>
             :   ""
             }
+            <Spinner isLoading={isLoading} loadingText={loadingText} />
         </>
     );
 };
