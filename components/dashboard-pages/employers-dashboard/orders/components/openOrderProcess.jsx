@@ -323,10 +323,10 @@ const OpenOrderProcess = () => {
         setIsLRGenerating(true);
         const { data: lrData, count } = await supabase
             .from("lr")
-            .select('*', { count: 'exact', head: true })
+            .select("*", { count: "exact", head: true })
 
             // Filters
-            .eq("order_id", order.order_id)
+            .eq("order_id", order.order_id);
 
         if (confirm("This order have " + count + " LR(s)! Are you sure want to create new LR?")) {
             // Generate LR Number
