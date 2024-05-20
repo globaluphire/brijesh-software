@@ -811,7 +811,7 @@ Listing Maps
   .loading-modal {
     display: block; /* Hidden by default */
     position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    z-index: 10000; /* Sit on top */
     left: 0;
     top: 0;
     width: 100%; /* Full width */
@@ -853,7 +853,7 @@ Listing Maps
   .loading-modal {
     display: block; /* Hidden by default */
     position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    z-index: 10000; /* Sit on top */
     left: 0;
     top: 0;
     width: 100%; /* Full width */
@@ -889,4 +889,8 @@ Listing Maps
       align-items: center;
     }
   }
+}
+
+.form-control, .form-select, textarea{
+  box-shadow: inset 1px 1px 10px -2px rgba(0, 0, 0, 0.3) !important
 }

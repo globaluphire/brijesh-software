@@ -428,8 +428,8 @@ const AddOrder = () => {
                 {
                     lr_number: lrNumber,
                     order_id: orderId,
-                    lr_created_by: user.id,
                     status: "Performa",
+                    auto_generated: true,
 
                     // pick up location details
                     pickup_location_id: selectedPickupPointData ? selectedPickupPointData.location_id : null,
