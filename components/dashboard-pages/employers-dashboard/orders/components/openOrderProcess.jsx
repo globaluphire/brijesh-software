@@ -370,7 +370,7 @@ const OpenOrderProcess = () => {
         // reset all states
         setTotalAmount(0);
         setInvoiceDate(new Date());
-        setInvoiceErrors(JSON.parse(JSON.stringify(invoiceErrorFields)))
+        setInvoiceErrors(JSON.parse(JSON.stringify(invoiceErrorFields)));
         setFetchedSelectedOpenOrderdata(order);
 
         // fetch if invoice already created
