@@ -382,7 +382,7 @@ const OpenOrderProcess = () => {
             .eq("order_id", order.order_id);
 
         if (invoiceData) {
-            setFetchedInvoiceData(invoiceData[0]);
+            setFetchedInvoiceData(invoiceData);
 
             const { data: invoiceUserData, error: e } = await supabase
             .from("users")
@@ -392,7 +392,7 @@ const OpenOrderProcess = () => {
             .eq("user_id", user.id);
 
             if (invoiceUserData) {
-                setFetchedInvoiceUserData(invoiceUserData[0]);
+                setFetchedInvoiceUserData(invoiceUserData);
             }
             setIsLoading(false);
         } else {
@@ -1337,7 +1337,8 @@ const OpenOrderProcess = () => {
                         <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                             <div className="apply-modal-content modal-content" style={{ overflow: "scroll" }}>
                                 <div className="text-center">
-                                    <h3 className="title">Invoice</h3>
+                                    <h3 className="title" style={{ marginBottom: "-5px" }}>Invoice</h3>
+                                    <span className="optional" style={{ letterSpacing: "1px" }}>#{fetchedSelectedOpenOrderdata.order_number}</span> 
                                     <button
                                         type="button"
                                         id="showInvoiceModalCloseButton"
@@ -1349,7 +1350,7 @@ const OpenOrderProcess = () => {
                                 {/* End modal-header */}
                                 { Object.keys(fetchedSelectedOpenOrderdata).length !== 0 ?
                                     <div className="widget-content">
-                                        {Object.keys(fetchedInvoiceData).length === 0 ?
+                                        { Object.keys(fetchedInvoiceData).length === 0 ?
                                             <div>
                                                 <Row className="mb-1">
                                                     <Form.Group as={Col} md="12" controlId="validationCustomPhonenumber">
@@ -1428,20 +1429,7 @@ const OpenOrderProcess = () => {
                                                 </thead>
                                                 {/* might need to add separate table link with order_number as one order can have 
                                                     multiple comments */}
-                                                {Object.keys(fetchedInvoiceData).length === 0 ? (
-                                                    <tbody
-                                                        style={{
-                                                            fontSize: "14px",
-                                                            fontWeight: "500",
-                                                        }}
-                                                    >
-                                                        <tr>
-                                                            <td colSpan={3}>
-                                                                <b> No Invoice created yet!</b>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                ) : (
+                                                { Object.keys(fetchedInvoiceData).length !== 0 && Object.keys(fetchedInvoiceUserData).length !== 0 ? (
                                                     <tbody style={{ fontSize: "14px" }}>
                                                         <tr>
                                                             <td>
@@ -1451,7 +1439,7 @@ const OpenOrderProcess = () => {
                                                                             data-text="Generate Invoice"
                                                                             onClick={() => {
                                                                                 document.getElementById("showInvoiceModalCloseButton").click();
-                                                                                router.push(`/employers-dashboard/view-invoice/${fetchedInvoiceData.invoice_id}`);
+                                                                                router.push(`/employers-dashboard/view-invoice/${fetchedInvoiceData[0].invoice_id}`);
                                                                             }}
                                                                         >
                                                                             <span className="la la-print"></span>
@@ -1460,10 +1448,18 @@ const OpenOrderProcess = () => {
                                                                 </ul>
                                                             </td>
                                                             <td>
-                                                                {fetchedInvoiceData.invoice_number}
+                                                                {fetchedInvoiceData[0].invoice_number}
                                                             </td>
                                                             <td>
-                                                                {fetchedInvoiceUserData.name}
+                                                                {fetchedInvoiceUserData[0].name}
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                ) : (
+                                                    <tbody style={{ fontSize: "14px", fontWeight: "500" }}>
+                                                        <tr>
+                                                            <td colSpan={3}>
+                                                                <b> No Invoice created yet!</b>
                                                             </td>
                                                         </tr>
                                                     </tbody>
