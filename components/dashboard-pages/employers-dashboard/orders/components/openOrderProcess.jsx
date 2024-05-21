@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
 /* eslint-disable no-undef */
+/* eslint-disable no-unreachable-loop */
 import candidatesData from "../../../../../data/candidates";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
@@ -416,13 +417,13 @@ const OpenOrderProcess = () => {
                     setInvoiceErrors((previousState) => ({
                         ...previousState,
                         vehicalNumberError: true
-                    }))
+                    }));
                 }
                 if(!lrData[i].lr_number) {
                     setInvoiceErrors((previousState) => ({
                         ...previousState,
                         lrNumberError: true
-                    }))
+                    }));
                 }
                 return false;
             }
@@ -433,61 +434,61 @@ const OpenOrderProcess = () => {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 orderIdError: true
-            }))
+            }));
         }
         if(!selectedOpenOrderdata.client_number) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 clientNumberError: true
-            }))
+            }));
         }
         if(!selectedOpenOrderdata.eway_number) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 ewayBillNumberError: true
-            }))
+            }));
         }
         if(!selectedOpenOrderdata.pickup_location) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 pickupCityError: true
-            }))
+            }));
         }
         if(!selectedOpenOrderdata.drop_location) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 dropCityError: true
-            }))
+            }));
         }
         if(!selectedOpenOrderdata.material) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 materialError: true
-            }))
+            }));
         }
         if(!selectedOpenOrderdata.quantity) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 quantityError: true
-            }))
+            }));
         }
         if(!selectedOpenOrderdata.quantity) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 quantityError: true
-            }))
+            }));
         }
         if(!selectedOpenOrderdata.order_number) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 orderNumberError: true
-            }))
+            }));
         }
         if(!selectedOpenOrderdata.weight) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 weightError: true
-            }))
+            }));
         }
 
         if (
@@ -521,7 +522,6 @@ const OpenOrderProcess = () => {
             if (checkLRsStatus(lrData)) {
                 if (totalAmount && invoiceDate) {
                     if (checkRequiredFieldsForGenerateInvoice(selectedOpenOrderdata, lrData)) {
-                        console.log("invoice generated!!!")
                         try {
                             // Generate Invoice Number
                             const { data: sysKeyInvoiceData, error: sysKeyInvoiceError } = await supabase
@@ -1451,7 +1451,7 @@ const OpenOrderProcess = () => {
                                                                             data-text="Generate Invoice"
                                                                             onClick={() => {
                                                                                 document.getElementById("showInvoiceModalCloseButton").click();
-                                                                                router.push(`/employers-dashboard/view-invoice/${fetchedInvoiceData.invoice_id}`)
+                                                                                router.push(`/employers-dashboard/view-invoice/${fetchedInvoiceData.invoice_id}`);
                                                                             }}
                                                                         >
                                                                             <span className="la la-print"></span>
