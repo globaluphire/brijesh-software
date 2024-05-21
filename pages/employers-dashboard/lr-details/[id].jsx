@@ -53,7 +53,8 @@ const addLrDetailsFields = {
     specialOfferedFreight: 0,
     notes: "",
     freightNotes: "",
-    transportVehicleType: ""
+    transportVehicleType: "",
+    vehicleNumber: ""
 };
 
 const LRDetails = (orderDetails) => {
@@ -143,7 +144,8 @@ const LRDetails = (orderDetails) => {
     const {
         consignorCity,
         consigneeCity,
-        transportVehicleType
+        transportVehicleType,
+        vehicleNumber
     } = useMemo(() => lrDetailsFormData, [lrDetailsFormData]);
 
     // all references state
@@ -806,6 +808,7 @@ const LRDetails = (orderDetails) => {
                     setLrDetailsFormData((previousState) => ({
                         ...previousState,
                         transportVehicleType: lrData[0].transport_vehicle_type,
+                        vehicleNumber: lrData[0].vehical_number
                     }));
 
                     if(lrData[0].transport_vehicle_type === "Local Vehicle") {
@@ -1182,6 +1185,7 @@ const LRDetails = (orderDetails) => {
                         transport_vehicle_type: transportVehicleType ? transportVehicleType : "",
                         transport_vehicle_details: transportVehicleDetail ? transportVehicleDetail : "",
                         status: lrStatus ? lrStatus : "",
+                        vehical_number: vehicleNumber ? vehicleNumber : "",
                         lr_last_modified_date: new Date()
                     })
                     .eq("lr_id", fetchedLRData.lr_id);
@@ -2071,7 +2075,7 @@ const LRDetails = (orderDetails) => {
                                                 </Form.Group>
                                             </Row>
                                             <Row className="pb-3">
-                                                <Form.Group as={Col} md="12" controlId="validationCustomPhonenumber">
+                                                <Form.Group as={Col} md="6" controlId="validationCustomPhonenumber">
                                                     <InputGroup size="sm">
                                                         <InputGroup.Text id="inputGroupPrepend">Quantity</InputGroup.Text>
                                                         <textarea
@@ -2090,6 +2094,23 @@ const LRDetails = (orderDetails) => {
                                                                 fontSize: "14px",
                                                                 color: "#212529",
                                                                 backgroundColor: "#e9ecef",
+                                                            }}
+                                                        />
+                                                    </InputGroup>
+                                                </Form.Group>
+                                                <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
+                                                    <InputGroup size="sm">
+                                                        <InputGroup.Text id="inputGroupPrepend">Vehicle Number</InputGroup.Text>
+                                                        <Form.Control
+                                                            type="text"
+                                                            // placeholder="Username"
+                                                            aria-describedby="inputGroupPrepend"
+                                                            value={vehicleNumber}
+                                                            onChange={(e) => {
+                                                                setLrDetailsFormData((previousState) => ({
+                                                                    ...previousState,
+                                                                    vehicleNumber: e.target.value,
+                                                                }));
                                                             }}
                                                         />
                                                     </InputGroup>

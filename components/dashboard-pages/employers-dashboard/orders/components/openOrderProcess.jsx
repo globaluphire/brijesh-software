@@ -20,9 +20,26 @@ import DateRangePickerComp from "../../../../date/DateRangePickerComp";
 import { CSVLink } from "react-csv";
 import { convertToFullDateFormat } from "../../../../../utils/convertToFullDateFormat";
 import Spinner from "../../../../spinner/spinner";
+import { InputGroup } from "react-bootstrap";
+import CalendarComp from "../../../../date/CalendarComp";
+import { format } from "date-fns";
 
 const addSearchFilters = {
     status: ""
+};
+
+const invoiceErrorFields = {
+    orderIdError: false,
+    clientNumberError: false,
+    ewayBillNumberError: false,
+    pickupCityError: false,
+    dropCityError: false,
+    materialError: false,
+    quantityError: false,
+    orderNumberError: false,
+    weightError: false,
+    vehicalNumberError: false,
+    lrNumberError: false
 };
 
 const OpenOrderProcess = () => {
@@ -35,9 +52,15 @@ const OpenOrderProcess = () => {
 
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
     const [fetchedOpenOrderdata, setFetchedOpenOrderdata] = useState({});
+    const [fetchedSelectedOpenOrderdata, setFetchedSelectedOpenOrderdata] = useState({});
     const [fetchedOpenOrderdataCSV, setFetchedOpenOrderdataCSV] = useState({});
     const [fetchedOrderCommentData, setFetchedOrderCommentData] = useState([]);
     const [fetchedLRsData, setFetchedLRsData] = useState([]);
+    const [fetchedInvoiceData, setFetchedInvoiceData] = useState({});
+    const [fetchedInvoiceUserData, setFetchedInvoiceUserData] = useState({});
+
+    const [invoiceDate, setInvoiceDate] = useState(new Date());
+    const [totalAmount, setTotalAmount] = useState(0);
 
     const [applicationStatus, setApplicationStatus] = useState("");
     const [
@@ -71,6 +94,28 @@ const OpenOrderProcess = () => {
         status } = useMemo(
         () => searchFilters,
         [searchFilters]
+    );
+
+
+    const [invoiceErrors, setInvoiceErrors] = useState(
+        JSON.parse(JSON.stringify(invoiceErrorFields))
+    );
+    const {
+        orderIdError,
+        clientNumberError,
+        ewayBillNumberError,
+        pickupCityError,
+        dropCityError,
+        materialError,
+        quantityError,
+        orderNumberError,
+        weightError,
+        vehicalNumberError,
+        lrNumberError
+    
+    } = useMemo(
+        () => invoiceErrors,
+        [invoiceErrors]
     );
 
     // global states
@@ -319,8 +364,299 @@ const OpenOrderProcess = () => {
         // currentPage
     ]);
 
+    const setInvoiceModalData = async (order) => {
+        setIsLoading(true);
+        // reset all states
+        setTotalAmount(0);
+        setInvoiceDate(new Date());
+        setInvoiceErrors(JSON.parse(JSON.stringify(invoiceErrorFields)))
+        setFetchedSelectedOpenOrderdata(order);
+
+        // fetch if invoice already created
+        const { data: invoiceData, error: e } = await supabase
+            .from("invoice")
+            .select("*")
+
+            // Filters
+            .eq("order_id", order.order_id);
+
+        if (invoiceData) {
+            setFetchedInvoiceData(invoiceData[0]);
+
+            const { data: invoiceUserData, error: e } = await supabase
+            .from("users")
+            .select("*")
+
+            // Filters
+            .eq("user_id", user.id);
+
+            if (invoiceUserData) {
+                setFetchedInvoiceUserData(invoiceUserData[0]);
+            }
+            setIsLoading(false);
+        } else {
+            setIsLoading(false);
+        }
+
+    };
+    function checkLRsStatus(lrData) {
+        for(var i=0; i<lrData.length; i++){
+            if(lrData[i].status === "Performa") {
+                return false;
+            }
+        }
+        return true;
+    };
+    function checkLRDetails(lrData) {
+        for(var i=0; i<lrData.length; i++){
+            if(lrData[i].vehical_number && lrData[i].lr_number){
+                return true;
+            } else {
+                if(!lrData[i].vehical_number) {
+                    setInvoiceErrors((previousState) => ({
+                        ...previousState,
+                        vehicalNumberError: true
+                    }))
+                }
+                if(!lrData[i].lr_number) {
+                    setInvoiceErrors((previousState) => ({
+                        ...previousState,
+                        lrNumberError: true
+                    }))
+                }
+                return false;
+            }
+        }
+    };
+    function checkRequiredFieldsForGenerateInvoice(selectedOpenOrderdata, lrData) {
+        if(!selectedOpenOrderdata.order_id) {
+            setInvoiceErrors((previousState) => ({
+                ...previousState,
+                orderIdError: true
+            }))
+        }
+        if(!selectedOpenOrderdata.client_number) {
+            setInvoiceErrors((previousState) => ({
+                ...previousState,
+                clientNumberError: true
+            }))
+        }
+        if(!selectedOpenOrderdata.eway_number) {
+            setInvoiceErrors((previousState) => ({
+                ...previousState,
+                ewayBillNumberError: true
+            }))
+        }
+        if(!selectedOpenOrderdata.pickup_location) {
+            setInvoiceErrors((previousState) => ({
+                ...previousState,
+                pickupCityError: true
+            }))
+        }
+        if(!selectedOpenOrderdata.drop_location) {
+            setInvoiceErrors((previousState) => ({
+                ...previousState,
+                dropCityError: true
+            }))
+        }
+        if(!selectedOpenOrderdata.material) {
+            setInvoiceErrors((previousState) => ({
+                ...previousState,
+                materialError: true
+            }))
+        }
+        if(!selectedOpenOrderdata.quantity) {
+            setInvoiceErrors((previousState) => ({
+                ...previousState,
+                quantityError: true
+            }))
+        }
+        if(!selectedOpenOrderdata.quantity) {
+            setInvoiceErrors((previousState) => ({
+                ...previousState,
+                quantityError: true
+            }))
+        }
+        if(!selectedOpenOrderdata.order_number) {
+            setInvoiceErrors((previousState) => ({
+                ...previousState,
+                orderNumberError: true
+            }))
+        }
+        if(!selectedOpenOrderdata.weight) {
+            setInvoiceErrors((previousState) => ({
+                ...previousState,
+                weightError: true
+            }))
+        }
+
+        if (
+            // order data
+            selectedOpenOrderdata.order_id &&
+            selectedOpenOrderdata.client_number &&
+            selectedOpenOrderdata.eway_number &&
+            selectedOpenOrderdata.pickup_location &&
+            selectedOpenOrderdata.drop_location &&
+            selectedOpenOrderdata.material &&
+            selectedOpenOrderdata.quantity &&
+            selectedOpenOrderdata.order_number &&
+            selectedOpenOrderdata.weight &&
+
+            // lr data
+            checkLRDetails(lrData)
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+    async function generateInvoice(selectedOpenOrderdata) {
+        const { data: lrData, error: e } = await supabase
+            .from("lr")
+            .select("*")
+
+            // Filters
+            .eq("order_id", selectedOpenOrderdata.order_id);
+
+            if (checkLRsStatus(lrData)) {
+                if (totalAmount && invoiceDate) {
+                    if (checkRequiredFieldsForGenerateInvoice(selectedOpenOrderdata, lrData)) {
+                        console.log("invoice generated!!!")
+                        try {
+                            // Generate Invoice Number
+                            const { data: sysKeyInvoiceData, error: sysKeyInvoiceError } = await supabase
+                                .from("sys_key")
+                                .select("sys_seq_nbr")
+                                .eq("key_name", "invoice_number");
+
+                            let invoiceSeqNbr = sysKeyInvoiceData[0].sys_seq_nbr + 1;
+                            if (invoiceSeqNbr < 10) {
+                                invoiceSeqNbr = "0000" + invoiceSeqNbr;
+                            } else if(invoiceSeqNbr < 100) {
+                                invoiceSeqNbr = "000" + invoiceSeqNbr;
+                            } else if(invoiceSeqNbr < 1000) {
+                                invoiceSeqNbr = "00" + invoiceSeqNbr;
+                            } else if(invoiceSeqNbr < 10000) {
+                                invoiceSeqNbr = "0" + invoiceSeqNbr;
+                            }
+                            const invoiceNumber = "RF" + invoiceSeqNbr;
+
+                            const { data, error } = await supabase.from("invoice").insert([
+                                {
+                                    invoice_number: invoiceNumber,
+                                    total_amount: totalAmount,
+                                    invoice_date: format(invoiceDate, "yyyy-MM-dd"),
+                                    order_id: selectedOpenOrderdata.order_id,
+                                    invoice_created_by: user.id
+                                },
+                            ]);
+                            if (error) {
+                                // open toast
+                                toast.error(
+                                    "Error while saving Invoice details, Please try again later or contact tech support",
+                                    {
+                                        position: "bottom-right",
+                                        autoClose: false,
+                                        hideProgressBar: false,
+                                        closeOnClick: true,
+                                        pauseOnHover: true,
+                                        draggable: true,
+                                        progress: undefined,
+                                        theme: "colored",
+                                    }
+                                );
+                            } else {
+                                // open toast
+                                toast.success("New Invoice saved successfully", {
+                                    position: "bottom-right",
+                                    autoClose: 8000,
+                                    hideProgressBar: false,
+                                    closeOnClick: true,
+                                    pauseOnHover: true,
+                                    draggable: true,
+                                    progress: undefined,
+                                    theme: "colored",
+                                });
+                                
+                                // increment lr_number key
+                                await supabase.rpc("increment_sys_key", {
+                                    x: 1,
+                                    keyname: "invoice_number",
+                                });
+
+                                document.getElementById("showInvoiceModalCloseButton").click();
+
+                            }
+                        } catch (err) {
+                            // open toast
+                            toast.error(
+                                "Error while saving Invoice details, Please try again later or contact tech support",
+                                {
+                                    position: "bottom-right",
+                                    autoClose: false,
+                                    hideProgressBar: false,
+                                    closeOnClick: true,
+                                    pauseOnHover: true,
+                                    draggable: true,
+                                    progress: undefined,
+                                    theme: "colored",
+                                }
+                            );
+                            // console.warn(err);
+                        }
+                    } else {
+                        // open toast
+                        toast.error("Please fill all the listed required fields.", {
+                            position: "top-center",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                    }
+                } else {
+                    // open toast
+                    toast.error("Please fill Total Amount and Invoice Date in mentioned format", {
+                        position: "top-center",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                    setIsLoading(false);
+                    setLoadingText("");
+                }
+                setIsLoading(false);
+                setLoadingText("");
+            } else {
+                // open toast
+                toast.error(
+                    "Please check all LRs under this Order should be in FINAL status",
+                    {
+                        position: "top-center",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    }
+                );
+                setIsLoading(false);
+                setLoadingText("");
+            }
+    };
+
     async function generateLR(order) {
-        setIsLRGenerating(true);
+        setIsLoading(true);
+        setLoadingText("LR is generating...");
         const { data: lrData, count } = await supabase
             .from("lr")
             .select("*", { count: "exact", head: true })
@@ -378,7 +714,8 @@ const OpenOrderProcess = () => {
                             theme: "colored",
                         }
                     );
-                    setIsLRGenerating(false);
+                    setIsLoading(false);
+                    setLoadingText("");
                 } else {
                     // open toast
                     toast.success("New LR generated successfully", {
@@ -398,9 +735,11 @@ const OpenOrderProcess = () => {
                         keyname: "lr_number",
                     });
 
-                    setIsLRGenerating(false);
+                    setIsLoading(false);
+                    setLoadingText("");
                 }
-                setIsLRGenerating(false);
+                setIsLoading(false);
+                setLoadingText("");
             } catch (e) {
                 // open toast
                 toast.error(
@@ -416,8 +755,12 @@ const OpenOrderProcess = () => {
                         theme: "colored",
                     }
                 );
-                setIsLRGenerating(false);
+                setIsLoading(false);
+                setLoadingText("");
             }
+        } else {
+            setIsLoading(false);
+            setLoadingText("");
         }
     };
 
@@ -636,6 +979,7 @@ const OpenOrderProcess = () => {
                                 <th>Updated On</th>
                                 <th>Pickup Date</th>
                                 <th>ERP Order No</th>
+                                <th>LR No</th>
                                 <th>Route</th>
                                 <th>Status</th>
                                 <th>Comment</th>
@@ -646,7 +990,6 @@ const OpenOrderProcess = () => {
                                 <th>Total Weight</th>
                                 <th>Order Details</th>
                                 <th>Order Notes</th>
-                                <th>LR No</th>
                                 <th>Local Transport</th>
                                 <th>Truck Details</th>
                                 <th>Eway Bill No</th>
@@ -674,9 +1017,20 @@ const OpenOrderProcess = () => {
                                             <td>
                                                 <div className="option-box">
                                                     <ul className="option-list">
-                                                        <li onClick={() => generateInvoice(order)}>
+                                                        <li>
                                                             <button data-text="Generate Invoice">
-                                                                <span className="la la-file-invoice"></span>
+                                                                <a
+                                                                    href="#"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#showInvoiceModal"
+                                                                    onClick={() => {
+                                                                        setInvoiceModalData(
+                                                                            order
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <span className="la la-file-invoice"></span>
+                                                                </a>
                                                             </button>
                                                         </li>
                                                         <li onClick={() => generateLR(order)}>
@@ -703,6 +1057,26 @@ const OpenOrderProcess = () => {
                                                 >
                                                     {order.order_number}
                                                 </Link>
+                                            </td>
+                                            <td>
+                                                <ul className="option-list">
+                                                    <li>
+                                                        <button data-text="View LRs">
+                                                            <a
+                                                                href="#"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#showLRsModal"
+                                                                onClick={() => {
+                                                                    setLRsModalData(
+                                                                        order.order_id
+                                                                    );
+                                                                }}
+                                                            >
+                                                                <span className="la la-receipt"></span>
+                                                            </a>
+                                                        </button>
+                                                    </li>
+                                                </ul>
                                             </td>
                                             <td>
                                                 <span>{order.pickup_location}-{order.drop_location}</span>
@@ -765,26 +1139,6 @@ const OpenOrderProcess = () => {
                                             </td>
                                             <td>
                                                 {order.notes ? order.notes : "-" }
-                                            </td>
-                                            <td>
-                                                <ul className="option-list">
-                                                    <li>
-                                                        <button data-text="View LRs">
-                                                            <a
-                                                                href="#"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#showLRsModal"
-                                                                onClick={() => {
-                                                                    setLRsModalData(
-                                                                        order.order_id
-                                                                    );
-                                                                }}
-                                                            >
-                                                                <span className="la la-receipt"></span>
-                                                            </a>
-                                                        </button>
-                                                    </li>
-                                                </ul>
                                             </td>
                                             <td>
                                                 {order.local_transport ? order.local_transport : "-" }
@@ -913,6 +1267,7 @@ const OpenOrderProcess = () => {
                                             <thead>
                                                 <tr>
                                                     <th style={{ fontSize: "14px" }}>LR No</th>
+                                                    <th style={{ fontSize: "14px" }}>LR Status</th>
                                                     <th style={{ fontSize: "14px" }}>Created On</th>
                                                     <th style={{ fontSize: "14px" }}>Created By</th>
                                                 </tr>
@@ -949,10 +1304,13 @@ const OpenOrderProcess = () => {
                                                                     </Link>
                                                                 </td>
                                                                 <td>
+                                                                    {lr.status}
+                                                                </td>
+                                                                <td>
                                                                     {lr.lr_created_date}
                                                                 </td>
                                                                 <td>
-                                                                    {lr.lr_created_by ? "USER" : "SYSTEM" }
+                                                                    {lr.auto_generated ? "SYSTEM" : "USER" }
                                                                 </td>
                                                             </tr>
                                                         )
@@ -968,6 +1326,158 @@ const OpenOrderProcess = () => {
                         </div>
                     </div>
                     {/* End LRs Modal Popup */}
+
+                    {/* Start Invoice Modal Popup */}
+                    <div
+                        className="modal fade"
+                        id="showInvoiceModal"
+                        tabIndex="-1"
+                        aria-hidden="true"
+                    >
+                        <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                            <div className="apply-modal-content modal-content" style={{ overflow: "scroll" }}>
+                                <div className="text-center">
+                                    <h3 className="title">Invoice</h3>
+                                    <button
+                                        type="button"
+                                        id="showInvoiceModalCloseButton"
+                                        className="closed-modal"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    ></button>
+                                </div>
+                                {/* End modal-header */}
+                                { Object.keys(fetchedSelectedOpenOrderdata).length !== 0 ?
+                                    <div className="widget-content">
+                                        {Object.keys(fetchedInvoiceData).length === 0 ?
+                                            <div>
+                                                <Row className="mb-1">
+                                                    <Form.Group as={Col} md="12" controlId="validationCustomPhonenumber">
+                                                        <Form.Label size="sm">Total Amount <span className="optional">(ex. 12 or 12.00 or 12.01 or 12.12)</span></Form.Label>
+                                                        <InputGroup size="sm">
+                                                            <InputGroup.Text id="inputGroupPrepend"><i className="las la-rupee-sign"></i></InputGroup.Text>
+                                                            <Form.Control
+                                                                type="number"
+                                                                // placeholder="900"
+                                                                aria-describedby="inputGroupPrepend"
+                                                                required
+                                                                value={totalAmount}
+                                                                onChange={(e) => { setTotalAmount(e.target.value); }}
+                                                            />
+                                                        </InputGroup>
+                                                    </Form.Group>
+                                                </Row>
+
+                                                <Row className="mb-3">
+                                                    <Form.Group as={Col} md="12" controlId="validationCustom01">
+                                                        <Form.Label>Invoice Date</Form.Label><br />
+                                                        <CalendarComp setDate={setInvoiceDate} date1={invoiceDate}/>
+                                                    </Form.Group>
+                                                </Row>
+
+                                                <Row>
+                                                    <Form.Group as={Col} md="12" className="chosen-single form-input chosen-container mb-3">
+                                                        <Button
+                                                            type="submit"
+                                                            variant="success"
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                generateInvoice(fetchedSelectedOpenOrderdata);
+                                                            }}
+                                                            className="btn btn-add-lr btn-sm text-nowrap m-1"
+                                                        >
+                                                            Generate Invoice
+                                                        </Button>
+                                                    </Form.Group>
+                                                </Row>
+
+                                                <Row>
+                                                    { orderIdError || clientNumberError || ewayBillNumberError ||
+                                                        pickupCityError || dropCityError || materialError || quantityError ||
+                                                        orderNumberError || weightError || vehicalNumberError || lrNumberError ?
+                                                        <div className="pb-3 optional"
+                                                            style={{ color: "red",
+                                                                lineHeight: "normal",
+                                                                fontSize: "12px",
+                                                            }}>
+                                                            Please fill below listed fields before generating Invoice<br />
+                                                            {orderIdError ? <><span>* Order ID</span><br /></> : "" }
+                                                            {clientNumberError ? <><span>* Client Details(Order Details)</span><br /></> : "" }
+                                                            {ewayBillNumberError ? <><span>* Eway Bill Number(Order Details)</span><br /></> : "" }
+                                                            {pickupCityError ? <><span>* Pickup City(Order Details)</span><br /></> : "" }
+                                                            {dropCityError ? <><span>* Drop City(Order Details)</span><br /></> : "" }
+                                                            {materialError ? <><span>* Material(Order Details)</span><br /></> : "" }
+                                                            {quantityError ? <><span>* Quantity(Order Details)</span><br /></> : "" }
+                                                            {orderNumberError ? <><span>* Order Number</span><br /></> : "" }
+                                                            {weightError ? <><span>* Weight(Order Details)</span><br /></> : "" }
+                                                            {vehicalNumberError ? <><span>* Vehical Number(LR Details)</span><br /></> : "" }
+                                                            {lrNumberError ? <><span>* LR Number</span></> : "" }
+                                                        </div>
+                                                    : "" }
+                                                </Row>
+                                            </div>
+                                        : "" }
+                                        <div className="table-outer">
+                                            <Table className="default-table manage-job-table" style={{ minWidth: "300px" }}>
+                                                <thead>
+                                                    <tr>
+                                                        <th style={{ fontSize: "14px" }}>Action</th>
+                                                        <th style={{ fontSize: "14px" }}>Invoice No</th>
+                                                        <th style={{ fontSize: "14px" }}>Created By</th>
+                                                    </tr>
+                                                </thead>
+                                                {/* might need to add separate table link with order_number as one order can have 
+                                                    multiple comments */}
+                                                {Object.keys(fetchedInvoiceData).length === 0 ? (
+                                                    <tbody
+                                                        style={{
+                                                            fontSize: "14px",
+                                                            fontWeight: "500",
+                                                        }}
+                                                    >
+                                                        <tr>
+                                                            <td colSpan={3}>
+                                                                <b> No Invoice created yet!</b>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                ) : (
+                                                    <tbody style={{ fontSize: "14px" }}>
+                                                        <tr>
+                                                            <td>
+                                                                <ul className="option-list">
+                                                                    <li>
+                                                                        <button
+                                                                            data-text="Generate Invoice"
+                                                                            onClick={() => {
+                                                                                document.getElementById("showInvoiceModalCloseButton").click();
+                                                                                router.push(`/employers-dashboard/view-invoice/${fetchedInvoiceData.invoice_id}`)
+                                                                            }}
+                                                                        >
+                                                                            <span className="la la-print"></span>
+                                                                        </button>
+                                                                    </li>
+                                                                </ul>
+                                                            </td>
+                                                            <td>
+                                                                {fetchedInvoiceData.invoice_number}
+                                                            </td>
+                                                            <td>
+                                                                {fetchedInvoiceUserData.name}
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                )}
+                                            </Table>
+                                        </div>
+                                    </div>
+                                : "" }
+                                {/* End PrivateMessageBox */}
+                            </div>
+                            {/* End .send-private-message-wrapper */}
+                        </div>
+                    </div>
+                    {/* End Invoice Modal Popup */}
                     {/* End All Popup Blocks */}
 
                 </div>
