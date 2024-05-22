@@ -44,36 +44,64 @@ const ViewLR = ({ fetchedLRdata }) => {
                 <span class="lr_number item"><b>LR Number:</b> {fetchedLRdata.lr_number}</span>
                 <span class="last_modified_date item"><b>Last Modified Date: </b> {fetchedLRdata.lr_last_modified_date ? fetchedLRdata.lr_last_modified_date : fetchedLRdata.lr_created_date}</span>
                 <div class="pickup_address item">
-                    <span><b>Pickup Address: {fetchedLRdata.consignor}</b></span><br />
-                    <span>{fetchedLRdata.pickup_address}</span>
+                    <span><b>Pickup Address: {fetchedLRdata.consignor_name}</b></span><br />
+                    <span>
+                        {fetchedLRdata.pickup_point_address1 ? <span>{fetchedLRdata.pickup_point_address1}, </span> : "" }
+                        {fetchedLRdata.pickup_point_address2 ? <span>{fetchedLRdata.pickup_point_address2}, </span> : "" }
+                        {fetchedLRdata.pickup_point_area ? <span>{fetchedLRdata.pickup_point_area}, </span> : "" }
+                        {fetchedLRdata.pickup_point_city ? <span>{fetchedLRdata.pickup_point_city}, </span> : "" }
+                        {fetchedLRdata.pickup_point_state ? <span>{fetchedLRdata.pickup_point_state}, </span> : "" }
+                        {fetchedLRdata.pickup_point_pin ? <span>{fetchedLRdata.pickup_point_pin}, </span> : "" }
+                    </span>
                 </div>
                 <div class="from_to item">
-                    <span><b>From: </b>{fetchedLRdata.from_city}</span><br />
-                    <span><b>To: </b>{fetchedLRdata.to_city}</span>
+                    <span><b>From: </b>{fetchedLRdata.pickup_point_location_city}</span><br />
+                    <span><b>To: </b>{fetchedLRdata.drop_point_location_city}</span>
                 </div>
                 <div class="delivery_address item">
-                    <span><b>Delivery Address: {fetchedLRdata.consignee}</b></span><br />
-                    <span>{fetchedLRdata.drop_address}</span>
+                    <span><b>Delivery Address: {fetchedLRdata.consignee_name}</b></span><br />
+                    <span>
+                        {fetchedLRdata.drop_point_address1 ? <span>{fetchedLRdata.drop_point_address1}, </span> : "" }
+                        {fetchedLRdata.drop_point_address2 ? <span>{fetchedLRdata.drop_point_address2}, </span> : "" }
+                        {fetchedLRdata.drop_point_area ? <span>{fetchedLRdata.drop_point_area}, </span> : "" }
+                        {fetchedLRdata.drop_point_city ? <span>{fetchedLRdata.drop_point_city}, </span> : "" }
+                        {fetchedLRdata.drop_point_state ? <span>{fetchedLRdata.drop_point_state}, </span> : "" }
+                        {fetchedLRdata.drop_point_pin ? <span>{fetchedLRdata.drop_point_pin}, </span> : "" }
+                    </span>
                 </div>
                 <div class="consignor item">
-                    <span><b>Consignor: {fetchedLRdata.consignor}</b></span><br />
-                    <span>{fetchedLRdata.pickup_address}</span><br />
+                    <span><b>Consignor: {fetchedLRdata.consignor_name}</b></span><br />
+                    <span>
+                        {fetchedLRdata.pickup_point_address1 ? <span>{fetchedLRdata.pickup_point_address1}, </span> : "" }
+                        {fetchedLRdata.pickup_point_address2 ? <span>{fetchedLRdata.pickup_point_address2}, </span> : "" }
+                        {fetchedLRdata.pickup_point_area ? <span>{fetchedLRdata.pickup_point_area}, </span> : "" }
+                        {fetchedLRdata.pickup_point_city ? <span>{fetchedLRdata.pickup_point_city}, </span> : "" }
+                        {fetchedLRdata.pickup_point_state ? <span>{fetchedLRdata.pickup_point_state}, </span> : "" }
+                        {fetchedLRdata.pickup_point_pin ? <span>{fetchedLRdata.pickup_point_pin}, </span> : "" }
+                    </span><br />
                     <span><b>GST No: </b>{fetchedLRdata.consignor_gst}</span>
                     <span><b> | Ph No: </b>{fetchedLRdata.consignor_phone}</span>
                 </div>
                 <div class="vehicle item">
                     <span><b>Vehical No: </b>{fetchedLRdata.vehical_number}</span><br />
-                    <span><b>Driver: </b>{fetchedLRdata.driver_name}</span><br />
+                    <span><b>Driver: </b>{fetchedLRdata.truck_details}</span><br /> {/* ask what to show here */}
                 </div>
                 <div class="consignee item">
-                    <span><b>Consignee: {fetchedLRdata.consignee}</b></span><br />
-                    <span>{fetchedLRdata.drop_address}</span><br />
+                    <span><b>Consignee: {fetchedLRdata.consignee_name}</b></span><br />
+                    <span>
+                        {fetchedLRdata.drop_point_address1 ? <span>{fetchedLRdata.drop_point_address1}, </span> : "" }
+                        {fetchedLRdata.drop_point_address2 ? <span>{fetchedLRdata.drop_point_address2}, </span> : "" }
+                        {fetchedLRdata.drop_point_area ? <span>{fetchedLRdata.drop_point_area}, </span> : "" }
+                        {fetchedLRdata.drop_point_city ? <span>{fetchedLRdata.drop_point_city}, </span> : "" }
+                        {fetchedLRdata.drop_point_state ? <span>{fetchedLRdata.drop_point_state}, </span> : "" }
+                        {fetchedLRdata.drop_point_pin ? <span>{fetchedLRdata.drop_point_pin}, </span> : "" }
+                    </span> <br />
                     <span><b>GST No: </b>{fetchedLRdata.consignee_gst}</span>
                     <span><b> | Ph No: </b>{fetchedLRdata.consignee_phone}</span>
                 </div>
                 <div class="material_detail item">
                     <span><b>Material Details</b></span><br />
-                    <span>{fetchedLRdata.material_details}</span>
+                    <span>{fetchedLRdata.quantity}</span>
                 </div>
                 <div class="weight item">
                     <span><b>Weight(Kg)</b></span><br />
@@ -110,7 +138,7 @@ const ViewLR = ({ fetchedLRdata }) => {
                     <span><b>Head Office: </b>51 and 52 Sinde Colony, S R P Road, Navapura, Vadodara, Gujarat 390001</span> <br />
                     <span><b>Mobile No: </b>7016229891</span>
                     {/* <span>
-                    <t></t> | <t></t><b>Email: </b>info@raftaarlogistics.com
+                    <t></t> | <t></t><b>Email: </b>margisoni031@gmail.com
                     </span> */}
                     {/* <span>
                     <t></t> | <t></t><b>Website: </b>raftaarlogistics.com
@@ -141,36 +169,64 @@ const ViewLR = ({ fetchedLRdata }) => {
                 <span class="lr_number item"><b>LR Number:</b> {fetchedLRdata.lr_number}</span>
                 <span class="last_modified_date item"><b>Last Modified Date: </b> {fetchedLRdata.lr_last_modified_date ? fetchedLRdata.lr_last_modified_date : fetchedLRdata.lr_created_date}</span>
                 <div class="pickup_address item">
-                    <span><b>Pickup Address: {fetchedLRdata.consignor}</b></span><br />
-                    <span>{fetchedLRdata.pickup_address}</span>
+                    <span><b>Pickup Address: {fetchedLRdata.consignor_name}</b></span><br />
+                    <span>
+                        {fetchedLRdata.pickup_point_address1 ? <span>{fetchedLRdata.pickup_point_address1}, </span> : "" }
+                        {fetchedLRdata.pickup_point_address2 ? <span>{fetchedLRdata.pickup_point_address2}, </span> : "" }
+                        {fetchedLRdata.pickup_point_area ? <span>{fetchedLRdata.pickup_point_area}, </span> : "" }
+                        {fetchedLRdata.pickup_point_city ? <span>{fetchedLRdata.pickup_point_city}, </span> : "" }
+                        {fetchedLRdata.pickup_point_state ? <span>{fetchedLRdata.pickup_point_state}, </span> : "" }
+                        {fetchedLRdata.pickup_point_pin ? <span>{fetchedLRdata.pickup_point_pin}, </span> : "" }
+                    </span>
                 </div>
                 <div class="from_to item">
-                    <span><b>From: </b>{fetchedLRdata.from_city}</span><br />
-                    <span><b>To: </b>{fetchedLRdata.to_city}</span>
+                    <span><b>From: </b>{fetchedLRdata.pickup_point_location_city}</span><br />
+                    <span><b>To: </b>{fetchedLRdata.drop_point_location_city}</span>
                 </div>
                 <div class="delivery_address item">
-                    <span><b>Delivery Address: {fetchedLRdata.consignee}</b></span><br />
-                    <span>{fetchedLRdata.drop_address}</span>
+                    <span><b>Delivery Address: {fetchedLRdata.consignee_name}</b></span><br />
+                    <span>
+                        {fetchedLRdata.drop_point_address1 ? <span>{fetchedLRdata.drop_point_address1}, </span> : "" }
+                        {fetchedLRdata.drop_point_address2 ? <span>{fetchedLRdata.drop_point_address2}, </span> : "" }
+                        {fetchedLRdata.drop_point_area ? <span>{fetchedLRdata.drop_point_area}, </span> : "" }
+                        {fetchedLRdata.drop_point_city ? <span>{fetchedLRdata.drop_point_city}, </span> : "" }
+                        {fetchedLRdata.drop_point_state ? <span>{fetchedLRdata.drop_point_state}, </span> : "" }
+                        {fetchedLRdata.drop_point_pin ? <span>{fetchedLRdata.drop_point_pin}, </span> : "" }
+                    </span>
                 </div>
                 <div class="consignor item">
-                    <span><b>Consignor: {fetchedLRdata.consignor}</b></span><br />
-                    <span>{fetchedLRdata.pickup_address}</span><br />
+                    <span><b>Consignor: {fetchedLRdata.consignor_name}</b></span><br />
+                    <span>
+                        {fetchedLRdata.pickup_point_address1 ? <span>{fetchedLRdata.pickup_point_address1}, </span> : "" }
+                        {fetchedLRdata.pickup_point_address2 ? <span>{fetchedLRdata.pickup_point_address2}, </span> : "" }
+                        {fetchedLRdata.pickup_point_area ? <span>{fetchedLRdata.pickup_point_area}, </span> : "" }
+                        {fetchedLRdata.pickup_point_city ? <span>{fetchedLRdata.pickup_point_city}, </span> : "" }
+                        {fetchedLRdata.pickup_point_state ? <span>{fetchedLRdata.pickup_point_state}, </span> : "" }
+                        {fetchedLRdata.pickup_point_pin ? <span>{fetchedLRdata.pickup_point_pin}, </span> : "" }
+                    </span><br />
                     <span><b>GST No: </b>{fetchedLRdata.consignor_gst}</span>
                     <span><b> | Ph No: </b>{fetchedLRdata.consignor_phone}</span>
                 </div>
                 <div class="vehicle item">
                     <span><b>Vehical No: </b>{fetchedLRdata.vehical_number}</span><br />
-                    <span><b>Driver: </b>{fetchedLRdata.driver_name}</span><br />
+                    <span><b>Driver: </b>{fetchedLRdata.truck_details}</span><br /> {/* ask what to show here */}
                 </div>
                 <div class="consignee item">
-                    <span><b>Consignee: {fetchedLRdata.consignee}</b></span><br />
-                    <span>{fetchedLRdata.drop_address}</span><br />
+                    <span><b>Consignee: {fetchedLRdata.consignee_name}</b></span><br />
+                    <span>
+                        {fetchedLRdata.drop_point_address1 ? <span>{fetchedLRdata.drop_point_address1}, </span> : "" }
+                        {fetchedLRdata.drop_point_address2 ? <span>{fetchedLRdata.drop_point_address2}, </span> : "" }
+                        {fetchedLRdata.drop_point_area ? <span>{fetchedLRdata.drop_point_area}, </span> : "" }
+                        {fetchedLRdata.drop_point_city ? <span>{fetchedLRdata.drop_point_city}, </span> : "" }
+                        {fetchedLRdata.drop_point_state ? <span>{fetchedLRdata.drop_point_state}, </span> : "" }
+                        {fetchedLRdata.drop_point_pin ? <span>{fetchedLRdata.drop_point_pin}, </span> : "" }
+                    </span> <br />
                     <span><b>GST No: </b>{fetchedLRdata.consignee_gst}</span>
                     <span><b> | Ph No: </b>{fetchedLRdata.consignee_phone}</span>
                 </div>
                 <div class="material_detail item">
                     <span><b>Material Details</b></span><br />
-                    <span>{fetchedLRdata.material_details}</span>
+                    <span>{fetchedLRdata.quantity}</span>
                 </div>
                 <div class="weight item">
                     <span><b>Weight(Kg)</b></span><br />
@@ -207,7 +263,7 @@ const ViewLR = ({ fetchedLRdata }) => {
                     <span><b>Head Office: </b>51 and 52 Sinde Colony, S R P Road, Navapura, Vadodara, Gujarat 390001</span> <br />
                     <span><b>Mobile No: </b>7016229891</span>
                     {/* <span>
-                    <t></t> | <t></t><b>Email: </b>info@raftaarlogistics.com
+                    <t></t> | <t></t><b>Email: </b>margisoni031@gmail.com
                     </span> */}
                     {/* <span>
                     <t></t> | <t></t><b>Website: </b>raftaarlogistics.com
@@ -238,36 +294,64 @@ const ViewLR = ({ fetchedLRdata }) => {
                 <span class="lr_number item"><b>LR Number:</b> {fetchedLRdata.lr_number}</span>
                 <span class="last_modified_date item"><b>Last Modified Date: </b> {fetchedLRdata.lr_last_modified_date ? fetchedLRdata.lr_last_modified_date : fetchedLRdata.lr_created_date}</span>
                 <div class="pickup_address item">
-                    <span><b>Pickup Address: {fetchedLRdata.consignor}</b></span><br />
-                    <span>{fetchedLRdata.pickup_address}</span>
+                    <span><b>Pickup Address: {fetchedLRdata.consignor_name}</b></span><br />
+                    <span>
+                        {fetchedLRdata.pickup_point_address1 ? <span>{fetchedLRdata.pickup_point_address1}, </span> : "" }
+                        {fetchedLRdata.pickup_point_address2 ? <span>{fetchedLRdata.pickup_point_address2}, </span> : "" }
+                        {fetchedLRdata.pickup_point_area ? <span>{fetchedLRdata.pickup_point_area}, </span> : "" }
+                        {fetchedLRdata.pickup_point_city ? <span>{fetchedLRdata.pickup_point_city}, </span> : "" }
+                        {fetchedLRdata.pickup_point_state ? <span>{fetchedLRdata.pickup_point_state}, </span> : "" }
+                        {fetchedLRdata.pickup_point_pin ? <span>{fetchedLRdata.pickup_point_pin}, </span> : "" }
+                    </span>
                 </div>
                 <div class="from_to item">
-                    <span><b>From: </b>{fetchedLRdata.from_city}</span><br />
-                    <span><b>To: </b>{fetchedLRdata.to_city}</span>
+                    <span><b>From: </b>{fetchedLRdata.pickup_point_location_city}</span><br />
+                    <span><b>To: </b>{fetchedLRdata.drop_point_location_city}</span>
                 </div>
                 <div class="delivery_address item">
-                    <span><b>Delivery Address: {fetchedLRdata.consignee}</b></span><br />
-                    <span>{fetchedLRdata.drop_address}</span>
+                    <span><b>Delivery Address: {fetchedLRdata.consignee_name}</b></span><br />
+                    <span>
+                        {fetchedLRdata.drop_point_address1 ? <span>{fetchedLRdata.drop_point_address1}, </span> : "" }
+                        {fetchedLRdata.drop_point_address2 ? <span>{fetchedLRdata.drop_point_address2}, </span> : "" }
+                        {fetchedLRdata.drop_point_area ? <span>{fetchedLRdata.drop_point_area}, </span> : "" }
+                        {fetchedLRdata.drop_point_city ? <span>{fetchedLRdata.drop_point_city}, </span> : "" }
+                        {fetchedLRdata.drop_point_state ? <span>{fetchedLRdata.drop_point_state}, </span> : "" }
+                        {fetchedLRdata.drop_point_pin ? <span>{fetchedLRdata.drop_point_pin}, </span> : "" }
+                    </span>
                 </div>
                 <div class="consignor item">
-                    <span><b>Consignor: {fetchedLRdata.consignor}</b></span><br />
-                    <span>{fetchedLRdata.pickup_address}</span><br />
+                    <span><b>Consignor: {fetchedLRdata.consignor_name}</b></span><br />
+                    <span>
+                        {fetchedLRdata.pickup_point_address1 ? <span>{fetchedLRdata.pickup_point_address1}, </span> : "" }
+                        {fetchedLRdata.pickup_point_address2 ? <span>{fetchedLRdata.pickup_point_address2}, </span> : "" }
+                        {fetchedLRdata.pickup_point_area ? <span>{fetchedLRdata.pickup_point_area}, </span> : "" }
+                        {fetchedLRdata.pickup_point_city ? <span>{fetchedLRdata.pickup_point_city}, </span> : "" }
+                        {fetchedLRdata.pickup_point_state ? <span>{fetchedLRdata.pickup_point_state}, </span> : "" }
+                        {fetchedLRdata.pickup_point_pin ? <span>{fetchedLRdata.pickup_point_pin}, </span> : "" }
+                    </span><br />
                     <span><b>GST No: </b>{fetchedLRdata.consignor_gst}</span>
                     <span><b> | Ph No: </b>{fetchedLRdata.consignor_phone}</span>
                 </div>
                 <div class="vehicle item">
                     <span><b>Vehical No: </b>{fetchedLRdata.vehical_number}</span><br />
-                    <span><b>Driver: </b>{fetchedLRdata.driver_name}</span><br />
+                    <span><b>Driver: </b>{fetchedLRdata.truck_details}</span><br /> {/* ask what to show here */}
                 </div>
                 <div class="consignee item">
-                    <span><b>Consignee: {fetchedLRdata.consignee}</b></span><br />
-                    <span>{fetchedLRdata.drop_address}</span><br />
+                    <span><b>Consignee: {fetchedLRdata.consignee_name}</b></span><br />
+                    <span>
+                        {fetchedLRdata.drop_point_address1 ? <span>{fetchedLRdata.drop_point_address1}, </span> : "" }
+                        {fetchedLRdata.drop_point_address2 ? <span>{fetchedLRdata.drop_point_address2}, </span> : "" }
+                        {fetchedLRdata.drop_point_area ? <span>{fetchedLRdata.drop_point_area}, </span> : "" }
+                        {fetchedLRdata.drop_point_city ? <span>{fetchedLRdata.drop_point_city}, </span> : "" }
+                        {fetchedLRdata.drop_point_state ? <span>{fetchedLRdata.drop_point_state}, </span> : "" }
+                        {fetchedLRdata.drop_point_pin ? <span>{fetchedLRdata.drop_point_pin}, </span> : "" }
+                    </span> <br />
                     <span><b>GST No: </b>{fetchedLRdata.consignee_gst}</span>
                     <span><b> | Ph No: </b>{fetchedLRdata.consignee_phone}</span>
                 </div>
                 <div class="material_detail item">
                     <span><b>Material Details</b></span><br />
-                    <span>{fetchedLRdata.material_details}</span>
+                    <span>{fetchedLRdata.quantity}</span>
                 </div>
                 <div class="weight item">
                     <span><b>Weight(Kg)</b></span><br />
