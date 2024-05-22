@@ -19,7 +19,12 @@ const Index = () => {
     const router = useRouter();
     const id = router.query.id;
     const isEmployer = ["SUPER_ADMIN", "ADMIN", "MEMBER"].includes(user.role);
-    const [fetchedInvoicedata, setFetchedInvoicedata] = useState({});
+    const [fetchedInvoiceData, setFetchedInvoiceData] = useState({});
+    const [fetchedOrderData, setFetchedOrderData] = useState({});
+    const [fetchedLrData, setFetchedLrData] = useState([]);
+    const [fetchedClientData, setFetchedClientData] = useState({});
+
+    const [checkedAllStates, setCheckedAllStates] = useState(false);
 
     async function savePDF() {
         var element = document.getElementById("export-invoice");
@@ -49,6 +54,7 @@ const Index = () => {
     };
 
     const fetchInvoice = async () => {
+        // fetch order, invoice, lr for all required details to show in invoice
         try {
             if (id) {
                 const { data: invoiceData, error } = await supabase
@@ -63,7 +69,45 @@ const Index = () => {
                         (invoice) =>
                             (invoice.invoice_created_at = dateFormat(invoice.invoice_created_at))
                     );
-                    setFetchedInvoicedata(invoiceData[0]);
+                    setFetchedInvoiceData(invoiceData[0]);
+
+                    // fetch order data
+                    const { data: orderData, error } = await supabase
+                        .from("orders")
+                        .select("*")
+
+                        // Filters
+                        .eq("order_id", invoiceData[0].order_id);
+                    
+                    if (orderData) {
+                        setFetchedOrderData(orderData[0]);
+                    }
+
+                    // fetch lr data
+                    const { data: lrData, error: lrError } = await supabase
+                        .from("lr")
+                        .select("*")
+
+                        // Filters
+                        .eq("order_id", orderData[0].order_id)
+                        .order("lr_created_date", { ascending: true });
+                    
+                    if (lrData) {
+                        setFetchedLrData(lrData);
+                    }
+
+                    // fetch order data
+                    const { data: clientData, error: clientError } = await supabase
+                        .from("client")
+                        .select("*")
+
+                        // Filters
+                        .eq("client_number", orderData[0].client_number);
+                    
+                    if (clientData) {
+                        setFetchedClientData(clientData[0]);
+                    }
+
                 }
             }
         } catch (e) {
@@ -88,14 +132,21 @@ const Index = () => {
         fetchInvoice();
     }, [id]);
 
+    useEffect(() => {
+        setCheckedAllStates(true);
+    }, [(Object.keys(fetchedInvoiceData).length !== 0 && 
+        Object.keys(fetchedOrderData).length !== 0 && 
+        fetchedLrData.length !== 0 && 
+        Object.keys(fetchedClientData).length !== 0)]);
+
     return (
         <>
             <section>
                 <div className="auto-container pb-2">
                     <span className="px-1"></span>
-                    <Link href="/employers-dashboard/billing" className="btn btn-danger btn-md text-nowrap">
-                        Back to Billing
-                    </Link>
+                    <button onClick={() => {window.history.back()}} className="btn btn-danger btn-md text-nowrap"> {/*"/employers-dashboard/billing" */}
+                        Back
+                    </button>
                     <span className="px-2"></span>
                     <button className="btn btn-success btn-md text-nowrap" onClick={() => savePDF()}>
                         Export to PDF
@@ -103,7 +154,7 @@ const Index = () => {
                 </div>
                 {/* End auto-container */}
 
-                {fetchedInvoicedata ? 
+                { checkedAllStates ? 
                     <div id="export-invoice">
                         <div className="auto-container">
                             <div className="invoice-wrap">
@@ -115,13 +166,13 @@ const Index = () => {
                                         <div>
                                             <Container className="custom-border">
                                                 <Row className="custom-border">
-                                                    <Col className="invoice-id"> Invoice # <b>{fetchedInvoicedata.invoice_number}</b></Col>
+                                                    <Col className="invoice-id"> Invoice # <b>{fetchedInvoiceData.invoice_number}</b></Col>
                                                 </Row>
                                                 <Row className="custom-border">
                                                     <Col>
                                                         <span> Invoice date: </span>
                                                         <b>
-                                                            { fetchedInvoicedata.invoice_date ? convertToFullDateFormat(fetchedInvoicedata.invoice_date, true) : "" }
+                                                            { fetchedInvoiceData.invoice_date ? convertToFullDateFormat(fetchedInvoiceData.invoice_date, true) : "" }
                                                         </b>
                                                 </Col>
                                                 </Row>
@@ -130,11 +181,21 @@ const Index = () => {
                                     </div>
                                     {/* End logobox */}
 
-                                    <InfoBox fetchedInvoicedata={ fetchedInvoicedata } />
+                                    <InfoBox
+                                        fetchedInvoiceData={ fetchedInvoiceData }
+                                        fetchedClientData={ fetchedClientData }
+                                        fetchedOrderData={ fetchedOrderData }
+                                        fetchedLrData={ fetchedLrData }
+                                    />
                                     {/* End infobox */}
 
                                     <div className="table-outer">
-                                        <ViewInvoice fetchedInvoicedata={ fetchedInvoicedata } />
+                                        <ViewInvoice
+                                            fetchedInvoiceData={ fetchedInvoiceData }
+                                            fetchedClientData={ fetchedClientData }
+                                            fetchedOrderData={ fetchedOrderData }
+                                            fetchedLrData={ fetchedLrData }
+                                        />
                                     </div>
                                 </div>
 

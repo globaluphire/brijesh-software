@@ -442,12 +442,6 @@ const OpenOrderProcess = () => {
                 clientNumberError: true
             }));
         }
-        if(!selectedOpenOrderdata.eway_number) {
-            setInvoiceErrors((previousState) => ({
-                ...previousState,
-                ewayBillNumberError: true
-            }));
-        }
         if(!selectedOpenOrderdata.pickup_location) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
@@ -464,12 +458,6 @@ const OpenOrderProcess = () => {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 materialError: true
-            }));
-        }
-        if(!selectedOpenOrderdata.quantity) {
-            setInvoiceErrors((previousState) => ({
-                ...previousState,
-                quantityError: true
             }));
         }
         if(!selectedOpenOrderdata.quantity) {
@@ -495,7 +483,6 @@ const OpenOrderProcess = () => {
             // order data
             selectedOpenOrderdata.order_id &&
             selectedOpenOrderdata.client_number &&
-            selectedOpenOrderdata.eway_number &&
             selectedOpenOrderdata.pickup_location &&
             selectedOpenOrderdata.drop_location &&
             selectedOpenOrderdata.material &&

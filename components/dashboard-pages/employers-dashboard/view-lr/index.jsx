@@ -50,7 +50,7 @@ const index = () => {
         try {
             if (id) {
                 const { data: lrData, error } = await supabase
-                    .from("lr")
+                    .from("lr_view")
                     .select("*")
 
                     // Filters
@@ -60,6 +60,10 @@ const index = () => {
                     lrData.forEach(
                         (lr) =>
                             (lr.lr_created_date = dateFormat(lr.lr_created_date))
+                    );
+                    lrData.forEach(
+                        (lr) =>
+                            (lr.lr_last_modified_date = dateFormat(lr.lr_last_modified_date))
                     );
                     setFetchedLRdata(lrData[0]);
                 }
