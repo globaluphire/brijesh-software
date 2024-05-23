@@ -188,7 +188,7 @@ const OrderDetails = (orderDetails) => {
         setIsLoading(true);
         setLoadingText("Order is cancelling...");
         if (cancelOrderData.cancelReason && cancelOrderData.cancelNote && fetchedOrderData.status !== "Completed") {
-            const {data, error} = await supabase
+            const { data, error } = await supabase
                 .from("orders")
                 .update({
                     status: "Cancel",
@@ -252,7 +252,7 @@ const OrderDetails = (orderDetails) => {
         if(fetchedOrderData.status !== "Cancel") {
             if(fetchedOrderData.status !== "Completed") {
                 if(orderComment) {
-                    const{data, error} = await supabase
+                    const{ data, error } = await supabase
                             .from("order_comments")
                             .insert([
                                 {
@@ -338,7 +338,7 @@ const OrderDetails = (orderDetails) => {
         if(fetchedOrderData.status !== "Cancel") {
             if (fetchedOrderData.status !== "Completed") {
                 if(newStatus !== "N/A") {
-                    const{data, error} = await supabase
+                    const{ data, error } = await supabase
                             .from("orders")
                             .update({
                                 status: newStatus,
@@ -421,7 +421,7 @@ const OrderDetails = (orderDetails) => {
         if(fetchedOrderData.status !== "Cancel") {
             if(fetchedOrderData.status !== "Completed") {
                 if(newEwayNumber) {
-                    const{data, error} = await supabase
+                    const{ data, error } = await supabase
                             .from("orders")
                             .update({
                                 eway_number: newEwayNumber,
@@ -506,7 +506,7 @@ const OrderDetails = (orderDetails) => {
         if(fetchedOrderData.status !== "Cancel") {
             if (fetchedOrderData.status !== "Completed") {
                 if(newCompanyName) {
-                    const{data, error} = await supabase
+                    const{ data, error } = await supabase
                             .from("orders")
                             .update({
                                 company_name: newCompanyName,
@@ -589,7 +589,7 @@ const OrderDetails = (orderDetails) => {
         if(fetchedOrderData.status !== "Cancel") {
             if (fetchedOrderData.status !== "Completed") {
                 if(newLocalTransport) {
-                    const{data, error} = await supabase
+                    const{ data, error } = await supabase
                             .from("orders")
                             .update({
                                 local_transport: newLocalTransport,
@@ -672,7 +672,7 @@ const OrderDetails = (orderDetails) => {
         if(fetchedOrderData.status !== "Cancel") {
             if (fetchedOrderData.status !== "Completed") {
                 if(newTruckDetails) {
-                    const{data, error} = await supabase
+                    const{ data, error } = await supabase
                             .from("orders")
                             .update({
                                 truck_details: newTruckDetails,

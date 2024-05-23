@@ -8,7 +8,7 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { showFormattedDate } from "../../utils/showFormattedDate";
 
-const CalendarComp = ({ setDate, date1 }) => {
+const CalendarComp = ({ setDate, date1, dateDisabled }) => {
 
   // date state
   // const [calendar, setCalendar] = useState(new Date());
@@ -68,6 +68,7 @@ const CalendarComp = ({ setDate, date1 }) => {
         readOnly
         className="inputBox"
         onClick={ () => setOpen(open => !open) }
+        disabled={dateDisabled}
       />
 
       <div ref={refOne}>

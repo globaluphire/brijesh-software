@@ -45,6 +45,7 @@ const AddOrder = () => {
     const [isLRGenerating, setIsLRGenerating] = useState(false);
     const user = useSelector((state) => state.candidate.user);
     const [pickupDate, setPickupDate] = useState(new Date());
+    const [dateDisabled, setDateDisabled] = useState(true);
     const [isLocationSaved, setIsLocationSaved] = useState(false);
     const [isLocationContactSaved, setIsLocationContactSaved] = useState(false);
     const [isLocationContactType, setIsLocationContactType] = useState("");
@@ -850,7 +851,7 @@ const AddOrder = () => {
                         <Row className="mb-3">
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
                                 <Form.Label>Pickup Date</Form.Label><br />
-                                <CalendarComp setDate={setPickupDate} date1={pickupDate} />
+                                <CalendarComp setDate={setPickupDate} date1={pickupDate} dateDisabled={dateDisabled} />
                             </Form.Group>
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
                                 <Form.Label>Pickup Location</Form.Label>
