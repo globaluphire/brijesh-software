@@ -1025,7 +1025,7 @@ const OldLR = () => {
                                                 Export to CSV
                                             </CSVLink>
                                         : "" }
-                                        { user.id === "NnxOeP2axndJjCYRX74985oipdo2" ?
+                                        {/* { user.id === "NnxOeP2axndJjCYRX74985oipdo2" ? */}
                                             <Button
                                                 variant="success"
                                                 onClick={() => Router.push("/employers-dashboard/add-lr")}
@@ -1033,7 +1033,7 @@ const OldLR = () => {
                                             >
                                                 Add LR
                                             </Button>
-                                        : "" }
+                                        {/* : "" } */}
                                     </Form.Group>
                                 </Col>
                             </Row>
