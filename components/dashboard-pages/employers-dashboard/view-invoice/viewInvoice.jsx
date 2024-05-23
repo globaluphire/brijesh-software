@@ -52,7 +52,7 @@ const ViewInvoice = ({ fetchedInvoiceData, fetchedClientData, fetchedOrderData, 
                         <Row>
                             <Col md={1} className="custom-border">1</Col>
                             <Col md={5} className="custom-border">
-                                <b>{fetchedLrData.length > 0 ? fetchedLrData[1].vehical_number : ""}</b> <br />
+                                <b>{fetchedLrData.length > 0 ? fetchedLrData[0].vehical_number : ""}</b> <br />
                                 <div className="px-2 pb-1 line-height-shrink">
                                     <span className="optional">{fetchedOrderData.pickup_location} to {fetchedOrderData.drop_location}</span> <br />
                                     <span className="optional">{fetchedOrderData.quantity}</span> <br />

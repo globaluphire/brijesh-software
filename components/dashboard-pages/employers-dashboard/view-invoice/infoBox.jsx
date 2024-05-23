@@ -57,26 +57,12 @@ const infoBox = ({ fetchedInvoiceData, fetchedClientData, fetchedOrderData, fetc
                                 <Row>
                                     <Col className="custom-border">Vehicle No. <br />
                                         <b>
-                                            {Array.from(fetchedLrData).map(
-                                                (lr) => (
-                                                    <Row>
-                                                        <b>
-                                                            {lr.vehical_number}
-                                                        </b>
-                                                    </Row>
-                                            ))}
+                                            {fetchedLrData.length > 0 ? fetchedLrData[0].vehical_number : ""}
                                         </b>
                                     </Col>
                                     <Col className="custom-border">Bill of Lading/LR-RR No. <br />
                                         <b>
-                                            {Array.from(fetchedLrData).map(
-                                                (lr) => (
-                                                    <Row>
-                                                        <b>
-                                                            {lr.lr_number}
-                                                        </b>
-                                                    </Row>
-                                            ))}
+                                            {fetchedLrData.length > 0 ? fetchedLrData[0].lr_number : ""}
                                         </b>
                                     </Col>
                                 </Row>

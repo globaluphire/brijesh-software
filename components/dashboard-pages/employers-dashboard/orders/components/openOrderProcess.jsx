@@ -960,8 +960,7 @@ const OpenOrderProcess = () => {
                         <thead>
                             <tr>
                                 <th>Action</th>
-                                <th>Created On</th>
-                                <th>Updated On</th>
+                                <th><span>Created</span> <br /> <span>/Updated On</span></th>
                                 <th>Pickup Date</th>
                                 <th>ERP Order No</th>
                                 <th>LR No</th>
@@ -969,8 +968,6 @@ const OpenOrderProcess = () => {
                                 <th>Status</th>
                                 <th>Comment</th>
                                 <th>Client Name</th>
-                                <th>Pickup Point</th>
-                                <th>Drop Point</th>
                                 <th>Company</th>
                                 <th>Total Weight</th>
                                 <th>Order Details</th>
@@ -1027,10 +1024,8 @@ const OpenOrderProcess = () => {
                                                 </div>
                                             </td>
                                             <td>
-                                                {order.order_created_at}
-                                            </td>
-                                            <td>
-                                                {order.order_updated_at ? order.order_updated_at : order.order_created_at}
+                                                <span>{order.order_created_at}</span> <br />
+                                                <span className="optional">{order.order_updated_at ? order.order_updated_at : order.order_created_at}</span>
                                             </td>
                                             <td>
                                                 {convertToFullDateFormat(order.pickup_date, false)}
@@ -1106,12 +1101,6 @@ const OpenOrderProcess = () => {
                                             </td>
                                             <td>
                                                 { order.client_name ? order.client_name : "-" }
-                                            </td>
-                                            <td>
-                                                {order.pickup_point_name ? order.pickup_point_name : "-" }
-                                            </td>
-                                            <td>
-                                                {order.dropping_point_name ? order.dropping_point_name : "-" }
                                             </td>
                                             <td>
                                                 {order.company_name ? order.company_name : "-" }
