@@ -1175,7 +1175,7 @@ const LRDetails = (orderDetails) => {
                         drop_location: dropCitySelection[0],
                         order_updated_at: new Date()
                     })
-                    .eq("order_id", fetchedLRData.order_id)
+                    .eq("order_id", fetchedLRData.order_id);
                     // .select(); // this will return the updated record in object
 
                 const { data: updatedLRData, error: updatedLRError } = await supabase
