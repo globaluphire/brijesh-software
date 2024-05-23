@@ -270,7 +270,7 @@ const AddClientPopup = ({
             } else if (isConsignee) {
                 setLoadingText("New Consignee is saving...");
             } else {
-                setLoadingText("New Client is saving...")
+                setLoadingText("New Client is saving...");
             }
             try {
                 // Generate client number

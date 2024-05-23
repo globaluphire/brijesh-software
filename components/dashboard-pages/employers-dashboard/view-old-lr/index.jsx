@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 import { supabase } from "../../../../config/supabaseClient";
 import InfoBox from "./InfoBox";
 import ViewOldLR from "./ViewOldLR";
-import ViewLR from "./ViewOldLR";
 
 const index = () => {
 
