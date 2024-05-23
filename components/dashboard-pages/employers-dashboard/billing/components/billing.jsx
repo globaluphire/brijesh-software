@@ -123,8 +123,6 @@ const Billing = () => {
     };
 
     async function findInvoice(searchInvoiceDateFrom, searchInvoiceDateTo, searchFilters) {
-        localStorage.setItem("billingCompanyName", searchFilters.clientName);
-
         let query = supabase
             .from("invoice")
             .select("*")
@@ -175,15 +173,6 @@ const Billing = () => {
         status
     }) {
         try {
-            var searchBillingCompanyName = localStorage.getItem("billingCompanyName");
-
-            if(searchBillingCompanyName) {
-                setSearchFilters((previousState) => ({
-                    ...previousState,
-                    clientName: searchBillingCompanyName
-                }));
-            }
-
             // call reference to get lrStatus options
             const { data, error: e } = await supabase
                 .from("reference")
@@ -193,19 +182,10 @@ const Billing = () => {
             if (data) {
                 setInvoiceStatusReferenceOptions(data);
             }
-            let query
-            if(searchBillingCompanyName) {
-                query = supabase
-                    .from("invoice")
-                    .select("*")
-                    .lt("invoice_created_at", "2024-06-01")
-                    .ilike("company_name", "%" + searchBillingCompanyName + "%");
-            } else {
-                query = supabase
-                    .from("invoice")
-                    .select("*")
-                    .lt("invoice_created_at", "2024-06-01");
-            }
+
+            let query = supabase
+                .from("invoice")
+                .select("*");
 
             // if (name) {
             //     query.ilike("name", "%" + name + "%");
