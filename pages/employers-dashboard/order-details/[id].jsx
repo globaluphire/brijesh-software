@@ -20,6 +20,7 @@ import DefaulHeader2 from "../../../components/header/DefaulHeader2";
 import EditJobView from "../../../components/dashboard-pages/employers-dashboard/edit-job/components/EditJobView";
 import { supabase } from "../../../config/supabaseClient";
 import { Button, Col, Collapse, Container, Form, InputGroup, Row, Table } from "react-bootstrap";
+import Spinner from "../../../components/spinner/spinner";
 
 
 const cancelOrderDataFields = {
@@ -30,6 +31,8 @@ const cancelOrderDataFields = {
 const OrderDetails = (orderDetails) => {
     const user = useSelector((state) => state.candidate.user);
     const showLoginButton = useMemo(() => !user?.id, [user]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadingText, setLoadingText] = useState("Order Details are loading...");
     const [fetchedOrderData, setFetchedOrderData] = useState({});
     const [fetchedOrderCommentData, setFetchedOrderCommentData] = useState([]);
     const [ewayBillVerified, setEwayBillVerified] = useState(false);
@@ -123,7 +126,16 @@ const OrderDetails = (orderDetails) => {
                                 (orderComment) => (orderComment.order_comment_created_at = dateFormat(orderComment.order_comment_created_at))
                             );
                             setFetchedOrderCommentData(orderCommentData);
+                        } else {
+                            setIsLoading(false);
+                            setLoadingText("");
                         }
+
+                    setIsLoading(false);
+                    setLoadingText("");
+                } else {
+                    setIsLoading(false);
+                    setLoadingText("");
                 }
             }
         } catch (e) {
@@ -145,6 +157,7 @@ const OrderDetails = (orderDetails) => {
     };
 
     const fetchOrderCommentData = async () => {
+        setIsLoading(true);
         const { data: orderCommentData, error: e } = await supabase
             .from("order_comments_view")
             .select("*")
@@ -158,6 +171,12 @@ const OrderDetails = (orderDetails) => {
                     (orderComment) => (orderComment.order_comment_created_at = dateFormat(orderComment.order_comment_created_at))
                 );
                 setFetchedOrderCommentData(orderCommentData);
+
+                setIsLoading(false);
+                setLoadingText("");
+            } else {
+                setIsLoading(false);
+                setLoadingText("");
             }
     };
 
@@ -166,8 +185,10 @@ const OrderDetails = (orderDetails) => {
     }, [id]);
 
     const cancelOrder = async (cancelOrderData) => {
+        setIsLoading(true);
+        setLoadingText("Order is cancelling...");
         if (cancelOrderData.cancelReason && cancelOrderData.cancelNote && fetchedOrderData.status !== "Completed") {
-            await supabase
+            const {data, error} = await supabase
                 .from("orders")
                 .update({
                     status: "Cancel",
@@ -176,25 +197,40 @@ const OrderDetails = (orderDetails) => {
                     order_updated_at: new Date(),
                     cancel_date: new Date()
                 })
-                .eq("order_id", id);
+                .eq("order_id", id)
+                .select();
 
-            
-            setTimeout(() => {
+            if (data) {
                 document.getElementById("cancelOrderCloseButton").click();
                 fetchOrderData();
-            }, 3000);
+                setCancelOrderData(JSON.parse(JSON.stringify(cancelOrderDataFields)));
+                toast.success("Order cancelled successfully!", {
+                    position: "bottom-right",
+                    autoClose: 8000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
 
-            toast.success("Order cancelled successfully!", {
-                position: "bottom-right",
-                autoClose: 8000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
-
+                setIsLoading(false);
+                setLoadingText("");
+            } else {
+                toast.error("Error while Cancelling Order. Please try again later or contact tech support", {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+                setIsLoading(false);
+                setLoadingText("");
+            }
         } else {
             toast.error("Please fill all fields to cancel this order!!!", {
                 position: "bottom-right",
@@ -206,42 +242,55 @@ const OrderDetails = (orderDetails) => {
                 progress: undefined,
                 theme: "colored",
             });
-
+            setIsLoading(false);
+            setLoadingText("");
         }
     };
 
     const addOrderComment = async (orderComment) => {
+        setIsLoading(true);
         if(fetchedOrderData.status !== "Cancel") {
             if(fetchedOrderData.status !== "Completed") {
                 if(orderComment) {
-                    await supabase
-                        .from("order_comments")
-                        .insert([
-                            {
-                                order_comment: orderComment,
-                                order_number: fetchedOrderData.order_number,
-                                user_id: user.id,
-                                order_id: fetchedOrderData.order_id
-                            }
-                        ]);
-                    
-                    setTimeout(() => {
+                    const{data, error} = await supabase
+                            .from("order_comments")
+                            .insert([
+                                {
+                                    order_comment: orderComment,
+                                    order_number: fetchedOrderData.order_number,
+                                    user_id: user.id,
+                                    order_id: fetchedOrderData.order_id
+                                }
+                            ])
+                            .select();;
+                    if(data) {
                         document.getElementById("orderCommentCloseButton").click();
-                        fetchOrderCommentData();
-                    }, 3000);
-
-                    toast.success("Order Comment Successfully Added!", {
-                        position: "bottom-right",
-                        autoClose: 8000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
-
-
+                        fetchOrderData();
+                        setOrderComment("");
+                        toast.success("Order Comment Successfully Added!", {
+                            position: "bottom-right",
+                            autoClose: 8000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        setIsLoading(false);
+                    } else {
+                        toast.error("Error while saving Order Comment!", {
+                            position: "bottom-right",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        setIsLoading(false);
+                    }
                 } else {
                     toast.error("Please fill all fields!!!", {
                         position: "bottom-right",
@@ -254,6 +303,7 @@ const OrderDetails = (orderDetails) => {
                         theme: "colored",
                     });
 
+                    setIsLoading(false);
                 }
             } else {
                     toast.info("This order is already Completed! No further status updates needed.", {
@@ -266,6 +316,7 @@ const OrderDetails = (orderDetails) => {
                         progress: undefined,
                         theme: "colored",
                     });
+                    setIsLoading(false);
                 }
         } else {
             toast.info("This order is already Cancelled! You cannot change the status.", {
@@ -278,35 +329,51 @@ const OrderDetails = (orderDetails) => {
                 progress: undefined,
                 theme: "colored",
             });
+            setIsLoading(false);
         }
     };
 
     const updateOrderStatus = async (newStatus) => {
+        setIsLoading(true);
         if(fetchedOrderData.status !== "Cancel") {
             if (fetchedOrderData.status !== "Completed") {
                 if(newStatus !== "N/A") {
-                    await supabase
-                        .from("orders")
-                        .update({
-                            status: newStatus,
-                            status_last_updated_at: new Date()
-                        })
-                        .eq("order_id", id);
+                    const{data, error} = await supabase
+                            .from("orders")
+                            .update({
+                                status: newStatus,
+                                status_last_updated_at: new Date()
+                            })
+                            .eq("order_id", id)
+                            .select();
                     
-                    setTimeout(() => {
+                    if(data) {
                         fetchOrderData();
-                    }, 3000);
+                        toast.success("Order status marked as " + newStatus, {
+                            position: "bottom-right",
+                            autoClose: 8000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
 
-                    toast.success("Order status marked as " + newStatus, {
-                        position: "bottom-right",
-                        autoClose: 8000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
+                        setIsLoading(false);
+                    } else {
+                        toast.error("Error while Saving Order Status!", {
+                            position: "bottom-right",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        setIsLoading(false);
+                    }
                 } else {
                     toast.info("This order is already Completed! No further status updates needed.", {
                         position: "top-center",
@@ -318,6 +385,7 @@ const OrderDetails = (orderDetails) => {
                         progress: undefined,
                         theme: "colored",
                     });
+                    setIsLoading(false);
                 }
             } else {
                 toast.info("This order is already Completed! No further status updates needed.", {
@@ -330,6 +398,7 @@ const OrderDetails = (orderDetails) => {
                     progress: undefined,
                     theme: "colored",
                 });
+                setIsLoading(false);
             }
         } else {
             toast.info("This order is already Cancelled! You cannot change the status.", {
@@ -342,37 +411,55 @@ const OrderDetails = (orderDetails) => {
                 progress: undefined,
                 theme: "colored",
             });
+            setIsLoading(false);
         }
     };
 
     const updateEwayBillNumber = async (newEwayNumber, isVerified) => {
+        setIsLoading(true);
+
         if(fetchedOrderData.status !== "Cancel") {
             if(fetchedOrderData.status !== "Completed") {
                 if(newEwayNumber) {
-                    await supabase
-                        .from("orders")
-                        .update({
-                            eway_number: newEwayNumber,
-                            eway_verified: isVerified,
-                            order_updated_at: new Date()
-                        })
-                        .eq("order_id", id);
-                    
-                    setTimeout(() => {
+                    const{data, error} = await supabase
+                            .from("orders")
+                            .update({
+                                eway_number: newEwayNumber,
+                                eway_verified: isVerified,
+                                order_updated_at: new Date()
+                            })
+                            .eq("order_id", id)
+                            .select();
+
+                    if(data) {
                         document.getElementById("ewayNumberModalCloseButton").click();
                         fetchOrderData();
-                    }, 3000);
-
-                    toast.success("Eway Bill Number saved successfully.", {
-                        position: "bottom-right",
-                        autoClose: 8000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
+                        setEwayBillNumber("");
+                        setEwayBillVerified(false);
+                        toast.success("Eway Bill Number saved successfully.", {
+                            position: "bottom-right",
+                            autoClose: 8000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        setIsLoading(false);
+                    } else {
+                        toast.error("Error while saving Order Eway Bill Number!", {
+                            position: "bottom-right",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        setIsLoading(false);
+                    }
                 } else {
                     toast.error("Please fill Eway Bill Number!!!", {
                         position: "bottom-right",
@@ -384,6 +471,7 @@ const OrderDetails = (orderDetails) => {
                         progress: undefined,
                         theme: "colored",
                     });
+                    setIsLoading(false);
                 }
             } else {
                 toast.info("This order is already Completed! You cannot change the status.", {
@@ -396,6 +484,7 @@ const OrderDetails = (orderDetails) => {
                     progress: undefined,
                     theme: "colored",
                 });
+                setIsLoading(false);
             }
         } else {
             toast.info("This order is already Cancelled! You cannot change the status.", {
@@ -408,36 +497,52 @@ const OrderDetails = (orderDetails) => {
                 progress: undefined,
                 theme: "colored",
             });
+            setIsLoading(false);
         }
     };
 
     const updateCompanyName = async (newCompanyName) => {
+        setIsLoading(true);
         if(fetchedOrderData.status !== "Cancel") {
             if (fetchedOrderData.status !== "Completed") {
                 if(newCompanyName) {
-                    await supabase
-                        .from("orders")
-                        .update({
-                            company_name: newCompanyName,
-                            order_updated_at: new Date()
-                        })
-                        .eq("order_id", id);
+                    const{data, error} = await supabase
+                            .from("orders")
+                            .update({
+                                company_name: newCompanyName,
+                                order_updated_at: new Date()
+                            })
+                            .eq("order_id", id)
+                            .select();
 
-                    setTimeout(() => {
+                    if(data) {
                         document.getElementById("companyNameModalCloseButton").click();
                         fetchOrderData();
-                    }, 3000);
-
-                    toast.success("Company Name saved successfully.", {
-                        position: "bottom-right",
-                        autoClose: 8000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
+                        setCompanyName("");
+                        toast.success("Company Name saved successfully.", {
+                            position: "bottom-right",
+                            autoClose: 8000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        setIsLoading(false);
+                    } else {
+                        toast.error("Error while saving Company Name!!!", {
+                            position: "bottom-right",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        setIsLoading(false);
+                    }
                 } else {
                     toast.error("Please fill Company Name!!!", {
                         position: "bottom-right",
@@ -449,6 +554,7 @@ const OrderDetails = (orderDetails) => {
                         progress: undefined,
                         theme: "colored",
                     });
+                    setIsLoading(false);
                 }
             } else {
                 toast.info("This order is already Completed! No further status updates needed.", {
@@ -461,6 +567,7 @@ const OrderDetails = (orderDetails) => {
                     progress: undefined,
                     theme: "colored",
                 });
+                setIsLoading(false);
             }
         } else {
             toast.info("This order is already Cancelled! You cannot change the status.", {
@@ -473,36 +580,52 @@ const OrderDetails = (orderDetails) => {
                 progress: undefined,
                 theme: "colored",
             });
+            setIsLoading(false);
         }
     };
 
     const updateLocalTransport = async (newLocalTransport) => {
+        setIsLoading(true);
         if(fetchedOrderData.status !== "Cancel") {
             if (fetchedOrderData.status !== "Completed") {
                 if(newLocalTransport) {
-                    await supabase
-                        .from("orders")
-                        .update({
-                            local_transport: newLocalTransport,
-                            order_updated_at: new Date()
-                        })
-                        .eq("order_id", id);
+                    const{data, error} = await supabase
+                            .from("orders")
+                            .update({
+                                local_transport: newLocalTransport,
+                                order_updated_at: new Date()
+                            })
+                            .eq("order_id", id)
+                            .select();
 
-                    setTimeout(() => {
+                    if(data) {
                         document.getElementById("localTransportModalCloseButton").click();
                         fetchOrderData();
-                    }, 3000);
-
-                    toast.success("Local Transport saved successfully.", {
-                        position: "bottom-right",
-                        autoClose: 8000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
+                        setLocalTransport("");
+                        toast.success("Local Transport saved successfully.", {
+                            position: "bottom-right",
+                            autoClose: 8000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        setIsLoading(false);
+                    } else {
+                        toast.error("Error while saving Local Transport!!!", {
+                            position: "bottom-right",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        setIsLoading(false);
+                    }
                 } else {
                     toast.error("Please fill Local Transport!!!", {
                         position: "bottom-right",
@@ -514,6 +637,7 @@ const OrderDetails = (orderDetails) => {
                         progress: undefined,
                         theme: "colored",
                     });
+                    setIsLoading(false);
                 }
             } else {
                 toast.info("This order is already Completed! No further status updates needed.", {
@@ -526,6 +650,7 @@ const OrderDetails = (orderDetails) => {
                     progress: undefined,
                     theme: "colored",
                 });
+                setIsLoading(false);
             }
         } else {
             toast.info("This order is already Cancelled! You cannot change the status.", {
@@ -538,36 +663,53 @@ const OrderDetails = (orderDetails) => {
                 progress: undefined,
                 theme: "colored",
             });
+            setIsLoading(false);
         }
     };
 
     const updateTruckDetails = async (newTruckDetails) => {
+        setIsLoading(true);
         if(fetchedOrderData.status !== "Cancel") {
             if (fetchedOrderData.status !== "Completed") {
                 if(newTruckDetails) {
-                    await supabase
-                        .from("orders")
-                        .update({
-                            truck_details: newTruckDetails,
-                            order_updated_at: new Date()
-                        })
-                        .eq("order_id", id);
+                    const{data, error} = await supabase
+                            .from("orders")
+                            .update({
+                                truck_details: newTruckDetails,
+                                order_updated_at: new Date()
+                            })
+                            .eq("order_id", id)
+                            .select();
 
-                    setTimeout(() => {
+                    if(data) {
                         document.getElementById("truckDetailsModalCloseButton").click();
                         fetchOrderData();
-                    }, 3000);
-
-                    toast.success("Truck Details saved successfully.", {
-                        position: "bottom-right",
-                        autoClose: 8000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
+                        setTruckDetails("");
+                        toast.success("Truck Details saved successfully.", {
+                            position: "bottom-right",
+                            autoClose: 8000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        setIsLoading(false);
+                    } else {
+                        toast.error("Error while saving Truck Details!!!", {
+                            position: "bottom-right",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        
+                        setIsLoading(false);
+                    }
                 } else {
                     toast.error("Please fill Truck Details!!!", {
                         position: "bottom-right",
@@ -579,6 +721,7 @@ const OrderDetails = (orderDetails) => {
                         progress: undefined,
                         theme: "colored",
                     });
+                    setIsLoading(false);
                 }
             } else {
                 toast.info("This order is already Completed! No further status updates needed.", {
@@ -591,6 +734,7 @@ const OrderDetails = (orderDetails) => {
                     progress: undefined,
                     theme: "colored",
                 });
+                setIsLoading(false);
             }
         } else {
             toast.info("This order is already Cancelled! You cannot change the status.", {
@@ -603,6 +747,7 @@ const OrderDetails = (orderDetails) => {
                 progress: undefined,
                 theme: "colored",
             });
+            setIsLoading(false);
         }
     };
 
@@ -680,6 +825,8 @@ const OrderDetails = (orderDetails) => {
                                     <div className="widget-title">
                                         <h3><b>Order Details</b></h3>
                                     </div>
+
+                                    <Spinner isLoading={isLoading} loadingText={loadingText} />
 
                                     <div className="widget-content">
                                         {fetchedOrderData.status === "Cancel" ?
@@ -882,16 +1029,20 @@ const OrderDetails = (orderDetails) => {
                                                             disabled
                                                             value={fetchedOrderData.eway_number}
                                                         />
-                                                        <button data-text="Add, View, Edit, Delete Notes">
-                                                            <a
-                                                                href="#"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#ewayNumberModal"
-                                                                onClick={() => { setEwayBillNumber(fetchedOrderData.eway_number); }}
-                                                            >
-                                                                <span className="la la-plus mx-2 mt-2"></span>
-                                                            </a>
-                                                        </button>
+                                                        <ul className="option-list">
+                                                            <li className="mx-2">
+                                                                <button data-text="Add EWay Bill Number">
+                                                                    <a
+                                                                        href="#"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#ewayNumberModal"
+                                                                        onClick={() => { setEwayBillNumber(fetchedOrderData.eway_number); }}
+                                                                    >
+                                                                        <span className="la la-plus"></span>
+                                                                    </a>
+                                                                </button>
+                                                            </li>
+                                                        </ul>
                                                     </InputGroup>
                                                 </Form.Group>
                                             </Row>
@@ -1038,16 +1189,20 @@ const OrderDetails = (orderDetails) => {
                                                             disabled
                                                             value={fetchedOrderData.company_name}
                                                         />
-                                                        <button data-text="Add, View, Edit, Delete Notes">
-                                                            <a
-                                                                href="#"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#companyNameModal"
-                                                                onClick={() => { setCompanyName(fetchedOrderData.company_name); }}
-                                                            >
-                                                                <span className="la la-plus mx-2 mt-2"></span>
-                                                            </a>
-                                                        </button>
+                                                        <ul className="option-list">
+                                                            <li className="mx-2">
+                                                                <button data-text="Add Company Name">
+                                                                    <a
+                                                                        href="#"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#companyNameModal"
+                                                                        onClick={() => { setCompanyName(fetchedOrderData.company_name); }}
+                                                                    >
+                                                                        <span className="la la-plus"></span>
+                                                                    </a>
+                                                                </button>
+                                                            </li>
+                                                        </ul>
                                                     </InputGroup>
                                                 </Form.Group>
                                             </Row>
@@ -1082,16 +1237,20 @@ const OrderDetails = (orderDetails) => {
                                                                 backgroundColor: "#e9ecef",
                                                             }}
                                                         />
-                                                        <button data-text="Add, View, Edit, Delete Notes">
-                                                            <a
-                                                                href="#"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#localTransportModal"
-                                                                onClick={() => { setLocalTransport(fetchedOrderData.local_transport); }}
-                                                            >
-                                                                <span className="la la-plus mx-2 mt-2"></span>
-                                                            </a>
-                                                        </button>
+                                                        <ul className="option-list">
+                                                            <li className="mx-2">
+                                                                <button data-text="Add Local Transport Details">
+                                                                    <a
+                                                                        href="#"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#localTransportModal"
+                                                                        onClick={() => { setLocalTransport(fetchedOrderData.local_transport); }}
+                                                                    >
+                                                                        <span className="la la-plus"></span>
+                                                                    </a>
+                                                                </button>
+                                                            </li>
+                                                        </ul>
                                                     </InputGroup>
                                                 </Form.Group>
                                             </Row>
@@ -1126,16 +1285,20 @@ const OrderDetails = (orderDetails) => {
                                                                 backgroundColor: "#e9ecef",
                                                             }}
                                                         />
-                                                        <button data-text="Add, View, Edit, Delete Notes">
-                                                            <a
-                                                                href="#"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#truckDetailsModal"
-                                                                onClick={() => { setTruckDetails(fetchedOrderData.truck_details); }}
-                                                            >
-                                                                <span className="la la-plus mx-2 mt-2"></span>
-                                                            </a>
-                                                        </button>
+                                                        <ul className="option-list">
+                                                            <li className="mx-2">
+                                                                <button data-text="Add Truck Details">
+                                                                    <a
+                                                                        href="#"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#truckDetailsModal"
+                                                                        onClick={() => { setTruckDetails(fetchedOrderData.truck_details); }}
+                                                                    >
+                                                                        <span className="la la-plus"></span>
+                                                                    </a>
+                                                                </button>
+                                                            </li>
+                                                        </ul>
                                                     </InputGroup>
                                                 </Form.Group>
                                             </Row>
@@ -1215,10 +1378,10 @@ const OrderDetails = (orderDetails) => {
                                         <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container m-4">
                                             <Button
                                                 variant="secondary"
-                                                onClick={() => {Router.push("/employers-dashboard/orders"); }}
+                                                onClick={() => { window.history.back(); }}
                                                 className="btn btn-back btn-sm text-nowrap m-1"
                                             >
-                                                Back to Orders
+                                                Back
                                             </Button>
                                         </Form.Group>
                                     </Row>
@@ -1376,6 +1539,7 @@ const OrderDetails = (orderDetails) => {
                                                             color: "#212529",
                                                             maxHeight: "300px"
                                                         }}
+                                                        value={cancelNote}
                                                     />
                                                 </InputGroup>
                                             </Form.Group>
@@ -1646,6 +1810,7 @@ const OrderDetails = (orderDetails) => {
                                                             color: "#212529",
                                                             maxHeight: "300px"
                                                         }}
+                                                        value={orderComment}
                                                     />
                                                 </InputGroup>
                                             </Form.Group>

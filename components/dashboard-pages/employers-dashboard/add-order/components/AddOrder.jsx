@@ -575,7 +575,6 @@ const AddOrder = () => {
                         order_number: orderNumber,
                         pickup_date: format(pickupDate, "yyyy-MM-dd"),
                         order_city: orderCity,
-                        client_name: selectedClient[0],
                         pickup_location: pickupCitySelection[0],
                         drop_location: dropCitySelection[0],
                         material: material,
