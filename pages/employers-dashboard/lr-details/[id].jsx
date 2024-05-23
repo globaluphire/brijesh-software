@@ -54,7 +54,8 @@ const addLrDetailsFields = {
     notes: "",
     freightNotes: "",
     transportVehicleType: "",
-    vehicleNumber: ""
+    vehicleNumber: "",
+    driverDetails: ""
 };
 
 const LRDetails = (orderDetails) => {
@@ -145,7 +146,8 @@ const LRDetails = (orderDetails) => {
         consignorCity,
         consigneeCity,
         transportVehicleType,
-        vehicleNumber
+        vehicleNumber,
+        driverDetails
     } = useMemo(() => lrDetailsFormData, [lrDetailsFormData]);
 
     // all references state
@@ -808,7 +810,8 @@ const LRDetails = (orderDetails) => {
                     setLrDetailsFormData((previousState) => ({
                         ...previousState,
                         transportVehicleType: lrData[0].transport_vehicle_type,
-                        vehicleNumber: lrData[0].vehical_number
+                        vehicleNumber: lrData[0].vehical_number,
+                        driverDetails: lrData[0].driver_details
                     }));
 
                     if(lrData[0].transport_vehicle_type === "Local Vehicle") {
@@ -1164,6 +1167,17 @@ const LRDetails = (orderDetails) => {
             selectedConsigneeClientData && selectedConsigneeClientData.client_id
         ) {
             try {
+            
+                const { data, error } = await supabase
+                    .from("orders")
+                    .update({
+                        pickup_location: pickupCitySelection[0],
+                        drop_location: dropCitySelection[0],
+                        order_updated_at: new Date()
+                    })
+                    .eq("order_id", fetchedLRData.order_id)
+                    // .select(); // this will return the updated record in object
+
                 const { data: updatedLRData, error: updatedLRError } = await supabase
                     .from("lr")
                     .update({
@@ -1186,10 +1200,11 @@ const LRDetails = (orderDetails) => {
                         transport_vehicle_details: transportVehicleDetail ? transportVehicleDetail : "",
                         status: lrStatus ? lrStatus : "",
                         vehical_number: vehicleNumber ? vehicleNumber : "",
+                        driver_details: driverDetails ? driverDetails : "",
                         lr_last_modified_date: new Date()
                     })
-                    .eq("lr_id", fetchedLRData.lr_id);
-                    // .select(); // this will return the updated record in object
+                    .eq("lr_id", fetchedLRData.lr_id)
+                    .select(); // this will return the updated record in object
 
                 if (!updatedLRError) {
                     // open toast
@@ -1203,6 +1218,21 @@ const LRDetails = (orderDetails) => {
                         progress: undefined,
                         theme: "colored",
                     });
+                } else {
+                    // open toast
+                    toast.error(
+                        "Error while saving LR changes, Please try again later or contact tech support",
+                        {
+                            position: "bottom-right",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        }
+                    );
                 }
 
             } catch (err) {
@@ -2008,7 +2038,7 @@ const LRDetails = (orderDetails) => {
                                         {/* Start Other Details fields */}
                                         <div style={{ padding: "0 2rem" }}>
                                             <Row className="pb-3">
-                                                <Form.Group as={Col} md="6" controlId="validationCustom02">
+                                                <Form.Group as={Col} md="2" controlId="validationCustom02">
                                                     <Form.Label>Transport Vehicle</Form.Label>
                                                     <Form.Select
                                                         className="chosen-single form-select"
@@ -2050,7 +2080,7 @@ const LRDetails = (orderDetails) => {
                                                         Please enter Consignor's City.
                                                     </Form.Control.Feedback>
                                                 </Form.Group>
-                                                <Form.Group as={Col} md="4" controlId="validationCustom02">
+                                                <Form.Group as={Col} md="2" controlId="validationCustom02">
                                                     <Form.Label>Status</Form.Label>
                                                     <Form.Select
                                                         className="chosen-single form-select"
@@ -2072,6 +2102,33 @@ const LRDetails = (orderDetails) => {
                                                     <Form.Control.Feedback type="invalid">
                                                         Please enter LR Status.
                                                     </Form.Control.Feedback>
+                                                </Form.Group>
+                                                <Form.Group as={Col} md="8" controlId="validationCustomPhonenumber">
+                                                    <InputGroup size="sm">
+                                                        <InputGroup.Text id="inputGroupPrepend">Driver Details</InputGroup.Text>
+                                                        <textarea
+                                                            type="text"
+                                                            // placeholder="Username"
+                                                            aria-describedby="inputGroupPrepend"
+                                                            value={driverDetails}
+                                                            onChange={(e) => {
+                                                                setLrDetailsFormData((previousState) => ({
+                                                                    ...previousState,
+                                                                    driverDetails: e.target.value,
+                                                                }));
+                                                            }}    
+                                                            cols="75"
+                                                            rows="2"
+                                                            style={{
+                                                                resize: "both",
+                                                                overflowY: "scroll",
+                                                                border: "1px solid #dee2e6",
+                                                                padding: "10px",
+                                                                fontSize: "14px",
+                                                                color: "#212529"
+                                                            }}
+                                                        />
+                                                    </InputGroup>
                                                 </Form.Group>
                                             </Row>
                                             <Row className="pb-3">

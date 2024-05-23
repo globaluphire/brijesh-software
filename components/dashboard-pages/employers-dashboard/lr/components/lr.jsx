@@ -1168,7 +1168,7 @@ const LR = () => {
                                                 </span>
                                             </td>
                                             <td>
-                                                <span>{lr.truck_details ? lr.truck_details : "-"}</span><br />
+                                                <span>{lr.driver_details ? lr.driver_details : "-"}</span><br />
                                             </td>
                                             <td>
                                                 {

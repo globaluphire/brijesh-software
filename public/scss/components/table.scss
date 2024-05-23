@@ -17,11 +17,11 @@ default table
 }
 
 .default-table tbody tr:hover {
-  background: #ADD8E6;
+  background: #E1E9F3;
 }
 
 .default-table thead {
-  background-color: #5F8CAB;
+  background-color: #013778;
 }
 
 .default-table thead th {
@@ -31,7 +31,7 @@ default table
   font-weight: 800;
   line-height: normal;
   white-space: nowrap;
-  border: 1px solid #333;
+  border: 1px solid #01549A;
   background-color: transparent;
 }
 
@@ -45,10 +45,11 @@ default table
   font-size: 12px;
   color: black;
   font-weight: 400;
-  border: 1px solid #333;
+  border: 1px solid #01549A;
   background-color: transparent;
 }
 
 .default-table tr td:hover {
-  background-color: #87CEEB;
+  background-color: #013778;
+  color: white;
 }
