@@ -17,6 +17,7 @@ import AddLocationPopup from "../../add-location/components/AddLocationPopup";
 import AddLocationContactPopup from "../../add-location/components/AddLocationContactPopup";
 import { Grid } from "react-loader-spinner";
 import Spinner from "../../../../spinner/spinner";
+import AddClientPopup from "../../add-client/components/AddClientPopup";
 
 
 const addOrderFields = {
@@ -48,6 +49,8 @@ const AddOrder = () => {
     const [isLocationContactSaved, setIsLocationContactSaved] = useState(false);
     const [isLocationContactType, setIsLocationContactType] = useState("");
     const [locationNumber, setLocationNumber] = useState("");
+    const [isClient, setIsClient] = useState(false);
+    const [isClientSaved, setIsClientSaved] = useState(false);
 
     // client fields states
     const [fetchedClientsData, setFetchedClientsData] = useState({});
@@ -279,6 +282,11 @@ const AddOrder = () => {
                     allClientNames.sort();
                     setClientNames(allClientNames);
                 }
+
+                if (isClientSaved) {
+                    document.getElementById("addClientModalCloseButton").click();
+                    setIsClientSaved(false);
+                }
             } catch (e) {
                 toast.error(
                     "System is unavailable.  Unable to fetch Client Data.  Please try again later or contact tech support!",
@@ -303,7 +311,7 @@ const AddOrder = () => {
 
     useEffect(() => {
         getClientDetails();
-    }, [orderCity]);
+    }, [orderCity, isClientSaved]);
 
     function getSelectedClientData() {
         if (fetchedClientsData && fetchedClientsData.length > 0) {
@@ -762,7 +770,37 @@ const AddOrder = () => {
                                 </Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
-                                <Form.Label>Client Name</Form.Label>
+                                <Form.Label>
+                                    <ul className="option-list">
+                                        <span
+                                            className="optional"
+                                            style={{
+                                                letterSpacing: "5px",
+                                                fontSize: "24px",
+                                                color: "red"
+                                            }}
+                                        >
+                                            *
+                                        </span>
+                                        Client Name
+                                        <li className="mx-2">
+                                            { orderCity ?
+                                                <button>
+                                                    <a
+                                                        href="#"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#addClientModal"
+                                                        onClick={() => {
+                                                            setIsClient(true);
+                                                        }}
+                                                    >
+                                                        <span className="la la-plus"></span>
+                                                    </a>
+                                                </button>
+                                            : "" }
+                                        </li>
+                                    </ul>
+                                </Form.Label>
                                 <Typeahead
                                     id="clientName"
                                     disabled = {!orderCity}
@@ -1302,6 +1340,36 @@ const AddOrder = () => {
                     </div>
                 </div>
                 {/* End of Add Location Contact Modal */}
+
+                {/* Add Client Modal */}
+                <div
+                    className="modal fade"
+                    id="addClientModal"
+                    tabIndex="-1"
+                    aria-hidden="true"
+                >
+                    <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                        <div className="apply-modal-content modal-content" style={{ overflow: "auto" }}>
+                            <div className="text-center">
+                                <button
+                                    type="button"
+                                    id="addClientModalCloseButton"
+                                    className="closed-modal"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                            <AddClientPopup
+                                isClient={isClient}
+                                setIsClient={setIsClient}
+                                isClientSaved={isClientSaved}
+                                setIsClientSaved={setIsClientSaved}
+                            />
+                        </div>
+                        {/* End .send-private-message-wrapper */}
+                    </div>
+                </div>
+                {/* End of Add Client Modal */}
             </Form>
             :   ""
             }

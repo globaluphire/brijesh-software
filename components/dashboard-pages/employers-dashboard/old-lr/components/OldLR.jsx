@@ -18,7 +18,6 @@ import Pagination from "../../../../common/Pagination";
 import Table from "react-bootstrap/Table";
 import { InputGroup } from "react-bootstrap";
 import { CSVLink } from "react-csv";
-import CalendarComp from "../../../../date/CalendarComp";
 
 const addSearchFilters = {
     consignorName: "",
@@ -29,13 +28,12 @@ const addSearchFilters = {
     status: ""
 };
 
-const LR = () => {
+const OldLR = () => {
     const router = useRouter();
     const user = useSelector((state) => state.candidate.user);
 
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
     const [fetchedLRdata, setFetchedLRdata] = useState({});
-    const [fetchedOrderData, setFetchedOrderData] = useState({});
     const [fetchedLRdataCSV, setFetchedLRdataCSV] = useState({});
 
     const [applicationStatus, setApplicationStatus] = useState("");
@@ -57,8 +55,6 @@ const LR = () => {
     // const [pageSize, setPageSize] = useState(10);
 
     // for search filters
-    const [searchLRDateFrom, setSearchLRDateFrom] = useState();
-    const [searchLRDateTo, setSearchLRDateTo] = useState();
     const [searchFilters, setSearchFilters] = useState(
         JSON.parse(JSON.stringify(addSearchFilters))
     );
@@ -92,13 +88,11 @@ const LR = () => {
 
     // clear all filters
     const clearAll = () => {
-        setSearchLRDateFrom();
-        setSearchLRDateTo();
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
         fetchedLR(JSON.parse(JSON.stringify(addSearchFilters)));
     };
 
-    async function findLR(searchFilters, searchLRDateFrom, searchLRDateTo) {
+    async function findLR(searchFilters) {
         // call reference to get applicantStatus options
         // setCurrentPage(1);
         // const { data: refData, error: e } = await supabase
@@ -112,18 +106,9 @@ const LR = () => {
 
         let query = supabase
             .from("lr")
-            .select("*");
+            .select("*")
+            .lt("lr_created_date", "2024-06-01");
 
-        if (searchLRDateFrom) {
-            query.gte("lr_created_date", searchLRDateFrom.getTime());
-        }
-        if (searchLRDateTo) {
-            query.lte("lr_created_date", searchLRDateTo.getTime());
-        }
-        if (searchLRDateFrom && searchLRDateTo) {
-            query.gte("lr_created_date", searchLRDateFrom.getTime());
-            query.lte("lr_created_date", searchLRDateTo.getTime());
-        }
         if (searchFilters.consignorName) {
             query.ilike("consignor", "%" + searchFilters.consignorName + "%");
         }
@@ -192,8 +177,9 @@ const LR = () => {
             }
 
             let query = supabase
-                .from("lr_view")
-                .select("*");
+                .from("lr")
+                .select("*")
+                .lt("lr_created_date", "2024-06-01");
 
             // if (name) {
             //     query.ilike("name", "%" + name + "%");
@@ -232,7 +218,6 @@ const LR = () => {
                 // creating new array object for CSV export
                 const lrDataCSV = lrData.map(({ id, lr_created_by,...rest }) => ({ ...rest }));
                 setFetchedLRdataCSV(lrDataCSV);
-
             }
         } catch (e) {
             toast.error(
@@ -853,29 +838,6 @@ const LR = () => {
                         </Form.Label>
                         <div style={{ fontSize: "14px", fontWeight: "bold" }}>
                             <Row className="mb-1 mx-3">
-                                <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>Status</Form.Label>
-                                    <Form.Select
-                                        className="chosen-single form-select"
-                                        size="sm"
-                                        onChange={(e) => {
-                                            setSearchFilters((previousState) => ({
-                                                ...previousState,
-                                                status: e.target.value,
-                                            }));
-                                        }}
-                                        value={status}
-                                    >
-                                        <option value=""></option>
-                                        {lRStatusReferenceOptions.map(
-                                            (option) => (
-                                                <option value={option.ref_dspl}>
-                                                    {option.ref_dspl}
-                                                </option>
-                                            )
-                                        )}
-                                    </Form.Select>
-                                </Form.Group>
                                 <Form.Group as={Col} md="2" controlId="validationCustom01">
                                     <Form.Label style={{ marginBottom: "-5px" }}>Consignor</Form.Label>
                                     <Form.Control
@@ -968,22 +930,64 @@ const LR = () => {
                                         }}
                                     />
                                 </Form.Group>
-                            </Row>
-                            <Row className="mb-3 mx-3">
-                                <Form.Group as={Col} md="auto" controlId="validationCustom01">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>Invoice Date</Form.Label><br />
-                                    <div className="p-1" style={{ border: "1px solid #dee2e6", borderRadius: "3px" }}>
-                                        <div className="pb-1">
-                                            <span className="px-1">From</span>
-                                            <CalendarComp setDate={setSearchLRDateFrom} date1={searchLRDateFrom} />
-                                        </div>
-                                        <div>
-                                            <span className="px-1">To &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                            <CalendarComp setDate={setSearchLRDateTo} date1={searchLRDateTo} />
-                                        </div>
-                                    </div>
+                                <Form.Group as={Col} md="2" controlId="validationCustom02">
+                                    <Form.Label style={{ marginBottom: "-5px" }}>Status</Form.Label>
+                                    <Form.Select
+                                        className="chosen-single form-select"
+                                        size="sm"
+                                        onChange={(e) => {
+                                            setSearchFilters((previousState) => ({
+                                                ...previousState,
+                                                status: e.target.value,
+                                            }));
+                                        }}
+                                        value={status}
+                                    >
+                                        <option value=""></option>
+                                        {lRStatusReferenceOptions.map(
+                                            (option) => (
+                                                <option value={option.ref_dspl}>
+                                                    {option.ref_dspl}
+                                                </option>
+                                            )
+                                        )}
+                                    </Form.Select>
                                 </Form.Group>
                             </Row>
+                            {/* <Row className="mb-3 mx-3">
+                                <Form.Group as={Col} md="2" controlId="validationCustom02">
+                                    <Form.Label style={{ marginBottom: "-5px" }}>From Date</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        size="sm"
+                                        // placeholder="GST number"
+                                        // defaultValue="Otto"
+                                        // value={consignorGST}
+                                        // onChange={(e) => {
+                                        //     setLrFormData((previousState) => ({
+                                        //         ...previousState,
+                                        //         consignorGST: e.target.value,
+                                        //     }));
+                                        // }}
+                                    />
+                                </Form.Group>
+                                <Form.Group as={Col} md="2" controlId="validationCustom02">
+                                    <Form.Label style={{ marginBottom: "-5px" }}>To Date</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        size="sm"
+                                        // placeholder="GST number"
+                                        // defaultValue="Otto"
+                                        // value={consignorGST}
+                                        // onChange={(e) => {
+                                        //     setLrFormData((previousState) => ({
+                                        //         ...previousState,
+                                        //         consignorGST: e.target.value,
+                                        //     }));
+                                        // }}
+                                    />
+                                </Form.Group>
+                            </Row> */}
                             <Row className="mx-3">
                                 <Col>
                                     <Form.Group className="chosen-single form-input chosen-container mb-3">
@@ -991,7 +995,7 @@ const LR = () => {
                                             variant="primary"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                findLR(searchFilters, searchLRDateFrom, searchLRDateTo);
+                                                findLR(searchFilters);
                                             }}
                                             className="btn btn-submit btn-sm text-nowrap m-1"
                                         >
@@ -1080,9 +1084,9 @@ const LR = () => {
                                     fontWeight: "500",
                                 }}
                             >
-                                <tr style={{ border: "1px solid #333" }}>
-                                    <td colSpan={4} style={{ border: "none" }}>
-                                        <span><b>No LRs found!</b></span>
+                                <tr>
+                                    <td>
+                                        <b>No LR found!</b>
                                     </td>
                                 </tr>
                             </tbody>
@@ -1095,7 +1099,7 @@ const LR = () => {
                                                 <ui className="option-list" style={{ border: "none" }}>
                                                     <li>
                                                         <button>
-                                                            <a onClick={() => router.push(`/employers-dashboard/view-lr/${lr.lr_id}`)}>
+                                                            <a onClick={() => router.push(`/employers-dashboard/view-old-lr/${lr.lr_id}`)}>
                                                                 <span className="la la-print" title="Print LR"></span>
                                                             </a>
                                                         </button>
@@ -1103,12 +1107,9 @@ const LR = () => {
                                                 </ui>
                                             </td>
                                             <td>
-                                                <Link
-                                                    href={`/employers-dashboard/lr-details/${lr.lr_number}`} 
-                                                    style={{ textDecoration: "underline" }}
-                                                >
+                                                <span>
                                                     {lr.lr_number}
-                                                </Link>
+                                                </span>
                                             </td>
                                             <td>
                                                 <span>
@@ -1116,45 +1117,33 @@ const LR = () => {
                                                 </span>
                                             </td>
                                             <td>
-                                                <Link
-                                                    href={`/employers-dashboard/order-details/${lr.order_id}`} 
-                                                    style={{ textDecoration: "underline" }}
-                                                >
+                                                <span>
                                                     {lr.order_number}
-                                                </Link>
+                                                </span>
                                             </td>
                                             <td>
-                                                <span>{lr.consignor_name}</span><br />
-                                                <span className="optional">{lr.consignor_phone ? "+91 " + lr.consignor_phone : ""}</span><br />
+                                                <span>{lr.consignor}</span><br />
+                                                <span className="optional">{lr.consignor_phone}</span><br />
                                                 <span className="optional">{lr.consignor_email}</span>
                                             </td>
                                             <td>
-                                                <span>{lr.consignee_name}</span><br />
-                                                <span className="optional">{lr.consignee_phone ? "+91 " + lr.consignee_phone : ""}</span><br />
+                                                <span>{lr.consignee}</span><br />
+                                                <span className="optional">{lr.consignee_phone}</span><br />
                                                 <span className="optional">{lr.consignee_email}</span>
                                             </td>
                                             <td>
-                                                {lr.pickup_point_address1 ? <span>{lr.pickup_point_address1}, </span> : "" }
-                                                {lr.pickup_point_address2 ? <span>{lr.pickup_point_address2}, </span> : "" }
-                                                {lr.pickup_point_area ? <span>{lr.pickup_point_area}, </span> : "" }
-                                                {lr.pickup_point_city ? <span>{lr.pickup_point_city}, </span> : "" }
-                                                {lr.pickup_point_state ? <span>{lr.pickup_point_state}, </span> : "" }
-                                                {lr.pickup_point_pin ? <span>{lr.pickup_point_pin}, </span> : "" }
-                                            </td>
-                                            <td>
-                                                {lr.drop_point_address1 ? <span>{lr.drop_point_address1}, </span> : "" }
-                                                {lr.drop_point_address2 ? <span>{lr.drop_point_address2}, </span> : "" }
-                                                {lr.drop_point_area ? <span>{lr.drop_point_area}, </span> : "" }
-                                                {lr.drop_point_city ? <span>{lr.drop_point_city}, </span> : "" }
-                                                {lr.drop_point_state ? <span>{lr.drop_point_state}, </span> : "" }
-                                                {lr.drop_point_pin ? <span>{lr.drop_point_pin}, </span> : "" }
+                                                <span>
+                                                    {lr.pickup_address}
+                                                </span>
                                             </td>
                                             <td>
                                                 <span>
-                                                    {lr.material}
-                                                </span> <br />
+                                                    {lr.drop_address}
+                                                </span>
+                                            </td>
+                                            <td>
                                                 <span>
-                                                    {lr.quantity}
+                                                    {lr.material_details}
                                                 </span>
                                             </td>
                                             <td>
@@ -1164,11 +1153,12 @@ const LR = () => {
                                             </td>
                                             <td>
                                                 <span>
-                                                    {lr.vehical_number ? lr.vehical_number : "-"}
+                                                    {lr.vehical_number}
                                                 </span>
                                             </td>
                                             <td>
-                                                <span>{lr.truck_details ? lr.truck_details : "-"}</span><br />
+                                                <span>{lr.driver_name}</span><br />
+                                                <span className="optional">{lr.driver_phone}</span>
                                             </td>
                                             <td>
                                                 {
@@ -1196,4 +1186,4 @@ const LR = () => {
     );
 };
 
-export default LR;
+export default OldLR;

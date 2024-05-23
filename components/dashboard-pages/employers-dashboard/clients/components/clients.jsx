@@ -602,9 +602,9 @@ const Clients = () => {
                                     fontWeight: "500",
                                 }}
                             >
-                                <tr>
-                                    <td>
-                                        <b>No Clients found!</b>
+                                <tr style={{ border: "1px solid #333" }}>
+                                    <td colSpan={4} style={{ border: "none" }}>
+                                        <span><b>No Clients found!</b></span>
                                     </td>
                                 </tr>
                             </tbody>

@@ -32,7 +32,6 @@ const addSearchFilters = {
 const invoiceErrorFields = {
     orderIdError: false,
     clientNumberError: false,
-    ewayBillNumberError: false,
     pickupCityError: false,
     dropCityError: false,
     materialError: false,
@@ -104,7 +103,6 @@ const OpenOrderProcess = () => {
     const {
         orderIdError,
         clientNumberError,
-        ewayBillNumberError,
         pickupCityError,
         dropCityError,
         materialError,
@@ -990,9 +988,9 @@ const OpenOrderProcess = () => {
                                     fontWeight: "500",
                                 }}
                             >
-                                <tr>
-                                    <td>
-                                        <b>No Orders found!</b>
+                                <tr style={{ border: "1px solid #333" }}>
+                                    <td colSpan={4} style={{ border: "none" }}>
+                                        <span><b>No Orders found!</b></span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -1380,9 +1378,8 @@ const OpenOrderProcess = () => {
                                                 </Row>
 
                                                 <Row>
-                                                    { orderIdError || clientNumberError || ewayBillNumberError ||
-                                                        pickupCityError || dropCityError || materialError || quantityError ||
-                                                        orderNumberError || weightError || vehicalNumberError || lrNumberError ?
+                                                    { orderIdError || clientNumberError || pickupCityError || dropCityError || materialError ||
+                                                      quantityError || orderNumberError || weightError || vehicalNumberError || lrNumberError ?
                                                         <div className="pb-3 optional"
                                                             style={{ color: "red",
                                                                 lineHeight: "normal",
@@ -1391,7 +1388,6 @@ const OpenOrderProcess = () => {
                                                             Please fill below listed fields before generating Invoice<br />
                                                             {orderIdError ? <><span>* Order ID</span><br /></> : "" }
                                                             {clientNumberError ? <><span>* Client Details(Order Details)</span><br /></> : "" }
-                                                            {ewayBillNumberError ? <><span>* Eway Bill Number(Order Details)</span><br /></> : "" }
                                                             {pickupCityError ? <><span>* Pickup City(Order Details)</span><br /></> : "" }
                                                             {dropCityError ? <><span>* Drop City(Order Details)</span><br /></> : "" }
                                                             {materialError ? <><span>* Material(Order Details)</span><br /></> : "" }

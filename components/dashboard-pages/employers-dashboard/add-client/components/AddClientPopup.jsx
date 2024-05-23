@@ -74,9 +74,11 @@ const addClientFields = {
 const AddClientPopup = ({
     isConsignor, setIsConsignor,
     isConsignee, setIsConsignee,
+    isClient, setIsClient,
 
     isConsigneeSaved, setIsConsigneeSaved,
-    isConsignorSaved, setIsConsignorSaved }) => {
+    isConsignorSaved, setIsConsignorSaved,
+    isClientSaved, setIsClientSaved }) => {
     const user = useSelector((state) => state.candidate.user);
     const [salaryType, setSalaryType] = useState("fixed");
     const [lowerLimit, setLowerLimit] = useState("");
@@ -267,6 +269,8 @@ const AddClientPopup = ({
                 setLoadingText("New Consignor is saving...");
             } else if (isConsignee) {
                 setLoadingText("New Consignee is saving...");
+            } else {
+                setLoadingText("New Client is saving...")
             }
             try {
                 // Generate client number
@@ -368,6 +372,8 @@ const AddClientPopup = ({
                             setIsConsignorSaved(true);
                         } else if (isConsignee) {
                             setIsConsigneeSaved(true);
+                        } else if (isClient) {
+                            setIsClientSaved(true);
                         }
                     }
             } catch (err) {
@@ -421,6 +427,7 @@ const AddClientPopup = ({
                         <div>
                         <h4>{isConsignor ? "Add New Consignor" : ""}</h4>
                         <h4>{isConsignee ? "Add New Consignee" : ""}</h4>
+                        <h4>{isClient ? "Add New Client" : ""}</h4>
                             <div className="divider">
                                 <span><b>Details</b></span>
                             </div>
@@ -487,7 +494,7 @@ const AddClientPopup = ({
                                             onChange={(e) => {
                                                 setClientFormData((previousState) => ({
                                                     ...previousState,
-                                                    clientGST: e.target.value,
+                                                    clientGST: e.target.value.toUpperCase(),
                                                 }));
                                             }}
                                         />
@@ -510,7 +517,7 @@ const AddClientPopup = ({
                                             onChange={(e) => {
                                                 setClientFormData((previousState) => ({
                                                     ...previousState,
-                                                    clientPAN: e.target.value,
+                                                    clientPAN: e.target.value.toUpperCase(),
                                                 }));
                                             }}
                                         />

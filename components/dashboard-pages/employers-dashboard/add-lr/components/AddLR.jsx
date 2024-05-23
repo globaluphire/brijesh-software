@@ -889,7 +889,7 @@ const AddLR = () => {
                     <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">
                         <Button
                             variant="secondary"
-                            onClick={() => {Router.push("/employers-dashboard/lr"); }}
+                            onClick={() => {Router.push("/employers-dashboard/old-lr"); }}
                             className="btn btn-back btn-sm text-nowrap m-1"
                         >
                             Back to LR

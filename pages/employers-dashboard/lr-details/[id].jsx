@@ -2191,7 +2191,7 @@ const LRDetails = (orderDetails) => {
                                         <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">
                                             <Button
                                                 variant="secondary"
-                                                onClick={() => {window.history.back()}}
+                                                onClick={() => { window.history.back(); }}
                                                 className="btn btn-back btn-sm text-nowrap m-1"
                                             >
                                                 Back
@@ -2273,7 +2273,7 @@ const LRDetails = (orderDetails) => {
                             </div>
                             {/* End of Add Location Contact Modal */}
 
-                            {/* Add Location Contact Modal */}
+                            {/* Add Client Modal */}
                             <div
                                 className="modal fade"
                                 id="addClientModal"
@@ -2305,7 +2305,7 @@ const LRDetails = (orderDetails) => {
                                     {/* End .send-private-message-wrapper */}
                                 </div>
                             </div>
-                            {/* End of Add Location Contact Modal */}
+                            {/* End of Add Client Modal */}
                             {/* End of All Popup Modals */}
 
                         </div>

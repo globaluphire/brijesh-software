@@ -735,7 +735,7 @@ const AddInvoice = () => {
                     <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">
                         <Button
                             variant="secondary"
-                            onClick={() => {Router.push("/employers-dashboard/billing"); }}
+                            onClick={() => { Router.push("/employers-dashboard/old-billing"); }}
                             className="btn btn-back btn-sm text-nowrap m-1"
                         >
                             Back to Billing

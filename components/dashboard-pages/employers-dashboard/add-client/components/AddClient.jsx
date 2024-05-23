@@ -452,7 +452,7 @@ const AddClient = () => {
                                         onChange={(e) => {
                                             setClientFormData((previousState) => ({
                                                 ...previousState,
-                                                clientGST: e.target.value,
+                                                clientGST: e.target.value.toUpperCase(),
                                             }));
                                         }}
                                     />
@@ -474,7 +474,7 @@ const AddClient = () => {
                                         onChange={(e) => {
                                             setClientFormData((previousState) => ({
                                                 ...previousState,
-                                                clientPAN: e.target.value,
+                                                clientPAN: e.target.value.toUpperCase(),
                                             }));
                                         }}
                                     />

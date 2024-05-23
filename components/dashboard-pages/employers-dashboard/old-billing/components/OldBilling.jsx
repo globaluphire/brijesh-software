@@ -31,7 +31,7 @@ const addSearchFilters = {
     status: ""
 };
 
-const Billing = () => {
+const OldBilling = () => {
     const router = useRouter();
     const user = useSelector((state) => state.candidate.user);
 
@@ -130,7 +130,7 @@ const Billing = () => {
         let query = supabase
             .from("invoice")
             .select("*")
-            .gt("invoice_created_at", "2024-05-31")
+            .lt("invoice_created_at", "2024-06-01")
             .ilike("company_name", "%" + searchFilters.clientName + "%");
 
         if (searchInvoiceDateFrom) {
@@ -179,12 +179,14 @@ const Billing = () => {
     }) {
         try {
             var searchBillingCompanyName = localStorage.getItem("billingCompanyName");
+
             if(searchBillingCompanyName) {
                 setSearchFilters((previousState) => ({
                     ...previousState,
                     clientName: searchBillingCompanyName
                 }));
             }
+
             // call reference to get lrStatus options
             const { data, error: e } = await supabase
                 .from("reference")
@@ -194,20 +196,20 @@ const Billing = () => {
             if (data) {
                 setInvoiceStatusReferenceOptions(data);
             }
-
             let query;
             if(searchBillingCompanyName) {
                 query = supabase
                     .from("invoice")
                     .select("*")
-                    .gt("invoice_created_at", "2024-05-31")
+                    .lt("invoice_created_at", "2024-06-01")
                     .ilike("company_name", "%" + searchBillingCompanyName + "%");
             } else {
                 query = supabase
                     .from("invoice")
                     .select("*")
-                    .gt("invoice_created_at", "2024-05-31");
+                    .lt("invoice_created_at", "2024-06-01");
             }
+
             // if (name) {
             //     query.ilike("name", "%" + name + "%");
             // }
@@ -625,7 +627,6 @@ const Billing = () => {
                                                 Export to CSV
                                             </CSVLink>
                                         : "" }
-
                                         { user.id === "NnxOeP2axndJjCYRX74985oipdo2" ?
                                             <Button
                                                 variant="success"
@@ -686,9 +687,9 @@ const Billing = () => {
                                     fontWeight: "500",
                                 }}
                             >
-                                <tr style={{ border: "1px solid #333" }}>
-                                    <td colSpan={4} style={{ border: "none" }}>
-                                        <span><b>No Invoices found!</b></span>
+                                <tr>
+                                    <td>
+                                        <b>No Invoices found!</b>
                                     </td>
                                 </tr>
                             </tbody>
@@ -701,7 +702,7 @@ const Billing = () => {
                                                 <ui className="option-list" style={{ border: "none" }}>
                                                     <li>
                                                         <button>
-                                                            <a onClick={() => router.push(`/employers-dashboard/view-invoice/${invoice.invoice_id}`)}>
+                                                            <a target="_blank" onClick={() => router.push(`/employers-dashboard/view-old-invoice/${invoice.invoice_id}`)}>
                                                                 <span className="la la-print" title="Print Invoice"></span>
                                                             </a>
                                                         </button>
@@ -780,4 +781,4 @@ const Billing = () => {
     );
 };
 
-export default Billing;
+export default OldBilling;
