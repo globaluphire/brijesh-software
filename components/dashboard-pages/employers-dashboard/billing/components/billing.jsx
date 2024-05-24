@@ -21,6 +21,7 @@ import { CSVLink } from "react-csv";
 import { convertToFullDateFormat } from "../../../../../utils/convertToFullDateFormat";
 import CalendarComp from "../../../../date/CalendarComp";
 import { format } from "date-fns";
+import Spinner from "../../../../spinner/spinner";
 
 const addSearchFilters = {
     clientName: "",
@@ -34,9 +35,12 @@ const addSearchFilters = {
 const Billing = () => {
     const router = useRouter();
     const user = useSelector((state) => state.candidate.user);
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadingText, setLoadingText] = useState("");
 
     const [fetchedInvoicedata, setFetchedInvoicedata] = useState({});
     const [fetchedInvoicedataCSV, setFetchedInvoicedataCSV] = useState({});
+    const [fetchedLRsData, setFetchedLRsData] = useState([]);
 
     const [applicationStatus, setApplicationStatus] = useState("");
     const [
@@ -124,13 +128,14 @@ const Billing = () => {
     };
 
     async function findInvoice(searchInvoiceDateFrom, searchInvoiceDateTo, searchFilters) {
+        setIsLoading(true);
 
         localStorage.setItem("billingCompanyName", searchFilters.clientName);
 
         let query = supabase
-            .from("invoice")
+            .from("invoice_view")
             .select("*")
-            .gt("invoice_created_at", "2024-05-31")
+            
             .ilike("company_name", "%" + searchFilters.clientName + "%");
 
         if (searchInvoiceDateFrom) {
@@ -167,16 +172,13 @@ const Billing = () => {
             const invoiceDataCSV = data.map(({ invoice_id, order_id, lr_id, invoice_date, ...rest }) => ({ ...rest }));
             setFetchedInvoicedataCSV(invoiceDataCSV);
         }
+
+        setIsLoading(false);
     }
 
-    async function fetchedInvoice({
-        consignorName,
-        consigneeName,
-        fromCity,
-        toCity,
-        driverName,
-        status
-    }) {
+    async function fetchedInvoice() {
+        setIsLoading(true);
+
         try {
             var searchBillingCompanyName = localStorage.getItem("billingCompanyName");
             if(searchBillingCompanyName) {
@@ -198,15 +200,13 @@ const Billing = () => {
             let query;
             if(searchBillingCompanyName) {
                 query = supabase
-                    .from("invoice")
+                    .from("invoice_view")
                     .select("*")
-                    .gt("invoice_created_at", "2024-05-31")
                     .ilike("company_name", "%" + searchBillingCompanyName + "%");
             } else {
                 query = supabase
-                    .from("invoice")
-                    .select("*")
-                    .gt("invoice_created_at", "2024-05-31");
+                    .from("invoice_view")
+                    .select("*");
             }
             // if (name) {
             //     query.ilike("name", "%" + name + "%");
@@ -262,6 +262,7 @@ const Billing = () => {
             );
             console.warn(e);
         }
+        setIsLoading(false);
     }
     // const handlePageChange = (newPage) => {
     //     setCurrentPage(newPage);
@@ -287,6 +288,82 @@ const Billing = () => {
         // pageSize,
         // currentPage
     ]);
+
+    async function updateInvoiceStatus(invoice) {
+        setIsLoading(true);
+
+        if (!invoice.is_paid) {
+            if(confirm("Are you sure you want to mark this Invoice as PAID?")) {
+                try {
+                    const { data, error } = await supabase
+                        .from("invoice")
+                        .update({
+                            is_paid: true,
+                            invoice_updated_at: new Date()
+                        })
+                        .eq("invoice_id", invoice.invoice_id)
+                        .select();
+
+                    if (data) {
+                        fetchedInvoice();
+                        toast.success("Invoice marked as PAID!", {
+                            position: "bottom-right",
+                            autoClose: 8000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                    } else {
+                        toast.error("Error while marking invoice as PAID. Please try again later or contact tech support", {
+                            position: "bottom-right",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+
+                        setIsLoading(false);
+                        setLoadingText("");
+                    }
+                } catch {
+                    toast.error("Error while mark invoice as PAID. Please try again later or contact tech support", {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                    setIsLoading(false);
+                    setLoadingText("");
+                }
+            } else {
+                setIsLoading(false);
+                setLoadingText("");
+            }
+        } else {
+            toast.info("Invoice is already PAID", {
+                position: "top-center",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+            setIsLoading(false);
+            setLoadingText("");
+        }
+    };
 
     const setNoteData = async (applicationId) => {
         // reset NoteText
@@ -378,18 +455,33 @@ const Billing = () => {
     };
 
     const determineBadgeColor = (status) => {
-        switch (status?.toLowerCase()) {
-            case "sent":
-                return { color: "orange", tag: "Sent" };
-            case "read":
-                return { color: "#87CEEB", tag: "Read" };
-            case "completed":
-                return { color: "green", tag: "Signed" };
-            case "signed":
-                return { color: "green", tag: "Signed" };
-            default:
-                return { color: "red", tag: "Not Sent" };
+        if (status) {
+            return { color: "green", tag: "PAID" };
+        } else {
+            return { color: "red", tag: "UNPAID" };
         }
+    };
+
+    const setLRsModalData = async (orderId) => {
+        setIsLoading(true);
+
+        const { data: lrData, error: e } = await supabase
+            .from("lr")
+            .select("*")
+
+            // Filters
+            .eq("order_id", orderId)
+            .order("lr_created_date", { ascending: false });
+
+            if (lrData) {
+                lrData.forEach(
+                    (i) => (i.lr_created_date = dateTimeFormat(i.lr_created_date))
+                );
+                setFetchedLRsData(lrData);
+                setIsLoading(false);
+            } else {
+                setIsLoading(false);
+            }
     };
 
     const CSVSmartLinx = async (applicant) => {
@@ -418,6 +510,7 @@ const Billing = () => {
     return (
         <>
             <div>
+                <Spinner isLoading={isLoading} loadingText={loadingText} />
                 <div
                     className="widget-title"
                     style={{ fontSize: "1.5rem", fontWeight: "500" }}
@@ -672,11 +765,9 @@ const Billing = () => {
                                 <th>Order City</th>
                                 <th>Client Name</th>
                                 <th>Route</th>
-                                <th>Status</th>
-                                <th>LR No</th>
-                                <th>Truck Number</th>
+                                <th>LR Details</th>
                                 <th>Weight(Kg)</th>
-                                <th>Order Details</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         {fetchedInvoicedata.length === 0 ? (
@@ -706,6 +797,13 @@ const Billing = () => {
                                                             </a>
                                                         </button>
                                                     </li>
+                                                    <li>
+                                                        <button data-text="PAID/UNPAID">
+                                                            <a onClick={() => { updateInvoiceStatus(invoice); }}>
+                                                                <span className="la la-rupee-sign" title="PAID/UNPAID"></span>
+                                                            </a>
+                                                        </button>
+                                                    </li>
                                                 </ui>
                                             </td>
                                             <td>
@@ -720,7 +818,7 @@ const Billing = () => {
                                             </td>
                                             <td>
                                                 <span>
-                                                    -
+                                                    {convertToFullDateFormat(invoice.pickup_date, false)}
                                                 </span>
                                             </td>
                                             <td>
@@ -735,27 +833,36 @@ const Billing = () => {
                                             </td>
                                             <td>
                                                 <span>
-                                                    -
+                                                    {invoice.order_city ? invoice.order_city : "-"}
                                                 </span>
                                             </td>
                                             <td>
-                                                {invoice.company_name}
+                                                {invoice.client_name ? invoice.client_name : "-"}
                                             </td>
                                             <td>
-                                                {invoice.from_city} - {invoice.to_city}
+                                                {invoice.pickup_location} - {invoice.drop_location}
                                             </td>
                                             <td>
-                                                -
-                                            </td>
-                                            <td>
-                                                <span>
-                                                    {invoice.lr_number}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span>
-                                                    {invoice.vehical_number}
-                                                </span>
+                                                <div className="option-box">
+                                                    <ul className="option-list">
+                                                        <li>
+                                                            <button data-text="View LRs">
+                                                                <a
+                                                                    href="#"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#showLRsModal"
+                                                                    onClick={() => {
+                                                                        setLRsModalData(
+                                                                            invoice.order_id
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <span className="la la-receipt"></span>
+                                                                </a>
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </td>
                                             <td>
                                                 <span>
@@ -763,8 +870,21 @@ const Billing = () => {
                                                 </span>
                                             </td>
                                             <td>
-                                                <span>
-                                                    -
+                                                <span
+                                                    className={"badge"}
+                                                    style={{
+                                                        backgroundColor:
+                                                            determineBadgeColor(
+                                                                invoice.is_paid
+                                                            ).color,
+                                                        fontSize: "11px"
+                                                    }}
+                                                >
+                                                    {
+                                                        determineBadgeColor(
+                                                            invoice.is_paid
+                                                        ).tag
+                                                    }
                                                 </span>
                                             </td>
                                         </tr>
@@ -773,6 +893,90 @@ const Billing = () => {
                             </tbody>
                         )}
                     </Table>
+
+                    {/* Start All Popup Blocks */}
+                    {/* Start LRs Modal Popup */}
+                    <div
+                        className="modal fade"
+                        id="showLRsModal"
+                        tabIndex="-1"
+                        aria-hidden="true"
+                    >
+                        <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                            <div className="apply-modal-content modal-content">
+                                <div className="text-center">
+                                    <h3 className="title">LRs History</h3>
+                                    <button
+                                        type="button"
+                                        id="showLRsModalCloseButton"
+                                        className="closed-modal"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    ></button>
+                                </div>
+                                {/* End modal-header */}
+                                <div className="widget-content">
+                                    <div className="table-outer">
+                                        <Table className="default-table manage-job-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style={{ fontSize: "14px" }}>LR No</th>
+                                                    <th style={{ fontSize: "14px" }}>Vehical Number</th>
+                                                    <th style={{ fontSize: "14px" }}>LR Status</th>
+                                                    <th style={{ fontSize: "14px" }}>Created On</th>
+                                                    <th style={{ fontSize: "14px" }}>Created By</th>
+                                                </tr>
+                                            </thead>
+                                            {/* might need to add separate table link with order_number as one order can have 
+                                                multiple comments */}
+                                            {fetchedLRsData.length === 0 ? (
+                                                <tbody
+                                                    style={{
+                                                        fontSize: "14px",
+                                                        fontWeight: "500",
+                                                    }}
+                                                >
+                                                    <tr>
+                                                        <td colSpan={3}>
+                                                            <b> No LR created yet!</b>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            ) : (
+                                                <tbody style={{ fontSize: "14px" }}>
+                                                    {Array.from(fetchedLRsData).map(
+                                                        (lr) => (
+                                                            <tr key={lr.lr_id}>
+                                                                <td>
+                                                                    {lr.lr_number}
+                                                                </td>
+                                                                <td>
+                                                                    {lr.vehical_number ? lr.vehical_number : "-"}
+                                                                </td>
+                                                                <td>
+                                                                    {lr.status}
+                                                                </td>
+                                                                <td>
+                                                                    {lr.lr_created_date}
+                                                                </td>
+                                                                <td>
+                                                                    {lr.auto_generated ? "SYSTEM" : "USER" }
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                        )}
+                                                </tbody>
+                                            )}
+                                        </Table>
+                                    </div>
+                                </div>
+                                {/* End PrivateMessageBox */}
+                            </div>
+                            {/* End .send-private-message-wrapper */}
+                        </div>
+                    </div>
+                    {/* End LRs Modal Popup */}
+
                 </div>
             </div>
             {/* End table widget content */}
