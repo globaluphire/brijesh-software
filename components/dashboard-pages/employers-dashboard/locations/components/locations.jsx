@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import Pagination from "../../../../common/Pagination";
 import Table from "react-bootstrap/Table";
 import { InputGroup } from "react-bootstrap";
+import Spinner from "../../../../spinner/spinner";
 
 const addSearchFilters = {
     consignorName: "",
@@ -29,6 +30,9 @@ const addSearchFilters = {
 
 const Clients = () => {
     const router = useRouter();
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadingText, setLoadingText] = useState("Location Data are loading...");
 
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
     const [fetchedLocationsData, setFetchedLocationsData] = useState({});
@@ -159,14 +163,8 @@ const Clients = () => {
         }
     }
 
-    async function fetchedLocations({
-        consignorName,
-        consigneeName,
-        fromCity,
-        toCity,
-        driverName,
-        status
-    }) {
+    async function fetchedLocations() {
+        setIsLoading(true);
         // fetch client data
         try {
             let query = supabase
@@ -194,9 +192,12 @@ const Clients = () => {
                 locationData.forEach(
                     (i) => (i.location_created_at = dateTimeFormat(i.location_created_at))
                 );
+                setFetchedLocationsData(locationData);
+                setIsLoading(false);
+            } else {
+                setIsLoading(false);
             }
 
-            setFetchedLocationsData(locationData);
         } catch (e) {
             toast.error(
                 "System is unavailable.  Unable to fetch Locations Data.  Please try again later or contact tech support!",
@@ -211,7 +212,8 @@ const Clients = () => {
                     theme: "colored",
                 }
             );
-            console.warn(e);
+            // console.warn(e);
+            setIsLoading(false);
         }
     }
     // const handlePageChange = (newPage) => {
@@ -278,6 +280,8 @@ const Clients = () => {
     };
 
     const setContactModalData = async (locationNumber) => {
+        setIsLoading(true);
+        setLoadingText("Location Contacts are loading...")
         const { data: contactData, error: e } = await supabase
             .from("location_contact")
             .select("*")
@@ -291,6 +295,9 @@ const Clients = () => {
                     (i) => (i.location_contact_created_at = dateTimeFormat(i.location_contact_created_at))
                 );
                 setFetchedContactData(contactData);
+                setIsLoading(false);
+            } else {
+                setIsLoading(false);
             }
     };
 
@@ -303,6 +310,8 @@ const Clients = () => {
                 >
                     <b>All Locations!</b>
                 </div>
+
+                <Spinner isLoading={isLoading} loadingText={loadingText} />
 
                 <Form>
                     {/* <Form.Label

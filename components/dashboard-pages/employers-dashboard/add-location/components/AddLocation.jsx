@@ -10,6 +10,7 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import { envConfig } from "../../../../../config/env";
 import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import Router from "next/router";
+import Spinner from "../../../../spinner/spinner";
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
     ssr: false,
@@ -55,7 +56,6 @@ const addLocationFields = {
     address1: "",
     address2: "",
     area: "",
-    city: "",
     pin: "",
     state: "",
 
@@ -71,7 +71,6 @@ const addLocationFields = {
     dropAddress1: "",
     dropAddress2: "",
     dropArea: "",
-    dropCity: "",
     dropPin: "",
     dropState: "",
 
@@ -88,9 +87,8 @@ const AddLocation = () => {
     const [lowerLimit, setLowerLimit] = useState("");
     const [upperLimit, setUpperLimit] = useState("");
 
-    const handleSalaryTypeChange = (e) => {
-        setSalaryType(e.target.value);
-    };
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadingText, setLoadingText] = useState("");
 
     const [jobData, setJobData] = useState(
         JSON.parse(JSON.stringify(addJobFields))
@@ -120,7 +118,6 @@ const AddLocation = () => {
         address1,
         address2,
         area,
-        city,
         pin,
         state,
 
@@ -136,7 +133,6 @@ const AddLocation = () => {
         dropAddress1,
         dropAddress2,
         dropArea,
-        dropCity,
         dropPin,
         dropState,
 
@@ -162,6 +158,12 @@ const AddLocation = () => {
 
     const [dropCitySelection, setDropCitySelection] = useState([]);
     const [dropCityRequired, setDropCityRequired] = useState(false);
+
+    const [pickupLocationCitySelection, setPickupLocationCitySelection] = useState([]);
+    const [pickupLocationCityRequired, setPickupLocationCityRequired] = useState(false);
+
+    const [dropLocationCitySelection, setDropLocationCitySelection] = useState([]);
+    const [dropLocationCityRequired, setDropLocationCityRequired] = useState(false);
 
     const [clientTypeReferenceOptions, setClientTypeReferenceOptions] = useState([]);
     const [clientContactTypeReferenceOptions, setClientContactTypeReferenceOptions] = useState([]);
@@ -197,6 +199,7 @@ const AddLocation = () => {
             cityNames.sort();
             setCityRefs(cityNames);
         }
+        setIsLoading(false);
 
     };
 
@@ -214,7 +217,7 @@ const AddLocation = () => {
             pickupCitySelection[0] &&
             locationFormData.address1 &&
             locationFormData.area &&
-            locationFormData.city &&
+            pickupLocationCitySelection[0] &&
             locationFormData.pin &&
             locationFormData.state &&
     
@@ -233,7 +236,7 @@ const AddLocation = () => {
             dropCitySelection[0] &&
             locationFormData.dropAddress1 &&
             locationFormData.dropArea &&
-            locationFormData.dropCity &&
+            dropLocationCitySelection[0] &&
             locationFormData.dropPin &&
             locationFormData.dropState &&
     
@@ -273,6 +276,7 @@ const AddLocation = () => {
         setLocationFormData,
         user
     ) => {
+        setIsLoading(true);
         if (checkRequiredFields(locationFormData)) {
             try {
                 // Generate location number
@@ -311,9 +315,10 @@ const AddLocation = () => {
                         address1: locationFormData.locationType === "Pickup" ? address1 : dropAddress1,
                         address2: locationFormData.locationType === "Pickup" ? address2 : dropAddress2,
                         area: locationFormData.locationType === "Pickup" ? area : dropArea,
-                        city: locationFormData.locationType === "Pickup" ? city : dropCity,
+                        city: locationFormData.locationType === "Pickup" ? pickupLocationCitySelection[0] : dropLocationCitySelection[0],
                         pin: locationFormData.locationType === "Pickup" ? pin : dropPin,
-                        state: locationFormData.locationType === "Pickup" ? state : dropState
+                        state: locationFormData.locationType === "Pickup" ? state : dropState,
+                        location_created_by: user.id
                     },
                 ]);
                 if (locationError) {
@@ -331,6 +336,7 @@ const AddLocation = () => {
                             theme: "colored",
                         }
                     );
+                    setIsLoading(false);
                 } else {
                     // saving location contact data
                     const { data: locationContactData, error: locationContactError } = await supabase.from("location_contact").insert([
@@ -358,6 +364,7 @@ const AddLocation = () => {
                                 theme: "colored",
                             }
                         );
+                        setIsLoading(false);
                     } else {
                         // open toast
                         toast.success("New " + locationType + " location saved successfully", {
@@ -381,8 +388,11 @@ const AddLocation = () => {
                         setValidated(false);
                         setPickupCitySelection([]);
                         setDropCitySelection([]);
+                        setPickupLocationCitySelection([]);
+                        setDropLocationCitySelection([]);
                         setPickupCityRequired(false);
                         setDropCityRequired(false);
+                        setIsLoading(false);
                     }
                 }
             } catch (err) {
@@ -401,6 +411,7 @@ const AddLocation = () => {
                     }
                 );
                 // console.warn(err);
+                setIsLoading(false);
             }
         } else {
             // open toast
@@ -414,6 +425,7 @@ const AddLocation = () => {
                 progress: undefined,
                 theme: "colored",
             });
+            setIsLoading(false);
         }
     };
 
@@ -429,6 +441,7 @@ const AddLocation = () => {
     return (
         <> 
             <Form validated={validated}>
+                <Spinner isLoading={isLoading} loadingText={loadingText} />
                     <div>
                         <div style={{ padding: "0 2rem" }}>
                             <Row>
@@ -498,17 +511,17 @@ const AddLocation = () => {
                                                         onChange={setPickupCitySelection}
                                                         className="form-group"
                                                         options={cityRefs}
-                                                        selected={pickupPointCity}
+                                                        selected={pickupCitySelection}
                                                         required="true"
                                                     />
                                                     { !pickupCityRequired && pickupCitySelection[0] ? <span style={{ color: "green" }}>Looks good!</span> :
                                                         <span  style={{ fontSize: "0.875em", color: "#dc3545" }}>
-                                                            Please enter Client Contact Type.
+                                                            Please enter pickup city.
                                                         </span>
                                                     }
                                                 </Form.Group>
                                             </Row>
-                                            <div className="horizontal-divider pb-4"></div>
+                                            <div className="horizontal-divider pb-1"></div>
                                             <Row>
                                                 <Form.Group as={Col} md="6" controlId="validationCustom03">
                                                     <Form.Label>Address 1</Form.Label>
@@ -550,20 +563,19 @@ const AddLocation = () => {
                                             <Row className="mb-3">
                                                 <Form.Group as={Col} md="2" controlId="validationCustom03">
                                                     <Form.Label>City</Form.Label>
-                                                    <Form.Control    
-                                                        type="text"
-                                                        required
-                                                        value={city}
-                                                        onChange={(e) => {
-                                                            setLocationFormData((previousState) => ({
-                                                                ...previousState,
-                                                                city: e.target.value,
-                                                            }));
-                                                        }}
+                                                    <Typeahead
+                                                        id="pickupCity"
+                                                        onChange={setPickupLocationCitySelection}
+                                                        className="form-group"
+                                                        options={cityRefs}
+                                                        selected={pickupLocationCitySelection}
+                                                        required="true"
                                                     />
-                                                    <Form.Control.Feedback type="invalid">
-                                                        Please provide a valid city.
-                                                    </Form.Control.Feedback>
+                                                    { pickupLocationCitySelection && pickupLocationCitySelection[0] ? <span style={{ color: "green" }}>Looks good!</span> :
+                                                        <span  style={{ fontSize: "0.875em", color: "#dc3545" }}>
+                                                            Please enter pickup city.
+                                                        </span>
+                                                    }
                                                 </Form.Group>
                                                 <Form.Group as={Col} md="2" controlId="validationCustom04">
                                                     <Form.Label>State</Form.Label>
@@ -700,23 +712,20 @@ const AddLocation = () => {
                                                     />
                                                 </Form.Group>
                                             </Row>
-                                            <div className="horizontal-divider pb-2"></div>
                                         </div>
                                     </div>
                                     {/* Contact Block ends */}
 
                                     {/* Form Submit Buttons Block Starts */}
                                     <Row className="mt-5">
-                                        <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">
+                                        <Form.Group as={Col} className="chosen-single form-input chosen-container mb-3">
                                             <Button
                                                 variant="secondary"
-                                                onClick={() => {Router.push("/employers-dashboard/locations"); }}
+                                                onClick={() => { window.history.back(); }}
                                                 className="btn btn-back btn-sm text-nowrap m-1"
                                             >
-                                                Back to Locations
+                                                Back
                                             </Button>
-                                        </Form.Group>
-                                        <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mx-3 mb-3 px-4">
                                             <Button
                                                 type="submit"
                                                 variant="success"
@@ -768,12 +777,12 @@ const AddLocation = () => {
                                                         onChange={setDropCitySelection}
                                                         className="form-group"
                                                         options={cityRefs}
-                                                        selected={dropCity}
+                                                        selected={dropCitySelection}
                                                         required="true"
                                                     />
                                                     { !dropCityRequired && dropCitySelection[0] ? <span style={{ color: "green" }}>Looks good!</span> :
                                                         <span  style={{ fontSize: "0.875em", color: "#dc3545" }}>
-                                                            Please enter Drop city.
+                                                            Please enter drop city.
                                                         </span>
                                                     }
                                                 </Form.Group>
@@ -822,21 +831,19 @@ const AddLocation = () => {
                                             <Row className="mb-3">
                                                 <Form.Group as={Col} md="2" controlId="validationCustom03">
                                                     <Form.Label>City</Form.Label>
-                                                    <Form.Control    
-                                                        type="text"
-                                                        
-                                                        required
-                                                        value={dropCity}
-                                                        onChange={(e) => {
-                                                            setLocationFormData((previousState) => ({
-                                                                ...previousState,
-                                                                dropCity: e.target.value,
-                                                            }));
-                                                        }}
+                                                    <Typeahead
+                                                        id="dropCity"
+                                                        onChange={setDropLocationCitySelection}
+                                                        className="form-group"
+                                                        options={cityRefs}
+                                                        selected={dropLocationCitySelection}
+                                                        required="true"
                                                     />
-                                                    <Form.Control.Feedback type="invalid">
-                                                        Please provide a valid city.
-                                                    </Form.Control.Feedback>
+                                                    { dropLocationCitySelection && dropLocationCitySelection[0] ? <span style={{ color: "green" }}>Looks good!</span> :
+                                                        <span  style={{ fontSize: "0.875em", color: "#dc3545" }}>
+                                                            Please enter drop city.
+                                                        </span>
+                                                    }
                                                 </Form.Group>
                                                 <Form.Group as={Col} md="2" controlId="validationCustom04">
                                                     <Form.Label>State</Form.Label>
@@ -884,7 +891,7 @@ const AddLocation = () => {
                                                     />
                                                 </Form.Group>
                                             </Row>
-                                            <div className="horizontal-divider pb-1"></div>
+                                            <div className="horizontal-divider pb-2"></div>
                                         </div>
                                     </div>
                                     {/* Address Block ends */}
@@ -985,16 +992,14 @@ const AddLocation = () => {
 
                                     {/* Form Submit Buttons Block Starts */}
                                     <Row className="mt-5">
-                                        <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">
+                                        <Form.Group as={Col} className="chosen-single form-input chosen-container mb-3">
                                             <Button
                                                 variant="secondary"
-                                                onClick={() => {Router.push("/employers-dashboard/locations"); }}
+                                                onClick={() => { window.history.back(); }}
                                                 className="btn btn-back btn-sm text-nowrap m-1"
                                             >
-                                                Back to Locations
+                                                Back
                                             </Button>
-                                        </Form.Group>
-                                        <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mx-3 mb-3 px-4">
                                             <Button
                                                 type="submit"
                                                 variant="success"
