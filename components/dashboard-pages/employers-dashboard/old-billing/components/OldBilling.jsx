@@ -21,6 +21,7 @@ import { CSVLink } from "react-csv";
 import { convertToFullDateFormat } from "../../../../../utils/convertToFullDateFormat";
 import CalendarComp from "../../../../date/CalendarComp";
 import { format } from "date-fns";
+import Spinner from "../../../../spinner/spinner";
 
 const addSearchFilters = {
     clientName: "",
@@ -34,6 +35,8 @@ const addSearchFilters = {
 const OldBilling = () => {
     const router = useRouter();
     const user = useSelector((state) => state.candidate.user);
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadingText, setLoadingText] = useState("");
 
     const [fetchedInvoicedata, setFetchedInvoicedata] = useState({});
     const [fetchedInvoicedataCSV, setFetchedInvoicedataCSV] = useState({});
@@ -124,6 +127,7 @@ const OldBilling = () => {
     };
 
     async function findInvoice(searchInvoiceDateFrom, searchInvoiceDateTo, searchFilters) {
+        setIsLoading(true);
 
         localStorage.setItem("billingCompanyName", searchFilters.clientName);
 
@@ -167,16 +171,12 @@ const OldBilling = () => {
             const invoiceDataCSV = data.map(({ invoice_id, order_id, lr_id, invoice_date, ...rest }) => ({ ...rest }));
             setFetchedInvoicedataCSV(invoiceDataCSV);
         }
+        setIsLoading(false);
     }
 
-    async function fetchedInvoice({
-        consignorName,
-        consigneeName,
-        fromCity,
-        toCity,
-        driverName,
-        status
-    }) {
+    async function fetchedInvoice() {
+        setIsLoading(true);
+
         try {
             var searchBillingCompanyName = localStorage.getItem("billingCompanyName");
 
@@ -264,6 +264,7 @@ const OldBilling = () => {
             );
             console.warn(e);
         }
+        setIsLoading(false);
     }
     // const handlePageChange = (newPage) => {
     //     setCurrentPage(newPage);
@@ -289,6 +290,82 @@ const OldBilling = () => {
         // pageSize,
         // currentPage
     ]);
+
+    async function updateInvoiceStatus(invoice) {
+        setIsLoading(true);
+
+        if (!invoice.is_paid) {
+            if(confirm("Are you sure you want to mark this Invoice as PAID?")) {
+                try {
+                    const { data, error } = await supabase
+                        .from("invoice")
+                        .update({
+                            is_paid: true,
+                            invoice_updated_at: new Date()
+                        })
+                        .eq("invoice_id", invoice.invoice_id)
+                        .select();
+
+                    if (data) {
+                        fetchedInvoice();
+                        toast.success("Invoice marked as PAID!", {
+                            position: "bottom-right",
+                            autoClose: 8000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                    } else {
+                        toast.error("Error while marking invoice as PAID. Please try again later or contact tech support", {
+                            position: "bottom-right",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+
+                        setIsLoading(false);
+                        setLoadingText("");
+                    }
+                } catch {
+                    toast.error("Error while mark invoice as PAID. Please try again later or contact tech support", {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                    setIsLoading(false);
+                    setLoadingText("");
+                }
+            } else {
+                setIsLoading(false);
+                setLoadingText("");
+            }
+        } else {
+            toast.info("Invoice is already PAID", {
+                position: "top-center",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+            setIsLoading(false);
+            setLoadingText("");
+        }
+    };
 
     const setNoteData = async (applicationId) => {
         // reset NoteText
@@ -380,17 +457,10 @@ const OldBilling = () => {
     };
 
     const determineBadgeColor = (status) => {
-        switch (status?.toLowerCase()) {
-            case "sent":
-                return { color: "orange", tag: "Sent" };
-            case "read":
-                return { color: "#87CEEB", tag: "Read" };
-            case "completed":
-                return { color: "green", tag: "Signed" };
-            case "signed":
-                return { color: "green", tag: "Signed" };
-            default:
-                return { color: "red", tag: "Not Sent" };
+        if (status) {
+            return { color: "green", tag: "PAID" };
+        } else {
+            return { color: "red", tag: "UNPAID" };
         }
     };
 
@@ -420,6 +490,7 @@ const OldBilling = () => {
     return (
         <>
             <div>
+                <Spinner isLoading={isLoading} loadingText={loadingText} />
                 <div
                     className="widget-title"
                     style={{ fontSize: "1.5rem", fontWeight: "500" }}
@@ -677,7 +748,7 @@ const OldBilling = () => {
                                 <th>LR No</th>
                                 <th>Truck Number</th>
                                 <th>Weight(Kg)</th>
-                                <th>Order Details</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         {fetchedInvoicedata.length === 0 ? (
@@ -704,6 +775,13 @@ const OldBilling = () => {
                                                         <button>
                                                             <a target="_blank" onClick={() => router.push(`/employers-dashboard/view-old-invoice/${invoice.invoice_id}`)}>
                                                                 <span className="la la-print" title="Print Invoice"></span>
+                                                            </a>
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button data-text="PAID/UNPAID">
+                                                            <a onClick={() => { updateInvoiceStatus(invoice); }}>
+                                                                <span className="la la-rupee-sign" title="PAID/UNPAID"></span>
                                                             </a>
                                                         </button>
                                                     </li>
@@ -764,8 +842,21 @@ const OldBilling = () => {
                                                 </span>
                                             </td>
                                             <td>
-                                                <span>
-                                                    -
+                                                <span
+                                                    className={"badge"}
+                                                    style={{
+                                                        backgroundColor:
+                                                            determineBadgeColor(
+                                                                invoice.is_paid
+                                                            ).color,
+                                                        fontSize: "11px"
+                                                    }}
+                                                >
+                                                    {
+                                                        determineBadgeColor(
+                                                            invoice.is_paid
+                                                        ).tag
+                                                    }
                                                 </span>
                                             </td>
                                         </tr>
