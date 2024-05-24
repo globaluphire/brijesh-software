@@ -204,17 +204,16 @@ const AddClient = () => {
     function checkRequiredFields(clientFormData) {
         if (
             // client
-            clientType &&
-            clientName &&
-            clientPhone &&
-            clientGST &&
+            clientFormData.clientType &&
+            clientFormData.clientName &&
+            clientFormData.clientGST &&
         
             // client address
-            clientAddress1 &&
+            clientFormData.clientAddress1 &&
             clientCitySelection[0] &&
-            clientState &&
-            clientArea &&
-            clientPIN
+            clientFormData.clientState &&
+            clientFormData.clientArea &&
+            clientFormData.clientPIN
         ) {
             return true;
         } else {
@@ -277,8 +276,6 @@ const AddClient = () => {
                 }
                 const clientNumber = "C" + "" + date + "" + month + "" + year.toString().substring(2) + "" + clientSeqNbr;
 
-                console.log(clientNumber, " ", clientNumber);
-
                 // saving client data
                 const { data: clientData, error: clientError } = await supabase.from("client").insert([
                     {
@@ -302,7 +299,9 @@ const AddClient = () => {
                         // client contact
                         contact_name: clientContactName,
                         contact_phone: clientContactPhone,
-                        contact_email: clientContactEmail
+                        contact_email: clientContactEmail,
+
+                        client_created_by: user.id
                     },
                 ]);
                 if (clientError) {
@@ -573,7 +572,7 @@ const AddClient = () => {
                                         onChange={setClientCitySelection}
                                         className="form-group"
                                         options={cityRefs}
-                                        selected={clientCity}
+                                        selected={clientCitySelection}
                                         required="true"
                                     />
                                     { !clientCityRequired && clientCitySelection[0] ? <span style={{ color: "green" }}>Looks good!</span> :
@@ -712,9 +711,7 @@ const AddClient = () => {
                                 onClick={(e) => {
                                     e.preventDefault();
                                     handleSubmit(e);
-                                    if(validated) {
-                                        addNewClient(clientFormData, setClientFormData, user);
-                                    }
+                                    addNewClient(clientFormData, setClientFormData, user);
                                 }}
                                 className="btn btn-add-lr btn-sm text-nowrap m-1"
                             >
