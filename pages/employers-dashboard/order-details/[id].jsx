@@ -754,38 +754,38 @@ const OrderDetails = (orderDetails) => {
     const determineBadgeColor = (status) => {
         switch (status) {
             case "Ready for pickup":
-                return { color: "#157347", tag: "Ready for pickup" };
+                return { color: "#87CEEB", textColor: "#333", tag: "Ready for pickup" };
             case "Tempo under the process":
-                return { color: "#C44027", tag: "Tempo under the process" };
+                return { color: "#FFA500", textColor: "#333", tag: "Tempo under the process" };
             case "In process of departure":
-                return { color: "#91C47C", tag: "In process of departure" };
+                return { color: "#8f83c3", textColor: "#fff", tag: "In process of departure" };
             case "At destination city warehouse":
-                return { color: "#A2C3C8", tag: "At destination city warehouse" };
+                return { color: "#FFE284", textColor: "#333", tag: "At destination city warehouse" };
             case "Ready for final delivery":
-                return { color: "#CEE0E2", tag: "Ready for final delivery" };
+                return { color: "green", tag: "Ready for final delivery" };
             case "Cancel":
-                return { color: "#dc3545", tag: "Cancelled" };
+                return { color: "#dc3545", tag: "Cancel Order" };
             case "Completed":
                 return { color: "gray", tag: "Completed" };
             default:
-                return { color: "#E7B8B0", tag: "Under pickup process" };
+                return { color: "#B55385", textColor: "#fff", tag: "Under pickup process" };
         }
     };
 
     const determineNextStatus = (status) => {
         switch (status) {
             case "Under pickup process":
-                return { color: "orange", tag: "Ready for pickup" };
+                return { color: "#87CEEB", tag: "Ready for pickup" };
             case "Ready for pickup":
-                return { color: "#C44027", tag: "Tempo under the process" };
+                return { color: "#FFA500", tag: "Tempo under the process" };
             case "Tempo under the process":
-                return { color: "#91C47C", tag: "In process of departure" };
+                return { color: "#8f83c3", tag: "In process of departure" };
             case "In process of departure":
-                return { color: "#A2C3C8", tag: "At destination city warehouse" };
+                return { color: "#FFE284", tag: "At destination city warehouse" };
             case "At destination city warehouse":
-                return { color: "#CEE0E2", tag: "Ready for final delivery" };
+                return { color: "green", tag: "Ready for final delivery" };
             case "Ready for final delivery":
-                return { color: "#CEE0E2", tag: "Completed" };
+                return { color: "gray", tag: "Completed" };
             default:
                 return { color: "#E9ECEF", tag: "N/A" };
         }
@@ -1138,8 +1138,11 @@ const OrderDetails = (orderDetails) => {
                                                                     determineBadgeColor(
                                                                         fetchedOrderData.status
                                                                     ).color,
-                                                                margin: "auto",
-                                                                color: "#fff"
+                                                                color:
+                                                                    determineBadgeColor(
+                                                                        fetchedOrderData.status
+                                                                    ).textColor,
+                                                                margin: "auto"
                                                             }}
                                                         />
                                                     </InputGroup>
