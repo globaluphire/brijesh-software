@@ -187,12 +187,12 @@ const LocationDetails = () => {
                     }));
     
                     // set city
-                    let preCitySelected = [];
+                    const preCitySelected = [];
                     preCitySelected.push(locationData[0].city);
                     setCitySelection(preCitySelected);
     
                     // set location_city
-                    let preLocationCitySelected = [];
+                    const preLocationCitySelected = [];
                     preLocationCitySelected.push(locationData[0].location_city);
                     setLocationCitySelection(preLocationCitySelected);
     
