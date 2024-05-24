@@ -167,7 +167,7 @@ const Clients = () => {
         // fetch client data
         try {
             let query = supabase
-                .from("client")
+                .from("client_view")
                 .select("*");
 
             // setTotalRecords((await query).data.length);
@@ -617,8 +617,7 @@ const Clients = () => {
                                                 <ui className="option-list" style={{ border: "none" }}>
                                                     <li>
                                                         <button>
-                                                        {/* onClick={() => router.push(`/employers-dashboard/edit-client/${client.client_number}`)} */}
-                                                            <a>
+                                                            <a onClick={() => router.push(`/employers-dashboard/client-details/${client.client_number}`)}>
                                                                 <span className="la la-pencil" title="Edit Client"></span>
                                                             </a>
                                                         </button>
@@ -661,13 +660,13 @@ const Clients = () => {
                                                 <span className="optional">{client.contact_email}</span> <br />
                                             </td>
                                             <td>
-                                                <span>-</span>
+                                                <span>{client.total_orders ? client.total_orders : "-"}</span>
                                             </td>
                                             <td>
-                                                <span>-</span>
+                                                <span>{client.total_billings ? client.total_billings : "-"}</span>
                                             </td>
                                             <td>
-                                                <span>-</span>
+                                                <span>{client.total_billings_due ? client.total_billings_due : "-"}</span>
                                             </td>
                                             <td>
                                                 {
