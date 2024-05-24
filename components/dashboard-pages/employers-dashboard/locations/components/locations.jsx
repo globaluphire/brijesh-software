@@ -281,7 +281,7 @@ const Clients = () => {
 
     const setContactModalData = async (locationNumber) => {
         setIsLoading(true);
-        setLoadingText("Location Contacts are loading...")
+        setLoadingText("Location Contacts are loading...");
         const { data: contactData, error: e } = await supabase
             .from("location_contact")
             .select("*")
@@ -296,8 +296,10 @@ const Clients = () => {
                 );
                 setFetchedContactData(contactData);
                 setIsLoading(false);
+                setLoadingText("");
             } else {
                 setIsLoading(false);
+                setLoadingText("");
             }
     };
 
