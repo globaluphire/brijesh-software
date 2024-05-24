@@ -744,7 +744,6 @@ const OldBilling = () => {
                                 <th>Order City</th>
                                 <th>Client Name</th>
                                 <th>Route</th>
-                                <th>Status</th>
                                 <th>LR No</th>
                                 <th>Truck Number</th>
                                 <th>Weight(Kg)</th>
@@ -822,9 +821,6 @@ const OldBilling = () => {
                                             </td>
                                             <td>
                                                 {invoice.from_city} - {invoice.to_city}
-                                            </td>
-                                            <td>
-                                                -
                                             </td>
                                             <td>
                                                 <span>
