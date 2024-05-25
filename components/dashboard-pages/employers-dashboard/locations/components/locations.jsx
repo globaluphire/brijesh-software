@@ -570,7 +570,7 @@ const Clients = () => {
                                                     <li>
                                                         <button>
                                                             <a onClick={() => router.push(`/employers-dashboard/location-details/${location.location_number}`)}>
-                                                                <span className="la la-pencil" title="Edit Location"></span>
+                                                                <span className="la la-edit" title="Edit Location"></span>
                                                             </a>
                                                         </button>
                                                     </li>
