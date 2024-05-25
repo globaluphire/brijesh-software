@@ -288,7 +288,6 @@ const OpenOrderProcess = () => {
             let { data: csvOrderData, error } = await supabase
                     .from("csv_orders")
                     .select("*");
-                    {}
 
             if (csvOrderData) {
                 csvOrderData.forEach(
