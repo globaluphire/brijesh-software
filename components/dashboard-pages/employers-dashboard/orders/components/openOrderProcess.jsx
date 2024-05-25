@@ -186,54 +186,10 @@ const OpenOrderProcess = () => {
             );
 
             setFetchedOpenOrderdata(data);
-
-            // creating new array object for CSV export
-            const orderDataCSV = data.map(({
-                order_created_at: CreatedOn,
-                order_updated_at: UpdatedOn,
-                pickup_date: PickupDate,
-                order_number: ERPOrderNo,
-                status: Status,
-                client_name: ClientName,
-                company_name: Company,
-                weight: TotalWeight,
-                quantity: OrderDetails,
-                notes: OrderNotes,
-                lr_number: LRNo,
-                local_transport: LocalTransport,
-                truck_details: TruckDetails,
-                eway_number: EwayBillNo,
-                bills: Bills,
-                ...rest }) => ({ 
-                    CreatedOn,
-                    UpdatedOn,
-                    PickupDate,
-                    ERPOrderNo,
-                    Status,
-                    ClientName,
-                    Company,
-                    TotalWeight,
-                    OrderDetails,
-                    OrderNotes,
-                    LRNo,
-                    LocalTransport,
-                    TruckDetails,
-                    EwayBillNo,
-                    Bills,
-                    ...rest }));
-
-            setFetchedOpenOrderdataCSV(orderDataCSV);
         }
     }
 
-    async function fetchOpenOrder({
-        consignorName,
-        consigneeName,
-        fromCity,
-        toCity,
-        driverName,
-        status
-    }) {
+    async function fetchOpenOrder() {
         try {
             // call reference to get lrStatus options
             const { data, error: e } = await supabase
@@ -278,43 +234,6 @@ const OpenOrderProcess = () => {
                 );
 
                 setFetchedOpenOrderdata(orderData);
-
-                // creating new array object for CSV export
-                const orderDataCSV = orderData.map(({
-                    order_created_at: CreatedOn,
-                    order_updated_at: UpdatedOn,
-                    pickup_date: PickupDate,
-                    order_number: ERPOrderNo,
-                    status: Status,
-                    client_name: ClientName,
-                    company_name: Company,
-                    weight: TotalWeight,
-                    quantity: OrderDetails,
-                    notes: OrderNotes,
-                    lr_number: LRNo,
-                    local_transport: LocalTransport,
-                    truck_details: TruckDetails,
-                    eway_number: EwayBillNo,
-                    bills: Bills,
-                    ...rest }) => ({ 
-                        CreatedOn,
-                        UpdatedOn,
-                        PickupDate,
-                        ERPOrderNo,
-                        Status,
-                        ClientName,
-                        Company,
-                        TotalWeight,
-                        OrderDetails,
-                        OrderNotes,
-                        LRNo,
-                        LocalTransport,
-                        TruckDetails,
-                        EwayBillNo,
-                        Bills,
-                        ...rest }));
-
-                setFetchedOpenOrderdataCSV(orderDataCSV);
 
                 setIsLoading(false);
             } else {
@@ -362,6 +281,51 @@ const OpenOrderProcess = () => {
         // pageSize,
         // currentPage
     ]);
+
+    async function fetchedCSVData() {
+        try {
+            
+            let { data: csvOrderData, error } = await supabase
+                    .from("csv_orders")
+                    .select("*");
+                    {}
+
+            if (csvOrderData) {
+                csvOrderData.forEach(
+                    (i) => (i["Created On"] = dateTimeFormat(i["Created On"]))
+                );
+                csvOrderData.forEach(
+                    (i) => (i["Updated On"] = dateTimeFormat(i["Updated On"]))
+                );
+
+                setFetchedOpenOrderdataCSV(csvOrderData);
+
+                setIsLoading(false);
+            } else {
+                setIsLoading(false);
+            }
+        } catch (e) {
+            toast.error(
+                "System is unavailable.  Please try again later or contact tech support!",
+                {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
+            // console.warn(e);
+            setIsLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        fetchedCSVData(searchFilters);
+    }, []);
 
     const setInvoiceModalData = async (order) => {
         setIsLoading(true);
@@ -770,24 +734,24 @@ const OpenOrderProcess = () => {
         }
     };
 
-    const CSVSmartLinx = async (applicant) => {
-        fetch("/api/csv", {
+    const ordersCSV = async (orderData) => {
+        fetch("/api/orders/orderCSV", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(applicant),
+            body: JSON.stringify(orderData),
         })
             .then((response) => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-                toast.success("Sent to SmartLinx!");
+                toast.success("Orders Successfully Exported in CSV!");
             })
             .catch((error) => {
                 console.error("Fetch error:", error);
                 toast.error(
-                    "Error while sending CSV to SmartLinx.  Please try again later or contact tech support!"
+                    "Error while downloading CSV to SmartLinx.  Please try again later or contact tech support!"
                 );
                 // Handle errors here, such as displaying an error message to the user
             });
