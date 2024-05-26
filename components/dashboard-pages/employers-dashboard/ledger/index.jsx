@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
+/* eslint-disable prefer-const */
 import MobileMenu from "../../../header/MobileMenu";
 import DashboardHeader from "../../../header/DashboardHeader";
 import LoginPopup from "../../../common/form/login/LoginPopup";
@@ -78,8 +79,8 @@ const index = () => {
             if (ledgerData) {
                 setFetchedLedgerData(ledgerData);
 
-                var totalDebAmount = 0
-                var totalCredAmount = 0
+                var totalDebAmount = 0;
+                var totalCredAmount = 0;
                 for (let i=0; i<ledgerData.length; i++) {
                     totalDebAmount = totalDebAmount + ledgerData[i].total_amount;
                     if(ledgerData[i].is_paid) {
@@ -129,6 +130,8 @@ const index = () => {
     }
 
     async function fetchedClientNames() {
+        setIsLoading(true);
+        setLoadingText("");
         let { data: ledgerClientData, error } = await supabase
             .from("ledger_view")
             .select("client_name", { distinct: true });
@@ -141,6 +144,11 @@ const index = () => {
             }
             allLedgerClientNames.sort();
             setClientNames(allLedgerClientNames);
+            setIsLoading(false);
+            setLoadingText("");
+        } else {
+            setIsLoading(false);
+            setLoadingText("");
         }
 
     };
