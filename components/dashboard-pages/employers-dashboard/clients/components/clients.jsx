@@ -156,14 +156,7 @@ const Clients = () => {
         }
     }
 
-    async function fetchedClients({
-        consignorName,
-        consigneeName,
-        fromCity,
-        toCity,
-        driverName,
-        status
-    }) {
+    async function fetchedClients() {
         // fetch client data
         try {
             let query = supabase

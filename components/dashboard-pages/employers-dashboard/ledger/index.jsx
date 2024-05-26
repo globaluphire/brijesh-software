@@ -9,11 +9,16 @@ import CopyrightFooter from "../../CopyrightFooter";
 import MenuToggler from "../../MenuToggler";
 import Spinner from "../../../spinner/spinner";
 import CalendarComp from "../../../date/CalendarComp";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import { convertToFullDateFormat } from "../../../../utils/convertToFullDateFormat";
+import { format } from "date-fns";
+import { toast } from "react-toastify";
+import { supabase } from "../../../../config/supabaseClient";
+import { Typeahead } from "react-bootstrap-typeahead";
 
 const addSearchFilters = {
     clientName: ""
@@ -24,8 +29,14 @@ const index = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [loadingText, setLoadingText] = useState("");
 
+    const [fetchedLedgerData, setFetchedLedgerData] = useState([]);
+    const [totalDebitAmount, setTotalDebitAmount] = useState(0);
+    const [totalCreditAmount, setTotalCreditAmount] = useState(0);
+
     const [searchInvoiceDateFrom, setSearchInvoiceDateFrom] = useState();
     const [searchInvoiceDateTo, setSearchInvoiceDateTo] = useState();
+    const [clientNames, setClientNames] = useState([]);
+    const [selectedClient, setSelectedClient] = useState([]);
     const [searchFilters, setSearchFilters] = useState(
         JSON.parse(JSON.stringify(addSearchFilters))
     );
@@ -53,54 +64,93 @@ const index = () => {
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
     };
 
-    // async function findInvoice(searchInvoiceDateFrom, searchInvoiceDateTo, searchFilters) {
-    //     setIsLoading(true);
+    async function fetchedLedger(searchInvoiceDateFrom, searchInvoiceDateTo, searchFilters) {
+        setIsLoading(true);
+        setLoadingText("Finding Ledger...");
 
-    //     let query = supabase
-    //         .from("invoice")
-    //         .select("*")
-    //         .lt("invoice_created_at", "2024-06-01")
-    //         .ilike("company_name", "%" + searchFilters.clientName + "%");
+        // fetch Ledger
+        try {
+            let { data: ledgerData, error } = await supabase
+                .from("ledger_view")
+                .select("*")
+                .eq("client_name", selectedClient);
 
-    //     if (searchInvoiceDateFrom) {
-    //         query.gte("invoice_date", format(searchInvoiceDateFrom, "yyyy-MM-dd"));
-    //     }
-    //     if (searchInvoiceDateTo) {
-    //         query.lte("invoice_date", format(searchInvoiceDateTo, "yyyy-MM-dd"));
-    //     }
-    //     if (searchInvoiceDateFrom && searchInvoiceDateTo) {
-    //         query.gte("invoice_date", format(searchInvoiceDateFrom, "yyyy-MM-dd"));
-    //         query.lte("invoice_date", format(searchInvoiceDateTo, "yyyy-MM-dd"));
-    //     }
+            if (ledgerData) {
+                setFetchedLedgerData(ledgerData);
 
-    //     // setTotalRecords((await query).data.length);
+                var totalDebAmount = 0
+                var totalCredAmount = 0
+                for (let i=0; i<ledgerData.length; i++) {
+                    totalDebAmount = totalDebAmount + ledgerData[i].total_amount;
+                    if(ledgerData[i].is_paid) {
+                        totalCredAmount = totalCredAmount + ledgerData[i].total_amount;
+                    }
+                }
+                setTotalDebitAmount(totalDebAmount);
+                setTotalCreditAmount(totalCredAmount);
 
-    //     let { data, error } = await query.order("invoice_created_at", {
-    //         ascending: false,
-    //         nullsFirst: false,
-    //     });
-    //     // .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
+                setIsLoading(false);
+                setLoadingText("");
+            } else {
+                toast.error(
+                    "Error while finding Ledger data.  Please try again later or contact tech support!",
+                    {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    }
+                );
+                setIsLoading(false);
+                setLoadingText("");
+            }
+        } catch (e) {
+            toast.error(
+                "System is unavailable.  Unable to fetch Client Data.  Please try again later or contact tech support!",
+                {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
+            // console.warn(e);
+            setIsLoading(false);
+            setLoadingText("");
+        }
+    }
 
-    //     // if (facility) {
-    //     //     data = data.filter((i) => i.facility_name === facility);
-    //     // }
+    async function fetchedClientNames() {
+        let { data: ledgerClientData, error } = await supabase
+            .from("ledger_view")
+            .select("client_name", { distinct: true });
+    
+        if (ledgerClientData) {
+            // set client names
+            const allLedgerClientNames = [];
+            for (let i = 0; i < ledgerClientData.length; i++) {
+                allLedgerClientNames.push(ledgerClientData[i].client_name);
+            }
+            allLedgerClientNames.sort();
+            setClientNames(allLedgerClientNames);
+        }
 
-    //     if (data) {
-    //         data.forEach(
-    //             (invoice) =>
-    //                 (invoice.invoice_created_at = dateTimeFormat(invoice.invoice_created_at))
-    //         );
-    //         setFetchedInvoicedata(data);
+    };
 
-    //         // creating new array object for CSV export
-    //         const invoiceDataCSV = data.map(({ invoice_id, order_id, lr_id, invoice_date, ...rest }) => ({ ...rest }));
-    //         setFetchedInvoicedataCSV(invoiceDataCSV);
-    //     }
-    //     setIsLoading(false);
-    // }
+    useEffect(() => {
+        fetchedClientNames();
+    }, []);
 
     const handleSubmit = (e) => {
-        var wb = XLSX.utils.table_to_book(document.getElementById("sampletable"));
+        var wb = XLSX.utils.table_to_book(document.getElementById("ledgerTable"));
         XLSX.writeFile(wb, "sample.xlsx");
         return false;
     };
@@ -190,25 +240,16 @@ const index = () => {
                                                 </Form.Group>
                                                 <Form.Group as={Col} md="4" controlId="validationCustom01">
                                                     <Form.Label>Client Name</Form.Label>
-                                                    <Form.Control
-                                                        type="text"
-                                                        name="clientNameFilterBilling"
-                                                        value={clientName}
-                                                        onChange={(e) => {
-                                                            setSearchFilters((previousState) => ({
-                                                                ...previousState,
-                                                                clientName: e.target.value,
-                                                            }));
-                                                        }}
-                                                        onKeyDown={(e) => {
-                                                            if (e.key === "Enter") {
-                                                                findInvoice(searchInvoiceDateFrom, searchInvoiceDateTo, searchFilters);
-                                                            }
-                                                        }}
+                                                    <Typeahead
+                                                        id="clientName"
+                                                        onChange={setSelectedClient}
+                                                        className="form-group"
+                                                        options={clientNames}
+                                                        selected={selectedClient}
                                                     />
                                                 </Form.Group>
                                             </Row>
-                                            
+
                                             <Row className="mx-3">
                                                 <Col>
                                                     <Form.Group className="chosen-single form-input chosen-container mb-3">
@@ -216,7 +257,7 @@ const index = () => {
                                                             variant="primary"
                                                             onClick={(e) => {
                                                                 e.preventDefault();
-                                                                // findInvoice(searchInvoiceDateFrom, searchInvoiceDateTo, searchFilters);
+                                                                fetchedLedger(searchInvoiceDateFrom, searchInvoiceDateTo, searchFilters);
                                                             }}
                                                             className="btn btn-submit btn-sm text-nowrap m-1"
                                                         >
@@ -242,14 +283,15 @@ const index = () => {
                                     <span className="horizontal-divider" style={{ marginTop: "-20px" }}>
                                     </span>
 
-                                    <div className="auto-container">
+                                    <div className="auto-container pb-5">
                                         <div className="invoice-wrap">
                                             <div className="invoice-content">
                                                 <div className="table-outer">
                                                     <div className="widget-content">
                                                         {/* <PostJobSteps /> */}
                                                         {/* End job steps form */}
-                                                        <table id="sampletable" class="default-table manage-job-table ledger-table">
+                                                        {}
+                                                        <table id="ledgerTable" class="default-table manage-job-table ledger-table">
                                                             <thead>
                                                             </thead>
                                                             <tbody>
@@ -269,7 +311,10 @@ const index = () => {
                                                                     <td></td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td colspan="2">AGL CERAMIC LEDGER ACCOUNT: 1-Jan-24 to 16-May-24</td>
+                                                                    <td colspan="2">{fetchedLedgerData.length > 0 ? fetchedLedgerData[0].client_name.toUpperCase() : ""} LEDGER ACCOUNT:
+                                                                        {searchInvoiceDateFrom ? " " + convertToFullDateFormat(format(searchInvoiceDateFrom, "yyyy-MM-dd"), false) : ""}
+                                                                        {searchInvoiceDateTo ? " to " + convertToFullDateFormat(format(searchInvoiceDateTo, "yyyy-MM-dd"), false) : ""}
+                                                                    </td>
                                                                     <td></td>
                                                                     <td></td>
                                                                     <td></td>
@@ -307,14 +352,30 @@ const index = () => {
                                                                 <tr>
                                                                     <td></td>
                                                                     <td></td>
-                                                                    <td colspan="2">AGL CERAMIC</td>
+                                                                    <td colspan="2">{fetchedLedgerData.length > 0 ? fetchedLedgerData[0].client_name.toUpperCase() : ""}</td>
                                                                     <td></td>
                                                                     <td></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td></td>
                                                                     <td></td>
-                                                                    <td colspan="2">Shop No: F-4 and 5, 1st Floor, Parshwa Darshan Complex, Cow Circle Cross Road, Akota Vadodara</td>
+                                                                    <td colspan="2">
+                                                                        { fetchedLedgerData.length > 0 ?
+                                                                            fetchedLedgerData[0].address1 + ", " +
+                                                                            fetchedLedgerData[0].address2 + ", " +
+                                                                            fetchedLedgerData[0].area + ", " +
+                                                                            fetchedLedgerData[0].city + ", " +
+                                                                            fetchedLedgerData[0].state + ", " +
+                                                                            fetchedLedgerData[0].pin
+                                                                        : "" }
+                                                                    </td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                    <td colspan="2">GSTIN: { fetchedLedgerData.length > 0 ? fetchedLedgerData[0].client_gst : "" }</td>
                                                                     <td></td>
                                                                     <td></td>
                                                                 </tr>
@@ -334,30 +395,28 @@ const index = () => {
                                                                     <td>Debit</td>
                                                                     <td>Credit</td>
                                                                 </tr>
-                                                                <tr>
-                                                                    <td>1/1/2024</td>
-                                                                    <td>XYZ.LLC</td>
-                                                                    <td>Sales</td>
-                                                                    <td>GB0001</td>
-                                                                    <td>50</td>
-                                                                    <td></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td>50</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>5/1/2024</td>
-                                                                    <td>ABC.LLC</td>
-                                                                    <td>Sales</td>
-                                                                    <td>GB0005</td>
-                                                                    <td>100</td>
-                                                                    <td></td>
-                                                                </tr>
+                                                                { fetchedLedgerData.map((ledger) => (
+                                                                    <>
+                                                                        <tr>
+                                                                            <td>{ledger.invoice_created_at ? convertToFullDateFormat(format(ledger.invoice_created_at, "yyyy-MM-dd"), false) : ""}</td>
+                                                                            <td>XYZ.LLC</td>
+                                                                            <td>Sales</td>
+                                                                            <td>{ledger.invoice_number}</td>
+                                                                            <td>{ledger.total_amount}</td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        { ledger.is_paid ?
+                                                                            <tr>
+                                                                                <td></td>
+                                                                                <td></td>
+                                                                                <td></td>
+                                                                                <td></td>
+                                                                                <td></td>
+                                                                                <td>{ledger.is_paid ? ledger.total_amount : ""}</td>
+                                                                            </tr>
+                                                                        : "" }
+                                                                    </>
+                                                                ))}
                                                                 <tr>
                                                                     <td>&nbsp;</td>
                                                                     <td></td>
@@ -379,8 +438,8 @@ const index = () => {
                                                                     <td>Closing Balance</td>
                                                                     <td></td>
                                                                     <td></td>
-                                                                    <td>150</td>
-                                                                    <td>50</td>
+                                                                    <td>{totalDebitAmount}</td>
+                                                                    <td>{totalCreditAmount}</td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
