@@ -53,3 +53,13 @@ default table
   background-color: #013778;
   color: white;
 }
+
+.ledger-table tr td {
+  position: relative;
+  font-size: 16px;
+  color: black;
+  font-weight: 400;
+  border: 1px solid #01549A;
+  background-color: transparent;
+  padding: 2px;
+}
