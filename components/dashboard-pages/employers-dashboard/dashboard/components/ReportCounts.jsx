@@ -55,7 +55,6 @@ const ReportCounts = () => {
         setTotalInvoices(countTotalInvoices.count);
 
         setIsLoading(false);
-        setLoadingText("");
     };
 
     return (
