@@ -1,12 +1,12 @@
 module.exports = [
-    // {
-    //     id: 1,
-    //     name: "Dashboard",
-    //     icon: "la-home",
-    //     routePath: "/employers-dashboard/dashboard",
-    //     active: "active",
-    //     access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
-    // },
+    {
+        id: 1,
+        name: "Dashboard",
+        icon: "la-home",
+        routePath: "/employers-dashboard/dashboard",
+        active: "",
+        access: ["SUPER_ADMIN"],
+    },
     // {
     //   id: 2,
     //   name: "Company Profile",
@@ -83,17 +83,17 @@ module.exports = [
         name: "LR",
         icon: "la-receipt",
         routePath: "/employers-dashboard/old-lr",
-        active: "",
+        active: "active",
         access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     },
-    // {
-    //     id: 9,
-    //     name: "Withdraw Applicants",
-    //     icon: "la-file-invoice",
-    //     routePath: "/employers-dashboard/withdrawal-applications",
-    //     active: "",
-    //     access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
-    // },
+    {
+        id: 11,
+        name: "Ledger",
+        icon: "la-scroll",
+        routePath: "/employers-dashboard/ledger",
+        active: "",
+        access: ["SUPER_ADMIN"],
+    },
     // {
     //   id: 6,
     //   name: "Shortlisted Resumes",

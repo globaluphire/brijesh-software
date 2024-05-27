@@ -68,8 +68,7 @@ const signInWithGoogle = async (dispatch) => {
             theme: "colored",
         });
 
-        Router.push("/employers-dashboard/dashboard");
-
+        Router.push("/employers-dashboard/old-lr");
     } catch (err) {
         toast.error(
             "Error while logging with Google, Please try again after some time or contact tech support!",

@@ -7,6 +7,7 @@ import BreadCrumb from "../../BreadCrumb";
 import TopCardBlock from "./components/TopCardBlock";
 import CopyrightFooter from "../../CopyrightFooter";
 import MenuToggler from "../../MenuToggler";
+import ReportCounts from "./components/ReportCounts";
 
 const Index = () => {
     return (
@@ -28,15 +29,29 @@ const Index = () => {
 
             {/* <!-- Dashboard --> */}
             <section className="user-dashboard">
-                <div className="dashboard-outer">
-                    <BreadCrumb title="Dashboard!" />
+                <div>
+                    {/* <BreadCrumb title="Dashboard!" /> */}
                     {/* breadCrumb */}
 
                     <MenuToggler />
                     {/* Collapsible sidebar button */}
 
                     <div className="row">
-                        <TopCardBlock />
+                        <div className="col-lg-12">
+                            {/* <!-- Ls widget --> */}
+                            <div className="ls-widget">
+                                <div className="tabs-box">
+                                    <div className="widget-title">
+                                        <h3><b>Dashboard</b></h3>
+                                    </div>
+
+                                    <div className="widget-content">
+                                        {/* <TopCardBlock /> */}
+                                        <ReportCounts />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     {/* End .row top card block */}
 
