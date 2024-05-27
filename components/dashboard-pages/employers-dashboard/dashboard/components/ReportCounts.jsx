@@ -75,7 +75,7 @@ const ReportCounts = () => {
                         <thead>
                             <tr>
                                 <th style={{ fontSize: "14px" }}>#</th>
-                                <th style={{ fontSize: "14px" }}>Total Count</th>
+                                <th style={{ fontSize: "14px" }}>Counts</th>
                             </tr>
                         </thead>
                             <tbody style={{ fontSize: "14px" }}>
