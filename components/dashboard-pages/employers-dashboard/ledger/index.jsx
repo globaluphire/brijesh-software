@@ -69,32 +69,56 @@ const index = () => {
         setIsLoading(true);
         setLoadingText("Finding Ledger...");
 
-        // fetch Ledger
-        try {
-            let { data: ledgerData, error } = await supabase
-                .from("ledger_view")
-                .select("*")
-                .eq("client_name", selectedClient);
+        if (searchInvoiceDateFrom && searchInvoiceDateTo && selectedClient) {
+            // fetch Ledger
+            try {
 
-            if (ledgerData) {
-                setFetchedLedgerData(ledgerData);
+                let query = supabase
+                    .from("ledger_view")
+                    .select("*")
+                    .eq("client_name", selectedClient)
+                    .gte("invoice_created_at", format(searchInvoiceDateFrom, "yyyy-MM-dd"))
+                    .lte("invoice_created_at", format(searchInvoiceDateTo, "yyyy-MM-dd"));
 
-                var totalDebAmount = 0;
-                var totalCredAmount = 0;
-                for (let i=0; i<ledgerData.length; i++) {
-                    totalDebAmount = totalDebAmount + ledgerData[i].total_amount;
-                    if(ledgerData[i].is_paid) {
-                        totalCredAmount = totalCredAmount + ledgerData[i].total_amount;
+                let { data: ledgerData, error } = await query
+
+                if (ledgerData) {
+
+                    setFetchedLedgerData(ledgerData);
+
+                    var totalDebAmount = 0;
+                    var totalCredAmount = 0;
+                    for (let i=0; i<ledgerData.length; i++) {
+                        totalDebAmount = totalDebAmount + ledgerData[i].total_amount;
+                        if(ledgerData[i].is_paid) {
+                            totalCredAmount = totalCredAmount + ledgerData[i].total_amount;
+                        }
                     }
-                }
-                setTotalDebitAmount(totalDebAmount);
-                setTotalCreditAmount(totalCredAmount);
+                    setTotalDebitAmount(totalDebAmount);
+                    setTotalCreditAmount(totalCredAmount);
 
-                setIsLoading(false);
-                setLoadingText("");
-            } else {
+                    setIsLoading(false);
+                    setLoadingText("");
+                } else {
+                    toast.error(
+                        "Error while finding Ledger data.  Please try again later or contact tech support!",
+                        {
+                            position: "bottom-right",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        }
+                    );
+                    setIsLoading(false);
+                    setLoadingText("");
+                }
+            } catch (e) {
                 toast.error(
-                    "Error while finding Ledger data.  Please try again later or contact tech support!",
+                    "System is unavailable.  Unable to fetch Ledger data.  Please try again later or contact tech support!",
                     {
                         position: "bottom-right",
                         autoClose: false,
@@ -106,12 +130,13 @@ const index = () => {
                         theme: "colored",
                     }
                 );
+                // console.warn(e);
                 setIsLoading(false);
                 setLoadingText("");
             }
-        } catch (e) {
+        } else {
             toast.error(
-                "System is unavailable.  Unable to fetch Client Data.  Please try again later or contact tech support!",
+                "Please provide Date and Client Name!",
                 {
                     position: "bottom-right",
                     autoClose: false,
