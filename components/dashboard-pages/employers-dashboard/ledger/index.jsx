@@ -323,177 +323,180 @@ const index = () => {
                                                     <div className="widget-content">
                                                         {/* <PostJobSteps /> */}
                                                         {/* End job steps form */}
-                                                        {}
-                                                        <table id="ledgerTable" class="default-table manage-job-table ledger-table">
-                                                            <thead>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td>&nbsp;</td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="2">RAFTAAR LOGISTICS</td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td colspan="2">{fetchedLedgerData.length > 0 ? fetchedLedgerData[0].client_name.toUpperCase() : ""} LEDGER ACCOUNT:
-                                                                        {searchInvoiceDateFrom ? " " + convertToFullDateFormat(format(searchInvoiceDateFrom, "yyyy-MM-dd"), false) : ""}
-                                                                        {searchInvoiceDateTo ? " to " + convertToFullDateFormat(format(searchInvoiceDateTo, "yyyy-MM-dd"), false) : ""}
-                                                                    </td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td colspan="2">RAFTAAR LOGISTICS</td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td colspan="2">51 & 52 Sinde Colony S R P  Road Navapura Vadodara Gujarat - 39001</td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td colspan="2">GSTIN: 24GFSPS6256B1Z1</td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>&nbsp;</td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td colspan="2">{fetchedLedgerData.length > 0 ? fetchedLedgerData[0].client_name.toUpperCase() : ""}</td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td colspan="2">
-                                                                        { fetchedLedgerData.length > 0 ?
-                                                                            fetchedLedgerData[0].address1 + ", " +
-                                                                            fetchedLedgerData[0].address2 + ", " +
-                                                                            fetchedLedgerData[0].area + ", " +
-                                                                            fetchedLedgerData[0].city + ", " +
-                                                                            fetchedLedgerData[0].state + ", " +
-                                                                            fetchedLedgerData[0].pin
-                                                                        : "" }
-                                                                    </td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td colspan="2">GSTIN: { fetchedLedgerData.length > 0 ? fetchedLedgerData[0].client_gst : "" }</td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>&nbsp;</td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Date</td>
-                                                                    <td>Particular</td>
-                                                                    <td>Vch Type</td>
-                                                                    <td>Vch No</td>
-                                                                    <td>Debit</td>
-                                                                    <td>Credit</td>
-                                                                </tr>
-                                                                { fetchedLedgerData.map((ledger) => (
-                                                                    <>
+                                                        { fetchedLedgerData.length > 0 ?
+                                                            <>
+                                                                <table id="ledgerTable" class="default-table manage-job-table ledger-table">
+                                                                    <thead>
+                                                                    </thead>
+                                                                    <tbody>
                                                                         <tr>
-                                                                            <td>{ledger.invoice_created_at ? convertToFullDateFormat(format(ledger.invoice_created_at, "yyyy-MM-dd"), false) : ""}</td>
-                                                                            <td>XYZ.LLC</td>
-                                                                            <td>Sales</td>
-                                                                            <td>{ledger.invoice_number}</td>
-                                                                            <td>{ledger.total_amount}</td>
+                                                                            <td>&nbsp;</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
                                                                             <td></td>
                                                                         </tr>
-                                                                        { ledger.is_paid ?
-                                                                            <tr>
-                                                                                <td></td>
-                                                                                <td></td>
-                                                                                <td></td>
-                                                                                <td></td>
-                                                                                <td></td>
-                                                                                <td>{ledger.is_paid ? ledger.total_amount : ""}</td>
-                                                                            </tr>
-                                                                        : "" }
-                                                                    </>
-                                                                ))}
-                                                                <tr>
-                                                                    <td>&nbsp;</td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>&nbsp;</td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td></td>
-                                                                    <td>Closing Balance</td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td>{totalDebitAmount}</td>
-                                                                    <td>{totalCreditAmount}</td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                        {/* Form Submit Buttons Block Starts */}
-                                                        <Row className="mt-3">
-                                                            <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mx-3 mb-1">
-                                                                <Button
-                                                                    type="submit"
-                                                                    variant="success"
-                                                                    onClick={(e) => {
-                                                                        e.preventDefault();
-                                                                        handleSubmit(e);
-                                                                    }}
-                                                                    className="btn btn-add-lr btn-sm text-nowrap m-1"
-                                                                >
-                                                                    Export Ledger
-                                                                </Button>
-                                                            </Form.Group>
-                                                        </Row>
-                                                        {/* Form Submit Buttons Block Ends */}
-                                                        {/* End post box form */}
+                                                                        <tr>
+                                                                            <td colspan="2">RAFTAAR LOGISTICS</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td colspan="2">{fetchedLedgerData.length > 0 ? fetchedLedgerData[0].client_name.toUpperCase() : ""} LEDGER ACCOUNT:
+                                                                                {searchInvoiceDateFrom ? " " + convertToFullDateFormat(format(searchInvoiceDateFrom, "yyyy-MM-dd"), false) : ""}
+                                                                                {searchInvoiceDateTo ? " to " + convertToFullDateFormat(format(searchInvoiceDateTo, "yyyy-MM-dd"), false) : ""}
+                                                                            </td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td colspan="2">RAFTAAR LOGISTICS</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td colspan="2">51 & 52 Sinde Colony S R P  Road Navapura Vadodara Gujarat - 39001</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td colspan="2">GSTIN: 24GFSPS6256B1Z1</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>&nbsp;</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td colspan="2">{fetchedLedgerData.length > 0 ? fetchedLedgerData[0].client_name.toUpperCase() : ""}</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td colspan="2">
+                                                                                { fetchedLedgerData.length > 0 ?
+                                                                                    fetchedLedgerData[0].address1 + ", " +
+                                                                                    fetchedLedgerData[0].address2 + ", " +
+                                                                                    fetchedLedgerData[0].area + ", " +
+                                                                                    fetchedLedgerData[0].city + ", " +
+                                                                                    fetchedLedgerData[0].state + ", " +
+                                                                                    fetchedLedgerData[0].pin
+                                                                                : "" }
+                                                                            </td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td colspan="2">GSTIN: { fetchedLedgerData.length > 0 ? fetchedLedgerData[0].client_gst : "" }</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>&nbsp;</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>Date</td>
+                                                                            <td>Particular</td>
+                                                                            <td>Vch Type</td>
+                                                                            <td>Vch No</td>
+                                                                            <td>Debit</td>
+                                                                            <td>Credit</td>
+                                                                        </tr>
+                                                                        { fetchedLedgerData.map((ledger) => (
+                                                                            <>
+                                                                                <tr>
+                                                                                    <td>{ledger.invoice_created_at ? convertToFullDateFormat(format(ledger.invoice_created_at, "yyyy-MM-dd"), false) : ""}</td>
+                                                                                    <td>XYZ.LLC</td>
+                                                                                    <td>Sales</td>
+                                                                                    <td>{ledger.invoice_number}</td>
+                                                                                    <td>{ledger.total_amount}</td>
+                                                                                    <td></td>
+                                                                                </tr>
+                                                                                { ledger.is_paid ?
+                                                                                    <tr>
+                                                                                        <td></td>
+                                                                                        <td></td>
+                                                                                        <td></td>
+                                                                                        <td></td>
+                                                                                        <td></td>
+                                                                                        <td>{ledger.is_paid ? ledger.total_amount : ""}</td>
+                                                                                    </tr>
+                                                                                : "" }
+                                                                            </>
+                                                                        ))}
+                                                                        <tr>
+                                                                            <td>&nbsp;</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>&nbsp;</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td></td>
+                                                                            <td>Closing Balance</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td>{totalDebitAmount}</td>
+                                                                            <td>{totalCreditAmount}</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+
+                                                                {/* Form Submit Buttons Block Starts */}
+                                                                <Row className="mt-3">
+                                                                    <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mx-3 mb-1">
+                                                                        <Button
+                                                                            type="submit"
+                                                                            variant="success"
+                                                                            onClick={(e) => {
+                                                                                e.preventDefault();
+                                                                                handleSubmit(e);
+                                                                            }}
+                                                                            className="btn btn-add-lr btn-sm text-nowrap m-1"
+                                                                        >
+                                                                            Export Ledger
+                                                                        </Button>
+                                                                    </Form.Group>
+                                                                </Row>
+                                                                {/* Form Submit Buttons Block Ends */}
+                                                            </>
+                                                        : "" }
                                                     </div>
                                                 </div>
                                             </div>
