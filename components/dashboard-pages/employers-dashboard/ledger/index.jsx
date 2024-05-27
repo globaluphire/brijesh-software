@@ -80,7 +80,7 @@ const index = () => {
                     .gte("invoice_created_at", format(searchInvoiceDateFrom, "yyyy-MM-dd"))
                     .lte("invoice_created_at", format(searchInvoiceDateTo, "yyyy-MM-dd"));
 
-                let { data: ledgerData, error } = await query
+                let { data: ledgerData, error } = await query;
 
                 if (ledgerData) {
 
