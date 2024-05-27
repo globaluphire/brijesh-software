@@ -72,7 +72,7 @@ const ReportCounts = () => {
                             style={{ marginLeft: "10px" }}>
                         </a>
                     </b>
-                    <Table className="default-table manage-job-table" style={{ minWidth: "300px"}}>
+                    <Table className="default-table manage-job-table" style={{ minWidth: "300px" }}>
                         <thead>
                             <tr>
                                 <th style={{ fontSize: "14px" }}>#</th>
