@@ -44,7 +44,7 @@ const ReportCounts = () => {
         setIsLoading(true);
 
         // fetch data for Orders
-        const { data: ordersData, error: ordersError} = await supabase
+        const { data: ordersData, error: ordersError } = await supabase
             .from("orders")
             .select("*")
             .neq("order_number", "DEFAULT");
@@ -110,7 +110,7 @@ const ReportCounts = () => {
     async function fetchInvoicesData() {
         setIsLoading(true);
 
-        const { data: invoiceData, error: invoiceError} = await supabase
+        const { data: invoiceData, error: invoiceError } = await supabase
             .from("invoice")
             .select("*");
 
@@ -402,8 +402,6 @@ const ReportCounts = () => {
                     </Col>
                 </Row>
             </Container>
-            
-
         </>
     );
 };
