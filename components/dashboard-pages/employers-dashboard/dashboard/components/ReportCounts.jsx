@@ -180,7 +180,7 @@ const ReportCounts = () => {
             
             // LR Badges
             case "Performa":
-                return { color: "orange", textColor: "#fff", tag: "Performa" };
+                return { color: "orange", textColor: "#333", tag: "Performa" };
             case "Final":
                 return { color: "green", textColor: "#fff", tag: "Final" };
             case "Unknown":
