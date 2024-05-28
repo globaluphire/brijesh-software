@@ -162,10 +162,14 @@ const index = () => {
             .select("client_name", { distinct: true });
     
         if (ledgerClientData) {
-            // set client names
+            // find unique client names
+            const uniqueLedgerClientNames = [
+                ...new Map(ledgerClientData.map((item) => [item["client_name"], item])).values()
+            ];
+            // set unique client names
             const allLedgerClientNames = [];
-            for (let i = 0; i < ledgerClientData.length; i++) {
-                allLedgerClientNames.push(ledgerClientData[i].client_name);
+            for (let i = 0; i < uniqueLedgerClientNames.length; i++) {
+                allLedgerClientNames.push(uniqueLedgerClientNames[i].client_name);
             }
             allLedgerClientNames.sort();
             setClientNames(allLedgerClientNames);
