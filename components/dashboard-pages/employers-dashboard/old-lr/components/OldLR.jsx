@@ -179,7 +179,7 @@ const OldLR = () => {
             let query = supabase
                 .from("lr")
                 .select("*")
-                .lt("lr_created_date", "2024-06-01");
+                .lt("lr_created_date", "2024-06-28");
 
             // if (name) {
             //     query.ilike("name", "%" + name + "%");
