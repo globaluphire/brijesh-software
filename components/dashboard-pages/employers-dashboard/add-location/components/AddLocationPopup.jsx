@@ -493,7 +493,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                     <div style={{ padding: "0 2rem" }}>
                                         <Row className="mb-3">
                                             <Form.Group as={Col} md="6" lg="12" controlId="validationCustom02">
-                                                <Form.Label>Name of Pickup Point</Form.Label>
+                                                <Form.Label>
+                                                    <span
+                                                        className="optional"
+                                                        style={{
+                                                            letterSpacing: "5px",
+                                                            fontSize: "24px",
+                                                            color: "red"
+                                                        }}
+                                                    >
+                                                        *
+                                                    </span>Name of Pickup Point</Form.Label>
                                                 <Form.Control
                                                     required
                                                     type="text"
@@ -514,7 +524,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                                 </Form.Control.Feedback>
                                             </Form.Group>
                                             <Form.Group as={Col} md="3" lg="12" controlId="validationCustom02">
-                                                <Form.Label>Pickup City</Form.Label>
+                                                <Form.Label>
+                                                    <span
+                                                        className="optional"
+                                                        style={{
+                                                            letterSpacing: "5px",
+                                                            fontSize: "24px",
+                                                            color: "red"
+                                                        }}
+                                                    >
+                                                        *
+                                                    </span>Pickup City</Form.Label>
                                                 <Typeahead
                                                     id="pickupCity"
                                                     size="sm"
@@ -534,7 +554,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                         <div className="horizontal-divider pb-1"></div>
                                         <Row>
                                             <Form.Group as={Col} md="6" lg="12" controlId="validationCustom03">
-                                                <Form.Label>Address 1</Form.Label>
+                                                <Form.Label>
+                                                    <span
+                                                        className="optional"
+                                                        style={{
+                                                            letterSpacing: "5px",
+                                                            fontSize: "24px",
+                                                            color: "red"
+                                                        }}
+                                                    >
+                                                        *
+                                                    </span>Address 1</Form.Label>
                                                 <Form.Control    
                                                     type="text"
                                                     size="sm"
@@ -574,7 +604,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                         </Row>
                                         <Row className="mb-3">
                                             <Form.Group as={Col} md="2" lg="12" controlId="validationCustom03">
-                                                <Form.Label>City</Form.Label>
+                                                <Form.Label>
+                                                    <span
+                                                        className="optional"
+                                                        style={{
+                                                            letterSpacing: "5px",
+                                                            fontSize: "24px",
+                                                            color: "red"
+                                                        }}
+                                                    >
+                                                        *
+                                                    </span>City</Form.Label>
                                                 <Form.Control    
                                                     type="text"
                                                     size="sm"
@@ -592,7 +632,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                                 </Form.Control.Feedback>
                                             </Form.Group>
                                             <Form.Group as={Col} md="2" lg="12" controlId="validationCustom04">
-                                                <Form.Label>State</Form.Label>
+                                                <Form.Label>
+                                                    <span
+                                                        className="optional"
+                                                        style={{
+                                                            letterSpacing: "5px",
+                                                            fontSize: "24px",
+                                                            color: "red"
+                                                        }}
+                                                    >
+                                                        *
+                                                    </span>State</Form.Label>
                                                 <Form.Control
                                                     type="text"
                                                     size="sm"
@@ -607,7 +657,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                                 />
                                             </Form.Group>
                                             <Form.Group as={Col} md="2" lg="12" controlId="validationCustom04">
-                                                <Form.Label>Area</Form.Label>
+                                                <Form.Label>
+                                                    <span
+                                                        className="optional"
+                                                        style={{
+                                                            letterSpacing: "5px",
+                                                            fontSize: "24px",
+                                                            color: "red"
+                                                        }}
+                                                    >
+                                                        *
+                                                    </span>Area</Form.Label>
                                                 <Form.Control
                                                     type="text"
                                                     size="sm"
@@ -622,7 +682,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                                 />
                                             </Form.Group>
                                             <Form.Group as={Col} md="2" lg="12" controlId="validationCustom04">
-                                                <Form.Label>PIN</Form.Label>
+                                                <Form.Label>
+                                                    <span
+                                                        className="optional"
+                                                        style={{
+                                                            letterSpacing: "5px",
+                                                            fontSize: "24px",
+                                                            color: "red"
+                                                        }}
+                                                    >
+                                                        *
+                                                    </span>PIN</Form.Label>
                                                 <Form.Control
                                                     type="number"
                                                     size="sm"
@@ -647,7 +717,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                     <div style={{ padding: "0 2rem" }}>
                                         <Row className="mb-3">
                                             <Form.Group as={Col} md="3" lg="12" controlId="validationCustom02">
-                                                <Form.Label>Contact Type</Form.Label>
+                                                <Form.Label>
+                                                    <span
+                                                        className="optional"
+                                                        style={{
+                                                            letterSpacing: "5px",
+                                                            fontSize: "24px",
+                                                            color: "red"
+                                                        }}
+                                                    >
+                                                        *
+                                                    </span>Contact Type</Form.Label>
                                                 <Form.Select
                                                     className="chosen-single form-select"
                                                     size="sm"
@@ -677,7 +757,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                         </Row>
                                         <Row>
                                             <Form.Group as={Col} md="4" lg="12" controlId="validationCustom02">
-                                                <Form.Label>Contact Name</Form.Label>
+                                                <Form.Label>
+                                                    <span
+                                                        className="optional"
+                                                        style={{
+                                                            letterSpacing: "5px",
+                                                            fontSize: "24px",
+                                                            color: "red"
+                                                        }}
+                                                    >
+                                                        *
+                                                    </span>Contact Name</Form.Label>
                                                 <Form.Control
                                                     required
                                                     size="sm"
@@ -698,7 +788,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                                 </Form.Control.Feedback>
                                             </Form.Group>
                                             <Form.Group as={Col} md="4" lg="12" controlId="validationCustomPhonenumber">
-                                                <Form.Label>Contact Phone Number</Form.Label>
+                                                <Form.Label>
+                                                    <span
+                                                        className="optional"
+                                                        style={{
+                                                            letterSpacing: "5px",
+                                                            fontSize: "24px",
+                                                            color: "red"
+                                                        }}
+                                                    >
+                                                        *
+                                                    </span>Contact Phone Number</Form.Label>
                                                 <InputGroup size="sm">
                                                     <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
                                                     <Form.Control
@@ -762,7 +862,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                 <div style={{ padding: "0 2rem" }}>
                                     <Row className="mb-3">
                                         <Form.Group as={Col} md="6" lg="12" controlId="validationCustom02">
-                                            <Form.Label>Name of Drop Point</Form.Label>
+                                            <Form.Label>
+                                                <span
+                                                    className="optional"
+                                                    style={{
+                                                        letterSpacing: "5px",
+                                                        fontSize: "24px",
+                                                        color: "red"
+                                                    }}
+                                                >
+                                                    *
+                                                </span>Name of Drop Point</Form.Label>
                                             <Form.Control
                                                 required
                                                 type="text"
@@ -783,7 +893,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                             </Form.Control.Feedback>
                                         </Form.Group>
                                         <Form.Group as={Col} md="3" lg="12" controlId="validationCustom02">
-                                            <Form.Label>Drop City</Form.Label>
+                                            <Form.Label>
+                                                <span
+                                                    className="optional"
+                                                    style={{
+                                                        letterSpacing: "5px",
+                                                        fontSize: "24px",
+                                                        color: "red"
+                                                    }}
+                                                >
+                                                    *
+                                                </span>Drop City</Form.Label>
                                             <Typeahead
                                                 id="dropCity"
                                                 size="sm"
@@ -803,7 +923,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                     <div className="horizontal-divider pb-1"></div>
                                     <Row>
                                         <Form.Group as={Col} md="6" lg="12" controlId="validationCustom03">
-                                            <Form.Label>Address 1</Form.Label>
+                                            <Form.Label>
+                                                <span
+                                                    className="optional"
+                                                    style={{
+                                                        letterSpacing: "5px",
+                                                        fontSize: "24px",
+                                                        color: "red"
+                                                    }}
+                                                >
+                                                    *
+                                                </span>Address 1</Form.Label>
                                             <Form.Control    
                                                 type="text"
                                                 size="sm"
@@ -843,7 +973,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                     </Row>
                                     <Row className="mb-3">
                                         <Form.Group as={Col} md="2" lg="12" controlId="validationCustom03">
-                                            <Form.Label>City</Form.Label>
+                                            <Form.Label>
+                                                <span
+                                                    className="optional"
+                                                    style={{
+                                                        letterSpacing: "5px",
+                                                        fontSize: "24px",
+                                                        color: "red"
+                                                    }}
+                                                >
+                                                    *
+                                                </span>City</Form.Label>
                                             <Form.Control    
                                                 type="text"
                                                 size="sm"
@@ -861,7 +1001,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                             </Form.Control.Feedback>
                                         </Form.Group>
                                         <Form.Group as={Col} md="2" lg="12" controlId="validationCustom04">
-                                            <Form.Label>State</Form.Label>
+                                            <Form.Label>
+                                                <span
+                                                    className="optional"
+                                                    style={{
+                                                        letterSpacing: "5px",
+                                                        fontSize: "24px",
+                                                        color: "red"
+                                                    }}
+                                                >
+                                                    *
+                                                </span>State</Form.Label>
                                             <Form.Control
                                                 type="text"
                                                 size="sm"
@@ -876,7 +1026,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                             />
                                         </Form.Group>
                                         <Form.Group as={Col} md="2" lg="12" controlId="validationCustom04">
-                                            <Form.Label>Area</Form.Label>
+                                            <Form.Label>
+                                                <span
+                                                    className="optional"
+                                                    style={{
+                                                        letterSpacing: "5px",
+                                                        fontSize: "24px",
+                                                        color: "red"
+                                                    }}
+                                                >
+                                                    *
+                                                </span>Area</Form.Label>
                                             <Form.Control
                                                 type="text"
                                                 size="sm"
@@ -891,7 +1051,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                             />
                                         </Form.Group>
                                         <Form.Group as={Col} md="2" lg="12" controlId="validationCustom04">
-                                            <Form.Label>PIN</Form.Label>
+                                            <Form.Label>
+                                                <span
+                                                    className="optional"
+                                                    style={{
+                                                        letterSpacing: "5px",
+                                                        fontSize: "24px",
+                                                        color: "red"
+                                                    }}
+                                                >
+                                                    *
+                                                </span>PIN</Form.Label>
                                             <Form.Control
                                                 type="number"
                                                 size="sm"
@@ -916,7 +1086,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                 <div style={{ padding: "0 2rem" }}>
                                     <Row className="mb-3">
                                         <Form.Group as={Col} md="3" lg="12" controlId="validationCustom02">
-                                            <Form.Label>Contact Type</Form.Label>
+                                            <Form.Label>
+                                                <span
+                                                    className="optional"
+                                                    style={{
+                                                        letterSpacing: "5px",
+                                                        fontSize: "24px",
+                                                        color: "red"
+                                                    }}
+                                                >
+                                                    *
+                                                </span>Contact Type</Form.Label>
                                             <Form.Select
                                                 className="chosen-single form-select"
                                                 size="sm"
@@ -946,7 +1126,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                     </Row>
                                     <Row>
                                         <Form.Group as={Col} md="4" lg="12" controlId="validationCustom02">
-                                            <Form.Label>Contact Name</Form.Label>
+                                            <Form.Label>
+                                                <span
+                                                    className="optional"
+                                                    style={{
+                                                        letterSpacing: "5px",
+                                                        fontSize: "24px",
+                                                        color: "red"
+                                                    }}
+                                                >
+                                                    *
+                                                </span>Contact Name</Form.Label>
                                             <Form.Control
                                                 required
                                                 size="sm"
@@ -967,7 +1157,17 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                             </Form.Control.Feedback>
                                         </Form.Group>
                                         <Form.Group as={Col} md="4" lg="12" controlId="validationCustomPhonenumber">
-                                            <Form.Label>Contact Phone Number</Form.Label>
+                                            <Form.Label>
+                                                <span
+                                                    className="optional"
+                                                    style={{
+                                                        letterSpacing: "5px",
+                                                        fontSize: "24px",
+                                                        color: "red"
+                                                    }}
+                                                >
+                                                    *
+                                                </span>Contact Phone Number</Form.Label>
                                             <InputGroup size="sm">
                                                 <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
                                                 <Form.Control

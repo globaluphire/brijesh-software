@@ -52,7 +52,7 @@ const addClientFields = {
     clientType: "",
     clientName: "",
     clientEmail: "",
-    clientPhone: 0,
+    clientPhone: null,
     clientGST: "",
     clientPAN: "",
 
@@ -67,7 +67,7 @@ const addClientFields = {
     // client contact
     clientContactType: "",
     clientContactName: "",
-    clientContactPhone: 0,
+    clientContactPhone: null,
     clientContactEmail: ""
 };
 
@@ -434,7 +434,17 @@ const AddClientPopup = ({
                             <div>
                                 <Row className="mb-3">
                                     <Form.Group as={Col} md="12" controlId="validationCustom02">
-                                        <Form.Label>Client Type</Form.Label>
+                                        <Form.Label>
+                                            <span
+                                                className="optional"
+                                                style={{
+                                                    letterSpacing: "5px",
+                                                    fontSize: "24px",
+                                                    color: "red"
+                                                }}
+                                            >
+                                                *
+                                            </span>Client Type</Form.Label>
                                         <Form.Select
                                             size="sm"
                                             className="chosen-single form-select"
@@ -462,7 +472,17 @@ const AddClientPopup = ({
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group as={Col} md="12" controlId="validationCustom01">
-                                        <Form.Label>Client Name</Form.Label>
+                                        <Form.Label>
+                                            <span
+                                                className="optional"
+                                                style={{
+                                                    letterSpacing: "5px",
+                                                    fontSize: "24px",
+                                                    color: "red"
+                                                }}
+                                            >
+                                                *
+                                            </span>Client Name</Form.Label>
                                         <Form.Control
                                             required
                                             size="sm"
@@ -483,7 +503,17 @@ const AddClientPopup = ({
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group as={Col} md="12" controlId="validationCustom02">
-                                        <Form.Label>Client GSTIN</Form.Label>
+                                        <Form.Label>
+                                            <span
+                                                className="optional"
+                                                style={{
+                                                    letterSpacing: "5px",
+                                                    fontSize: "24px",
+                                                    color: "red"
+                                                }}
+                                            >
+                                                *
+                                            </span>Client GSTIN</Form.Label>
                                         <Form.Control
                                             required
                                             size="sm"
@@ -578,7 +608,17 @@ const AddClientPopup = ({
                             <div>
                                 <Row className="mb-3">
                                     <Form.Group as={Col} md="12" controlId="validationCustom03">
-                                        <Form.Label>Address 1</Form.Label>
+                                        <Form.Label>
+                                            <span
+                                                className="optional"
+                                                style={{
+                                                    letterSpacing: "5px",
+                                                    fontSize: "24px",
+                                                    color: "red"
+                                                }}
+                                            >
+                                                *
+                                            </span>Address 1</Form.Label>
                                         <Form.Control    
                                             type="text"
                                             size="sm"
@@ -616,7 +656,17 @@ const AddClientPopup = ({
                                 </Row>
                                 <Row className="mb-3">
                                     <Form.Group as={Col} md="12" controlId="validationCustom02">
-                                        <Form.Label>City</Form.Label>
+                                        <Form.Label>
+                                            <span
+                                                className="optional"
+                                                style={{
+                                                    letterSpacing: "5px",
+                                                    fontSize: "24px",
+                                                    color: "red"
+                                                }}
+                                            >
+                                                *
+                                            </span>City</Form.Label>
                                         <Typeahead
                                             id="clientCity"
                                             size="sm"
@@ -633,7 +683,17 @@ const AddClientPopup = ({
                                         }
                                     </Form.Group>
                                     <Form.Group as={Col} md="12" controlId="validationCustom04">
-                                        <Form.Label>State</Form.Label>
+                                        <Form.Label>
+                                            <span
+                                                className="optional"
+                                                style={{
+                                                    letterSpacing: "5px",
+                                                    fontSize: "24px",
+                                                    color: "red"
+                                                }}
+                                            >
+                                                *
+                                            </span>State</Form.Label>
                                         <Form.Control
                                             type="text"
                                             size="sm"
@@ -652,7 +712,17 @@ const AddClientPopup = ({
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group as={Col} md="12" controlId="validationCustom04">
-                                        <Form.Label>Area</Form.Label>
+                                        <Form.Label>
+                                            <span
+                                                className="optional"
+                                                style={{
+                                                    letterSpacing: "5px",
+                                                    fontSize: "24px",
+                                                    color: "red"
+                                                }}
+                                            >
+                                                *
+                                            </span>Area</Form.Label>
                                         <Form.Control
                                             type="text"
                                             size="sm"
@@ -671,7 +741,17 @@ const AddClientPopup = ({
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group as={Col} md="12" controlId="validationCustom04">
-                                        <Form.Label>PIN</Form.Label>
+                                        <Form.Label>
+                                            <span
+                                                className="optional"
+                                                style={{
+                                                    letterSpacing: "5px",
+                                                    fontSize: "24px",
+                                                    color: "red"
+                                                }}
+                                            >
+                                                *
+                                            </span>PIN</Form.Label>
                                         <Form.Control
                                             type="number"
                                             size="sm"

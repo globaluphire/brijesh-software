@@ -485,7 +485,17 @@ const AddLocation = () => {
                                         <div style={{ padding: "0 2rem" }}>
                                             <Row className="mb-3">
                                                 <Form.Group as={Col} md="6" controlId="validationCustom02">
-                                                    <Form.Label>Name of Pickup Point</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>Name of Pickup Point</Form.Label>
                                                     <Form.Control
                                                         required
                                                         type="text"
@@ -505,7 +515,17 @@ const AddLocation = () => {
                                                     </Form.Control.Feedback>
                                                 </Form.Group>
                                                 <Form.Group as={Col} md="3" controlId="validationCustom02">
-                                                    <Form.Label>Pickup City</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>Pickup City</Form.Label>
                                                     <Typeahead
                                                         id="pickupCity"
                                                         onChange={setPickupCitySelection}
@@ -524,7 +544,17 @@ const AddLocation = () => {
                                             <div className="horizontal-divider pb-1"></div>
                                             <Row>
                                                 <Form.Group as={Col} md="6" controlId="validationCustom03">
-                                                    <Form.Label>Address 1</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>Address 1</Form.Label>
                                                     <Form.Control    
                                                         type="text"
                                                         // placeholder=""
@@ -562,7 +592,17 @@ const AddLocation = () => {
                                             </Row>
                                             <Row className="mb-3">
                                                 <Form.Group as={Col} md="2" controlId="validationCustom03">
-                                                    <Form.Label>City</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>City</Form.Label>
                                                     <Typeahead
                                                         id="pickupCity"
                                                         onChange={setPickupLocationCitySelection}
@@ -578,7 +618,17 @@ const AddLocation = () => {
                                                     }
                                                 </Form.Group>
                                                 <Form.Group as={Col} md="2" controlId="validationCustom04">
-                                                    <Form.Label>State</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>State</Form.Label>
                                                     <Form.Control
                                                         type="text"
                                                         required
@@ -592,7 +642,17 @@ const AddLocation = () => {
                                                     />
                                                 </Form.Group>
                                                 <Form.Group as={Col} md="2" controlId="validationCustom04">
-                                                    <Form.Label>Area</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>Area</Form.Label>
                                                     <Form.Control
                                                         type="text"
                                                         required
@@ -606,7 +666,17 @@ const AddLocation = () => {
                                                     />
                                                 </Form.Group>
                                                 <Form.Group as={Col} md="2" controlId="validationCustom04">
-                                                    <Form.Label>PIN</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>PIN</Form.Label>
                                                     <Form.Control
                                                         type="number"
                                                         required
@@ -630,7 +700,17 @@ const AddLocation = () => {
                                         <div style={{ padding: "0 2rem" }}>
                                             <Row className="mb-3">
                                                 <Form.Group as={Col} md="3" controlId="validationCustom02">
-                                                    <Form.Label>Contact Type</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>Contact Type</Form.Label>
                                                     <Form.Select
                                                         className="chosen-single form-select"
                                                         onChange={(e) => {
@@ -659,7 +739,17 @@ const AddLocation = () => {
                                             </Row>
                                             <Row>
                                                 <Form.Group as={Col} md="4" controlId="validationCustom02">
-                                                    <Form.Label>Contact Name</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>Contact Name</Form.Label>
                                                     <Form.Control
                                                         required
                                                         type="text"
@@ -679,7 +769,17 @@ const AddLocation = () => {
                                                     </Form.Control.Feedback>
                                                 </Form.Group>
                                                 <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
-                                                    <Form.Label>Contact Phone Number</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>Contact Phone Number</Form.Label>
                                                     <InputGroup>
                                                         <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
                                                         <Form.Control
@@ -749,7 +849,17 @@ const AddLocation = () => {
                                         <div style={{ padding: "0 2rem" }}>
                                             <Row className="mb-3">
                                                 <Form.Group as={Col} md="6" controlId="validationCustom02">
-                                                    <Form.Label>Name of Drop Point</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>Name of Drop Point</Form.Label>
                                                     <Form.Control
                                                         required
                                                         type="text"
@@ -770,7 +880,17 @@ const AddLocation = () => {
                                                     </Form.Control.Feedback>
                                                 </Form.Group>
                                                 <Form.Group as={Col} md="3" controlId="validationCustom02">
-                                                    <Form.Label>Drop City</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>Drop City</Form.Label>
                                                     <Typeahead
                                                         id="dropCity"
                                                         
@@ -790,7 +910,17 @@ const AddLocation = () => {
                                             <div className="horizontal-divider pb-1"></div>
                                             <Row>
                                                 <Form.Group as={Col} md="6" controlId="validationCustom03">
-                                                    <Form.Label>Address 1</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>Address 1</Form.Label>
                                                     <Form.Control    
                                                         type="text"
                                                         
@@ -830,7 +960,17 @@ const AddLocation = () => {
                                             </Row>
                                             <Row className="mb-3">
                                                 <Form.Group as={Col} md="2" controlId="validationCustom03">
-                                                    <Form.Label>City</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>City</Form.Label>
                                                     <Typeahead
                                                         id="dropCity"
                                                         onChange={setDropLocationCitySelection}
@@ -846,7 +986,17 @@ const AddLocation = () => {
                                                     }
                                                 </Form.Group>
                                                 <Form.Group as={Col} md="2" controlId="validationCustom04">
-                                                    <Form.Label>State</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>State</Form.Label>
                                                     <Form.Control
                                                         type="text"
                                                         
@@ -861,7 +1011,17 @@ const AddLocation = () => {
                                                     />
                                                 </Form.Group>
                                                 <Form.Group as={Col} md="2" controlId="validationCustom04">
-                                                    <Form.Label>Area</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>Area</Form.Label>
                                                     <Form.Control
                                                         type="text"
                                                         
@@ -876,7 +1036,17 @@ const AddLocation = () => {
                                                     />
                                                 </Form.Group>
                                                 <Form.Group as={Col} md="2" controlId="validationCustom04">
-                                                    <Form.Label>PIN</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>PIN</Form.Label>
                                                     <Form.Control
                                                         type="number"
                                                         
@@ -901,7 +1071,17 @@ const AddLocation = () => {
                                         <div style={{ padding: "0 2rem" }}>
                                             <Row className="mb-3">
                                                 <Form.Group as={Col} md="3" controlId="validationCustom02">
-                                                    <Form.Label>Contact Type</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>Contact Type</Form.Label>
                                                     <Form.Select
                                                         className="chosen-single form-select"
                                                         
@@ -931,7 +1111,17 @@ const AddLocation = () => {
                                             </Row>
                                             <Row>
                                                 <Form.Group as={Col} md="4" controlId="validationCustom02">
-                                                    <Form.Label>Contact Name</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>Contact Name</Form.Label>
                                                     <Form.Control
                                                         required
                                                         
@@ -952,7 +1142,17 @@ const AddLocation = () => {
                                                     </Form.Control.Feedback>
                                                 </Form.Group>
                                                 <Form.Group as={Col} md="4" controlId="validationCustomPhonenumber">
-                                                    <Form.Label>Contact Phone Number</Form.Label>
+                                                    <Form.Label>
+                                                        <span
+                                                            className="optional"
+                                                            style={{
+                                                                letterSpacing: "5px",
+                                                                fontSize: "24px",
+                                                                color: "red"
+                                                            }}
+                                                        >
+                                                            *
+                                                        </span>Contact Phone Number</Form.Label>
                                                     <InputGroup >
                                                         <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
                                                         <Form.Control

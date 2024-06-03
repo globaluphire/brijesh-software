@@ -32,7 +32,7 @@ const addOrderFields = {
     material: "",
     size: "",
     quantity: "",
-    weight: 0,
+    weight: null,
     priority: "",
     specialOfferedFreight: 0,
     notes: "",
@@ -773,16 +773,6 @@ const AddOrder = () => {
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
                                 <Form.Label>
                                     <ul className="option-list">
-                                        <span
-                                            className="optional"
-                                            style={{
-                                                letterSpacing: "5px",
-                                                fontSize: "24px",
-                                                color: "red"
-                                            }}
-                                        >
-                                            *
-                                        </span>
                                         Client Name
                                         <li className="mx-2">
                                             { orderCity ?
@@ -851,7 +841,19 @@ const AddOrder = () => {
                     <div style={{ padding: "0 2rem" }}>
                         <Row className="mb-3">
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
-                                <Form.Label>Pickup Date</Form.Label><br />
+                                <Form.Label>
+                                    <span
+                                        className="optional"
+                                        style={{
+                                            letterSpacing: "5px",
+                                            fontSize: "24px",
+                                            color: "red"
+                                        }}
+                                    >
+                                        *
+                                    </span>
+                                    Pickup Date
+                                </Form.Label><br />
                                 <CalendarComp setDate={setPickupDate} date1={pickupDate} dateDisabled={dateDisabled} />
                             </Form.Group>
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
@@ -1047,7 +1049,19 @@ const AddOrder = () => {
                     <div style={{ padding: "0 2rem" }}>
                         <Row className="mb-3">
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
-                                <Form.Label>Material</Form.Label>
+                                <Form.Label>
+                                    <span
+                                        className="optional"
+                                        style={{
+                                            letterSpacing: "5px",
+                                            fontSize: "24px",
+                                            color: "red"
+                                        }}
+                                    >
+                                        *
+                                    </span>
+                                    Material
+                                </Form.Label>
                                 <Form.Select
                                     required
                                     className="chosen-single form-select"
@@ -1075,7 +1089,19 @@ const AddOrder = () => {
                                 </Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
-                                <Form.Label>Size</Form.Label>
+                                <Form.Label>
+                                    <span
+                                        className="optional"
+                                        style={{
+                                            letterSpacing: "5px",
+                                            fontSize: "24px",
+                                            color: "red"
+                                        }}
+                                    >
+                                        *
+                                    </span>
+                                    Size
+                                </Form.Label>
                                 <Form.Select
                                     required
                                     className="chosen-single form-select"
@@ -1103,7 +1129,20 @@ const AddOrder = () => {
                                 </Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
-                                <Form.Label>Priority</Form.Label>
+                                <Form.Label>
+                                    
+                                    <span
+                                        className="optional"
+                                        style={{
+                                            letterSpacing: "5px",
+                                            fontSize: "24px",
+                                            color: "red"
+                                        }}
+                                    >
+                                        *
+                                    </span>
+                                    Priority
+                                </Form.Label>
                                 <Form.Select
                                     required
                                     className="chosen-single form-select"
@@ -1133,13 +1172,26 @@ const AddOrder = () => {
                         </Row>
                         <Row className="mb-3">
                             <Form.Group as={Col} md="6" controlId="validationCustom01">
-                                <Form.Label>Quantity</Form.Label>
+                                <Form.Label>
+                                    <span
+                                        className="optional"
+                                        style={{
+                                            letterSpacing: "5px",
+                                            fontSize: "24px",
+                                            color: "red"
+                                        }}
+                                    >
+                                        *
+                                    </span>
+                                    Quantity
+                                </Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="order-quantity"
                                     // placeholder="Material Details"
                                     // defaultValue="Mark"
                                     value={quantity}
+                                    required
                                     onChange={(e) => {
                                         setOrderFormData((previousState) => ({
                                             ...previousState,
@@ -1148,23 +1200,44 @@ const AddOrder = () => {
                                     }}
                                 />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please enter material's quantity.
+                                </Form.Control.Feedback>
                             </Form.Group>
-                            <Form.Group as={Col} md="3" controlId="validationCustom02">
-                                <Form.Label>Weight(Kg)</Form.Label>
-                                <Form.Control
-                                    type="number"
-                                    name="order-weight"
-                                    // placeholder="Weight"
-                                    // defaultValue="Otto"
-                                    value={weight}
-                                    onChange={(e) => {
-                                        setOrderFormData((previousState) => ({
-                                            ...previousState,
-                                            weight: e.target.value,
-                                        }));
-                                    }}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                            <Form.Group as={Col} md="3" controlId="validationCustom01">
+                                <Form.Label>
+                                    <span
+                                        className="optional"
+                                        style={{
+                                            letterSpacing: "5px",
+                                            fontSize: "24px",
+                                            color: "red"
+                                        }}
+                                    >
+                                        *
+                                    </span>
+                                    Weight(Kg)
+                                </Form.Label>
+                                <InputGroup>
+                                    <Form.Control
+                                        type="number"
+                                        name="order-weight"
+                                        // placeholder="Weight"
+                                        // defaultValue="Otto"
+                                        required
+                                        value={weight}
+                                        onChange={(e) => {
+                                            setOrderFormData((previousState) => ({
+                                                ...previousState,
+                                                weight: e.target.value,
+                                            }));
+                                        }}
+                                    />
+                                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                    <Form.Control.Feedback type="invalid">
+                                        Please enter material's weight.
+                                    </Form.Control.Feedback>
+                                </InputGroup>
                             </Form.Group>
                             <Form.Group as={Col} md="3" controlId="validationCustom02">
                                 <Form.Label>Special Offered Freight</Form.Label>

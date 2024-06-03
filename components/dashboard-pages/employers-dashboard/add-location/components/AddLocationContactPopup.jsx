@@ -195,7 +195,17 @@ const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactS
                                     <div style={{ padding: "0.5rem" }}>
                                         <Row className="mb-3">
                                             <Form.Group as={Col} lg="12" controlId="validationCustom02">
-                                                <Form.Label>Contact Type</Form.Label>
+                                                <Form.Label>
+                                                    <span
+                                                        className="optional"
+                                                        style={{
+                                                            letterSpacing: "5px",
+                                                            fontSize: "24px",
+                                                            color: "red"
+                                                        }}
+                                                    >
+                                                        *
+                                                    </span>Contact Type</Form.Label>
                                                 <Form.Control
                                                     size="sm"
                                                     disabled
@@ -207,7 +217,17 @@ const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactS
                                         </Row>
                                         <Row>
                                             <Form.Group as={Col} lg="12" controlId="validationCustom02">
-                                                <Form.Label>Contact Name</Form.Label>
+                                                <Form.Label>
+                                                    <span
+                                                        className="optional"
+                                                        style={{
+                                                            letterSpacing: "5px",
+                                                            fontSize: "24px",
+                                                            color: "red"
+                                                        }}
+                                                    >
+                                                        *
+                                                    </span>Contact Name</Form.Label>
                                                 <Form.Control
                                                     size="sm"
                                                     required
@@ -228,7 +248,17 @@ const AddLocationContactPopup = ({ setIsLocationContactSaved, isLocationContactS
                                                 </Form.Control.Feedback>
                                             </Form.Group>
                                             <Form.Group as={Col} lg="12" controlId="validationCustomPhonenumber">
-                                                <Form.Label>Contact Phone Number</Form.Label>
+                                                <Form.Label>
+                                                    <span
+                                                        className="optional"
+                                                        style={{
+                                                            letterSpacing: "5px",
+                                                            fontSize: "24px",
+                                                            color: "red"
+                                                        }}
+                                                    >
+                                                        *
+                                                    </span>Contact Phone Number</Form.Label>
                                                 <InputGroup size="sm">
                                                     <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
                                                     <Form.Control
