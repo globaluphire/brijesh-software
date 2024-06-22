@@ -1,6 +1,7 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
+/* eslint-disable no-return-assign */
 import candidatesData from "../../../../../data/candidates";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import Link from "next/link";
@@ -179,13 +180,13 @@ const OldBilling = () => {
         // creating new array object for CSV export
         data.sort(function(a,b){
             // here a , b is whole object, you can access its property
-            //convert both to lowercase
+            // convert both to lowercase
                let x = a.company_name.toLowerCase();
                let y = b.company_name.toLowerCase();
          
-            //compare the word which is comes first
-               if(x>y){return 1;} 
-               if(x<y){return -1;}
+            // compare the word which is comes first
+               if(x>y) {return 1;} 
+               if(x<y) {return -1;}
                return 0;
              });
         const finalInvoiceDataCSV = data.map(({ invoice_id, order_id, lr_id, ...rest }) => ({ ...rest }));
