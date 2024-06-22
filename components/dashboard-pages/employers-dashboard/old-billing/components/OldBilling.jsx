@@ -165,14 +165,32 @@ const OldBilling = () => {
                 (invoice) =>
                     (invoice.invoice_created_at = dateTimeFormat(invoice.invoice_created_at))
             );
+
+            data.forEach((invoice) => invoice.company_name = invoice.company_name.replace(/^\s+/g, "").trim());
             setFetchedInvoicedata(data);
 
-            // creating new array object for CSV export
-            const invoiceDataCSV = data.map(({ invoice_id, order_id, lr_id, invoice_date, ...rest }) => ({ ...rest }));
-            setFetchedInvoicedataCSV(invoiceDataCSV);
+            var dataCopy = [...data];
+            setExportData(dataCopy);
         }
         setIsLoading(false);
     }
+
+    function setExportData(data) {
+        // creating new array object for CSV export
+        data.sort(function(a,b){
+            // here a , b is whole object, you can access its property
+            //convert both to lowercase
+               let x = a.company_name.toLowerCase();
+               let y = b.company_name.toLowerCase();
+         
+            //compare the word which is comes first
+               if(x>y){return 1;} 
+               if(x<y){return -1;}
+               return 0;
+             });
+        const finalInvoiceDataCSV = data.map(({ invoice_id, order_id, lr_id, ...rest }) => ({ ...rest }));
+        setFetchedInvoicedataCSV(finalInvoiceDataCSV);
+    };
 
     async function fetchedInvoice() {
         setIsLoading(true);
@@ -242,11 +260,11 @@ const OldBilling = () => {
                     (i) => (i.invoice_created_at = dateTimeFormat(i.invoice_created_at))
                 );
 
+                invoiceData.forEach((invoice) => invoice.company_name = invoice.company_name.replace(/^\s+/g, "").trim());
                 setFetchedInvoicedata(invoiceData);
 
-                // creating new array object for CSV export
-                const invoiceDataCSV = invoiceData.map(({ invoice_id, order_id, lr_id, invoice_date, ...rest }) => ({ ...rest }));
-                setFetchedInvoicedataCSV(invoiceDataCSV);
+                var invoiceDataCopy = [...invoiceData];
+                setExportData(invoiceDataCopy);
             }
         } catch (e) {
             toast.error(
