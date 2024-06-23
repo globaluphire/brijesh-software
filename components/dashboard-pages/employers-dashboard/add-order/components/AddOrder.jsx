@@ -27,6 +27,8 @@ const addOrderFields = {
     dropLocation: "",
     nameOfPickupPoint: "",
     nameOfDroppingPoint: "",
+    consignorCity: "",
+    consigneeCity: "",
     marketingContact: "",
     dispatchContact: "",
     material: "",
@@ -86,6 +88,8 @@ const AddOrder = () => {
         dropLocation,
         nameOfPickupPoint,
         nameOfDroppingPoint,
+        consignorCity,
+        consigneeCity,
         marketingContact,
         dispatchContact,
         material,
@@ -109,6 +113,22 @@ const AddOrder = () => {
     const [materialTypeReferenceOptions, setMaterialTypeReferenceOptions] = useState(null);
     const [priorityReferenceOptions, setPriorityReferenceOptions] = useState(null);
 
+    const [isConsignor, setIsConsignor] = useState(false);
+    const [isConsignee, setIsConsignee] = useState(false);
+    const [isConsignorSaved, setIsConsignorSaved] = useState(false);
+    const [isConsigneeSaved, setIsConsigneeSaved] = useState(false);
+
+    // consignor states
+    const [fetchedConsignorClientsData, setFetchedConsignorClientsData] = useState({});
+    const [consignorClientNames, setConsignorClientNames] = useState([]);
+    const [selectedConsignorClient, setSelectedConsignorClient] = useState([]);
+    const [selectedConsignorClientData, setSelectedConsignorClientData] = useState("");
+
+    // consignee states
+    const [fetchedConsigneeClientsData, setFetchedConsigneeClientsData] = useState({});
+    const [consigneeClientNames, setConsigneeClientNames] = useState([]);
+    const [selectedConsigneeClient, setSelectedConsigneeClient] = useState([]);
+    const [selectedConsigneeClientData, setSelectedConsigneeClientData] = useState("");
 
     // start of pick up point details
     async function getPickupPointDetails() {
@@ -421,6 +441,160 @@ const AddOrder = () => {
         priorityReferenceOptions]
     );
 
+    async function getConsignorConsigneeDetails() {
+        if (consignorCity) {
+            // fetch consignor client addresses and contacts data
+            try {
+                setIsLoading(true);
+                setLoadingText("Consignor Details are Loading...");
+
+                let { data: consignorClientData, error } = await supabase
+                    .from("client")
+                    .select("*")
+                    .eq("city", consignorCity);
+
+                if (consignorClientData) {
+                    setFetchedConsignorClientsData(consignorClientData);
+
+                    // set client names
+                    const allConsignorClientNames = [];
+                    for (let i = 0; i < consignorClientData.length; i++) {
+                        allConsignorClientNames.push({
+                            "clientName": consignorClientData[i].client_name,
+                            "clientAddress": consignorClientData[i].address1 + ", " +
+                                            consignorClientData[i].address2 + ", " +
+                                            consignorClientData[i].area + ", " +
+                                            consignorClientData[i].city + ", " +
+                                            consignorClientData[i].state + ", " +
+                                            consignorClientData[i].pin,
+                            "clientId": consignorClientData[i].client_id
+                        });
+                    }
+                    allConsignorClientNames.sort();
+                    setConsignorClientNames(allConsignorClientNames);
+                    setIsLoading(false);
+                    setLoadingText("");
+
+                    if (isConsignorSaved) {
+                        document.getElementById("addClientModalCloseButton").click();
+                        setIsConsignorSaved(false);
+                    }
+                } else {
+                    setIsLoading(false);
+                    setLoadingText("");
+                }
+            } catch (e) {
+                toast.error(
+                    "System is unavailable.  Unable to fetch Client Data.  Please try again later or contact tech support!",
+                    {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    }
+                );
+                // console.warn(e);
+                setIsLoading(false);
+                setLoadingText("");
+            }
+        }
+
+        if (consigneeCity) {
+            // fetch consignee client addresses and contacts data
+            try {
+                setIsLoading(true);
+                setLoadingText("Consignee Details are Loading...");
+
+                let { data: consigneeClientData, error } = await supabase
+                    .from("client")
+                    .select("*")
+                    .eq("city", consigneeCity);
+
+                if (consigneeClientData) {
+                    setFetchedConsigneeClientsData(consigneeClientData);
+
+                    // set client names
+                    const allConsigneeClientNames = [];
+                    for (let i = 0; i < consigneeClientData.length; i++) {
+                        allConsigneeClientNames.push({
+                            "clientName": consigneeClientData[i].client_name,
+                            "clientAddress": consigneeClientData[i].address1 + ", " +
+                                            consigneeClientData[i].address2 + ", " +
+                                            consigneeClientData[i].area + ", " +
+                                            consigneeClientData[i].city + ", " +
+                                            consigneeClientData[i].state + ", " +
+                                            consigneeClientData[i].pin,
+                            "clientId": consigneeClientData[i].client_id
+                        });
+                    }
+                    allConsigneeClientNames.sort();
+                    setConsigneeClientNames(allConsigneeClientNames);
+                    setIsLoading(false);
+                    setLoadingText("");
+
+                    if (isConsigneeSaved) {
+                        document.getElementById("addClientModalCloseButton").click();
+                        setIsConsigneeSaved(false);
+                    }
+                } else {
+                    setIsLoading(false);
+                    setLoadingText("");
+                }
+            } catch (e) {
+                toast.error(
+                    "System is unavailable.  Unable to fetch Client Data.  Please try again later or contact tech support!",
+                    {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    }
+                );
+                // console.warn(e);
+                setIsLoading(false);
+                setLoadingText("");
+            }
+        }
+    };
+    useEffect(() => {
+        getConsignorConsigneeDetails();
+    }, [consignorCity, consigneeCity, isConsignorSaved, isConsigneeSaved]);
+
+    function getSelectedConsignorConsigneeData() {
+        if (fetchedConsignorClientsData && fetchedConsignorClientsData.length > 0 && selectedConsignorClient.length > 0) {
+            setIsLoading(true);
+            setLoadingText("Selected Consignor Details are Loading...");
+            const findSelectedConsignorClientData = fetchedConsignorClientsData.find((client) => client.client_id === selectedConsignorClient[0].clientId);
+            setSelectedConsignorClientData(findSelectedConsignorClientData);
+            setIsLoading(false);
+            setLoadingText("");
+        } else if (selectedConsignorClient.length === 0) {
+            setSelectedConsignorClientData([]);
+        }
+
+        if (fetchedConsigneeClientsData && fetchedConsigneeClientsData.length > 0 && selectedConsigneeClient.length > 0) {
+            setIsLoading(true);
+            setLoadingText("Selected Consignee Details are Loading...");
+            const findSelectedConsigneeClientData = fetchedConsigneeClientsData.find((client) => client.client_id === selectedConsigneeClient[0].clientId);
+            setSelectedConsigneeClientData(findSelectedConsigneeClientData);
+            setIsLoading(false);
+            setLoadingText("");
+        } else if (selectedConsigneeClient.length === 0) {
+            setSelectedConsigneeClientData([]);
+        }
+    };
+    useEffect(() => {
+        getSelectedConsignorConsigneeData();
+    }, [selectedConsignorClient, selectedConsigneeClient]);
+
     function checkRequiredFields() {
         if(pickupDate && material && size && priority) {
             return true;
@@ -445,6 +619,10 @@ const AddOrder = () => {
                     pickup_marketing_contact_id: selectedPickupMarketingContactDetails.length > 0 ? selectedPickupMarketingContactDetails[0].pickupMarketingContactId : null,
                     pickup_dispatch_contact_id: selectedPickupDispatchContactDetails.length > 0 ? selectedPickupDispatchContactDetails[0].pickupDispatchContactId : null,
                     
+                    // consignor and consignee details
+                    consignor_client_id: selectedConsignorClientData ? selectedConsignorClientData.client_id : null,
+                    consignee_client_id: selectedConsigneeClientData ? selectedConsigneeClientData.client_id : null,
+
                 },
             ]);
             if (error) {
@@ -464,6 +642,12 @@ const AddOrder = () => {
                 );
                 setIsLRGenerating(false);
             } else {
+                // reset all selected states
+                setSelectedConsignorClient([]);
+                setSelectedConsignorClientData("");
+                setSelectedConsigneeClient([]);
+                setSelectedConsigneeClientData("");
+
                 // open toast
                 toast.success("New LR generated successfully", {
                     position: "bottom-right",
@@ -783,6 +967,8 @@ const AddOrder = () => {
                                                         data-bs-target="#addClientModal"
                                                         onClick={() => {
                                                             setIsClient(true);
+                                                            setIsConsignor(false);
+                                                            setIsConsignee(false);
                                                         }}
                                                     >
                                                         <span className="la la-plus"></span>
@@ -1040,6 +1226,263 @@ const AddOrder = () => {
                     </div>
                 </div>
                 {/* Drop Details Block ends */}
+
+                
+                {/* Consignor Details Block starts */}
+                <div>
+                    <div className="divider divider-general">
+                        <span><b>Consignor</b></span>
+                    </div>
+                    <div style={{ padding: "0 2rem" }}>
+                        <Row className="mb-3">
+                            <Form.Group as={Col} md="4" controlId="validationCustom02">
+                                <Form.Label>City</Form.Label>
+                                <Form.Select
+                                    className="chosen-single form-select"
+                                    size="md"
+                                    onChange={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            consignorCity: e.target.value,
+                                        }));
+                                        setSelectedConsignorClient([]);
+                                    }}
+                                    value={consignorCity}
+                                >
+                                    <option value=""></option>
+                                    {orderCityReferenceOptions.map(
+                                        (option) => (
+                                            <option key={option} value={option}>
+                                                {option}
+                                            </option>
+                                        )
+                                    )}
+                                </Form.Select>
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please enter Consignor's City.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="8" controlId="validationCustom01">
+                                <Form.Label>
+                                    <ul className="option-list">
+                                        Client Name
+                                        <li className="mx-2">
+                                            { consignorCity ?
+                                                <button>
+                                                    <a
+                                                        href="#"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#addClientModal"
+                                                        onClick={() => {
+                                                            setIsConsignor(true);
+                                                            setIsConsignee(false);
+                                                            setIsClient(false);
+                                                        }}
+                                                    >
+                                                        <span className="la la-plus"></span>
+                                                    </a>
+                                                </button>
+                                            : "" }
+                                        </li>
+                                    </ul>
+                                </Form.Label>
+                                <Typeahead
+                                    id="clientName"
+                                    disabled = {!consignorCity}
+                                    onChange={setSelectedConsignorClient}
+                                    className="form-group"
+                                    options={consignorClientNames}
+                                    selected={selectedConsignorClient}
+                                    labelKey="clientName"
+                                    renderMenuItemChildren={(option) => (
+                                        <div>
+                                            <b>
+                                                {option.clientName}
+                                            </b>
+                                            <div className="px-1" style={{ fontSize: "small", whiteSpace: "normal" }}>
+                                                {option.clientAddress}
+                                            </div>
+                                        </div>
+                                    )}
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                {selectedConsignorClient && selectedConsignorClientData ?
+                                    <>
+                                        <div className="optional" style={{ paddingLeft: "inherit" }}>
+                                            <span>{selectedConsignorClientData.address1 ? selectedConsignorClientData.address1 + ", " : ""}</span>
+                                            <span>{selectedConsignorClientData.address2 ? selectedConsignorClientData.address2 + ", " : ""}</span>
+                                            <span>{selectedConsignorClientData.area ? selectedConsignorClientData.area + ", " : ""}</span>
+                                            <span>{selectedConsignorClientData.city ? selectedConsignorClientData.city + ", " : ""}</span>
+                                            <span>{selectedConsignorClientData.state ? selectedConsignorClientData.state + ", " : ""}</span>
+                                            <span>{selectedConsignorClientData.pin ? selectedConsignorClientData.pin : ""}</span>
+                                        </div>
+                                    </>
+                                :  ""}
+                            </Form.Group>
+                        </Row>
+                        {selectedConsignorClient && selectedConsignorClientData ?
+                            <Row className="pb-3">
+                                <Form.Group as={Col} md="6" controlId="validationCustomPhonenumber">
+                                    <InputGroup size="sm">
+                                        <InputGroup.Text id="inputGroupPrepend">GSTIN</InputGroup.Text>
+                                        <Form.Control
+                                            type="text"
+                                            // placeholder="Username"
+                                            aria-describedby="inputGroupPrepend"
+                                            disabled
+                                            value={selectedConsignorClientData.client_gst}
+                                        />
+                                    </InputGroup>
+                                </Form.Group>
+                                <Form.Group as={Col} md="6" controlId="validationCustomPhonenumber">
+                                    <InputGroup 
+                                        size="sm" >
+                                        <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
+                                        <Form.Control
+                                            type="number"
+                                            disabled
+                                            // placeholder="Username"
+                                            aria-describedby="inputGroupPrepend"
+                                            // required
+                                            value={selectedConsignorClientData.client_phone}
+                                        />
+                                    </InputGroup>
+                                </Form.Group>
+                            </Row>
+                        : ""}
+                    </div>
+                </div>
+                {/* Consignor Details Block ends */}
+
+                {/* Consignee Details Block starts */}
+                <div className="pb-4">
+                    <div className="divider divider-general">
+                        <span><b>Consignee</b></span>
+                    </div>
+                    <div style={{ padding: "0 2rem" }}>
+                        <Row className="mb-3">
+                            <Form.Group as={Col} md="4" controlId="validationCustom02">
+                                <Form.Label>City</Form.Label>
+                                <Form.Select
+                                    className="chosen-single form-select"
+                                    size="md"
+                                    onChange={(e) => {
+                                        setOrderFormData((previousState) => ({
+                                            ...previousState,
+                                            consigneeCity: e.target.value,
+                                        }));
+                                        setSelectedConsigneeClient([]);
+                                    }}
+                                    value={consigneeCity}
+                                >
+                                    <option value=""></option>
+                                    {orderCityReferenceOptions.map(
+                                        (option) => (
+                                            <option key={option} value={option}>
+                                                {option}
+                                            </option>
+                                        )
+                                    )}
+                                </Form.Select>
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                <Form.Control.Feedback type="invalid">
+                                    Please enter Consignee's City.
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                            <Form.Group as={Col} md="8" controlId="validationCustom01">
+                                <Form.Label>
+                                    <ul className="option-list">
+                                        Client Name
+                                        <li className="mx-2">
+                                            { consigneeCity[0] ?
+                                                <button>
+                                                    <a
+                                                        href="#"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#addClientModal"
+                                                        onClick={() => {
+                                                            setIsConsignor(false);
+                                                            setIsConsignee(true);
+                                                            setIsClient(false);
+                                                        }}
+                                                    >
+                                                        <span className="la la-plus"></span>
+                                                    </a>
+                                                </button>
+                                            : "" }
+                                        </li>
+                                    </ul>
+                                </Form.Label>
+                                <Typeahead
+                                    id="consigneeClientName"
+                                    disabled = {!consigneeCity}
+                                    onChange={setSelectedConsigneeClient}
+                                    className="form-group"
+                                    options={consigneeClientNames}
+                                    selected={selectedConsigneeClient}
+                                    labelKey="clientName"
+                                    renderMenuItemChildren={(option) => (
+                                        <div>
+                                            <b>
+                                                {option.clientName}
+                                            </b>
+                                            <div className="px-1" style={{ fontSize: "small", whiteSpace: "normal" }}>
+                                                {option.clientAddress}
+                                            </div>
+                                        </div>
+                                    )}
+                                />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                {selectedConsigneeClient && selectedConsigneeClientData ?
+                                    <>
+                                        <div className="optional" style={{ paddingLeft: "inherit" }}>
+                                            <span>{selectedConsigneeClientData.address1 ? selectedConsigneeClientData.address1 + ", " : ""}</span>
+                                            <span>{selectedConsigneeClientData.address2 ? selectedConsigneeClientData.address2 + ", " : ""}</span>
+                                            <span>{selectedConsigneeClientData.area ? selectedConsigneeClientData.area + ", " : ""}</span>
+                                            <span>{selectedConsigneeClientData.city ? selectedConsigneeClientData.city + ", " : ""}</span>
+                                            <span>{selectedConsigneeClientData.state ? selectedConsigneeClientData.state + ", " : ""}</span>
+                                            <span>{selectedConsigneeClientData.pin ? selectedConsigneeClientData.pin : ""}</span>
+                                        </div>
+                                    </>
+                                :  ""}
+                            </Form.Group>
+                        </Row>
+                        {selectedConsigneeClient && selectedConsigneeClientData ?
+                            <Row className="pb-3">
+                                <Form.Group as={Col} md="6" controlId="validationCustomPhonenumber">
+                                    <InputGroup size="sm">
+                                        <InputGroup.Text id="inputGroupPrepend">GSTIN</InputGroup.Text>
+                                        <Form.Control
+                                            type="text"
+                                            // placeholder="Username"
+                                            aria-describedby="inputGroupPrepend"
+                                            disabled
+                                            value={selectedConsigneeClientData.client_gst}
+                                        />
+                                    </InputGroup>
+                                </Form.Group>
+                                <Form.Group as={Col} md="6" controlId="validationCustomPhonenumber">
+                                    <InputGroup 
+                                        size="sm" >
+                                        <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
+                                        <Form.Control
+                                            type="number"
+                                            disabled
+                                            // placeholder="Username"
+                                            aria-describedby="inputGroupPrepend"
+                                            // required
+                                            value={selectedConsigneeClientData.client_phone}
+                                        />
+                                    </InputGroup>
+                                </Form.Group>
+                            </Row>
+                        : ""}
+                    </div>
+                    <span className="horizontal-divider">
+                    </span>
+                </div>
+                {/* Consignee Details Block ends */}
 
                 {/* Material Details starts */}
                 <div>
@@ -1438,6 +1881,14 @@ const AddOrder = () => {
                                 setIsClient={setIsClient}
                                 isClientSaved={isClientSaved}
                                 setIsClientSaved={setIsClientSaved}
+                                isConsignor={isConsignor}
+                                setIsConsignor={setIsConsignor}
+                                isConsignee={isConsignee}
+                                setIsConsignee={setIsConsignee}
+                                isConsigneeSaved={isConsigneeSaved}
+                                setIsConsigneeSaved={setIsConsigneeSaved}
+                                isConsignorSaved={isConsignorSaved}
+                                setIsConsignorSaved={setIsConsignorSaved}
                             />
                         </div>
                         {/* End .send-private-message-wrapper */}
