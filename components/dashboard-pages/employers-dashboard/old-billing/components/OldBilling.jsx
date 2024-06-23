@@ -135,7 +135,7 @@ const OldBilling = () => {
         let query = supabase
             .from("invoice")
             .select("*")
-            .lt("invoice_created_at", "2024-06-28")
+            .lt("invoice_created_at", "2024-07-28")
             .ilike("company_name", "%" + searchFilters.clientName + "%");
 
         if (searchInvoiceDateFrom) {
@@ -220,13 +220,13 @@ const OldBilling = () => {
                 query = supabase
                     .from("invoice")
                     .select("*")
-                    .lt("invoice_created_at", "2024-06-28")
+                    .lt("invoice_created_at", "2024-07-28")
                     .ilike("company_name", "%" + searchBillingCompanyName + "%");
             } else {
                 query = supabase
                     .from("invoice")
                     .select("*")
-                    .lt("invoice_created_at", "2024-06-28");
+                    .lt("invoice_created_at", "2024-07-28");
             }
 
             // if (name) {
