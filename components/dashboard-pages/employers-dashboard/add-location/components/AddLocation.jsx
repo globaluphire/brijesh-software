@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+/* eslint-disable prefer-const */
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
