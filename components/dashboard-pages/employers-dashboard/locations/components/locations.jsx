@@ -30,6 +30,7 @@ const addSearchFilters = {
 
 const Clients = () => {
     const router = useRouter();
+    const user = useSelector((state) => state.candidate.user);
 
     const [isLoading, setIsLoading] = useState(true);
     const [loadingText, setLoadingText] = useState("Location Data are loading...");
@@ -192,7 +193,25 @@ const Clients = () => {
                 locationData.forEach(
                     (i) => (i.location_created_at = dateTimeFormat(i.location_created_at))
                 );
-                setFetchedLocationsData(locationData);
+
+                var locationTypeFilteredData = [...locationData];
+                var locationCityFilteredData = [...locationData];
+                var filteredLocationData = [];
+                if (user.drop_branch) {
+                    locationTypeFilteredData = locationTypeFilteredData.filter((data) => data.location_type === "Drop" && data.location_city === user.drop_branch);
+                    Array.prototype.push.apply(filteredLocationData,locationTypeFilteredData);
+                }
+                if (user.pickup_branch) {
+                    locationCityFilteredData = locationCityFilteredData.filter((data) => data.location_type === "Pickup" && data.location_city === user.pickup_branch);
+                    Array.prototype.push.apply(filteredLocationData,locationCityFilteredData);
+                }
+
+                if (filteredLocationData.length > 0) {
+                    setFetchedLocationsData(filteredLocationData);
+                } else {
+                    setFetchedLocationsData(locationData);
+                }
+
                 setIsLoading(false);
             } else {
                 setIsLoading(false);

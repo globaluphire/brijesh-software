@@ -13,27 +13,6 @@ import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
 import Router from "next/router";
 import Spinner from "../../../../spinner/spinner";
 
-const SunEditor = dynamic(() => import("suneditor-react"), {
-    ssr: false,
-});
-
-const apiKey = envConfig.JOB_PORTAL_GMAP_API_KEY;
-const mapApiJs = "https://maps.googleapis.com/maps/api/js";
-
-// load google map api js
-function loadAsyncScript(src) {
-    return new Promise((resolve) => {
-        const script = document.createElement("Script");
-        Object.assign(script, {
-            type: "text/javascript",
-            async: true,
-            src,
-        });
-        script.addEventListener("load", () => resolve(script));
-        document.head.appendChild(script);
-    });
-}
-
 const addJobFields = {
     jobTitle: "",
     jobDesc: "",

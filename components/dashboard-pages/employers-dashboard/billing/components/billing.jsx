@@ -135,8 +135,13 @@ const Billing = () => {
         let query = supabase
             .from("invoice_view")
             .select("*")
-            
+
             .ilike("company_name", "%" + searchFilters.clientName + "%");
+
+
+        if (user.drop_branch) {
+            query.eq("order_city", user.drop_branch)
+        }
 
         if (searchInvoiceDateFrom) {
             query.gte("invoice_date", format(searchInvoiceDateFrom, "yyyy-MM-dd"));
@@ -220,6 +225,10 @@ const Billing = () => {
 
             // setTotalRecords((await query).data.length);
 
+            if (user.drop_branch) {
+                query.eq("order_city", user.drop_branch)
+            }
+    
             let { data: invoiceData, error } = await query.order(
                 "invoice_created_at",
                 { ascending: false, nullsFirst: false }

@@ -28,6 +28,7 @@ const addSearchFilters = {
 
 const CompletedOrderProcess = () => {
     const router = useRouter();
+    const user = useSelector((state) => state.candidate.user);
 
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
     const [fetchedOpenOrderdata, setFetchedOpenOrderdata] = useState({});
@@ -128,6 +129,10 @@ const CompletedOrderProcess = () => {
                 .from("orders")
                 .select("*")
                 .eq("status", "Completed");
+
+            if (user.drop_branch) {
+                query.eq("order_city", user.drop_branch)
+            }
 
             let { data: orderData, error } = await query.order(
                 "order_created_at",

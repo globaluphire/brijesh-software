@@ -498,7 +498,6 @@ const LocationDetails = () => {
         }
         setValidated(true);
       };
-    
 
     return (
         <div className="page-wrapper dashboard">
@@ -614,19 +613,46 @@ const LocationDetails = () => {
                                                                                         }}
                                                                                     >
                                                                                         *
-                                                                                    </span>Drop City</Form.Label> }
-                                                                            <Typeahead
-                                                                                id="city"
-                                                                                onChange={setCitySelection}
-                                                                                className="form-group"
-                                                                                options={cityRefs}
-                                                                                selected={citySelection}
-                                                                                required="true"
-                                                                            />
-                                                                            { citySelection && citySelection[0] ? <span style={{ color: "green" }}>Looks good!</span> :
-                                                                                <span  style={{ fontSize: "0.875em", color: "#dc3545" }}>
-                                                                                    Please enter Location City.
-                                                                                </span>
+                                                                                    </span>Drop City</Form.Label>
+                                                                            }
+                                                                            { locationType === "Pickup" && !user.pickup_branch ?
+                                                                                <>
+                                                                                    <Typeahead
+                                                                                        id="city"
+                                                                                        onChange={setCitySelection}
+                                                                                        className="form-group"
+                                                                                        options={cityRefs}
+                                                                                        selected={citySelection}
+                                                                                        required="true"
+                                                                                    />
+                                                                                    { citySelection && citySelection[0] ? <span style={{ color: "green" }}>Looks good!</span> :
+                                                                                        <span  style={{ fontSize: "0.875em", color: "#dc3545" }}>
+                                                                                            Please enter Location City.
+                                                                                        </span>
+                                                                                    }
+                                                                                </>
+                                                                            :
+                                                                                <>
+                                                                                    {locationType === "Drop" && !user.drop_branch ?
+                                                                                        <>
+                                                                                            <Typeahead
+                                                                                                id="city"
+                                                                                                onChange={setCitySelection}
+                                                                                                className="form-group"
+                                                                                                options={cityRefs}
+                                                                                                selected={citySelection}
+                                                                                                required="true"
+                                                                                            />
+                                                                                            { citySelection && citySelection[0] ? <span style={{ color: "green" }}>Looks good!</span> :
+                                                                                                <span  style={{ fontSize: "0.875em", color: "#dc3545" }}>
+                                                                                                    Please enter Location City.
+                                                                                                </span>
+                                                                                            }
+                                                                                        </>
+                                                                                    :
+                                                                                        <Form.Control type="text" disabled value={citySelection} />
+                                                                                    }
+                                                                                </>
                                                                             }
                                                                         </Form.Group>
                                                                     </Row>
@@ -692,18 +718,44 @@ const LocationDetails = () => {
                                                                                 >
                                                                                     *
                                                                                 </span>City</Form.Label>
-                                                                            <Typeahead
-                                                                                id="city"
-                                                                                onChange={setLocationCitySelection}
-                                                                                className="form-group"
-                                                                                options={cityRefs}
-                                                                                selected={locationCitySelection}
-                                                                                required="true"
-                                                                            />
-                                                                            { locationCitySelection && locationCitySelection[0] ? <span style={{ color: "green" }}>Looks good!</span> :
-                                                                                <span  style={{ fontSize: "0.875em", color: "#dc3545" }}>
-                                                                                    Please enter city.
-                                                                                </span>
+                                                                            { locationType === "Pickup" && !user.pickup_branch ?
+                                                                                <>
+                                                                                    <Typeahead
+                                                                                        id="city"
+                                                                                        onChange={setLocationCitySelection}
+                                                                                        className="form-group"
+                                                                                        options={cityRefs}
+                                                                                        selected={locationCitySelection}
+                                                                                        required="true"
+                                                                                    />
+                                                                                    { locationCitySelection && locationCitySelection[0] ? <span style={{ color: "green" }}>Looks good!</span> :
+                                                                                        <span  style={{ fontSize: "0.875em", color: "#dc3545" }}>
+                                                                                            Please enter city.
+                                                                                        </span>
+                                                                                    }
+                                                                                </>
+                                                                            :
+                                                                                <>
+                                                                                    {locationType === "Drop" && !user.drop_branch ?
+                                                                                        <>
+                                                                                            <Typeahead
+                                                                                                id="city"
+                                                                                                onChange={setLocationCitySelection}
+                                                                                                className="form-group"
+                                                                                                options={cityRefs}
+                                                                                                selected={locationCitySelection}
+                                                                                                required="true"
+                                                                                            />
+                                                                                            { locationCitySelection && locationCitySelection[0] ? <span style={{ color: "green" }}>Looks good!</span> :
+                                                                                                <span  style={{ fontSize: "0.875em", color: "#dc3545" }}>
+                                                                                                    Please enter city.
+                                                                                                </span>
+                                                                                            }
+                                                                                        </>
+                                                                                    :
+                                                                                        <Form.Control type="text" disabled value={citySelection} />
+                                                                                    }
+                                                                                </>
                                                                             }
                                                                         </Form.Group>
                                                                         <Form.Group as={Col} md="2" controlId="validationCustom04">

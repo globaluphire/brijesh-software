@@ -177,6 +177,29 @@ const LRDetails = (orderDetails) => {
         );
     };
 
+    useEffect(() => {
+        if (user.drop_branch) {
+            setLrDetailsFormData((previousState) => ({
+                ...previousState,
+                consigneeCity: user.drop_branch
+            }));
+
+            let preSelectedDropCity = [];
+            preSelectedDropCity.push(user.drop_branch);
+            setDropCitySelection(preSelectedDropCity);
+        }
+        if (user.pickup_branch) {
+            setLrDetailsFormData((previousState) => ({
+                ...previousState,
+                consignorCity: user.pickup_branch
+            }));
+
+            let preSelectedPickupCity = [];
+            preSelectedPickupCity.push(user.pickup_branch);
+            setPickupCitySelection(preSelectedPickupCity);
+        }
+    }, [user]);
+
     const handleChange=(e)=>{
         setEwayBillVerified(!ewayBillVerified);
     };
@@ -1416,19 +1439,25 @@ const LRDetails = (orderDetails) => {
                                                 <Row className="mb-3">
                                                     <Form.Group as={Col} md="3" controlId="validationCustom01">
                                                         <Form.Label>Pickup Location</Form.Label>
-                                                        <Typeahead
-                                                            id="pickupLocation"
-                                                            onChange={(e) => {
-                                                                setPickupCitySelection(e);
-                                                                setSelectedPickupPoint([]);
-                                                                setSelectedPickupMarketingContactDetails([]);
-                                                                setSelectedPickupDispatchContactDetails([]);
-                                                            }}
-                                                            className="form-group"
-                                                            options={cityRefs}
-                                                            selected={pickupCitySelection}
-                                                        />
-                                                        <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                                        { !user.pickup_branch ?
+                                                            <>
+                                                                <Typeahead
+                                                                    id="pickupLocation"
+                                                                    onChange={(e) => {
+                                                                        setPickupCitySelection(e);
+                                                                        setSelectedPickupPoint([]);
+                                                                        setSelectedPickupMarketingContactDetails([]);
+                                                                        setSelectedPickupDispatchContactDetails([]);
+                                                                    }}
+                                                                    className="form-group"
+                                                                    options={cityRefs}
+                                                                    selected={pickupCitySelection}
+                                                                />
+                                                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                                            </>
+                                                        :
+                                                            <Form.Control type="text" disabled value={pickupCitySelection} />
+                                                        }
                                                     </Form.Group>
                                                     <Form.Group as={Col} md="9" controlId="validationCustom01">
                                                         <Form.Label>
@@ -1593,19 +1622,25 @@ const LRDetails = (orderDetails) => {
                                                 <Row className="mb-3">
                                                     <Form.Group as={Col} md="3" controlId="validationCustom01">
                                                         <Form.Label>Drop Location</Form.Label>
-                                                        <Typeahead
-                                                            id="dropLocation"
-                                                            onChange={(e) => {
-                                                                setDropCitySelection(e);
-                                                                setSelectedDropPoint([]);
-                                                                setSelectedDropMarketingContactDetails([]);
-                                                                setSelectedDropDispatchContactDetails([]);
-                                                            }}
-                                                            className="form-group"
-                                                            options={cityRefs}
-                                                            selected={dropCitySelection}
-                                                        />
-                                                        <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                                        { !user.drop_branch ?
+                                                            <>
+                                                                <Typeahead
+                                                                    id="dropLocation"
+                                                                    onChange={(e) => {
+                                                                        setDropCitySelection(e);
+                                                                        setSelectedDropPoint([]);
+                                                                        setSelectedDropMarketingContactDetails([]);
+                                                                        setSelectedDropDispatchContactDetails([]);
+                                                                    }}
+                                                                    className="form-group"
+                                                                    options={cityRefs}
+                                                                    selected={dropCitySelection}
+                                                                />
+                                                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                                            </>
+                                                        :
+                                                            <Form.Control type="text" disabled value={dropCitySelection} />
+                                                        }
                                                     </Form.Group>
                                                     <Form.Group as={Col} md="9" controlId="validationCustom01">
                                                         <Form.Label>
@@ -1770,31 +1805,37 @@ const LRDetails = (orderDetails) => {
                                                 <Row className="mb-3">
                                                     <Form.Group as={Col} md="4" controlId="validationCustom02">
                                                         <Form.Label>City</Form.Label>
-                                                        <Form.Select
-                                                            className="chosen-single form-select"
-                                                            size="md"
-                                                            onChange={(e) => {
-                                                                setLrDetailsFormData((previousState) => ({
-                                                                    ...previousState,
-                                                                    consignorCity: e.target.value,
-                                                                }));
-                                                                setSelectedConsignorClient([]);
-                                                            }}
-                                                            value={consignorCity}
-                                                        >
-                                                            <option value=""></option>
-                                                            {orderCityReferenceOptions.map(
-                                                                (option) => (
-                                                                    <option key={option} value={option}>
-                                                                        {option}
-                                                                    </option>
-                                                                )
-                                                            )}
-                                                        </Form.Select>
-                                                        <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                                        <Form.Control.Feedback type="invalid">
-                                                            Please enter Consignor's City.
-                                                        </Form.Control.Feedback>
+                                                        { !user.drop_branch ?
+                                                            <>
+                                                                <Form.Select
+                                                                    className="chosen-single form-select"
+                                                                    size="md"
+                                                                    onChange={(e) => {
+                                                                        setLrDetailsFormData((previousState) => ({
+                                                                            ...previousState,
+                                                                            consignorCity: e.target.value,
+                                                                        }));
+                                                                        setSelectedConsignorClient([]);
+                                                                    }}
+                                                                    value={consignorCity}
+                                                                >
+                                                                    <option value=""></option>
+                                                                    {orderCityReferenceOptions.map(
+                                                                        (option) => (
+                                                                            <option key={option} value={option}>
+                                                                                {option}
+                                                                            </option>
+                                                                        )
+                                                                    )}
+                                                                </Form.Select>
+                                                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    Please enter Consignor's City.
+                                                                </Form.Control.Feedback>
+                                                            </>
+                                                        :
+                                                            <Form.Control type="text" disabled value={consignorCity} />
+                                                        }
                                                     </Form.Group>
                                                     <Form.Group as={Col} md="8" controlId="validationCustom01">
                                                         <Form.Label>
@@ -1906,31 +1947,37 @@ const LRDetails = (orderDetails) => {
                                                 <Row className="mb-3">
                                                     <Form.Group as={Col} md="4" controlId="validationCustom02">
                                                         <Form.Label>City</Form.Label>
-                                                        <Form.Select
-                                                            className="chosen-single form-select"
-                                                            size="md"
-                                                            onChange={(e) => {
-                                                                setLrDetailsFormData((previousState) => ({
-                                                                    ...previousState,
-                                                                    consigneeCity: e.target.value,
-                                                                }));
-                                                                setSelectedConsigneeClient([]);
-                                                            }}
-                                                            value={consigneeCity}
-                                                        >
-                                                            <option value=""></option>
-                                                            {orderCityReferenceOptions.map(
-                                                                (option) => (
-                                                                    <option key={option} value={option}>
-                                                                        {option}
-                                                                    </option>
-                                                                )
-                                                            )}
-                                                        </Form.Select>
-                                                        <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                                        <Form.Control.Feedback type="invalid">
-                                                            Please enter Consignee's City.
-                                                        </Form.Control.Feedback>
+                                                        { !user.pickup_branch ?
+                                                            <>
+                                                                <Form.Select
+                                                                    className="chosen-single form-select"
+                                                                    size="md"
+                                                                    onChange={(e) => {
+                                                                        setLrDetailsFormData((previousState) => ({
+                                                                            ...previousState,
+                                                                            consigneeCity: e.target.value,
+                                                                        }));
+                                                                        setSelectedConsigneeClient([]);
+                                                                    }}
+                                                                    value={consigneeCity}
+                                                                >
+                                                                    <option value=""></option>
+                                                                    {orderCityReferenceOptions.map(
+                                                                        (option) => (
+                                                                            <option key={option} value={option}>
+                                                                                {option}
+                                                                            </option>
+                                                                        )
+                                                                    )}
+                                                                </Form.Select>
+                                                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    Please enter Consignee's City.
+                                                                </Form.Control.Feedback>
+                                                            </>
+                                                        :
+                                                            <Form.Control type="text" disabled value={consigneeCity} />
+                                                        }
                                                     </Form.Group>
                                                     <Form.Group as={Col} md="8" controlId="validationCustom01">
                                                         <Form.Label>

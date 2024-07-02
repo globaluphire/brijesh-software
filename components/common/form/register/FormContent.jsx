@@ -94,6 +94,8 @@ const FormContent = () => {
                         id: userData.user_id,
                         email: userData.email,
                         role: userData.role,
+                        pickup_branch: userData.pickup_branch,
+                        drop_branch: userData.drop_branch
                     })
                 );
                 document.getElementById("close-button-2").click();

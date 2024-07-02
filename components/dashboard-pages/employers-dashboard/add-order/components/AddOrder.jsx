@@ -915,6 +915,30 @@ const AddOrder = () => {
         }
     };
 
+    useEffect(() => {
+        if (user.drop_branch) {
+            setOrderFormData((previousState) => ({
+                ...previousState,
+                orderCity: user.drop_branch,
+                consigneeCity: user.drop_branch
+            }));
+
+            let preSelectedDropCity = [];
+            preSelectedDropCity.push(user.drop_branch);
+            setDropCitySelection(preSelectedDropCity);
+        }
+        if (user.pickup_branch) {
+            setOrderFormData((previousState) => ({
+                ...previousState,
+                consignorCity: user.pickup_branch
+            }));
+
+            let preSelectedPickupCity = [];
+            preSelectedPickupCity.push(user.pickup_branch);
+            setPickupCitySelection(preSelectedPickupCity);
+        }
+    }, [user]);
+
     return (
         <>
             { checkAllRefs ?
@@ -928,31 +952,32 @@ const AddOrder = () => {
                         <Row className="mb-3">
                             <Form.Group as={Col} md="4" controlId="validationCustom02">
                                 <Form.Label>Order City</Form.Label>
-                                <Form.Select
-                                    className="chosen-single form-select"
-                                    size="md"
-                                    onChange={(e) => {
-                                        setOrderFormData((previousState) => ({
-                                            ...previousState,
-                                            orderCity: e.target.value,
-                                        }));
-                                        setSelectedClient([]);
-                                    }}
-                                    value={orderCity}
-                                >
-                                    <option value=""></option>
-                                    {orderCityReferenceOptions.map(
-                                        (option) => (
-                                            <option key={option} value={option}>
-                                                {option}
-                                            </option>
-                                        )
-                                    )}
-                                </Form.Select>
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                                <Form.Control.Feedback type="invalid">
-                                    Please enter Consignor's GST Number.
-                                </Form.Control.Feedback>
+                                { !user.drop_branch ?
+                                    <Form.Select
+                                        className="chosen-single form-select"
+                                        size="md"
+                                        disabled={user.drop_branch}
+                                        onChange={(e) => {
+                                            setOrderFormData((previousState) => ({
+                                                ...previousState,
+                                                orderCity: e.target.value,
+                                            }));
+                                            setSelectedClient([]);
+                                        }}
+                                        value={orderCity}
+                                    >
+                                        <option value=""></option>
+                                        {orderCityReferenceOptions.map(
+                                            (option) => (
+                                                <option key={option} value={option}>
+                                                    {option}
+                                                </option>
+                                            )
+                                        )}
+                                    </Form.Select>
+                                :
+                                    <Form.Control type="text" disabled value={orderCity} />
+                                }
                             </Form.Group>
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
                                 <Form.Label>
@@ -1044,18 +1069,22 @@ const AddOrder = () => {
                             </Form.Group>
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
                                 <Form.Label>Pickup Location</Form.Label>
-                                <Typeahead
-                                    id="pickupLocation"
-                                    onChange={(e) => {
-                                        setPickupCitySelection(e);
-                                        setSelectedPickupPoint([]);
-                                        setSelectedPickupMarketingContactDetails([]);
-                                        setSelectedPickupDispatchContactDetails([]);
-                                    }}
-                                    className="form-group"
-                                    options={cityRefs}
-                                    selected={pickupCitySelection}
-                                />
+                                { !user.pickup_branch ?
+                                    <Typeahead
+                                        id="pickupLocation"
+                                        onChange={(e) => {
+                                            setPickupCitySelection(e);
+                                            setSelectedPickupPoint([]);
+                                            setSelectedPickupMarketingContactDetails([]);
+                                            setSelectedPickupDispatchContactDetails([]);
+                                        }}
+                                        className="form-group"
+                                        options={cityRefs}
+                                        selected={pickupCitySelection}
+                                    />
+                                :
+                                    <Form.Control type="text" disabled value={pickupCitySelection} />
+                                }
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                             </Form.Group>
                         </Row>
@@ -1211,22 +1240,27 @@ const AddOrder = () => {
                     </div>
                     <div style={{ padding: "0 2rem" }}>
                         <Row className="mb-3">
-                            <Form.Group as={Col} md="4" controlId="validationCustom01">
-                                <Form.Label>Drop Location</Form.Label>
-                                <Typeahead
-                                    id="dropLocation"
-                                    onChange={setDropCitySelection}
-                                    className="form-group"
-                                    options={cityRefs}
-                                    selected={dropCitySelection}
-                                />
-                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                            </Form.Group>
+                            { !user.drop_branch ?
+                                <Form.Group as={Col} md="4" controlId="validationCustom01">
+                                    <Form.Label>Drop Location</Form.Label>
+                                    <Typeahead
+                                        id="dropLocation"
+                                        onChange={setDropCitySelection}
+                                        className="form-group"
+                                        options={cityRefs}
+                                        selected={dropCitySelection}
+                                    />
+                                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                                </Form.Group>
+                            :
+                                <Form.Group as={Col} md="4">
+                                    <Form.Control type="text" disabled value={dropCitySelection} />
+                                </Form.Group>
+                            }
                         </Row>
                     </div>
                 </div>
                 {/* Drop Details Block ends */}
-
                 
                 {/* Consignor Details Block starts */}
                 <div>
@@ -1237,27 +1271,31 @@ const AddOrder = () => {
                         <Row className="mb-3">
                             <Form.Group as={Col} md="4" controlId="validationCustom02">
                                 <Form.Label>City</Form.Label>
-                                <Form.Select
-                                    className="chosen-single form-select"
-                                    size="md"
-                                    onChange={(e) => {
-                                        setOrderFormData((previousState) => ({
-                                            ...previousState,
-                                            consignorCity: e.target.value,
-                                        }));
-                                        setSelectedConsignorClient([]);
-                                    }}
-                                    value={consignorCity}
-                                >
-                                    <option value=""></option>
-                                    {orderCityReferenceOptions.map(
-                                        (option) => (
-                                            <option key={option} value={option}>
-                                                {option}
-                                            </option>
-                                        )
-                                    )}
-                                </Form.Select>
+                                { !user.drop_branch ?
+                                    <Form.Select
+                                        className="chosen-single form-select"
+                                        size="md"
+                                        onChange={(e) => {
+                                            setOrderFormData((previousState) => ({
+                                                ...previousState,
+                                                consignorCity: e.target.value,
+                                            }));
+                                            setSelectedConsignorClient([]);
+                                        }}
+                                        value={consignorCity}
+                                    >
+                                        <option value=""></option>
+                                        {orderCityReferenceOptions.map(
+                                            (option) => (
+                                                <option key={option} value={option}>
+                                                    {option}
+                                                </option>
+                                            )
+                                        )}
+                                    </Form.Select>
+                                :
+                                    <Form.Control type="text" disabled value={consignorCity} />
+                                }
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 <Form.Control.Feedback type="invalid">
                                     Please enter Consignor's City.
@@ -1364,27 +1402,31 @@ const AddOrder = () => {
                         <Row className="mb-3">
                             <Form.Group as={Col} md="4" controlId="validationCustom02">
                                 <Form.Label>City</Form.Label>
-                                <Form.Select
-                                    className="chosen-single form-select"
-                                    size="md"
-                                    onChange={(e) => {
-                                        setOrderFormData((previousState) => ({
-                                            ...previousState,
-                                            consigneeCity: e.target.value,
-                                        }));
-                                        setSelectedConsigneeClient([]);
-                                    }}
-                                    value={consigneeCity}
-                                >
-                                    <option value=""></option>
-                                    {orderCityReferenceOptions.map(
-                                        (option) => (
-                                            <option key={option} value={option}>
-                                                {option}
-                                            </option>
-                                        )
-                                    )}
-                                </Form.Select>
+                                { !user.pickup_branch ?
+                                    <Form.Select
+                                        className="chosen-single form-select"
+                                        size="md"
+                                        onChange={(e) => {
+                                            setOrderFormData((previousState) => ({
+                                                ...previousState,
+                                                consigneeCity: e.target.value,
+                                            }));
+                                            setSelectedConsigneeClient([]);
+                                        }}
+                                        value={consigneeCity}
+                                    >
+                                        <option value=""></option>
+                                        {orderCityReferenceOptions.map(
+                                            (option) => (
+                                                <option key={option} value={option}>
+                                                    {option}
+                                                </option>
+                                            )
+                                        )}
+                                    </Form.Select>
+                                :
+                                    <Form.Control type="text" disabled value={consigneeCity} />
+                                }
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 <Form.Control.Feedback type="invalid">
                                     Please enter Consignee's City.

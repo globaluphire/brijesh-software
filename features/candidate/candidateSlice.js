@@ -95,6 +95,8 @@ const initialState = {
         name: "",
         id: "",
         role: "",
+        pickup_branch: "",
+        drop_branch: ""
     },
     loggedIn: false,
 };

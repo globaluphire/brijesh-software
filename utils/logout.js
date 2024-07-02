@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 import { setUserData } from "../features/candidate/candidateSlice";
 const logout = (dispatch) => {
-    dispatch(setUserData({ name: "", id: "", email: "", role: "" }));
+    dispatch(setUserData({ name: "", id: "", email: "", role: "", pickup_branch: "", drop_branch: "" }));
     localStorage.clear();
 
     // open toast

@@ -162,6 +162,10 @@ const OpenOrderProcess = () => {
             .neq("status", "Completed")
             .neq("status", "Cancel");
 
+        if (user.drop_branch) {
+            query.eq("order_city", user.drop_branch)
+        }
+
         if (searchFilters.status) {
             query.ilike("status", "%" + searchFilters.status + "%");
         }
@@ -206,6 +210,10 @@ const OpenOrderProcess = () => {
                 .select("*")
                 .neq("status", "Completed")
                 .neq("status", "Cancel");
+
+            if (user.drop_branch) {
+                query.eq("order_city", user.drop_branch)
+            }
 
             let { data: orderData, error } = await query.order(
                 "order_created_at",

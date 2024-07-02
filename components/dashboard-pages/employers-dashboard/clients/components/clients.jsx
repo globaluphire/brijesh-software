@@ -28,6 +28,7 @@ const addSearchFilters = {
 
 const Clients = () => {
     const router = useRouter();
+    const user = useSelector((state) => state.candidate.user);
 
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
     const [fetchedClientsData, setFetchedClientsData] = useState({});
@@ -112,6 +113,14 @@ const Clients = () => {
             .from("client")
             .select("*");
 
+        if (user.drop_branch && user.pickup_branch) {
+            query.in("city", [user.drop_branch, user.pickup_branch]);
+        } else if (user.drop_branch) {
+            query.eq("city", user.drop_branch);
+        } else if (user.pickup_branch) {
+            query.eq("city", user.pickup_branch);
+        }
+
         if (consignorName) {
             query.ilike("consignor", "%" + consignorName + "%");
         }
@@ -162,6 +171,14 @@ const Clients = () => {
             let query = supabase
                 .from("client_view")
                 .select("*");
+
+            if (user.drop_branch && user.pickup_branch) {
+                query.in("city", [user.drop_branch, user.pickup_branch]);
+            } else if (user.drop_branch) {
+                query.eq("city", user.drop_branch);
+            } else if (user.pickup_branch) {
+                query.eq("city", user.pickup_branch);
+            }
 
             // setTotalRecords((await query).data.length);
 

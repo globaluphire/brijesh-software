@@ -27,6 +27,7 @@ const addSearchFilters = {
 
 const CancelledOrderProcess = () => {
     const router = useRouter();
+    const user = useSelector((state) => state.candidate.user);
 
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
     const [fetchedOpenOrderdata, setFetchedOpenOrderdata] = useState({});
@@ -187,6 +188,10 @@ const CancelledOrderProcess = () => {
                 .from("orders")
                 .select("*")
                 .eq("status", "Cancel");
+
+            if (user.drop_branch) {
+                query.eq("order_city", user.drop_branch)
+            }
 
             let { data: orderData, error } = await query.order(
                 "order_created_at",
