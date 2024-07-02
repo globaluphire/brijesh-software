@@ -131,7 +131,7 @@ const CompletedOrderProcess = () => {
                 .eq("status", "Completed");
 
             if (user.drop_branch) {
-                query.eq("order_city", user.drop_branch)
+                query.eq("order_city", user.drop_branch);
             }
 
             let { data: orderData, error } = await query.order(

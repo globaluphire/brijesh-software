@@ -196,7 +196,7 @@ const LR = () => {
                 .select("*");
 
             if (user.drop_branch) {
-                query.eq("order_city", user.drop_branch)
+                query.eq("order_city", user.drop_branch);
             }
     
             // if (name) {

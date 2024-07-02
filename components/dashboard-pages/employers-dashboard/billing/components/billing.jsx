@@ -1,6 +1,7 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
+/* eslint-disable no-var */
 import candidatesData from "../../../../../data/candidates";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import Link from "next/link";
@@ -140,7 +141,7 @@ const Billing = () => {
 
 
         if (user.drop_branch) {
-            query.eq("order_city", user.drop_branch)
+            query.eq("order_city", user.drop_branch);
         }
 
         if (searchInvoiceDateFrom) {
@@ -226,7 +227,7 @@ const Billing = () => {
             // setTotalRecords((await query).data.length);
 
             if (user.drop_branch) {
-                query.eq("order_city", user.drop_branch)
+                query.eq("order_city", user.drop_branch);
             }
     
             let { data: invoiceData, error } = await query.order(
