@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-unused-vars
+/* eslint-disable no-unused-vars */
 import Link from "next/link";
 import employerMenuData from "../../data/employerMenuData";
 import { isActiveLink } from "../../utils/linkActiveChecker";
