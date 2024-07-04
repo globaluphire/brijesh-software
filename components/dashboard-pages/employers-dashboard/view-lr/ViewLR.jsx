@@ -6,7 +6,7 @@ const ViewLR = ({ fetchedLRdata }) => {
         <>
             <div class="grid">
                 <div class="item">
-                    <img src="../../images/logo.svg" alt="logo1" class="logo1" />
+                    <img src="../../images/logo-1.svg" alt="logo1" class="logo1" />
                 </div>
                 <div class="company_name item">
                     <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
@@ -131,7 +131,7 @@ const ViewLR = ({ fetchedLRdata }) => {
 
             <div class="grid">
                 <div class="item">
-                    <img src="../../images/logo.svg" alt="logo1" class="logo1" />
+                    <img src="../../images/logo-1.svg" alt="logo1" class="logo1" />
                 </div>
                 <div class="company_name item">
                     <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
@@ -256,7 +256,7 @@ const ViewLR = ({ fetchedLRdata }) => {
 
             <div class="grid">
                 <div class="item">
-                    <img src="../../images/logo.svg" alt="logo1" class="logo1" />
+                    <img src="../../images/logo-1.svg" alt="logo1" class="logo1" />
                 </div>
                 <div class="company_name item">
                     <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />

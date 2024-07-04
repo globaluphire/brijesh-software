@@ -109,8 +109,8 @@ const Index = () => {
                             <div className="invoice-wrap">
                                 <div className="invoice-content">
                                     <div className="logo-box">
-                                        <div className="logo">
-                                            <img src="../../images/logo.svg" alt="logo" />
+                                        <div className="logo" style={{ marginTop: "-12px" }}>
+                                            <img src="../../images/logo-1.svg" alt="logo" width={100} />
                                         </div>
                                         <div>
                                             <Container className="custom-border">

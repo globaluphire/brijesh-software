@@ -161,7 +161,7 @@ const Index = () => {
                                 <div className="invoice-content">
                                     <div className="logo-box">
                                         <div className="logo">
-                                            <img src="../../images/logo.svg" alt="logo" />
+                                            <img src="../../images/logo-1.svg" alt="logo" />
                                         </div>
                                         <div>
                                             <Container className="custom-border">

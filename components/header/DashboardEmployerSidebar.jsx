@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { menuToggle } from "../../features/toggle/toggleSlice";
 import { logout } from "../../utils/logout";
+import { Image } from "react-bootstrap";
 
 const DashboardEmployerSidebar = () => {
     const router = useRouter();
@@ -30,6 +31,15 @@ const DashboardEmployerSidebar = () => {
 
             <div className="sidebar-inner">
                 <ul className="navigation">
+                    <li className="pb-3 text-center">
+                        <Image
+                            alt="brand"
+                            src="/images/logo-1.svg"
+                            width={150}
+                            height={50}
+                            priority
+                        />
+                    </li>
                     {employerMenuData.map((item) => {
                         const isUserAllowed = item.access.includes(user.role);
                         if (!isUserAllowed) {

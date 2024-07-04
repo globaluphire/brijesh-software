@@ -34,7 +34,7 @@ const Header = () => {
                         <div className="logo-box">
                             <div className="logo">
                                 <Image
-                                    src="/images/logo.svg"
+                                    src="/images/logo-1.svg"
                                     alt="brand"
                                     width={174}
                                     height={70}

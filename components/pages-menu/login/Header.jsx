@@ -35,7 +35,7 @@ const Header = () => {
                                     title="brand"
                                 />
                                 <img
-                                    src="images/logo.svg"
+                                    src="images/logo-1.svg"
                                     alt="logo"
                                     title="brand"
                                 />

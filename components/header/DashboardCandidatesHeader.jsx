@@ -41,7 +41,7 @@ const DashboardCandidatesHeader = () => {
                             <div className="logo">
                                 <Image
                                     alt="brand"
-                                    src="/images/logo.svg"
+                                    src="/images/logo-1.svg"
                                     width={154}
                                     height={50}
                                     priority

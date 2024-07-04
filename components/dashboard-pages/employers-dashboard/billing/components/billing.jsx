@@ -286,8 +286,10 @@ const Billing = () => {
     //     setPageSize(end);
     // }
 
-    useEffect(() => {
-        fetchedInvoice(searchFilters);
+    useEffect(async () => {
+        // authenticate first
+        // if authenticated then
+        await fetchedInvoice(searchFilters);
         // if (facility) {
         //     localStorage.setItem("facility", facility);
         // } else {

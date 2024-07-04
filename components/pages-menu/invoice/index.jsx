@@ -25,7 +25,7 @@ const index = () => {
                         <div className="invoice-content">
                             <div className="logo-box">
                                 <div className="logo">
-                                    <img src="images/logo.svg" alt="logo" />
+                                    <img src="images/logo-1.svg" alt="logo" />
                                 </div>
                                 <div className="invoice-id">
                                     Invoice # <span>0043128641</span>

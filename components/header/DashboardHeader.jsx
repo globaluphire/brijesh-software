@@ -98,13 +98,13 @@ const DashboardHeader = () => {
                     <div className="nav-outer">
                         <div className="logo-box">
                             <div className="logo">
-                                <Image
+                                {/* <Image
                                     alt="brand"
-                                    src="/images/logo.svg"
-                                    width={154}
+                                    src="/images/logo-1.svg"
+                                    width={50}
                                     height={50}
                                     priority
-                                />
+                                /> */}
                             </div>
                         </div>
                         {/* End .logo-box */}
@@ -199,7 +199,9 @@ const DashboardHeader = () => {
                                     width={20}
                                     height={20}
                                 />
-                                <span className="name">Hello, {user.name}</span>
+                                <span className="name"
+                                    style={{ padding: "12px 0px" }}
+                                >Hello, {user.name}</span>
                             </a>
 
                             <ul className="dropdown-menu">

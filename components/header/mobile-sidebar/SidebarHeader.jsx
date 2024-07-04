@@ -5,7 +5,7 @@ const SidebarHeader = () => {
     return (
         <div className="pro-header">
             <img
-                src="../images/logo.svg"
+                src="../images/logo-1.svg"
                 alt="brand"
                 width={154}
                 height={50}

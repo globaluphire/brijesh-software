@@ -21,7 +21,7 @@ const MobileMenu = () => {
                     <div className="nav-outer">
                         <div className="logo-box">
                             <div className="logo">
-                                <img src="/images/logo.svg" alt="brand" />
+                                {/* <img src="/images/logo-1.svg" alt="brand" /> */}
                             </div>
                         </div>
                         {/* End .logo-box */}
@@ -69,7 +69,9 @@ const MobileMenu = () => {
                                     style={{ marginLeft: "10px" }}
                                     className="name dropdown-toggle1"
                                 ></span>
-                                <span>{user.name}</span>
+                                <span
+                                    style={{ padding: "12px 0px" }}
+                                >{user.name}</span>
                             </div>
                         )}
                     </div>
