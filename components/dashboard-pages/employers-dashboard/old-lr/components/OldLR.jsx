@@ -1104,6 +1104,13 @@ const OldLR = () => {
                                                             </a>
                                                         </button>
                                                     </li>
+                                                    <li>
+                                                        <button>
+                                                            <a onClick={() => router.push(`/employers-dashboard/edit-lr/${lr.lr_number}`)}>
+                                                                <span className="la la-edit" title="Edit LR"></span>
+                                                            </a>
+                                                        </button>
+                                                    </li>
                                                 </ui>
                                             </td>
                                             <td>
