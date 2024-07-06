@@ -1104,6 +1104,15 @@ const OldLR = () => {
                                                             </a>
                                                         </button>
                                                     </li>
+                                                    { user.id === "NnxOeP2axndJjCYRX74985oipdo2" || user.id === "x1VQeoLZ65gWKFwx9nPwOH7bNgE2" ?
+                                                        <li>
+                                                            <button>
+                                                                <a onClick={() => router.push(`/employers-dashboard/edit-lr/${lr.lr_number}`)}>
+                                                                    <span className="la la-edit" title="Edit LR"></span>
+                                                                </a>
+                                                            </button>
+                                                        </li>
+                                                    : "" }
                                                 </ui>
                                             </td>
                                             <td>
