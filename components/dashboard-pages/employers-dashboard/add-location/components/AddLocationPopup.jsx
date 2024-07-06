@@ -437,37 +437,14 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
         }
     };
 
-    const handleSubmit = (event) => {
-        const form = event.currentTarget;
-        if (form.checkValidity() === false) {
-        event.preventDefault();
-        event.stopPropagation();
-        }
-        setValidated(true);
-    };
-
-    useEffect(() => {
-        if (user.drop_branch) {
-            setLocationFormData((previousState) => ({
-                ...previousState,
-                dropCity: user.drop_branch
-            }));
-
-            let preSelectedDropCity = [];
-            preSelectedDropCity.push(user.drop_branch);
-            setDropCitySelection(preSelectedDropCity);
-        }
-        if (user.pickup_branch) {
-            setLocationFormData((previousState) => ({
-                ...previousState,
-                city: user.pickup_branch
-            }));
-
-            let preSelectedPickupCity = [];
-            preSelectedPickupCity.push(user.pickup_branch);
-            setPickupCitySelection(preSelectedPickupCity);
-        }
-    }, [user]);
+  const handleSubmit = (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    setValidated(true);
+  };
 
     return (
         <> 
@@ -559,19 +536,15 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                                     >
                                                         *
                                                     </span>Pickup City</Form.Label>
-                                                { !user.pickup_branch ?
-                                                    <Typeahead
-                                                        id="pickupCity"
-                                                        size="sm"
-                                                        onChange={setPickupCitySelection}
-                                                        className="form-group"
-                                                        options={cityRefs}
-                                                        selected={pickupCitySelection}
-                                                        required="true"
-                                                    />
-                                                :
-                                                    <Form.Control type="text" size="sm" disabled value={pickupCitySelection} />
-                                                }
+                                                <Typeahead
+                                                    id="pickupCity"
+                                                    size="sm"
+                                                    onChange={setPickupCitySelection}
+                                                    className="form-group"
+                                                    options={cityRefs}
+                                                    selected={pickupPointCity}
+                                                    required="true"
+                                                />
                                                 { !pickupCityRequired && pickupCitySelection[0] ? <span style={{ color: "green" }}>Looks good!</span> :
                                                     <span  style={{ fontSize: "0.875em", color: "#dc3545" }}>
                                                         Please enter Pickup city.
@@ -643,22 +616,18 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                                     >
                                                         *
                                                     </span>City</Form.Label>
-                                                { !user.pickup_branch ?
-                                                    <Form.Control    
-                                                        type="text"
-                                                        size="sm"
-                                                        required
-                                                        value={city}
-                                                        onChange={(e) => {
-                                                            setLocationFormData((previousState) => ({
-                                                                ...previousState,
-                                                                city: e.target.value,
-                                                            }));
-                                                        }}
-                                                    />
-                                                :
-                                                    <Form.Control type="text" size="sm" disabled value={city} />
-                                                }
+                                                <Form.Control    
+                                                    type="text"
+                                                    size="sm"
+                                                    required
+                                                    value={city}
+                                                    onChange={(e) => {
+                                                        setLocationFormData((previousState) => ({
+                                                            ...previousState,
+                                                            city: e.target.value,
+                                                        }));
+                                                    }}
+                                                />
                                                 <Form.Control.Feedback type="invalid">
                                                     Please provide a valid city.
                                                 </Form.Control.Feedback>
@@ -936,19 +905,15 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                                 >
                                                     *
                                                 </span>Drop City</Form.Label>
-                                            { !user.drop_branch ?
-                                                <Typeahead
-                                                    id="dropCity"
-                                                    size="sm"
-                                                    onChange={setDropCitySelection}
-                                                    className="form-group"
-                                                    options={cityRefs}
-                                                    selected={dropCitySelection}
-                                                    required="true"
-                                                />
-                                            :
-                                                <Form.Control type="text" size="sm" disabled value={dropCitySelection} />
-                                            }
+                                            <Typeahead
+                                                id="dropCity"
+                                                size="sm"
+                                                onChange={setDropCitySelection}
+                                                className="form-group"
+                                                options={cityRefs}
+                                                selected={dropPointCity}
+                                                required="true"
+                                            />
                                             { !dropCityRequired && dropCitySelection[0] ? <span style={{ color: "green" }}>Looks good!</span> :
                                                 <span  style={{ fontSize: "0.875em", color: "#dc3545" }}>
                                                     Please enter Drop city.
@@ -1020,22 +985,18 @@ const AddLocationPopup = ({ setIsLocationSaved, isLocationSaved }) => {
                                                 >
                                                     *
                                                 </span>City</Form.Label>
-                                            { !user.drop_branch ?
-                                                <Form.Control    
-                                                    type="text"
-                                                    size="sm"
-                                                    required
-                                                    value={dropCity}
-                                                    onChange={(e) => {
-                                                        setLocationFormData((previousState) => ({
-                                                            ...previousState,
-                                                            dropCity: e.target.value,
-                                                        }));
-                                                    }}
-                                                />
-                                            :
-                                                <Form.Control type="text" size="sm" disabled value={dropCity} />
-                                            }
+                                            <Form.Control    
+                                                type="text"
+                                                size="sm"
+                                                required
+                                                value={dropCity}
+                                                onChange={(e) => {
+                                                    setLocationFormData((previousState) => ({
+                                                        ...previousState,
+                                                        dropCity: e.target.value,
+                                                    }));
+                                                }}
+                                            />
                                             <Form.Control.Feedback type="invalid">
                                                 Please provide a valid city.
                                             </Form.Control.Feedback>
