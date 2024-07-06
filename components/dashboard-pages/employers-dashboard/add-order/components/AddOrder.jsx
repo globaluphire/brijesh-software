@@ -70,6 +70,7 @@ const AddOrder = () => {
     const [selectedPickupPoint, setSelectedPickupPoint] = useState([]);
     const [selectedPickupPointData, setSelectedPickupPointData] = useState("");
     const [open, setOpen] = useState(false);
+    const [pickupCitySelection, setPickupCitySelection] = useState([]);
 
     // pickup point contact details selection states
     const [pickupMarketingContactDetails, setPickupMarketingContactDetails] = useState([]);
@@ -77,6 +78,7 @@ const AddOrder = () => {
     const [pickupDispatchContactDetails, setPickupDispatchContactDetails] = useState([]);
     const [selectedPickupDispatchContactDetails, setSelectedPickupDispatchContactDetails] = useState([]);
     const [pickupLocationContactData, setPickupLocationContactData] = useState("");
+    const [dropCitySelection, setDropCitySelection] = useState([]);
 
     const [orderFormData, setOrderFormData] = useState(
         JSON.parse(JSON.stringify(addOrderFields))
@@ -103,8 +105,6 @@ const AddOrder = () => {
     } = useMemo(() => orderFormData, [orderFormData]);
 
     const [cityRefs, setCityRefs] = useState([]);
-    const [dropCitySelection, setDropCitySelection] = useState([]);
-    const [pickupCitySelection, setPickupCitySelection] = useState([]);
     const [validated, setValidated] = useState(false);
     const [checkAllRefs, setCheckAllRefs] = useState(false);
     const [orderCityReferenceOptions, setOrderCityReferenceOptions] = useState([]);
@@ -123,12 +123,14 @@ const AddOrder = () => {
     const [consignorClientNames, setConsignorClientNames] = useState([]);
     const [selectedConsignorClient, setSelectedConsignorClient] = useState([]);
     const [selectedConsignorClientData, setSelectedConsignorClientData] = useState("");
+    const [consignorCitySelection, setConsignorCitySelection] = useState([]);
 
     // consignee states
     const [fetchedConsigneeClientsData, setFetchedConsigneeClientsData] = useState({});
     const [consigneeClientNames, setConsigneeClientNames] = useState([]);
     const [selectedConsigneeClient, setSelectedConsigneeClient] = useState([]);
     const [selectedConsigneeClientData, setSelectedConsigneeClientData] = useState("");
+    const [consigneeCitySelection, setConsigneeCitySelection] = useState([]);
 
     // start of pick up point details
     async function getPickupPointDetails() {
@@ -442,7 +444,7 @@ const AddOrder = () => {
     );
 
     async function getConsignorConsigneeDetails() {
-        if (consignorCity) {
+        if (consignorCitySelection[0]) {
             // fetch consignor client addresses and contacts data
             try {
                 setIsLoading(true);
@@ -451,7 +453,7 @@ const AddOrder = () => {
                 let { data: consignorClientData, error } = await supabase
                     .from("client")
                     .select("*")
-                    .eq("city", consignorCity);
+                    .eq("city", consignorCitySelection[0]);
 
                 if (consignorClientData) {
                     setFetchedConsignorClientsData(consignorClientData);
@@ -503,7 +505,7 @@ const AddOrder = () => {
             }
         }
 
-        if (consigneeCity) {
+        if (consigneeCitySelection[0]) {
             // fetch consignee client addresses and contacts data
             try {
                 setIsLoading(true);
@@ -512,7 +514,7 @@ const AddOrder = () => {
                 let { data: consigneeClientData, error } = await supabase
                     .from("client")
                     .select("*")
-                    .eq("city", consigneeCity);
+                    .eq("city", consigneeCitySelection[0]);
 
                 if (consigneeClientData) {
                     setFetchedConsigneeClientsData(consigneeClientData);
@@ -566,7 +568,7 @@ const AddOrder = () => {
     };
     useEffect(() => {
         getConsignorConsigneeDetails();
-    }, [consignorCity, consigneeCity, isConsignorSaved, isConsigneeSaved]);
+    }, [consignorCitySelection, consigneeCitySelection, isConsignorSaved, isConsigneeSaved]);
 
     function getSelectedConsignorConsigneeData() {
         if (fetchedConsignorClientsData && fetchedConsignorClientsData.length > 0 && selectedConsignorClient.length > 0) {
@@ -643,8 +645,10 @@ const AddOrder = () => {
                 setIsLRGenerating(false);
             } else {
                 // reset all selected states
+                setConsignorCitySelection([]);
                 setSelectedConsignorClient([]);
                 setSelectedConsignorClientData("");
+                setConsigneeCitySelection([]);
                 setSelectedConsigneeClient([]);
                 setSelectedConsigneeClientData("");
 
@@ -1237,27 +1241,17 @@ const AddOrder = () => {
                         <Row className="mb-3">
                             <Form.Group as={Col} md="4" controlId="validationCustom02">
                                 <Form.Label>City</Form.Label>
-                                <Form.Select
-                                    className="chosen-single form-select"
-                                    size="md"
+                                <Typeahead
+                                    id="consignorCity"
                                     onChange={(e) => {
-                                        setOrderFormData((previousState) => ({
-                                            ...previousState,
-                                            consignorCity: e.target.value,
-                                        }));
+                                        setConsignorCitySelection(e);
                                         setSelectedConsignorClient([]);
+                                        setSelectedConsignorClientData("");
                                     }}
-                                    value={consignorCity}
-                                >
-                                    <option value=""></option>
-                                    {orderCityReferenceOptions.map(
-                                        (option) => (
-                                            <option key={option} value={option}>
-                                                {option}
-                                            </option>
-                                        )
-                                    )}
-                                </Form.Select>
+                                    className="form-group"
+                                    options={cityRefs}
+                                    selected={consignorCitySelection}
+                                />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 <Form.Control.Feedback type="invalid">
                                     Please enter Consignor's City.
@@ -1268,7 +1262,7 @@ const AddOrder = () => {
                                     <ul className="option-list">
                                         Client Name
                                         <li className="mx-2">
-                                            { consignorCity ?
+                                            { consignorCitySelection[0] ?
                                                 <button>
                                                     <a
                                                         href="#"
@@ -1289,7 +1283,7 @@ const AddOrder = () => {
                                 </Form.Label>
                                 <Typeahead
                                     id="clientName"
-                                    disabled = {!consignorCity}
+                                    disabled = {!consignorCitySelection[0]}
                                     onChange={setSelectedConsignorClient}
                                     className="form-group"
                                     options={consignorClientNames}
@@ -1364,27 +1358,17 @@ const AddOrder = () => {
                         <Row className="mb-3">
                             <Form.Group as={Col} md="4" controlId="validationCustom02">
                                 <Form.Label>City</Form.Label>
-                                <Form.Select
-                                    className="chosen-single form-select"
-                                    size="md"
+                                <Typeahead
+                                    id="consigneeCity"
                                     onChange={(e) => {
-                                        setOrderFormData((previousState) => ({
-                                            ...previousState,
-                                            consigneeCity: e.target.value,
-                                        }));
+                                        setConsigneeCitySelection(e);
                                         setSelectedConsigneeClient([]);
+                                        setSelectedConsigneeClientData("");
                                     }}
-                                    value={consigneeCity}
-                                >
-                                    <option value=""></option>
-                                    {orderCityReferenceOptions.map(
-                                        (option) => (
-                                            <option key={option} value={option}>
-                                                {option}
-                                            </option>
-                                        )
-                                    )}
-                                </Form.Select>
+                                    className="form-group"
+                                    options={cityRefs}
+                                    selected={consigneeCitySelection}
+                                />
                                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                 <Form.Control.Feedback type="invalid">
                                     Please enter Consignee's City.
@@ -1395,7 +1379,7 @@ const AddOrder = () => {
                                     <ul className="option-list">
                                         Client Name
                                         <li className="mx-2">
-                                            { consigneeCity[0] ?
+                                            { consigneeCitySelection[0] ?
                                                 <button>
                                                     <a
                                                         href="#"
@@ -1416,7 +1400,7 @@ const AddOrder = () => {
                                 </Form.Label>
                                 <Typeahead
                                     id="consigneeClientName"
-                                    disabled = {!consigneeCity}
+                                    disabled = {!consigneeCitySelection[0]}
                                     onChange={setSelectedConsigneeClient}
                                     className="form-group"
                                     options={consigneeClientNames}
