@@ -42,7 +42,7 @@ const ViewInvoice = ({ fetchedInvoiceData, fetchedClientData, fetchedOrderData, 
             { checkedAllStates ?
                 <>
                     <Container className="custom-border" style={{ borderRadius: "10px !important" }}>
-                        <Row style={{ backgroundColor: "#5F8CAB" }}>
+                        <Row style={{ backgroundColor: "#908F8E", color: "white" }}>
                             <Col md={1} className="custom-border"><b>#</b></Col>
                             <Col md={5} className="custom-border"><b>Description of Services</b></Col>
                             <Col md={2} className="custom-border"><b>HSN/SAC</b></Col>
@@ -54,11 +54,11 @@ const ViewInvoice = ({ fetchedInvoiceData, fetchedClientData, fetchedOrderData, 
                             <Col md={5} className="custom-border">
                                 <b>{fetchedLrData.length > 0 ? fetchedLrData[0].vehical_number : ""}</b> <br />
                                 <div className="px-2 pb-1 line-height-shrink">
-                                    <span className="optional">{fetchedOrderData.pickup_location} to {fetchedOrderData.drop_location}</span> <br />
-                                    <span className="optional">{fetchedOrderData.quantity}</span> <br />
-                                    <span className="optional">{fetchedOrderData.material}</span> <br />
-                                    <span className="optional">{fetchedOrderData.order_number}</span> <br />
-                                    <span className="optional">Eway Bill #{fetchedOrderData.eway_number}</span>
+                                    <span className="optional" style={{ color: "#444343" }}>{fetchedOrderData.pickup_location} to {fetchedOrderData.drop_location}</span> <br />
+                                    <span className="optional" style={{ color: "#444343" }}>{fetchedOrderData.quantity}</span> <br />
+                                    <span className="optional" style={{ color: "#444343" }}>{fetchedOrderData.material}</span> <br />
+                                    <span className="optional" style={{ color: "#444343" }}>{fetchedOrderData.order_number}</span> <br />
+                                    <span className="optional" style={{ color: "#444343" }}>Eway Bill #{fetchedOrderData.eway_number}</span>
                                 </div>
                             </Col>
                             <Col md={2} className="custom-border">996791</Col>

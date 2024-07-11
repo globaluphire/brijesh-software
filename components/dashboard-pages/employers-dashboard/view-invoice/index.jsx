@@ -30,10 +30,11 @@ const Index = () => {
         var element = document.getElementById("export-invoice");
         var opt = {
             margin:       0,
-            filename:     "Raftaar-Invoice-" + fetchedInvoicedata.invoice_number + ".pdf",
+            filename:     "Raftaar-Invoice-" + fetchedInvoiceData.invoice_number + ".pdf",
             image:        { type: "jpeg", quality: 1 },
             html2canvas:  { scale: 2  },
-            jsPDF:        { unit: "in", format: "A4", orientation: "portrait" }
+            jsPDF:        { unit: "in", format: "A4", orientation: "portrait" },
+            backimg:      "../../images/letter-head.jpeg"
           };
 
           window.html2pdf().from(element).set(opt).save();
@@ -156,30 +157,26 @@ const Index = () => {
 
                 { checkedAllStates ? 
                     <div id="export-invoice">
-                        <div className="auto-container">
+                        <div className="auto-container" style={{ minHeight: "1100px" }}>
                             <div className="invoice-wrap">
-                                <div className="invoice-content">
-                                    <div className="logo-box">
-                                        <div className="logo">
-                                            <img src="../../images/logo-1.svg" alt="logo" />
-                                        </div>
-                                        <div>
-                                            <Container className="custom-border">
-                                                <Row className="custom-border">
-                                                    <Col className="invoice-id"> Invoice # <b>{fetchedInvoiceData.invoice_number}</b></Col>
-                                                </Row>
-                                                <Row className="custom-border">
-                                                    <Col>
-                                                        <span> Invoice date: </span>
-                                                        <b>
-                                                            { fetchedInvoiceData.invoice_date ? convertToFullDateFormat(fetchedInvoiceData.invoice_date, true) : "" }
-                                                        </b>
-                                                </Col>
-                                                </Row>
-                                            </Container>
+                                <div className="invoice-watermark">
+                                    <img src="../../images/letter-head.jpeg" alt="logo" />
+                                </div>
+                                <div className="info-box">
+                                    <div className="left-column" style={{ top: "10px", left: "150px" }}>
+                                        <div className="company-details px-3 py-2">
+                                            <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
+                                            <span><b>Head Office: </b>51 and 52 Sinde Colony, S R P Road, Navapura, Vadodara, Gujarat 390001</span> <br />
+                                            <span><b>PAN: </b>GFSPS6256B</span> <br />
+                                            {/* <span>
+                                            <t></t> | <t></t><b>Email: </b>margisoni031@gmail.com
+                                            </span> */}
+                                            <span><b>Website: </b>raftaarlogistics.com</span> <br />
+                                            <span><b>GSTIN: </b>24GFSPS6256B1Z1</span>
                                         </div>
                                     </div>
-                                    {/* End logobox */}
+                                </div>
+                                <div className="invoice-content" style={{ top: "50px" }}>
 
                                     <InfoBox
                                         fetchedInvoiceData={ fetchedInvoiceData }
@@ -197,20 +194,20 @@ const Index = () => {
                                             fetchedLrData={ fetchedLrData }
                                         />
                                     </div>
-                                </div>
 
-                                <div className="invoice-footer">
-                                    <ul className="bottom-links">
-                                        <li>
-                                            SUBJECT TO BARODA JURISDICTION
-                                        </li>
-                                        <li>
-                                            This is a Computer Generated Invoice
-                                        </li>
-                                        <li>
-                                            Mobile No: +91 7016229891
-                                        </li>
-                                    </ul>
+                                    <div className="invoice-footer custom-border">
+                                        <ul className="bottom-links">
+                                            <li>
+                                                SUBJECT TO BARODA JURISDICTION
+                                            </li>
+                                            <li>
+                                                This is a Computer Generated Invoice
+                                            </li>
+                                            <li>
+                                                Mobile No: +91 7016229891
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>

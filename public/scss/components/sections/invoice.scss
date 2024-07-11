@@ -40,7 +40,7 @@ Invoice Section
   position: relative;
   padding: 5px;
   font-size: small;
-  border: 1px solid #333;
+  // border: 1px solid #333;
 }
 
 .invoice-wrap .logo-box {
@@ -193,7 +193,7 @@ Invoice Section
   position: relative;
   margin: 0 30px;
   font-size: 10px;
-  color: #696969;
+  color: #444343;
   // line-height: 20px;
 }
 
@@ -316,4 +316,23 @@ Invoice Section
 
 .custom-border {
   border: 1px solid black;
+}
+
+.invoice-watermark {
+  /* the image you want to 'watermark' */
+  height: auto; /* or whatever, equal to the image you want 'watermarked' */
+  width: auto; /* as above */
+  background-image: url(../../../images/letter-head.jpeg);
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.invoice-watermark img {
+  /* the actual 'watermark' */
+  position: absolute;
+  top: 0; /* or whatever */
+  left: 0; /* or whatever, position according to taste */
+  opacity: 0.7; /* Firefox, Chrome, Safari, Opera, IE >= 9 (preview) */
+  filter:alpha(opacity=50); /* for <= IE 8 */
 }
