@@ -1216,6 +1216,7 @@ const OpenOrderProcess = () => {
                                         <Table className="default-table manage-job-table">
                                             <thead>
                                                 <tr>
+                                                    <th style={{ fontSize: "14px" }}>Actions</th>
                                                     <th style={{ fontSize: "14px" }}>LR No</th>
                                                     <th style={{ fontSize: "14px" }}>LR Status</th>
                                                     <th style={{ fontSize: "14px" }}>Created On</th>
@@ -1242,6 +1243,21 @@ const OpenOrderProcess = () => {
                                                     {Array.from(fetchedLRsData).map(
                                                         (lr) => (
                                                             <tr key={lr.lr_id}>
+                                                                <td>
+                                                                    <ui className="option-list" style={{ border: "none" }}>
+                                                                        <li>
+                                                                            <button>
+                                                                                <a onClick={() => {
+                                                                                    router.push(`/employers-dashboard/view-lr/${lr.lr_id}`);
+                                                                                    document.getElementById("showLRsModalCloseButton").click();
+                                                                                    }
+                                                                                }>
+                                                                                    <span className="la la-print" title="Print LR"></span>
+                                                                                </a>
+                                                                            </button>
+                                                                        </li>
+                                                                    </ui>
+                                                                </td>
                                                                 <td>
                                                                     <Link
                                                                         href={`/employers-dashboard/lr-details/${lr.lr_number}`} 

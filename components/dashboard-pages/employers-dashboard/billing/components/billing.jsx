@@ -137,7 +137,7 @@ const Billing = () => {
             .from("invoice_view")
             .select("*")
 
-            .ilike("company_name", "%" + searchFilters.clientName + "%");
+            .ilike("client_name", "%" + searchFilters.clientName + "%");
 
 
         if (user.drop_branch) {
@@ -208,7 +208,7 @@ const Billing = () => {
                 query = supabase
                     .from("invoice_view")
                     .select("*")
-                    .ilike("company_name", "%" + searchBillingCompanyName + "%");
+                    .ilike("client_name", "%" + searchBillingCompanyName + "%");
             } else {
                 query = supabase
                     .from("invoice_view")
@@ -286,10 +286,10 @@ const Billing = () => {
     //     setPageSize(end);
     // }
 
-    useEffect(async () => {
+    useEffect(() => {
         // authenticate first
         // if authenticated then
-        await fetchedInvoice(searchFilters);
+        fetchedInvoice(searchFilters);
         // if (facility) {
         //     localStorage.setItem("facility", facility);
         // } else {
