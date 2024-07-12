@@ -8,11 +8,11 @@ import Orders from "../../../components/dashboard-pages/employers-dashboard/orde
 
 const index = () => {
     const user = useSelector((state) => state.candidate.user);
-    const isEmployer = ["SUPER_ADMIN"].includes(user.role);
+    const isEmployer = ["ADMIN", "SUPER_ADMIN"].includes(user.role);
 
     useEffect(() => {
         if (!isEmployer) {
-            Router.push("/");
+            Router.push("/404");
         }
     }, []);
 

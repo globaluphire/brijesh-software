@@ -111,7 +111,7 @@ const LR = () => {
         // }
 
         let query = supabase
-            .from("lr")
+            .from("lr_view")
             .select("*");
 
         if (searchLRDateFrom) {

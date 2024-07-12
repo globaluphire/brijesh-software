@@ -13,7 +13,7 @@ const index = () => {
 
     useEffect(() => {
         if (!isEmployer) {
-            Router.push("/");
+            Router.push("/404");
         }
     }, []);
 

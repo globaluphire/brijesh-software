@@ -70,7 +70,7 @@ const signInWithGoogle = async (dispatch) => {
             theme: "colored",
         });
 
-        Router.push("/employers-dashboard/old-lr");
+        Router.push("/employers-dashboard/orders");
     } catch (err) {
         toast.error(
             "Error while logging with Google, Please try again after some time or contact tech support!",

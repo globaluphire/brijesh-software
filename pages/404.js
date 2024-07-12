@@ -16,7 +16,7 @@ const index = () => {
             >
                 <div className="content">
                     <div className="logo">
-                        <img src="/images/logo-1.svg" alt="brand" />
+                        <img src="/images/logo-1.svg" alt="brand" width={200} />
                     </div>
                     {/* End logo */}
 
@@ -25,9 +25,9 @@ const index = () => {
 
                     <Link
                         className="theme-btn btn-style-three call-modal"
-                        href="/"
+                        href="/employers-dashboard/orders"
                     >
-                        BACK TO HOME
+                        BACK TO ORDERS
                     </Link>
                 </div>
                 {/* End .content */}

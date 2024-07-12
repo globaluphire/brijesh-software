@@ -817,7 +817,7 @@ const OpenOrderProcess = () => {
                 { orderStatusReferenceOptions != null ? (
                     <Form>
                         <Spinner isLoading={isLoading} loadingText={loadingText} />
-                        {/* <Form.Label
+                        <Form.Label
                             className="optional"
                             style={{
                                 marginLeft: "32px",
@@ -826,7 +826,7 @@ const OpenOrderProcess = () => {
                             }}
                         >
                             SEARCH BY
-                        </Form.Label> */}
+                        </Form.Label>
                         <div style={{ fontSize: "14px", fontWeight: "bold" }}>
                             {/* <Row className="mb-1 mx-3">
                                 <Form.Group as={Col} md="2" controlId="validationCustom02">

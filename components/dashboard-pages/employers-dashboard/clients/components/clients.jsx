@@ -645,7 +645,7 @@ const Clients = () => {
                                             </td>
                                             <td>
                                                 <span>{client.client_name}</span> <br />
-                                                {client.client_phone !== 0 ? <><span className="optional">+91 {client.client_phone}</span> <br /></> : "" }
+                                                {client.client_phone !== 0 && client.client_phone != null ? <><span className="optional">+91 {client.client_phone}</span> <br /></> : <span className="optional">-</span> }
                                                 {client.client_email ? <span className="optional"></span> : "" }
 
                                             </td>
@@ -662,21 +662,21 @@ const Clients = () => {
                                                 <span>{client.client_gst}</span>
                                             </td>
                                             <td>
-                                                <span>{client.client_pan}</span>
+                                                {client.client_pan ? <span>{client.client_pan}</span> : <span className="optional">-</span> }
                                             </td>
                                             <td>
-                                                <span>{client.contact_name}</span> <br />
-                                                {client.contact_phone !== 0 ? <><span className="optional">+91 {client.contact_phone}</span> <br /></> : ""}
-                                                <span className="optional">{client.contact_email}</span> <br />
+                                                {client.contact_name ? <span>{client.contact_name}</span> : <span className="optional">-</span> } <br />
+                                                {client.contact_phone !== 0 && client.contact_phone != null ? <><span className="optional">+91 {client.contact_phone}</span></> : <span className="optional">-</span> } <br />
+                                                {client.contact_email ? <span className="optional">{client.contact_email}</span> : <span className="optional">-</span> } <br />
                                             </td>
                                             <td>
-                                                <span>{client.total_orders ? client.total_orders : "-"}</span>
+                                                <span>{client.total_orders ? client.total_orders : <span className="optional">-</span> }</span>
                                             </td>
                                             <td>
-                                                <span>{client.total_billings ? client.total_billings : "-"}</span>
+                                                <span>{client.total_billings ? client.total_billings : <span className="optional">-</span> }</span>
                                             </td>
                                             <td>
-                                                <span>{client.total_billings_due ? client.total_billings_due : "-"}</span>
+                                                <span>{client.total_billings_due ? client.total_billings_due : <span className="optional">-</span> }</span>
                                             </td>
                                             <td>
                                                 {

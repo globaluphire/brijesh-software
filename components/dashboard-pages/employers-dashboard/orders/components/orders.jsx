@@ -11,12 +11,12 @@ import CancelledOrderProcess from "./cancelledOrderProcess";
 const Orders = () => {
     return (
         <>
-            <div
+            {/* <div
                 className="widget-title"
-                style={{ fontSize: "1.5rem", fontWeight: "500" }}
+                style={{ minHeight: "5px", padding: "0px" }}
             >
                 <b>All Orders!</b>
-            </div>
+            </div> */}
             {/* Start table widget content */}
             <Tabs
                 defaultActiveKey="Open"
