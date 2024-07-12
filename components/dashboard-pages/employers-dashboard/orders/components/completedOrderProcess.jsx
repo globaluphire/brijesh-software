@@ -272,16 +272,16 @@ const CompletedOrderProcess = () => {
             <div>
                 { lRStatusReferenceOptions != null ? (
                     <Form>
-                        <Form.Label
+                        {/* <Form.Label
                             className="optional"
                             style={{
-                                marginLeft: "32px",
+                                marginLeft: "24px",
                                 letterSpacing: "2px",
                                 fontSize: "12px",
                             }}
                         >
                             SEARCH BY
-                        </Form.Label>
+                        </Form.Label> */}
                         <div style={{ fontSize: "14px", fontWeight: "bold" }}>
                             {/* <Row className="mb-1 mx-3">
                                 <Form.Group as={Col} md="auto" controlId="validationCustom01">

@@ -333,7 +333,7 @@ const CancelledOrderProcess = () => {
                         {/* <Form.Label
                             className="optional"
                             style={{
-                                marginLeft: "32px",
+                                marginLeft: "24px",
                                 letterSpacing: "2px",
                                 fontSize: "12px",
                             }}
