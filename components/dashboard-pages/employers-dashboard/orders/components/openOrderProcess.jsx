@@ -26,7 +26,10 @@ import CalendarComp from "../../../../date/CalendarComp";
 import { format } from "date-fns";
 
 const addSearchFilters = {
-    status: ""
+    status: "",
+    clientName: "",
+    orderCity: "",
+    orderNumber: ""
 };
 
 const invoiceErrorFields = {
@@ -67,10 +70,8 @@ const OpenOrderProcess = () => {
         applicationStatusReferenceOptions,
         setApplicationStatusReferenceOptions,
     ] = useState(null);
-    const [
-        orderStatusReferenceOptions,
-        setOrderStatusReferenceOptions,
-    ] = useState(null);
+    const [orderStatusReferenceOptions, setOrderStatusReferenceOptions] = useState(null);
+    const [orderCityReferenceOptions, setOrderCityReferenceOptions] = useState(null);
     const [noteText, setNoteText] = useState("");
     const [applicationId, setApplicationId] = useState("");
     const [orderDetails, setOrderDetails] = useState("");
@@ -86,12 +87,11 @@ const OpenOrderProcess = () => {
         JSON.parse(JSON.stringify(addSearchFilters))
     );
     const {
-        consignorName,
-        consigneeName,
-        fromCity,
-        toCity,
-        driverName,
-        status } = useMemo(
+        status,
+        clientName,
+        orderCity,
+        orderNumber
+    } = useMemo(
         () => searchFilters,
         [searchFilters]
     );
@@ -156,6 +156,7 @@ const OpenOrderProcess = () => {
     };
 
     async function findOrder(searchFilters) {
+        setIsLoading(true);
         let query = supabase
             .from("orders")
             .select("*")
@@ -168,6 +169,18 @@ const OpenOrderProcess = () => {
 
         if (searchFilters.status) {
             query.ilike("status", "%" + searchFilters.status + "%");
+        }
+
+        if (searchFilters.clientName) {
+            query.ilike("client_name", "%" + searchFilters.clientName + "%");
+        }
+
+        if (searchFilters.orderCity) {
+            query.ilike("order_city", "%" + searchFilters.orderCity + "%");
+        }
+
+        if (searchFilters.orderNumber) {
+            query.ilike("order_number", "%" + searchFilters.orderNumber + "%");
         }
 
         // setTotalRecords((await query).data.length);
@@ -190,12 +203,15 @@ const OpenOrderProcess = () => {
             );
 
             setFetchedOpenOrderdata(data);
+            setIsLoading(false);
+        } else {
+            setIsLoading(false);
         }
     }
 
     async function fetchOpenOrder() {
         try {
-            // call reference to get lrStatus options
+            // call reference to get orderStatus options
             const { data, error: e } = await supabase
                 .from("reference")
                 .select("*")
@@ -203,6 +219,16 @@ const OpenOrderProcess = () => {
 
             if (data) {
                 setOrderStatusReferenceOptions(data);
+            }
+
+            // call reference to get orderCity options
+            const { data: orderCityRefs, error: orderCityRefsErr } = await supabase
+                .from("reference")
+                .select("*")
+                .eq("ref_nm", "orderCity");
+
+            if (orderCityRefs) {
+                setOrderCityReferenceOptions(orderCityRefs);
             }
 
             let query = supabase
@@ -814,7 +840,7 @@ const OpenOrderProcess = () => {
         <>
             {/* Search Filters */}
             <div>
-                { orderStatusReferenceOptions != null ? (
+                { orderStatusReferenceOptions != null && orderCityReferenceOptions != null ? (
                     <Form>
                         <Spinner isLoading={isLoading} loadingText={loadingText} />
                         <Form.Label
@@ -828,7 +854,7 @@ const OpenOrderProcess = () => {
                             SEARCH BY
                         </Form.Label>
                         <div style={{ fontSize: "14px", fontWeight: "bold" }}>
-                            {/* <Row className="mb-1 mx-3">
+                            <Row className="mb-1 mx-3">
                                 <Form.Group as={Col} md="2" controlId="validationCustom02">
                                     <Form.Label style={{ marginBottom: "-5px" }}>Status</Form.Label>
                                     <Form.Select
@@ -852,13 +878,76 @@ const OpenOrderProcess = () => {
                                         )}
                                     </Form.Select>
                                 </Form.Group>
-                                <Form.Group as={Col} md="4" controlId="validationCustom01">
+                                <Form.Group as={Col} md="2" controlId="validationCustom01">
+                                    <Form.Label style={{ marginBottom: "-5px" }}>Client Name</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        size="sm"
+                                        name="clientNameFilterOrders"
+                                        value={clientName}
+                                        onChange={(e) => {
+                                            setSearchFilters((previousState) => ({
+                                                ...previousState,
+                                                clientName: e.target.value,
+                                            }));
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                findOrder(searchFilters);
+                                            }
+                                        }}
+                                    />
+                                </Form.Group>
+                                <Form.Group as={Col} md="2" controlId="validationCustom02">
+                                    <Form.Label style={{ marginBottom: "-5px" }}>Order City</Form.Label>
+                                    <Form.Select
+                                        className="chosen-single form-select"
+                                        size="sm"
+                                        onChange={(e) => {
+                                            setSearchFilters((previousState) => ({
+                                                ...previousState,
+                                                orderCity: e.target.value,
+                                            }));
+                                        }}
+                                        value={orderCity}
+                                    >
+                                        <option value=""></option>
+                                        {orderCityReferenceOptions.map(
+                                            (option) => (
+                                                <option value={option.ref_dspl}>
+                                                    {option.ref_dspl}
+                                                </option>
+                                            )
+                                        )}
+                                    </Form.Select>
+                                </Form.Group>
+                                <Form.Group as={Col} md="2" controlId="validationCustom01">
+                                    <Form.Label style={{ marginBottom: "-5px" }}>ERP Order No</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        size="sm"
+                                        name="orderNumFilterOrders"
+                                        value={orderNumber}
+                                        onChange={(e) => {
+                                            setSearchFilters((previousState) => ({
+                                                ...previousState,
+                                                orderNumber: e.target.value,
+                                            }));
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                findOrder(searchFilters);
+                                            }
+                                        }}
+                                    />
+                                </Form.Group>
+                                {/* <Form.Group as={Col} md="4" controlId="validationCustom01">
                                     <Form.Label style={{ marginBottom: "2px" }}>From Date</Form.Label><br />
                                     <DateRangePickerComp />
-                                </Form.Group>
-                            </Row> */}
+                                </Form.Group> */}
+                            </Row>
                             <Row className="mx-3">
-                                {/* <Col>
+                                <Col>
                                     <Form.Group className="chosen-single form-input chosen-container mb-3">
                                         <Button
                                             variant="primary"
@@ -882,7 +971,7 @@ const OpenOrderProcess = () => {
                                             Clear
                                         </Button>
                                     </Form.Group>
-                                </Col> */}
+                                </Col>
                                 <Col style={{ display: "relative", textAlign: "right" }}>
                                     <Form.Group className="chosen-single form-input chosen-container mb-3">
                                         { fetchedOpenOrderdataCSV.length > 0 ?
