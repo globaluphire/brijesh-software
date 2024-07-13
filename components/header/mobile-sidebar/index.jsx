@@ -139,7 +139,7 @@ const Index = () => {
                 {user ? (
                     <Menu>
                         {menuOptions.map((menuItem, i) => {
-                            const isUserAllowed = menuItem.access.includes(
+                            const isUserAllowed = menuItem.access?.includes(
                                 user.role
                             );
                             if (!isUserAllowed) {

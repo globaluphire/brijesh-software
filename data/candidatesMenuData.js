@@ -5,7 +5,7 @@ module.exports = [
         icon: "la-home",
         routePath: "/candidates-dashboard/dashboard",
         active: "active",
-        access: ["CANDIDATE"],
+        // access: ["CANDIDATE"],
     },
     {
         id: 2,
@@ -13,7 +13,7 @@ module.exports = [
         icon: "la-user-tie",
         routePath: "/candidates-dashboard/my-profile",
         active: "",
-        access: ["CANDIDATE"],
+        // access: ["CANDIDATE"],
     },
     {
         id: 3,
@@ -21,7 +21,7 @@ module.exports = [
         icon: "la la-file-invoice",
         routePath: "/candidates-dashboard/my-career",
         active: "",
-        access: ["CANDIDATE"],
+        // access: ["CANDIDATE"],
     },
     {
         id: 4,
@@ -29,7 +29,7 @@ module.exports = [
         icon: "la-briefcase",
         routePath: "/candidates-dashboard/applied-jobs",
         active: "",
-        access: ["CANDIDATE"],
+        // access: ["CANDIDATE"],
     },
     // {
     //     id: 5,
@@ -44,7 +44,7 @@ module.exports = [
         icon: "la-bookmark-o",
         routePath: "/candidates-dashboard/short-listed-jobs",
         active: "",
-        access: ["CANDIDATE"],
+        // access: ["CANDIDATE"],
     },
     {
         id: 7,
@@ -52,7 +52,7 @@ module.exports = [
         icon: "la la-file-invoice",
         routePath: "/candidates-dashboard/cv-manager",
         active: "",
-        access: ["CANDIDATE"],
+        // access: ["CANDIDATE"],
     },
     // {
     //     id: 8,
@@ -81,7 +81,7 @@ module.exports = [
         icon: "la-sign-out",
         routePath: "/",
         active: "",
-        access: ["CANDIDATE"],
+        // access: ["CANDIDATE"],
     },
     // {
     //     id: 12,
