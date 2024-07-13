@@ -91,7 +91,7 @@ const InvoiceDetails = () => {
                                 .eq("order_id", invoiceData[0].order_id);
                             
                             if (orderData) {
-                                setFetchedOrderData(orderData[0])
+                                setFetchedOrderData(orderData[0]);
                             }
 
                             setIsLoading(false);
@@ -320,7 +320,7 @@ const InvoiceDetails = () => {
                                                             // required
                                                             value={totalAmount}
                                                             onChange={(e) => {
-                                                                setTotalAmount(e.target.value)
+                                                                setTotalAmount(e.target.value);
                                                             }}
                                                         />
                                                     </InputGroup>
