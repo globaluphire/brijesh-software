@@ -1083,15 +1083,18 @@ const CompletedOrderProcess = () => {
                                                                 </ul>
                                                             </td>
                                                             <td>
-                                                                {/* <Link
-                                                                    href={`/employers-dashboard/invoice-details/${fetchedInvoiceData[0].invoice_number}`} 
-                                                                    style={{ textDecoration: "underline" }}
-                                                                    onClick={() => { 
-                                                                        document.getElementById("showCompletedOrderInvoiceModalCloseButton").click();
-                                                                    }}
-                                                                > */}
-                                                                    {fetchedInvoiceData[0].invoice_number}
-                                                                {/* </Link> */}
+                                                                { user.role === "SUPER_ADMIN" ?
+                                                                    <Link
+                                                                        href={`/employers-dashboard/invoice-details/${fetchedInvoiceData[0].invoice_number}`} 
+                                                                        style={{ textDecoration: "underline" }}
+                                                                        onClick={() => { 
+                                                                            document.getElementById("showCompletedOrderInvoiceModalCloseButton").click();
+                                                                        }}
+                                                                    >
+                                                                        {fetchedInvoiceData[0].invoice_number}
+                                                                    </Link>
+                                                                : <span> {fetchedInvoiceData[0].invoice_number} </span>
+                                                                }
                                                             </td>
                                                             <td>
                                                                 {fetchedInvoiceUserData[0].name}
