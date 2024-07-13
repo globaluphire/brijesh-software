@@ -1506,7 +1506,7 @@ const OpenOrderProcess = () => {
                                                                         href={`/employers-dashboard/invoice-details/${fetchedInvoiceData[0].invoice_number}`} 
                                                                         style={{ textDecoration: "underline" }}
                                                                         onClick={() => { 
-                                                                            document.getElementById("showCompletedOrderInvoiceModalCloseButton").click();
+                                                                            document.getElementById("showInvoiceModalCloseButton").click();
                                                                         }}
                                                                     >
                                                                         {fetchedInvoiceData[0].invoice_number}
