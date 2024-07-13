@@ -280,6 +280,7 @@ const CompletedOrderProcess = () => {
                 }
             setIsLoading(false);
         } else {
+            setFetchedInvoiceData({});
             setIsLoading(false);
         }
 

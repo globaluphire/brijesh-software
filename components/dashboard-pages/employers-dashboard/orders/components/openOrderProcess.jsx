@@ -391,6 +391,7 @@ const OpenOrderProcess = () => {
                 }
             setIsLoading(false);
         } else {
+            setFetchedInvoiceData({});
             setIsLoading(false);
         }
 
