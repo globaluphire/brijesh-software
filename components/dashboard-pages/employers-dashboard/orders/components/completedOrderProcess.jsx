@@ -273,7 +273,7 @@ const CompletedOrderProcess = () => {
             .select("*")
 
             // Filters
-            .eq("user_id", user.id);
+            .eq("user_id", invoiceData[0].invoice_created_by);
 
             if (invoiceUserData) {
                 setFetchedInvoiceUserData(invoiceUserData);
