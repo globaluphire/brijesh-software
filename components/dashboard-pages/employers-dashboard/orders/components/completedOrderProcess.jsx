@@ -265,19 +265,19 @@ const CompletedOrderProcess = () => {
             // Filters
             .eq("order_id", order.order_id);
 
-        if (invoiceData) {
+        if (invoiceData.length > 0) {
             setFetchedInvoiceData(invoiceData);
 
             const { data: invoiceUserData, error: e } = await supabase
-            .from("users")
-            .select("*")
+                .from("users")
+                .select("*")
 
-            // Filters
-            .eq("user_id", invoiceData[0].invoice_created_by);
+                // Filters
+                .eq("user_id", invoiceData[0].invoice_created_by);
 
-            if (invoiceUserData) {
-                setFetchedInvoiceUserData(invoiceUserData);
-            }
+                if (invoiceUserData) {
+                    setFetchedInvoiceUserData(invoiceUserData);
+                }
             setIsLoading(false);
         } else {
             setIsLoading(false);
