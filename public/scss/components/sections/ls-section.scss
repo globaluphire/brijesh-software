@@ -892,5 +892,9 @@ Listing Maps
 }
 
 .form-control, .form-select, textarea, .inputBox{
+  box-shadow: 0 2px 5px 0 rgba(213,217,217,.5)
+}
+
+.form-control:focus {
   box-shadow: inset 0px 0px 5px -2px rgba(0, 0, 0, 0.5) !important
 }
