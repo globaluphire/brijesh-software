@@ -438,7 +438,7 @@ const index = () => {
                                                                             <>
                                                                                 <tr>
                                                                                     <td>{ledger.invoice_created_at ? convertToFullDateFormat(format(ledger.invoice_created_at, "yyyy-MM-dd"), false) : ""}</td>
-                                                                                    <td>XYZ.LLC</td>
+                                                                                    <td>Freight Income</td>
                                                                                     <td>Sales</td>
                                                                                     <td>{ledger.invoice_number}</td>
                                                                                     <td>{ledger.total_amount}</td>
