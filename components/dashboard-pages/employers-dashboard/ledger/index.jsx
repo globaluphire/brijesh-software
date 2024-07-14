@@ -189,7 +189,11 @@ const index = () => {
 
     const handleSubmit = (e) => {
         var wb = XLSX.utils.table_to_book(document.getElementById("ledgerTable"));
-        XLSX.writeFile(wb, "sample.xlsx");
+        XLSX.writeFile(
+            wb,
+            "Ledger-" + selectedClient + "-" + format(searchInvoiceDateFrom, "yyyy_MM_dd") + "-" + format(searchInvoiceDateTo, "yyyy_MM_dd") + ".xlsx"
+            // {cellStyles: true}
+        );
         return false;
     };
 
@@ -426,7 +430,7 @@ const index = () => {
                                                                             <td></td>
                                                                             <td></td>
                                                                         </tr>
-                                                                        <tr>
+                                                                        <tr style={{ backgroundColor: "yellow" }}>
                                                                             <td>Date</td>
                                                                             <td>Particular</td>
                                                                             <td>Vch Type</td>
