@@ -1803,11 +1803,7 @@ const LRDetails = (orderDetails) => {
                                                                             <a
                                                                                 href="#"
                                                                                 data-bs-toggle="modal"
-                                                                                data-bs-target="#addClientModal"
-                                                                                onClick={() => {
-                                                                                    setIsConsignor(true);
-                                                                                    setIsConsignee(false);
-                                                                                }}
+                                                                                data-bs-target="#addLocationModal"
                                                                             >
                                                                                 <span className="la la-plus"></span>
                                                                             </a>

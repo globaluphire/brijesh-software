@@ -357,6 +357,107 @@ const Clients = () => {
             });
     };
 
+    const addClientToLocation = async (client) => {
+        // setIsLoading(true);
+            try {
+                // Generate location number
+                const today = new Date();
+                let date = today.getDate();
+                if (date < 10) {
+                    date = "0" + date;
+                }
+                let month = today.getMonth() + 1;
+                if (month < 10) {
+                    month = "0" + month;
+                }
+                var year = today.getFullYear();
+
+                const { data: sysKeyLocationData, error: sysKeyLocationError } = await supabase
+                    .from("sys_key")
+                    .select("sys_seq_nbr")
+                    .eq("key_name", "location_number");
+
+                let locationSeqNbr = sysKeyLocationData[0].sys_seq_nbr + 1;
+                if (locationSeqNbr < 10) {
+                    locationSeqNbr = "00" + locationSeqNbr;
+                } else if(locationSeqNbr < 100) {
+                    locationSeqNbr = "0" + locationSeqNbr;
+                }
+                const locationNumber = "LOC" + "" + date + "" + month + "" + year.toString().substring(2) + "" + locationSeqNbr;
+
+                // saving data
+                const { data: locationData, error: locationError } = await supabase.from("location").insert([
+                    {
+                        // client
+                        location_number: locationNumber,
+                        location_type: client.client_type,
+                        name_of_pickup_point: client.client_name,
+                        location_city: client.city,
+                        address1: client.address1,
+                        address2: client.address2,
+                        area: client.area,
+                        city: client.city,
+                        pin: client.pin,
+                        state: client.state,
+                        location_created_by: user.id
+                    },
+                ]);
+                if (locationError) {
+                    // open toast
+                    toast.error(
+                        "Error while adding Location data, Please try again later or contact tech support",
+                        {
+                            position: "bottom-right",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        }
+                    );
+                    // setIsLoading(false);
+                } else {
+                    // open toast
+                    toast.success("'" + client.client_name + "'" + " saved as Location successfully", {
+                        position: "bottom-right",
+                        autoClose: 8000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+
+                    // increment location_number key
+                    await supabase.rpc("increment_sys_key", {
+                        x: 1,
+                        keyname: "location_number",
+                    });
+                    // setIsLoading(false);
+                }
+            } catch (err) {
+                // open toast
+                toast.error(
+                    "Error while adding Location details, Please try again later or contact tech support",
+                    {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    }
+                );
+                // console.warn(err);
+                // setIsLoading(false);
+            }
+    };
+
     return (
         <>
             <div>
@@ -632,6 +733,15 @@ const Clients = () => {
                                                             </a>
                                                         </button>
                                                     </li>
+                                                    { user.role === "SUPER_ADMIN" ?
+                                                        <li>
+                                                            <button>
+                                                                <a onClick={() => { addClientToLocation(client) }}>
+                                                                    <span className="la la-map-marker-alt" title="Add same Client as Location"></span>
+                                                                </a>
+                                                            </button>
+                                                        </li>
+                                                    : "" }
                                                 </ui>
                                             </td>
                                             <td>

@@ -786,8 +786,6 @@ const AddOrder = () => {
                                                         data-bs-target="#addClientModal"
                                                         onClick={() => {
                                                             setIsClient(true);
-                                                            setIsConsignor(false);
-                                                            setIsConsignee(false);
                                                         }}
                                                     >
                                                         <span className="la la-plus"></span>
