@@ -736,7 +736,7 @@ const Clients = () => {
                                                     { user.role === "SUPER_ADMIN" ?
                                                         <li>
                                                             <button>
-                                                                <a onClick={() => { addClientToLocation(client) }}>
+                                                                <a onClick={() => { addClientToLocation(client); }}>
                                                                     <span className="la la-map-marker-alt" title="Add same Client as Location"></span>
                                                                 </a>
                                                             </button>
