@@ -644,9 +644,9 @@ const LRDetails = (orderDetails) => {
                 setLoadingText("Consignor Details are Loading...");
 
                 let { data: consignorClientData, error } = await supabase
-                    .from("client")
+                    .from("location")
                     .select("*")
-                    .eq("city", consignorCitySelection[0]);
+                    .eq("location_city", consignorCitySelection[0]);
 
                 if (consignorClientData) {
                     setFetchedConsignorClientsData(consignorClientData);
@@ -655,14 +655,14 @@ const LRDetails = (orderDetails) => {
                     const allConsignorClientNames = [];
                     for (let i = 0; i < consignorClientData.length; i++) {
                         allConsignorClientNames.push({
-                            "clientName": consignorClientData[i].client_name,
+                            "clientName": consignorClientData[i].name_of_pickup_point,
                             "clientAddress": consignorClientData[i].address1 + ", " +
                                             consignorClientData[i].address2 + ", " +
                                             consignorClientData[i].area + ", " +
                                             consignorClientData[i].city + ", " +
                                             consignorClientData[i].state + ", " +
                                             consignorClientData[i].pin,
-                            "clientId": consignorClientData[i].client_id
+                            "clientId": consignorClientData[i].location_id
                         });
                     }
                     allConsignorClientNames.sort();
@@ -768,7 +768,7 @@ const LRDetails = (orderDetails) => {
         if (fetchedConsignorClientsData && fetchedConsignorClientsData.length > 0 && selectedConsignorClient.length > 0) {
             setIsLoading(true);
             setLoadingText("Selected Consignor Details are Loading...");
-            const findSelectedConsignorClientData = fetchedConsignorClientsData.find((client) => client.client_id === selectedConsignorClient[0].clientId);
+            const findSelectedConsignorClientData = fetchedConsignorClientsData.find((client) => client.location_id === selectedConsignorClient[0].clientId);
             setSelectedConsignorClientData(findSelectedConsignorClientData);
             setIsLoading(false);
             setLoadingText("");
@@ -1054,9 +1054,9 @@ const LRDetails = (orderDetails) => {
                     setLoadingText("Consignor Details are Loading...");
                     if (lrData[0].consignor_client_id) {
                         let { data: consignorData, error: consignorError } = await supabase
-                            .from("client")
+                            .from("location")
                             .select("*")
-                            .eq("client_id", lrData[0].consignor_client_id);
+                            .eq("location_id", lrData[0].consignor_client_id);
 
                         if (consignorData) {
                             setFetchedConsignorClientsData(consignorData[0]);
@@ -1064,20 +1064,20 @@ const LRDetails = (orderDetails) => {
                             // set pre loaded values
                             // pickup city
                             var preConsignorCitySelection = [];
-                            preConsignorCitySelection.push(consignorData[0]?.city);
+                            preConsignorCitySelection.push(consignorData[0]?.location_city);
                             setConsignorCitySelection(preConsignorCitySelection);
 
                             // set pre selected consignor
                             const preSelectedConsignorClient = [];
                             preSelectedConsignorClient.push({
-                                "clientName": consignorData[0].client_name,
+                                "clientName": consignorData[0].name_of_pickup_point,
                                 "clientAddress": consignorData[0].address1 + ", " +
                                                 consignorData[0].address2 + ", " +
                                                 consignorData[0].area + ", " +
                                                 consignorData[0].city + ", " +
                                                 consignorData[0].state + ", " +
                                                 consignorData[0].pin,
-                                "clientId": consignorData[0].client_id
+                                "clientId": consignorData[0].location_id
                             });
                             setSelectedConsignorClient(preSelectedConsignorClient);
 
@@ -1160,7 +1160,7 @@ const LRDetails = (orderDetails) => {
         if (
             selectedPickupPointData && selectedPickupPointData.location_id &&
             selectedDropPointData && selectedDropPointData.location_id &&
-            selectedConsignorClientData && selectedConsignorClientData.client_id &&
+            selectedConsignorClientData && selectedConsignorClientData.location_id &&
             selectedConsigneeClientData && selectedConsigneeClientData.client_id
         ) {
             try {
@@ -1189,7 +1189,7 @@ const LRDetails = (orderDetails) => {
                         drop_dispatch_contact_id: selectedDropDispatchContactDetails.length > 0 ? selectedDropDispatchContactDetails[0].dropDispatchContactId : null,
                         
                         // consignor and consignee details
-                        consignor_client_id: selectedConsignorClientData ? selectedConsignorClientData.client_id : null,
+                        consignor_client_id: selectedConsignorClientData ? selectedConsignorClientData.location_id : null,
                         consignee_client_id: selectedConsigneeClientData ? selectedConsigneeClientData.client_id : null,
 
                         // other details
@@ -1850,36 +1850,6 @@ const LRDetails = (orderDetails) => {
                                                         :  ""}
                                                     </Form.Group>
                                                 </Row>
-                                                {selectedConsignorClient && selectedConsignorClientData ?
-                                                    <Row className="pb-3">
-                                                        <Form.Group as={Col} md="6" controlId="validationCustomPhonenumber">
-                                                            <InputGroup size="sm">
-                                                                <InputGroup.Text id="inputGroupPrepend">GSTIN</InputGroup.Text>
-                                                                <Form.Control
-                                                                    type="text"
-                                                                    // placeholder="Username"
-                                                                    aria-describedby="inputGroupPrepend"
-                                                                    disabled
-                                                                    value={selectedConsignorClientData.client_gst}
-                                                                />
-                                                            </InputGroup>
-                                                        </Form.Group>
-                                                        <Form.Group as={Col} md="6" controlId="validationCustomPhonenumber">
-                                                            <InputGroup 
-                                                                size="sm" >
-                                                                <InputGroup.Text id="inputGroupPrepend">+91</InputGroup.Text>
-                                                                <Form.Control
-                                                                    type="number"
-                                                                    disabled
-                                                                    // placeholder="Username"
-                                                                    aria-describedby="inputGroupPrepend"
-                                                                    // required
-                                                                    value={selectedConsignorClientData.client_phone}
-                                                                />
-                                                            </InputGroup>
-                                                        </Form.Group>
-                                                    </Row>
-                                                : ""}
                                             </div>
                                         </div>
                                         {/* Consignor Details Block ends */}
