@@ -323,7 +323,9 @@ const AddClientPopup = ({
                         // client contact
                         contact_name: clientContactName,
                         contact_phone: clientContactPhone,
-                        contact_email: clientContactEmail
+                        contact_email: clientContactEmail,
+
+                        client_created_by: user.id
                     },
                 ]);
                 if (clientError) {

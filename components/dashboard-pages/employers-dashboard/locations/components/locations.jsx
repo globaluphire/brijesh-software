@@ -160,7 +160,7 @@ const Clients = () => {
                 (lr) =>
                     (lr.lr_created_date = dateFormat(lr.lr_created_date))
             );
-            setFetchedClientsData(data);
+            setFetchedLocationsData(data);
         }
     }
 

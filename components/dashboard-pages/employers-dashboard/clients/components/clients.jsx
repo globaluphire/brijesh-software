@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import Pagination from "../../../../common/Pagination";
 import Table from "react-bootstrap/Table";
 import { InputGroup } from "react-bootstrap";
+import Spinner from "../../../../spinner/spinner";
 
 const addSearchFilters = {
     consignorName: "",
@@ -29,6 +30,9 @@ const addSearchFilters = {
 const Clients = () => {
     const router = useRouter();
     const user = useSelector((state) => state.candidate.user);
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadingText, setLoadingText] = useState("Client Data are loading...");
 
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
     const [fetchedClientsData, setFetchedClientsData] = useState({});
@@ -166,6 +170,7 @@ const Clients = () => {
     }
 
     async function fetchedClients() {
+        setIsLoading(true);
         // fetch client data
         try {
             let query = supabase
@@ -201,9 +206,12 @@ const Clients = () => {
                 clientData.forEach(
                     (i) => (i.client_created_at = dateTimeFormat(i.client_created_at))
                 );
-            }
+                setFetchedClientsData(clientData);
 
-            setFetchedClientsData(clientData);
+                setIsLoading(false);
+            } else {
+                setIsLoading(false);
+            }
         } catch (e) {
             toast.error(
                 "System is unavailable.  Unable to fetch Client Data.  Please try again later or contact tech support!",
@@ -467,6 +475,8 @@ const Clients = () => {
                 >
                     <b>All Clients!</b>
                 </div>
+
+                <Spinner isLoading={isLoading} loadingText={loadingText} />
 
                 <Form>
                     {/* <Form.Label
