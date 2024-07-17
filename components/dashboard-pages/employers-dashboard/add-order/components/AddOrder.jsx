@@ -421,7 +421,7 @@ const AddOrder = () => {
     );
 
     function checkRequiredFields() {
-        if(pickupDate && material && size && priority) {
+        if(pickupDate && material && size && priority && selectedClient[0] && orderCity) {
             return true;
         } else {
             setValidated(true);
@@ -746,7 +746,19 @@ const AddOrder = () => {
                     <div style={{ padding: "0 2rem" }}>
                         <Row className="mb-3">
                             <Form.Group as={Col} md="4" controlId="validationCustom02">
-                                <Form.Label>Order City</Form.Label>
+                                <Form.Label>
+                                    <span
+                                        className="optional"
+                                        style={{
+                                            letterSpacing: "5px",
+                                            fontSize: "24px",
+                                            color: "red"
+                                        }}
+                                    >
+                                        *
+                                    </span>
+                                    Order City
+                                </Form.Label>
                                 <Form.Select
                                     className="chosen-single form-select"
                                     size="md"
@@ -776,6 +788,16 @@ const AddOrder = () => {
                             <Form.Group as={Col} md="4" controlId="validationCustom01">
                                 <Form.Label>
                                     <ul className="option-list">
+                                        <span
+                                            className="optional"
+                                            style={{
+                                                letterSpacing: "5px",
+                                                fontSize: "24px",
+                                                color: "red"
+                                            }}
+                                        >
+                                            *
+                                        </span>
                                         Client Name
                                         <li className="mx-2">
                                             { orderCity ?
