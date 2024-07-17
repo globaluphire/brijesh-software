@@ -390,7 +390,7 @@ const Clients = () => {
                     {
                         // client
                         location_number: locationNumber,
-                        location_type: client.client_type,
+                        location_type: "Pickup",
                         name_of_pickup_point: client.client_name,
                         location_city: client.city,
                         address1: client.address1,
