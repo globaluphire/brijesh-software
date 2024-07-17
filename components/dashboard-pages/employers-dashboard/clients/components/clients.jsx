@@ -63,6 +63,7 @@ const Clients = () => {
         [searchFilters]
     );
 
+    const [query, setQuery] = useState("");
     // global states
     const facility = useSelector((state) => state.employer.facility.payload);
 
@@ -490,123 +491,6 @@ const Clients = () => {
                         SEARCH BY
                     </Form.Label> */}
                     <div style={{ fontSize: "14px", fontWeight: "bold" }}>
-                        {/* <Row className="mb-1 mx-3">
-                            <Form.Group as={Col} md="2" controlId="validationCustom01">
-                                <Form.Label style={{ marginBottom: "-5px" }}>Consignor</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    size="sm"
-                                    value={consignorName}
-                                    onChange={(e) => {
-                                        setSearchFilters((previousState) => ({
-                                            ...previousState,
-                                            consignorName: e.target.value,
-                                        }));
-                                    }}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") {
-                                            findLR(searchFilters);
-                                        }
-                                    }}
-                                />
-                            </Form.Group>
-                            <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                <Form.Label style={{ marginBottom: "-5px" }}>Consignee</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    size="sm"
-                                    value={consigneeName}
-                                    onChange={(e) => {
-                                        setSearchFilters((previousState) => ({
-                                            ...previousState,
-                                            consigneeName: e.target.value,
-                                        }));
-                                    }}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") {
-                                            findLR(searchFilters);
-                                        }
-                                    }}
-                                />
-                            </Form.Group>
-                            <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                <Form.Label style={{ marginBottom: "-5px" }}>From</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    size="sm"
-                                    value={fromCity}
-                                    onChange={(e) => {
-                                        setSearchFilters((previousState) => ({
-                                            ...previousState,
-                                            fromCity: e.target.value,
-                                        }));
-                                    }}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") {
-                                            findLR(searchFilters);
-                                        }
-                                    }}
-                                />
-                            </Form.Group>
-                            <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                <Form.Label style={{ marginBottom: "-5px" }}>To</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    size="sm"
-                                    value={toCity}
-                                    onChange={(e) => {
-                                        setSearchFilters((previousState) => ({
-                                            ...previousState,
-                                            toCity: e.target.value,
-                                        }));
-                                    }}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") {
-                                            findLR(searchFilters);
-                                        }
-                                    }}
-                                />
-                            </Form.Group>
-                            <Form.Group as={Col} md="2" controlId="validationCustom01">
-                                <Form.Label style={{ marginBottom: "-5px" }}>Driver Name</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    size="sm"
-                                    // placeholder="Consignor"
-                                    // defaultValue="Mark"
-                                    value={driverName}
-                                    onChange={(e) => {
-                                        setSearchFilters((previousState) => ({
-                                            ...previousState,
-                                            driverName: e.target.value,
-                                        }));
-                                    }}
-                                />
-                            </Form.Group>
-                            <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                <Form.Label style={{ marginBottom: "-5px" }}>Status</Form.Label>
-                                <Form.Select
-                                    className="chosen-single form-select"
-                                    size="sm"
-                                    onChange={(e) => {
-                                        setSearchFilters((previousState) => ({
-                                            ...previousState,
-                                            status: e.target.value,
-                                        }));
-                                    }}
-                                    value={status}
-                                >
-                                    <option value=""></option>
-                                    {lRStatusReferenceOptions.map(
-                                        (option) => (
-                                            <option value={option.ref_dspl}>
-                                                {option.ref_dspl}
-                                            </option>
-                                        )
-                                    )}
-                                </Form.Select>
-                            </Form.Group>
-                        </Row> */}
                         {/* <Row className="mb-3 mx-3">
                             <Form.Group as={Col} md="2" controlId="validationCustom02">
                                 <Form.Label style={{ marginBottom: "-5px" }}>From Date</Form.Label>
@@ -705,7 +589,12 @@ const Clients = () => {
                                 <th>Created On</th>
                                 <th>Type</th>
                                 <th>City</th>
-                                <th>Client Name</th>
+                                <th>
+                                    Client Name <br />
+                                    <input className="searchInputBox" type="text" value={query} placeholder="search client..."
+                                        onChange={(e) => { setQuery(e.target.value); }}
+                                    />
+                                </th>
                                 <th>Address</th>
                                 <th>GSTIN</th>
                                 <th>PAN No</th>
@@ -731,7 +620,7 @@ const Clients = () => {
                             </tbody>
                         ) : (
                             <tbody>
-                                {Array.from(fetchedClientsData).map(
+                                {Array.from(fetchedClientsData).filter((client) => client.client_name.toLowerCase().includes(query)).map(
                                     (client) => (
                                         <tr key={client.client_number}>
                                             <td>

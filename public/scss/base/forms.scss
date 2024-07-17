@@ -537,3 +537,16 @@ input:checked + .slider:before {
   background-color: green;
   border-color: green;
 }
+
+::placeholder {
+  opacity: 0.5;
+}
+
+.searchInputBox {
+  border: 1px solid #E0E9F3;
+  border-radius: 5px;
+  padding: 2px;
+  font-size: 12px;
+  background-color: #E0E9F3;
+  margin: 1px;
+}

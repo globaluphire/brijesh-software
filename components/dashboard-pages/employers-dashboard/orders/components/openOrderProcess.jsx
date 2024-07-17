@@ -210,6 +210,7 @@ const OpenOrderProcess = () => {
     }
 
     async function fetchOpenOrder() {
+        setIsLoading(true);
         try {
             // call reference to get orderStatus options
             const { data, error: e } = await supabase
