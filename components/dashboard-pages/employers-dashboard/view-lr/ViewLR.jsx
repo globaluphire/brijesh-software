@@ -6,7 +6,7 @@ const ViewLR = ({ fetchedLRdata }) => {
         <>
             <div class="grid">
                 <div class="item">
-                    <img src="../../images/logo-1.svg" alt="logo1" class="logo1" />
+                    <img src="../../images/logo-1.svg" alt="logo1" class="logo1" width={70} />
                 </div>
                 <div class="company_name item">
                     <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
@@ -78,9 +78,7 @@ const ViewLR = ({ fetchedLRdata }) => {
                         {fetchedLRdata.pickup_point_city ? <span>{fetchedLRdata.pickup_point_city}, </span> : "" }
                         {fetchedLRdata.pickup_point_state ? <span>{fetchedLRdata.pickup_point_state}, </span> : "" }
                         {fetchedLRdata.pickup_point_pin ? <span>{fetchedLRdata.pickup_point_pin}, </span> : "" }
-                    </span><br />
-                    <span><b>GST No: </b>{fetchedLRdata.consignor_gst}</span>
-                    <span><b> | Ph No: </b>{fetchedLRdata.consignor_phone}</span>
+                    </span>
                 </div>
                 <div class="vehicle item">
                     <span><b>Vehical No: </b>{fetchedLRdata.vehical_number}</span><br />
@@ -131,7 +129,7 @@ const ViewLR = ({ fetchedLRdata }) => {
 
             <div class="grid">
                 <div class="item">
-                    <img src="../../images/logo-1.svg" alt="logo1" class="logo1" />
+                    <img src="../../images/logo-1.svg" alt="logo1" class="logo1" width={70} />
                 </div>
                 <div class="company_name item">
                     <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
@@ -203,9 +201,7 @@ const ViewLR = ({ fetchedLRdata }) => {
                         {fetchedLRdata.pickup_point_city ? <span>{fetchedLRdata.pickup_point_city}, </span> : "" }
                         {fetchedLRdata.pickup_point_state ? <span>{fetchedLRdata.pickup_point_state}, </span> : "" }
                         {fetchedLRdata.pickup_point_pin ? <span>{fetchedLRdata.pickup_point_pin}, </span> : "" }
-                    </span><br />
-                    <span><b>GST No: </b>{fetchedLRdata.consignor_gst}</span>
-                    <span><b> | Ph No: </b>{fetchedLRdata.consignor_phone}</span>
+                    </span>
                 </div>
                 <div class="vehicle item">
                     <span><b>Vehical No: </b>{fetchedLRdata.vehical_number}</span><br />
@@ -256,7 +252,7 @@ const ViewLR = ({ fetchedLRdata }) => {
 
             <div class="grid">
                 <div class="item">
-                    <img src="../../images/logo-1.svg" alt="logo1" class="logo1" />
+                    <img src="../../images/logo-1.svg" alt="logo1" class="logo1" width={70} />
                 </div>
                 <div class="company_name item">
                     <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
@@ -328,9 +324,7 @@ const ViewLR = ({ fetchedLRdata }) => {
                         {fetchedLRdata.pickup_point_city ? <span>{fetchedLRdata.pickup_point_city}, </span> : "" }
                         {fetchedLRdata.pickup_point_state ? <span>{fetchedLRdata.pickup_point_state}, </span> : "" }
                         {fetchedLRdata.pickup_point_pin ? <span>{fetchedLRdata.pickup_point_pin}, </span> : "" }
-                    </span><br />
-                    <span><b>GST No: </b>{fetchedLRdata.consignor_gst}</span>
-                    <span><b> | Ph No: </b>{fetchedLRdata.consignor_phone}</span>
+                    </span>
                 </div>
                 <div class="vehicle item">
                     <span><b>Vehical No: </b>{fetchedLRdata.vehical_number}</span><br />
