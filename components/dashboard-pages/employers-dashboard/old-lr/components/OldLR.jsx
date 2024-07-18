@@ -791,12 +791,39 @@ const OldLR = () => {
         // </div>
         <>
             <div>
-                <div
-                    className="widget-title"
-                    style={{ fontSize: "1.5rem", fontWeight: "500" }}
-                >
-                    <b>All LRs!</b>
-                </div>
+                <Form>
+                    <div style={{ fontSize: "1.5rem", fontWeight: "500", padding: "20px 20px 0px 20px" }}>
+                        <Row>
+                            <Col>
+                                <b>All OLD LRs!</b>
+                            </Col>
+                            <Col style={{ display: "relative", textAlign: "right" }}>
+                                <Form.Group className="chosen-single form-input chosen-container mb-3">
+                                    {/* { user.id === "NnxOeP2axndJjCYRX74985oipdo2" ? */}
+                                        <Button
+                                            variant="success"
+                                            onClick={() => Router.push("/employers-dashboard/add-lr")}
+                                            className="btn btn-add-lr btn-sm text-nowrap m-1"
+                                        >
+                                            Add LR
+                                        </Button>
+                                    {/* : "" } */}
+
+                                    { fetchedLRdataCSV.length > 0 ?
+                                        <CSVLink
+                                            data={fetchedLRdataCSV}
+                                            className="btn btn-export-csv btn-sm text-nowrap m-1"
+                                            filename={"Raftaar-LR-" + new Date().toLocaleDateString() + ".csv"}
+                                        >
+                                            Export to CSV
+                                        </CSVLink>
+                                    : "" }
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                    </div>
+                </Form>
+
                 { lRStatusReferenceOptions != null ? (
                     <Form>
                         <Form.Label
@@ -986,28 +1013,6 @@ const OldLR = () => {
                                         >
                                             Clear
                                         </Button>
-                                    </Form.Group>
-                                </Col>
-                                <Col style={{ display: "relative", textAlign: "right" }}>
-                                    <Form.Group className="chosen-single form-input chosen-container mb-3">
-                                        { fetchedLRdataCSV.length > 0 ?
-                                            <CSVLink
-                                                data={fetchedLRdataCSV}
-                                                className="btn btn-export-csv btn-sm text-nowrap m-1"
-                                                filename={"Raftaar-LR-" + new Date().toLocaleDateString() + ".csv"}
-                                            >
-                                                Export to CSV
-                                            </CSVLink>
-                                        : "" }
-                                        {/* { user.id === "NnxOeP2axndJjCYRX74985oipdo2" ? */}
-                                            <Button
-                                                variant="success"
-                                                onClick={() => Router.push("/employers-dashboard/add-lr")}
-                                                className="btn btn-add-lr btn-sm text-nowrap m-1"
-                                            >
-                                                Add LR
-                                            </Button>
-                                        {/* : "" } */}
                                     </Form.Group>
                                 </Col>
                             </Row>
