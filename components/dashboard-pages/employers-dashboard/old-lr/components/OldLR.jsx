@@ -49,10 +49,10 @@ const OldLR = () => {
     const [applicationId, setApplicationId] = useState("");
 
     // For Pagination
-    // const [totalRecords, setTotalRecords] = useState(0);
-    // const [currentPage, setCurrentPage] = useState(1);
-    // const [hidePagination, setHidePagination] = useState(false);
-    // const [pageSize, setPageSize] = useState(10);
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hidePagination, setHidePagination] = useState(false);
+    const [pageSize, setPageSize] = useState(10);
 
     // for search filters
     const [searchFilters, setSearchFilters] = useState(
@@ -86,28 +86,103 @@ const OldLR = () => {
         }
     };
 
+    async function getReferences() {
+        // call reference to get lrStatus options
+        const { data, error: e } = await supabase
+            .from("reference")
+            .select("*")
+            .eq("ref_nm", "lrStatus");
+
+        if (data) {
+            setLRStatusReferenceOptions(data);
+        }
+    };
+
+    useEffect(() => {
+        getReferences();
+    }, []);
+
     // clear all filters
     const clearAll = () => {
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
         fetchedLR(JSON.parse(JSON.stringify(addSearchFilters)));
     };
 
-    async function findLR(searchFilters) {
-        // call reference to get applicantStatus options
-        // setCurrentPage(1);
-        // const { data: refData, error: e } = await supabase
-        //     .from("reference")
-        //     .select("*")
-        //     .eq("ref_nm", "applicantStatus");
+    async function fetchedLR(searchFilters) {
+        try {
+            let query = supabase
+                .from("lr")
+                .select("*");
 
-        // if (refData) {
-        //     setApplicationStatusReferenceOptions(refData);
-        // }
+            if (searchFilters.consignorName) {
+                query.ilike("consignor", "%" + searchFilters.consignorName + "%");
+            }
+            if (searchFilters.consigneeName) {
+                query.ilike("consignee", "%" + searchFilters.consigneeName + "%");
+            }
+            if (searchFilters.fromCity) {
+                query.ilike("from_city", "%" + searchFilters.fromCity + "%");
+            }
+            if (searchFilters.toCity) {
+                query.ilike("to_city", "%" + searchFilters.toCity + "%");
+            }
+            if (searchFilters.driverName) {
+                query.ilike("driver_name", "%" + searchFilters.driverName + "%");
+            }
+            if (searchFilters.status) {
+                query.ilike("status", "%" + searchFilters.status + "%");
+            }
+        
+            let { data: lrData, error } = await query.order(
+                    "lr_created_date",
+                    { ascending: false, nullsFirst: false }
+                )
+                .range(
+                    (currentPage - 1) * pageSize,
+                    currentPage * pageSize - 1
+                );
+
+            // if (facility) {
+            //     allApplicantsView = allApplicantsView.filter(
+            //         (i) => i.facility_name === facility
+            //     );
+            // }
+
+            if (lrData) {
+                lrData.forEach(
+                    (i) => (i.lr_created_date = dateFormat(i.lr_created_date))
+                );
+
+                setFetchedLRdata(lrData);
+
+                // creating new array object for CSV export
+                const lrDataCSV = lrData.map(({ id, lr_created_by,...rest }) => ({ ...rest }));
+                setFetchedLRdataCSV(lrDataCSV);
+
+                fetchedTotalLRCounts(searchFilters);
+            }
+        } catch (e) {
+            toast.error(
+                "System is unavailable.  Please try again later or contact tech support!",
+                {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
+            console.warn(e);
+        }
+    }
+    async function fetchedTotalLRCounts(searchFilters) {
 
         let query = supabase
             .from("lr")
-            .select("*")
-            .lt("lr_created_date", "2024-07-28");
+            .select("*", { count: "exact", head: true });
 
         if (searchFilters.consignorName) {
             query.ilike("consignor", "%" + searchFilters.consignorName + "%");
@@ -128,125 +203,22 @@ const OldLR = () => {
             query.ilike("status", "%" + searchFilters.status + "%");
         }
 
-        // if (facility) {
-        //     query.ilike("facility_name", "%" + facility + "%");
-        // }
+        const countTotalLR = await query;
 
-        // setTotalRecords((await query).data.length);
+        setTotalRecords(countTotalLR.count);
 
-        let { data, error } = await query.order("lr_created_date", {
-            ascending: false,
-            nullsFirst: false,
-        });
-        // .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
+    };
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
 
-        // if (facility) {
-        //     data = data.filter((i) => i.facility_name === facility);
-        // }
+    function perPageHandler(event) {
+        setCurrentPage(1);
+        const selectedValue = JSON.parse(event.target.value);
+        const end = selectedValue.end;
 
-        if (data) {
-            data.forEach(
-                (lr) =>
-                    (lr.lr_created_date = dateFormat(lr.lr_created_date))
-            );
-            setFetchedLRdata(data);
-
-            // creating new array object for CSV export
-            const lrDataCSV = data.map(({ id, lr_created_by,...rest }) => ({ ...rest }));
-            setFetchedLRdataCSV(lrDataCSV);
-        }
-    }
-
-    async function fetchedLR({
-        consignorName,
-        consigneeName,
-        fromCity,
-        toCity,
-        driverName,
-        status
-    }) {
-        try {
-            // call reference to get lrStatus options
-            const { data, error: e } = await supabase
-                .from("reference")
-                .select("*")
-                .eq("ref_nm", "lrStatus");
-
-            if (data) {
-                setLRStatusReferenceOptions(data);
-            }
-
-            let query = supabase
-                .from("lr")
-                .select("*")
-                .lt("lr_created_date", "2024-07-28");
-
-            // if (name) {
-            //     query.ilike("name", "%" + name + "%");
-            // }
-            // if (jobTitle) {
-            //     query.ilike("job_title", "%" + jobTitle + "%");
-            // }
-            // if (facility) {
-            //     query.ilike("facility_name", "%" + facility + "%");
-            // }
-
-            // setTotalRecords((await query).data.length);
-
-            let { data: lrData, error } = await query.order(
-                "lr_created_date",
-                { ascending: false, nullsFirst: false }
-            );
-            // .range(
-            //     (currentPage - 1) * pageSize,
-            //     currentPage * pageSize - 1
-            // );
-
-            // if (facility) {
-            //     allApplicantsView = allApplicantsView.filter(
-            //         (i) => i.facility_name === facility
-            //     );
-            // }
-
-            if (lrData) {
-                lrData.forEach(
-                    (i) => (i.lr_created_date = dateFormat(i.lr_created_date))
-                );
-
-                setFetchedLRdata(lrData);
-
-                // creating new array object for CSV export
-                const lrDataCSV = lrData.map(({ id, lr_created_by,...rest }) => ({ ...rest }));
-                setFetchedLRdataCSV(lrDataCSV);
-            }
-        } catch (e) {
-            toast.error(
-                "System is unavailable.  Please try again later or contact tech support!",
-                {
-                    position: "bottom-right",
-                    autoClose: false,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                }
-            );
-            console.warn(e);
-        }
-    }
-    // const handlePageChange = (newPage) => {
-    //     setCurrentPage(newPage);
-    // };
-
-    // function perPageHandler(event) {
-    //     setCurrentPage(1);
-    //     const selectedValue = JSON.parse(event.target.value);
-    //     const end = selectedValue.end;
-
-    //     setPageSize(end);
-    // }
+        setPageSize(end);
+    };
 
     useEffect(() => {
         fetchedLR(searchFilters);
@@ -255,10 +227,11 @@ const OldLR = () => {
         // } else {
         //     localStorage.setItem("facility", "");
         // }
+        // fetchedTotalLRCounts();
     }, [
         // facility,
-        // pageSize,
-        // currentPage
+        pageSize,
+        currentPage
     ]);
 
     const setNoteData = async (applicationId) => {
@@ -852,7 +825,7 @@ const OldLR = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                fetchedLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -871,7 +844,7 @@ const OldLR = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                fetchedLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -890,7 +863,7 @@ const OldLR = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                fetchedLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -909,7 +882,7 @@ const OldLR = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                fetchedLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -953,6 +926,7 @@ const OldLR = () => {
                                         )}
                                     </Form.Select>
                                 </Form.Group>
+
                             </Row>
                             {/* <Row className="mb-3 mx-3">
                                 <Form.Group as={Col} md="2" controlId="validationCustom02">
@@ -995,7 +969,7 @@ const OldLR = () => {
                                             variant="primary"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                findLR(searchFilters);
+                                                fetchedLR(searchFilters);
                                             }}
                                             className="btn btn-submit btn-sm text-nowrap m-1"
                                         >
@@ -1037,23 +1011,73 @@ const OldLR = () => {
                                     </Form.Group>
                                 </Col>
                             </Row>
+                            <Row className="mx-3">
+                                <Col style={{ display: "relative", textAlign: "right" }}>
+                                    <Form.Group className="chosen-single form-input chosen-container mb-3 pagination-panel">
+                                        <span
+                                            style={{ marginRight: "5px", fontWeight: "100" }}
+                                        >
+                                            Total Record: {totalRecords} |
+                                        </span>
+                                        <span style={{ fontWeight: "100" }}>Show:
+                                            <select
+                                                className="pagination-page-selector"
+                                                onChange={perPageHandler}
+                                                style={{ border: "1px solid black", padding: "1px", marginLeft: "5px"}}
+                                            >
+                                                <option
+                                                    value={JSON.stringify({
+                                                        start: 0,
+                                                        end: 10,
+                                                    })}
+                                                >
+                                                    10 Per page
+                                                </option>
+                                                <option
+                                                    value={JSON.stringify({
+                                                        start: 0,
+                                                        end: 30,
+                                                    })}
+                                                >
+                                                    30 Per page
+                                                </option>
+                                                <option
+                                                    value={JSON.stringify({
+                                                        start: 0,
+                                                        end: 50,
+                                                    })}
+                                                >
+                                                    50 Per page
+                                                </option>
+                                                <option
+                                                    value={JSON.stringify({
+                                                        start: 0,
+                                                        end: 100,
+                                                    })}
+                                                >
+                                                    100 Per page
+                                                </option>
+                                            </select>
+                                        </span>
+                                        <span>
+                                                {!hidePagination ? (
+                                                    <Pagination
+                                                        currentPage={currentPage}
+                                                        totalRecords={totalRecords}
+                                                        pageSize={pageSize}
+                                                        onPageChange={handlePageChange}
+                                                    />
+                                                ) : null}
+                                            </span>
+                                        
+                                    </Form.Group>
+                                </Col>
+                            </Row>
                         </div>
                     </Form>
                 ) : ( "" 
                 )}
                 {/* End filter top bar */}
-
-                <div
-                    className="optional"
-                    style={{
-                        textAlign: "right",
-                        marginRight: "50px",
-                        marginBottom: "10px",
-                    }}
-                >
-                    Showing ({fetchedLRdata.length}) LR(s)
-                    {/* Out of ({totalRecords}) <br /> Page: {currentPage} */}
-                </div>
 
             </div>
             {/* Start table widget content */}

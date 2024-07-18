@@ -585,7 +585,7 @@ Listing Pagination
 
 .ls-pagination {
   position: relative;
-  margin-top: 50px;
+  // margin-top: 50px;
 }
 
 .ls-pagination ul {
@@ -595,7 +595,7 @@ Listing Pagination
   display: flex;
   -webkit-box-pack: center;
   -ms-flex-pack: center;
-  justify-content: center;
+  justify-content: right;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
@@ -603,11 +603,11 @@ Listing Pagination
 
 .ls-pagination li {
   position: relative;
-  margin: 0 5px;
-  font-size: 14px;
+  margin: 0px 1px;
+  font-size: 12px;
   color: #696969;
-  line-height: 45px;
-  min-width: 45px;
+  // line-height: 45px;
+  min-width: 30px;
   font-weight: 400;
   text-align: center;
 }
@@ -663,6 +663,16 @@ Listing Pagination
   color: var(--primary-color);
 }
 
+.pagination-panel {
+  color: black;
+  font-size: 0.75rem;
+  margin-right: 10px;
+}
+
+.pagination-page-selector {
+  box-shadow: 0 2px 5px 0 rgba(213, 217, 217, 0.5);
+  border-radius: 5px;
+}
 /***
 
 ====================================================================
