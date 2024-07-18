@@ -401,6 +401,9 @@ Candidates Section Two
 
 .option-list li {
   position: relative;
+  margin: auto;
+}
+.option-list li:not(:first-child) {
   margin-left: 10px;
 }
 
