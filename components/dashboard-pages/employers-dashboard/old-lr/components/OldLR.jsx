@@ -795,7 +795,7 @@ const OldLR = () => {
                     <div style={{ fontSize: "1.5rem", fontWeight: "500", padding: "20px 20px 0px 20px" }}>
                         <Row>
                             <Col>
-                                <b>All OLD LRs!</b>
+                                <b>All Old LRs!</b>
                             </Col>
                             <Col style={{ display: "relative", textAlign: "right" }}>
                                 <Form.Group className="chosen-single form-input chosen-container mb-3">
