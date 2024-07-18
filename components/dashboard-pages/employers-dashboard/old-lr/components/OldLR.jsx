@@ -1023,7 +1023,7 @@ const OldLR = () => {
                                             <select
                                                 className="pagination-page-selector"
                                                 onChange={perPageHandler}
-                                                style={{ border: "1px solid black", padding: "1px", marginLeft: "5px"}}
+                                                style={{ border: "1px solid black", padding: "1px", marginLeft: "5px" }}
                                             >
                                                 <option
                                                     value={JSON.stringify({
