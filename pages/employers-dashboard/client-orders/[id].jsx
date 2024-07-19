@@ -34,7 +34,7 @@ const EditLR = () => {
     }, []);
 
     async function fetchClientOrders() {
-        const {data, error} = await supabase
+        const { data, error } = await supabase
             .from("client")
             .select("client_name")
             .eq("client_number", clientNumber);
