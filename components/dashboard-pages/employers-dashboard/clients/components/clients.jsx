@@ -620,7 +620,7 @@ const Clients = () => {
                             </tbody>
                         ) : (
                             <tbody>
-                                {Array.from(fetchedClientsData).filter((client) => client.client_name.toLowerCase().includes(query)).map(
+                                {Array.from(fetchedClientsData).filter((client) => client.client_name.toLowerCase().includes(query.toLowerCase())).map(
                                     (client) => (
                                         <tr key={client.client_number}>
                                             <td>
