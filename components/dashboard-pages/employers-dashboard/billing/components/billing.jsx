@@ -834,9 +834,15 @@ const Billing = () => {
                                                 </span>
                                             </td>
                                             <td>
-                                                <span>
-                                                    {invoice.invoice_number}
-                                                </span>
+                                                { user.role === "SUPER_ADMIN" ?
+                                                    <Link
+                                                        href={`/employers-dashboard/invoice-details/${invoice.invoice_number}`} 
+                                                        style={{ textDecoration: "underline" }}
+                                                    >
+                                                        {invoice.invoice_number}
+                                                    </Link>
+                                                : <span> {invoice.invoice_number} </span>
+                                                }
                                             </td>
                                             <td>
                                                 <span>
