@@ -679,7 +679,14 @@ const Clients = () => {
                                                 {client.contact_email ? <span className="optional">{client.contact_email}</span> : <span className="optional">-</span> } <br />
                                             </td>
                                             <td>
-                                                <span>{client.total_orders ? client.total_orders : <span className="optional">-</span> }</span>
+                                                {client.total_orders ?
+                                                    <Link className="option-list"
+                                                        href={`/employers-dashboard/client-orders/${client.client_number}`}
+                                                        style={{ textDecoration: "underline", fontSize: "14px" }}
+                                                    >
+                                                        <span>{client.total_orders}</span>
+                                                    </Link>
+                                                : <span className="optional">-</span> }
                                             </td>
                                             <td>
                                                 <span>{client.total_billings ? client.total_billings : <span className="optional">-</span> }</span>
