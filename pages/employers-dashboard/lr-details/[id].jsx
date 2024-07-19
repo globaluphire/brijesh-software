@@ -853,12 +853,12 @@ const LRDetails = (orderDetails) => {
                         // pickup city
                         var prePickupCitySelection = [];
                         prePickupCitySelection.push(orderData[0]?.pickup_location);
-                        setPickupCitySelection(prePickupCitySelection ? prePickupCitySelection : []);
+                        setPickupCitySelection(prePickupCitySelection[0] !== null ? prePickupCitySelection : []);
 
                         // drop city
                         var preDropCitySelection = [];
                         preDropCitySelection.push(orderData[0].drop_location);
-                        setDropCitySelection(preDropCitySelection ? preDropCitySelection : []);
+                        setDropCitySelection(preDropCitySelection[0] !== null ? preDropCitySelection : []);
                     } else {
                         setIsLoading(false);
                         setLoadingText("");
@@ -885,39 +885,41 @@ const LRDetails = (orderDetails) => {
                      *  Fetch Pick up Location Details
                      *  @order.pickup_location_number
                      */
-                    setLoadingText("Pick up Location Details are Loading...");
-                    let { data: pickupLocationData, error: pickupLocationError } = await supabase
-                        .from("location")
-                        .select("*")
-                        .eq("location_id", lrData[0].pickup_location_id);
+                    if (lrData[0].pickup_location_id) {
+                        setLoadingText("Pick up Location Details are Loading...");
+                        let { data: pickupLocationData, error: pickupLocationError } = await supabase
+                            .from("location")
+                            .select("*")
+                            .eq("location_id", lrData[0].pickup_location_id);
 
-                    if (pickupLocationData) {
-                        setFetchedPickupLocationData(pickupLocationData[0]);
+                        if (pickupLocationData) {
+                            setFetchedPickupLocationData(pickupLocationData[0]);
 
-                        // set pre loaded values
-                        // pickup city
-                        var prePickupCitySelection = [];
-                        prePickupCitySelection.push(pickupLocationData[0]?.location_city);
-                        setPickupCitySelection(prePickupCitySelection ? prePickupCitySelection : []);
+                            // set pre loaded values
+                            // pickup city
+                            var prePickupCitySelection = [];
+                            prePickupCitySelection.push(pickupLocationData[0]?.location_city);
+                            setPickupCitySelection(prePickupCitySelection[0] !== null ? prePickupCitySelection : []);
 
-                        // set pre selected drop name
-                        const preSelectedPickupPoint = [];
-                        preSelectedPickupPoint.push({
-                            "pickupName": pickupLocationData[0].name_of_pickup_point,
-                            "pickupAddress": pickupLocationData[0].address1 + ", " +
-                                            pickupLocationData[0].address2 + ", " +
-                                            pickupLocationData[0].area + ", " +
-                                            pickupLocationData[0].city + ", " +
-                                            pickupLocationData[0].state + ", " +
-                                            pickupLocationData[0].pin,
-                            "pickupLocationNumber": pickupLocationData[0].location_number
-                        });
-                        setSelectedPickupPoint(preSelectedPickupPoint);
+                            // set pre selected drop name
+                            const preSelectedPickupPoint = [];
+                            preSelectedPickupPoint.push({
+                                "pickupName": pickupLocationData[0].name_of_pickup_point,
+                                "pickupAddress": pickupLocationData[0].address1 + ", " +
+                                                pickupLocationData[0].address2 + ", " +
+                                                pickupLocationData[0].area + ", " +
+                                                pickupLocationData[0].city + ", " +
+                                                pickupLocationData[0].state + ", " +
+                                                pickupLocationData[0].pin,
+                                "pickupLocationNumber": pickupLocationData[0].location_number
+                            });
+                            setSelectedPickupPoint(preSelectedPickupPoint);
 
-                        setSelectedPickupPointData(pickupLocationData[0]);
-                    } else {
-                        setIsLoading(false);
-                        setLoadingText("");
+                            setSelectedPickupPointData(pickupLocationData[0]);
+                        } else {
+                            setIsLoading(false);
+                            setLoadingText("");
+                        }
                     }
                     setLoadingText("Pick up Location Contact Details are Loading...");
                     // get pickup Location Marketing Contact data
@@ -968,39 +970,41 @@ const LRDetails = (orderDetails) => {
                      *  Fetch Drop Location Details
                      *  @order.drop_location_number
                      */
-                    setLoadingText("Drop Location Details are Loading...");
-                    let { data: dropLocationData, error: dropLocationError } = await supabase
-                        .from("location")
-                        .select("*")
-                        .eq("location_id", lrData[0].drop_location_id);
+                    if (lrData[0].drop_location_id) {
+                        setLoadingText("Drop Location Details are Loading...");
+                        let { data: dropLocationData, error: dropLocationError } = await supabase
+                            .from("location")
+                            .select("*")
+                            .eq("location_id", lrData[0].drop_location_id);
 
-                    if (dropLocationData) {
-                        setFetchedDropLocationData(dropLocationData[0]);
+                        if (dropLocationData) {
+                            setFetchedDropLocationData(dropLocationData[0]);
 
-                        // set pre loaded values
-                        // drop city
-                        var preDropCitySelection = [];
-                        preDropCitySelection.push(dropLocationData[0]?.location_city);
-                        setDropCitySelection(preDropCitySelection ? preDropCitySelection : []);
+                            // set pre loaded values
+                            // drop city
+                            var preDropCitySelection = [];
+                            preDropCitySelection.push(dropLocationData[0]?.location_city);
+                            setDropCitySelection(preDropCitySelection[0] !== null ? preDropCitySelection : []);
 
-                        // set pre selected drop name
-                        const preSelectedDropPoint = [];
-                        preSelectedDropPoint.push({
-                            "dropName": dropLocationData[0].name_of_pickup_point,
-                            "dropAddress": dropLocationData[0].address1 + ", " +
-                                            dropLocationData[0].address2 + ", " +
-                                            dropLocationData[0].area + ", " +
-                                            dropLocationData[0].city + ", " +
-                                            dropLocationData[0].state + ", " +
-                                            dropLocationData[0].pin,
-                            "dropLocationNumber": dropLocationData[0].location_number
-                        });
-                        setSelectedDropPoint(preSelectedDropPoint);
+                            // set pre selected drop name
+                            const preSelectedDropPoint = [];
+                            preSelectedDropPoint.push({
+                                "dropName": dropLocationData[0].name_of_pickup_point,
+                                "dropAddress": dropLocationData[0].address1 + ", " +
+                                                dropLocationData[0].address2 + ", " +
+                                                dropLocationData[0].area + ", " +
+                                                dropLocationData[0].city + ", " +
+                                                dropLocationData[0].state + ", " +
+                                                dropLocationData[0].pin,
+                                "dropLocationNumber": dropLocationData[0].location_number
+                            });
+                            setSelectedDropPoint(preSelectedDropPoint);
 
-                        setSelectedDropPointData(dropLocationData[0]);
-                    } else {
-                        setIsLoading(false);
-                        setLoadingText("");
+                            setSelectedDropPointData(dropLocationData[0]);
+                        } else {
+                            setIsLoading(false);
+                            setLoadingText("");
+                        }
                     }
                     setLoadingText("Drop Location Contact Details are Loading...");
                     // get drop Location Marketing Contact data
@@ -1065,7 +1069,7 @@ const LRDetails = (orderDetails) => {
                             // pickup city
                             var preConsignorCitySelection = [];
                             preConsignorCitySelection.push(consignorData[0]?.location_city);
-                            setConsignorCitySelection(preConsignorCitySelection);
+                            setConsignorCitySelection(preConsignorCitySelection[0] !== null ? preConsignorCitySelection : []);
 
                             // set pre selected consignor
                             const preSelectedConsignorClient = [];
@@ -1105,7 +1109,7 @@ const LRDetails = (orderDetails) => {
                             // pickup city
                             var preConsigneeCitySelection = [];
                             preConsigneeCitySelection.push(consigneeData[0]?.city);
-                            setConsigneeCitySelection(preConsigneeCitySelection);
+                            setConsigneeCitySelection(preConsigneeCitySelection[0] !== null ? preConsigneeCitySelection : []);
 
 
                             // set pre selected consignee
