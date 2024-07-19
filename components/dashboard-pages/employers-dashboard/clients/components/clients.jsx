@@ -681,18 +681,47 @@ const Clients = () => {
                                             <td>
                                                 {client.total_orders ?
                                                     <Link className="option-list"
-                                                        href={`/employers-dashboard/client-orders/${client.client_number}`}
-                                                        style={{ textDecoration: "underline", fontSize: "14px" }}
+                                                        href={`/employers-dashboard/clients/total-orders/${client.client_number}`}
                                                     >
-                                                        <span>{client.total_orders}</span>
+                                                        <li>
+                                                            <button>
+                                                                <a style={{ paddingLeft: "10px", paddingRight: "10px" }}>
+                                                                    {client.total_orders}
+                                                                </a>
+                                                            </button>
+                                                        </li>
                                                     </Link>
                                                 : <span className="optional">-</span> }
                                             </td>
                                             <td>
-                                                <span>{client.total_billings ? client.total_billings : <span className="optional">-</span> }</span>
+                                                {client.total_billings ?
+                                                    <Link className="option-list"
+                                                        href={`/employers-dashboard/clients/total-billings/${client.client_number}`}
+                                                    >
+                                                        <li>
+                                                            <button>
+                                                                <a style={{ paddingLeft: "10px", paddingRight: "10px" }}>
+                                                                    {client.total_billings}
+                                                                </a>
+                                                            </button>
+                                                        </li>
+                                                    </Link>
+                                                : <span className="optional">-</span> }
                                             </td>
                                             <td>
-                                                <span>{client.total_billings_due ? client.total_billings_due : <span className="optional">-</span> }</span>
+                                                {client.total_billings_due ?
+                                                    <Link className="option-list"
+                                                        href={`/employers-dashboard/clients/total-dues/${client.client_number}`}
+                                                    >
+                                                        <li>
+                                                            <button>
+                                                                <a style={{ paddingLeft: "10px", paddingRight: "10px" }}>
+                                                                    {client.total_billings_due}
+                                                                </a>
+                                                            </button>
+                                                        </li>
+                                                    </Link>
+                                                : <span className="optional">-</span> }
                                             </td>
                                             <td>
                                                 {

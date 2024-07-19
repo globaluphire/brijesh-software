@@ -45,7 +45,7 @@ const invoiceErrorFields = {
     lrNumberError: false
 };
 
-const ClientOrders = ({ fetchedClientData }) => {
+const ClientTotalOrders = ({ fetchedClientData }) => {
     console.log(fetchedClientData);
     const router = useRouter();
     const user = useSelector((state) => state.candidate.user);
@@ -1531,4 +1531,4 @@ const ClientOrders = ({ fetchedClientData }) => {
     );
 };
 
-export default ClientOrders;
+export default ClientTotalOrders;
