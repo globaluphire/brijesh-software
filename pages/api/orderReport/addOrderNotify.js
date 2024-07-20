@@ -5,9 +5,9 @@ export default function handler(req, res) {
         const mail = require("@sendgrid/mail");
         mail.setApiKey(envConfig.SENDGRID_API_KEY);
         const msg = {
-            to: "brijeshbhagat67@gmail.com",
+            to: ["brijeshbhagat67@gmail.com", "mounishsoni116@gmail.com"],
             from: "support@globaluphire.com", // Change to your verified sender,
-            subject: `[Raftaar] New Order placed for ${req.body.clientName} on ${req.body.pickupDate}`,
+            subject: `[Raftaar] New Order placed - ${req.body.clientName} - ${req.body.pickupDate}`,
             html: `
             <html>
                 <head>

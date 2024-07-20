@@ -650,7 +650,7 @@ const AddOrder = () => {
                             data: {
                                 redirectionUrl: `https://www.raftaarlogistics.com/employers-dashboard/order-details/${data[0].order_id}`,
                                 orderCity: data[0].order_city,
-                                ClientName: data[0].client_name,
+                                clientName: data[0].client_name,
                                 pickupDate: convertToFullDateFormat(data[0].pickup_date, false),
                                 pickupLocation: data[0].pickup_location,
                                 dropLocation: data[0].drop_location,

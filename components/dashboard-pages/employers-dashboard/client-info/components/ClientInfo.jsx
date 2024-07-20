@@ -285,7 +285,7 @@ const ClientInfo = () => {
                                     <Link
                                         variant="secondary"
                                         href={`/employers-dashboard/client-details/${fetchedClientData.client_number}`}
-                                        className="theme-btn btn-style-four"
+                                        className="btn btn-secondary btn-sm text-nowrap p-2"
                                     >
                                         Edit Client Details
                                     </Link>
@@ -337,8 +337,8 @@ const ClientInfo = () => {
                                                     <span>Tiles, Sanitary</span>
                                                 </li>
                                                 <li>
-                                                    Founded In:{" "}
-                                                    <span>2020</span>
+                                                    Client Number:{" "}
+                                                    <span>{fetchedClientData.client_number ? fetchedClientData.client_number : ""}</span>
                                                 </li>
                                                 <li>
                                                     Total Orders:{" "}
