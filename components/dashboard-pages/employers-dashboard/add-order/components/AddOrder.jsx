@@ -18,6 +18,8 @@ import AddLocationContactPopup from "../../add-location/components/AddLocationCo
 import { Grid } from "react-loader-spinner";
 import Spinner from "../../../../spinner/spinner";
 import AddClientPopup from "../../add-client/components/AddClientPopup";
+import axios from "axios";
+import { convertToFullDateFormat } from "../../../../../utils/convertToFullDateFormat";
 
 
 const addOrderFields = {
@@ -642,6 +644,23 @@ const AddOrder = () => {
                     setIsLoading(false);
 
                     if (data[0].order_id) {
+                        axios({
+                            method: "POST",
+                            url: "/api/orderReport/addOrderNotify",
+                            data: {
+                                redirectionUrl: "https://www.raftaarlogistics.com/employers-dashboard/orders",
+                                orderCity: data[0].order_city,
+                                ClientName: data[0].client_name,
+                                pickupDate: convertToFullDateFormat(data[0].pickup_date, false),
+                                pickupLocation: data[0].pickup_location,
+                                dropLocation: data[0].drop_location,
+                                material: data[0].material,
+                                size: data[0].size,
+                                priority: data[0].priority,
+                                quantity: data[0].quantity,
+                                weight: data[0].weight
+                            },
+                        });
                         // generate LR
                         try {
                             setIsLRGenerating(true);
