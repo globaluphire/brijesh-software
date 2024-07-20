@@ -648,7 +648,7 @@ const AddOrder = () => {
                             method: "POST",
                             url: "/api/orderReport/addOrderNotify",
                             data: {
-                                redirectionUrl: "https://www.raftaarlogistics.com/employers-dashboard/orders",
+                                redirectionUrl: `https://www.raftaarlogistics.com/employers-dashboard/order-details/${data[0].order_id}`,
                                 orderCity: data[0].order_city,
                                 ClientName: data[0].client_name,
                                 pickupDate: convertToFullDateFormat(data[0].pickup_date, false),
