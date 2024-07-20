@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
 import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import Router from "next/router";
 import Seo from "../../../components/common/Seo";
 import ClientInfo from "../../../components/dashboard-pages/employers-dashboard/client-info";
 import { useSelector } from "react-redux";

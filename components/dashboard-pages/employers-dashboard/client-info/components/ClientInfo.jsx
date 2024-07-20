@@ -1,4 +1,5 @@
 /* eslint-disable prefer-const */
+/* eslint no-unneeded-ternary: "error" */
 /* eslint-disable no-unused-vars */
 import candidatesData from "../../../../../data/candidates";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
@@ -323,7 +324,7 @@ const ClientInfo = () => {
                                                     Client Status:{" "}
                                                     {
                                                         fetchedClientData.client_status ?
-                                                            <span className="badge" style={{ backgroundColor: "green", color: "#fff"}}>
+                                                            <span className="badge" style={{ backgroundColor: "green", color: "#fff" }}>
                                                                 Active
                                                             </span>
                                                         :   <span className="badge" style={{ backgroundColor: "red" }}>
