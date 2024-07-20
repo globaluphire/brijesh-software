@@ -653,9 +653,24 @@ const Clients = () => {
                                                 <span>{client.city}</span>
                                             </td>
                                             <td>
-                                                <span>{client.client_name}</span> <br />
-                                                {client.client_phone !== 0 && client.client_phone != null ? <><span className="optional">+91 {client.client_phone}</span> <br /></> : <span className="optional">-</span> }
-                                                {client.client_email ? <span className="optional"></span> : "" }
+                                                { user.role === "SUPER_ADMIN" ?
+                                                    <>
+                                                        <Link
+                                                            href={`/employers-dashboard/client-info/${client.client_number}`}
+                                                            style={{ textDecoration: "underline" }}
+                                                        >
+                                                            {client.client_name}
+                                                        </Link> <br />
+                                                        {client.client_phone !== 0 && client.client_phone != null ? <><span className="optional">+91 {client.client_phone}</span> <br /></> : <span className="optional">-</span> }
+                                                        {client.client_email ? <span className="optional"></span> : "" }
+                                                    </>
+                                                :
+                                                    <>
+                                                        {client.client_name}<br />
+                                                        {client.client_phone !== 0 && client.client_phone != null ? <><span className="optional">+91 {client.client_phone}</span> <br /></> : <span className="optional">-</span> }
+                                                        {client.client_email ? <span className="optional"></span> : "" }
+                                                    </>
+                                                }
 
                                             </td>
                                             <td>
