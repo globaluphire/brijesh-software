@@ -181,7 +181,7 @@ const OldLR = () => {
             console.warn(e);
             setIsLoading(false);
         }
-    }
+    };
     async function fetchedTotalLRCounts(searchFilters) {
 
         let query = supabase

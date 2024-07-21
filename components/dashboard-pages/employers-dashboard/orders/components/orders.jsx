@@ -24,12 +24,12 @@ const Orders = () => {
                 id="noanim-tab-example"
                 className="mb-3"
             >
-                <Tab eventKey="Pickup" title="Pickup Order Process">
+                {/* <Tab eventKey="Pickup" title="Pickup Order Process">
                     <PickupOrderProcess />
-                </Tab>
-                <Tab eventKey="Delivery" title="Delivery Order Process">
+                </Tab> */}
+                {/* <Tab eventKey="Delivery" title="Delivery Order Process">
                     <DeliveryOrderProcess />
-                </Tab>
+                </Tab> */}
                 <Tab eventKey="Open" title="Open Order Process">
                     <OpenOrderProcess />
                 </Tab>

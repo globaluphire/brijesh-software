@@ -77,10 +77,10 @@ const OpenOrderProcess = () => {
     const [orderDetails, setOrderDetails] = useState("");
 
     // For Pagination
-    // const [totalRecords, setTotalRecords] = useState(0);
-    // const [currentPage, setCurrentPage] = useState(1);
-    // const [hidePagination, setHidePagination] = useState(false);
-    // const [pageSize, setPageSize] = useState(10);
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hidePagination, setHidePagination] = useState(false);
+    const [pageSize, setPageSize] = useState(50);
 
     // for search filters
     const [searchFilters, setSearchFilters] = useState(
@@ -152,14 +152,124 @@ const OpenOrderProcess = () => {
     // clear all filters
     const clearAll = () => {
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
-        findOrder(JSON.parse(JSON.stringify(addSearchFilters)));
+        fetchOpenOrder(JSON.parse(JSON.stringify(addSearchFilters)));
     };
 
-    async function findOrder(searchFilters) {
+    async function getReferences () {
+        // call reference to get orderStatus options
+        const { data, error: e } = await supabase
+            .from("reference")
+            .select("*")
+            .eq("ref_nm", "orderStatus");
+
+        if (data) {
+            setOrderStatusReferenceOptions(data);
+        }
+
+        // call reference to get orderCity options
+        const { data: orderCityRefs, error: orderCityRefsErr } = await supabase
+            .from("reference")
+            .select("*")
+            .eq("ref_nm", "orderCity");
+
+        if (orderCityRefs) {
+            setOrderCityReferenceOptions(orderCityRefs);
+        }
+
+    };
+
+    useEffect(() => {
+        getReferences();
+    }, []);
+
+    async function fetchOpenOrder(searchFilters) {
         setIsLoading(true);
+        try {
+            let query = supabase
+                .from("orders")
+                .select("*")
+                .neq("status", "Completed")
+                .neq("status", "Cancel");
+
+            if (user.drop_branch) {
+                query.eq("order_city", user.drop_branch);
+            }
+
+            if (searchFilters.status) {
+                query.ilike("status", "%" + searchFilters.status + "%");
+            }
+    
+            if (searchFilters.clientName) {
+                query.ilike("client_name", "%" + searchFilters.clientName + "%");
+            }
+    
+            if (searchFilters.orderCity) {
+                query.ilike("order_city", "%" + searchFilters.orderCity + "%");
+            }
+    
+            if (searchFilters.orderNumber) {
+                query.ilike("order_number", "%" + searchFilters.orderNumber + "%");
+            }
+
+            let { data: orderData, error } = await query.order(
+                "order_created_at",
+                { ascending: false, nullsFirst: false }
+            )
+            .range(
+                (currentPage - 1) * pageSize,
+                currentPage * pageSize - 1
+            );
+
+            // if (facility) {
+            //     allApplicantsView = allApplicantsView.filter(
+            //         (i) => i.facility_name === facility
+            //     );
+            // }
+
+
+            if (orderData) {
+
+                // setTotalRecords(orderData.length);
+
+                orderData.forEach(
+                    (i) => (i.order_created_at = dateFormat(i.order_created_at))
+                );
+                orderData.forEach(
+                    (i) => (i.order_updated_at = dateFormat(i.order_updated_at))
+                );
+                orderData.forEach(
+                    (i) => (i.status_last_updated_at = dateTimeFormat(i.status_last_updated_at))
+                );
+
+                setFetchedOpenOrderdata(orderData);
+                fetchedTotalOpenOrdersCount(searchFilters);
+
+            } else {
+                setIsLoading(false);
+            }
+        } catch (e) {
+            toast.error(
+                "System is unavailable.  Please try again later or contact tech support!",
+                {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
+            // console.warn(e);
+            setIsLoading(false);
+        }
+    };
+    async function fetchedTotalOpenOrdersCount(searchFilters) {
+
         let query = supabase
             .from("orders")
-            .select("*")
+            .select("*", { count: "exact", head: true })
             .neq("status", "Completed")
             .neq("status", "Cancel");
 
@@ -183,126 +293,27 @@ const OpenOrderProcess = () => {
             query.ilike("order_number", "%" + searchFilters.orderNumber + "%");
         }
 
-        // setTotalRecords((await query).data.length);
+        const countTotalOpenOrders = await query;
 
-        let { data, error } = await query.order("order_created_at", {
-            ascending: false,
-            nullsFirst: false,
-        });
-        // .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
+        setTotalRecords(countTotalOpenOrders.count);
 
-        if (data) {
-            data.forEach(
-                (order) => (order.order_created_at = dateFormat(order.order_created_at))
-            );
-            data.forEach(
-                (order) => (order.order_updated_at = dateFormat(order.order_updated_at))
-            );
-            data.forEach(
-                (order) => (order.status_last_updated_at = dateTimeFormat(order.status_last_updated_at))
-            );
+        setIsLoading(false);
+    };
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
 
-            setFetchedOpenOrderdata(data);
-            setIsLoading(false);
-        } else {
-            setIsLoading(false);
-        }
-    }
-
-    async function fetchOpenOrder() {
+    function perPageHandler(event) {
         setIsLoading(true);
-        try {
-            // call reference to get orderStatus options
-            const { data, error: e } = await supabase
-                .from("reference")
-                .select("*")
-                .eq("ref_nm", "orderStatus");
 
-            if (data) {
-                setOrderStatusReferenceOptions(data);
-            }
+        setCurrentPage(1);
+        const selectedValue = JSON.parse(event.target.value);
+        const end = selectedValue.end;
 
-            // call reference to get orderCity options
-            const { data: orderCityRefs, error: orderCityRefsErr } = await supabase
-                .from("reference")
-                .select("*")
-                .eq("ref_nm", "orderCity");
+        setPageSize(end);
 
-            if (orderCityRefs) {
-                setOrderCityReferenceOptions(orderCityRefs);
-            }
-
-            let query = supabase
-                .from("orders")
-                .select("*")
-                .neq("status", "Completed")
-                .neq("status", "Cancel");
-
-            if (user.drop_branch) {
-                query.eq("order_city", user.drop_branch);
-            }
-
-            let { data: orderData, error } = await query.order(
-                "order_created_at",
-                { ascending: false, nullsFirst: false }
-            );
-            // .range(
-            //     (currentPage - 1) * pageSize,
-            //     currentPage * pageSize - 1
-            // );
-
-            // if (facility) {
-            //     allApplicantsView = allApplicantsView.filter(
-            //         (i) => i.facility_name === facility
-            //     );
-            // }
-
-            if (orderData) {
-                orderData.forEach(
-                    (i) => (i.order_created_at = dateFormat(i.order_created_at))
-                );
-                orderData.forEach(
-                    (i) => (i.order_updated_at = dateFormat(i.order_updated_at))
-                );
-                orderData.forEach(
-                    (i) => (i.status_last_updated_at = dateTimeFormat(i.status_last_updated_at))
-                );
-
-                setFetchedOpenOrderdata(orderData);
-
-                setIsLoading(false);
-            } else {
-                setIsLoading(false);
-            }
-        } catch (e) {
-            toast.error(
-                "System is unavailable.  Please try again later or contact tech support!",
-                {
-                    position: "bottom-right",
-                    autoClose: false,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                }
-            );
-            // console.warn(e);
-            setIsLoading(false);
-        }
+        setIsLoading(false);
     }
-    // const handlePageChange = (newPage) => {
-    //     setCurrentPage(newPage);
-    // };
-
-    // function perPageHandler(event) {
-    //     setCurrentPage(1);
-    //     const selectedValue = JSON.parse(event.target.value);
-    //     const end = selectedValue.end;
-
-    //     setPageSize(end);
-    // }
 
     useEffect(() => {
         fetchOpenOrder(searchFilters);
@@ -313,8 +324,8 @@ const OpenOrderProcess = () => {
         // }
     }, [
         // facility,
-        // pageSize,
-        // currentPage
+        pageSize,
+        currentPage
     ]);
 
     async function fetchedCSVData() {
@@ -838,6 +849,7 @@ const OpenOrderProcess = () => {
             }
     };
 
+
     return (
         <>
             {/* Search Filters */}
@@ -895,7 +907,7 @@ const OpenOrderProcess = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findOrder(searchFilters);
+                                                fetchOpenOrder(searchFilters);
                                             }
                                         }}
                                     />
@@ -938,7 +950,7 @@ const OpenOrderProcess = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findOrder(searchFilters);
+                                                fetchOpenOrder(searchFilters);
                                             }
                                         }}
                                     />
@@ -955,7 +967,7 @@ const OpenOrderProcess = () => {
                                             variant="primary"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                findOrder(searchFilters);
+                                                fetchOpenOrder(searchFilters);
                                             }}
                                             className="btn btn-submit btn-sm text-nowrap m-1"
                                         >
@@ -992,6 +1004,68 @@ const OpenOrderProcess = () => {
                                         >
                                             Add Order
                                         </Button>
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+                            <Row className="mx-3">
+                                <Col style={{ display: "relative", textAlign: "right" }}>
+                                    <Form.Group className="chosen-single form-input chosen-container mb-3 pagination-panel">
+                                        <span
+                                            style={{ marginRight: "5px", fontWeight: "100" }}
+                                        >
+                                            Total Record: {totalRecords} |
+                                        </span>
+                                        <span style={{ fontWeight: "100" }}>Show:
+                                            <select
+                                                className="pagination-page-selector"
+                                                onChange={perPageHandler}
+                                                style={{ border: "1px solid black", padding: "1px", marginLeft: "5px" }}
+                                            >
+                                                <option
+                                                    value={JSON.stringify({
+                                                        start: 0,
+                                                        end: 50,
+                                                    })}
+                                                >
+                                                    50 Per page
+                                                </option>
+                                                <option
+                                                    value={JSON.stringify({
+                                                        start: 0,
+                                                        end: 100,
+                                                    })}
+                                                >
+                                                    100 Per page
+                                                </option>
+                                                <option
+                                                    value={JSON.stringify({
+                                                        start: 0,
+                                                        end: 300,
+                                                    })}
+                                                >
+                                                    300 Per page
+                                                </option>
+                                                <option
+                                                    value={JSON.stringify({
+                                                        start: 0,
+                                                        end: 500,
+                                                    })}
+                                                >
+                                                    500 Per page
+                                                </option>
+                                            </select>
+                                        </span>
+                                        <span>
+                                                {!hidePagination ? (
+                                                    <Pagination
+                                                        currentPage={currentPage}
+                                                        totalRecords={totalRecords}
+                                                        pageSize={pageSize}
+                                                        onPageChange={handlePageChange}
+                                                    />
+                                                ) : null}
+                                            </span>
+                                        
                                     </Form.Group>
                                 </Col>
                             </Row>

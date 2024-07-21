@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import Pagination from "../../../../common/Pagination";
 import Table from "react-bootstrap/Table";
 import DateRangePickerComp from "../../../../date/DateRangePickerComp";
+import Spinner from "../../../../spinner/spinner";
 
 const addSearchFilters = {
     consignorName: "",
@@ -29,8 +30,11 @@ const CancelledOrderProcess = () => {
     const router = useRouter();
     const user = useSelector((state) => state.candidate.user);
 
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadingText, setLoadingText] = useState("");
+
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
-    const [fetchedOpenOrderdata, setFetchedOpenOrderdata] = useState({});
+    const [fetchedCancelOrderdata, setFetchedCancelOrderdata] = useState({});
     const [fetchedOrderCommentData, setFetchedOrderCommentData] = useState([]);
 
     const [applicationStatus, setApplicationStatus] = useState("");
@@ -47,10 +51,10 @@ const CancelledOrderProcess = () => {
     const [orderDetails, setOrderDetails] = useState("");
 
     // For Pagination
-    // const [totalRecords, setTotalRecords] = useState(0);
-    // const [currentPage, setCurrentPage] = useState(1);
-    // const [hidePagination, setHidePagination] = useState(false);
-    // const [pageSize, setPageSize] = useState(10);
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hidePagination, setHidePagination] = useState(false);
+    const [pageSize, setPageSize] = useState(50);
 
     // for search filters
     const [searchFilters, setSearchFilters] = useState(
@@ -161,11 +165,11 @@ const CancelledOrderProcess = () => {
     //             (lr) =>
     //                 (lr.lr_created_date = dateFormat(lr.lr_created_date))
     //         );
-    //         setFetchedOpenOrderdata(data);
+    //         setFetchedCancelOrderdata(data);
     //     }
     // }
 
-    async function fetchOpenOrder({
+    async function fetchCancelOrder({
         consignorName,
         consigneeName,
         fromCity,
@@ -173,17 +177,9 @@ const CancelledOrderProcess = () => {
         driverName,
         status
     }) {
+        setIsLoading(true);
+
         try {
-            // call reference to get lrStatus options
-            const { data, error: e } = await supabase
-                .from("reference")
-                .select("*")
-                .eq("ref_nm", "orderStatus");
-
-            if (data) {
-                setLRStatusReferenceOptions(data);
-            }
-
             let query = supabase
                 .from("orders")
                 .select("*")
@@ -196,11 +192,11 @@ const CancelledOrderProcess = () => {
             let { data: orderData, error } = await query.order(
                 "order_created_at",
                 { ascending: false, nullsFirst: false }
+            )
+            .range(
+                (currentPage - 1) * pageSize,
+                currentPage * pageSize - 1
             );
-            // .range(
-            //     (currentPage - 1) * pageSize,
-            //     currentPage * pageSize - 1
-            // );
 
             // if (facility) {
             //     allApplicantsView = allApplicantsView.filter(
@@ -218,9 +214,13 @@ const CancelledOrderProcess = () => {
                 orderData.forEach(
                     (i) => (i.cancel_date = dateTimeFormat(i.cancel_date))
                 );
+                
+                setFetchedCancelOrderdata(orderData);
+                fetchedTotalCancelOrdersCount();
+                setIsLoading(false);
+            } else {
+                setIsLoading(false);
             }
-
-            setFetchedOpenOrderdata(orderData);
         } catch (e) {
             toast.error(
                 "System is unavailable.  Please try again later or contact tech support!",
@@ -236,22 +236,43 @@ const CancelledOrderProcess = () => {
                 }
             );
             console.warn(e);
+            setIsLoading(false);
         }
-    }
-    // const handlePageChange = (newPage) => {
-    //     setCurrentPage(newPage);
-    // };
+    };
+    async function fetchedTotalCancelOrdersCount() {
 
-    // function perPageHandler(event) {
-    //     setCurrentPage(1);
-    //     const selectedValue = JSON.parse(event.target.value);
-    //     const end = selectedValue.end;
+        let query = supabase
+            .from("orders")
+            .select("*", { count: "exact", head: true })
+            .eq("status", "Cancel");
 
-    //     setPageSize(end);
-    // }
+        if (user.drop_branch) {
+            query.eq("order_city", user.drop_branch);
+        }
+
+        const countTotalCancelOrders = await query;
+
+        setTotalRecords(countTotalCancelOrders.count);
+
+    };
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    function perPageHandler(event) {
+        setIsLoading(true);
+
+        setCurrentPage(1);
+        const selectedValue = JSON.parse(event.target.value);
+        const end = selectedValue.end;
+
+        setPageSize(end);
+
+        setIsLoading(false);
+    };
 
     useEffect(() => {
-        fetchOpenOrder(searchFilters);
+        fetchCancelOrder(searchFilters);
         // if (facility) {
         //     localStorage.setItem("facility", facility);
         // } else {
@@ -259,8 +280,8 @@ const CancelledOrderProcess = () => {
         // }
     }, [
         // facility,
-        // pageSize,
-        // currentPage
+        pageSize,
+        currentPage
     ]);
 
     const determineBadgeColor = (status) => {
@@ -308,6 +329,8 @@ const CancelledOrderProcess = () => {
     };
 
     const setOrderCommentModalData = async (orderId) => {
+        setIsLoading(true);
+
         const { data: orderCommentData, error: e } = await supabase
             .from("order_comments_view")
             .select("*")
@@ -321,97 +344,161 @@ const CancelledOrderProcess = () => {
                     (orderComment) => (orderComment.order_comment_created_at = dateTimeFormat(orderComment.order_comment_created_at))
                 );
                 setFetchedOrderCommentData(orderCommentData);
+                setIsLoading(false);
+            } else {
+                setIsLoading(false);
             }
     };
 
     return (
         <>
+            <Spinner isLoading={isLoading} loadingText={loadingText} />
+
             {/* Search Filters */}
             <div>
-                { lRStatusReferenceOptions != null ? (
-                    <Form>
-                        {/* <Form.Label
-                            className="optional"
-                            style={{
-                                marginLeft: "24px",
-                                letterSpacing: "2px",
-                                fontSize: "12px",
-                            }}
-                        >
-                            SEARCH BY
-                        </Form.Label> */}
-                        <div style={{ fontSize: "14px", fontWeight: "bold" }}>
-                            {/* <Row className="mb-1 mx-3">
-                                <Form.Group as={Col} md="2" controlId="validationCustom02">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>Status</Form.Label>
-                                    <Form.Select
-                                        className="chosen-single form-select"
-                                        size="sm"
-                                        onChange={(e) => {
-                                            setSearchFilters((previousState) => ({
-                                                ...previousState,
-                                                status: e.target.value,
-                                            }));
+                <Form>
+                    {/* <Form.Label
+                        className="optional"
+                        style={{
+                            marginLeft: "24px",
+                            letterSpacing: "2px",
+                            fontSize: "12px",
+                        }}
+                    >
+                        SEARCH BY
+                    </Form.Label> */}
+                    <div style={{ fontSize: "14px", fontWeight: "bold" }}>
+                        {/* <Row className="mb-1 mx-3">
+                            <Form.Group as={Col} md="2" controlId="validationCustom02">
+                                <Form.Label style={{ marginBottom: "-5px" }}>Status</Form.Label>
+                                <Form.Select
+                                    className="chosen-single form-select"
+                                    size="sm"
+                                    onChange={(e) => {
+                                        setSearchFilters((previousState) => ({
+                                            ...previousState,
+                                            status: e.target.value,
+                                        }));
+                                    }}
+                                    value={status}
+                                >
+                                    <option value=""></option>
+                                    {lRStatusReferenceOptions.map(
+                                        (option) => (
+                                            <option value={option.ref_dspl}>
+                                                {option.ref_dspl}
+                                            </option>
+                                        )
+                                    )}
+                                </Form.Select>
+                            </Form.Group>
+                            <Form.Group as={Col} md="4" controlId="validationCustom01">
+                                <Form.Label style={{ marginBottom: "2px" }}>From Date</Form.Label><br />
+                                <DateRangePickerComp />
+                            </Form.Group>
+                        </Row> */}
+                        <Row className="mx-3">
+                            {/* <Col>
+                                <Form.Group className="chosen-single form-input chosen-container mb-3">
+                                    <Button
+                                        variant="primary"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            // findLR(searchFilters);
                                         }}
-                                        value={status}
+                                        className="btn btn-submit btn-sm text-nowrap m-1"
                                     >
-                                        <option value=""></option>
-                                        {lRStatusReferenceOptions.map(
-                                            (option) => (
-                                                <option value={option.ref_dspl}>
-                                                    {option.ref_dspl}
-                                                </option>
-                                            )
-                                        )}
-                                    </Form.Select>
+                                        Filter
+                                    </Button>
+                                    <Button
+                                        variant="primary"
+                                        onClick={clearAll}
+                                        className="btn btn-secondary btn-sm text-nowrap mx-2"
+                                        style={{
+                                            minHeight: "40px",
+                                            padding: "0 20px"
+                                        }}
+                                    >
+                                        Clear
+                                    </Button>
                                 </Form.Group>
-                                <Form.Group as={Col} md="4" controlId="validationCustom01">
-                                    <Form.Label style={{ marginBottom: "2px" }}>From Date</Form.Label><br />
-                                    <DateRangePickerComp />
+                            </Col> */}
+                            <Col style={{ display: "relative", textAlign: "right" }}>
+                                <Form.Group className="chosen-single form-input chosen-container mb-3">
+                                    <Button
+                                        variant="success"
+                                        onClick={() => Router.push("/employers-dashboard/add-order")}
+                                        className="btn btn-add-lr btn-sm text-nowrap m-1"
+                                    >
+                                        Add Order
+                                    </Button>
                                 </Form.Group>
-                            </Row> */}
-                            <Row className="mx-3">
-                                {/* <Col>
-                                    <Form.Group className="chosen-single form-input chosen-container mb-3">
-                                        <Button
-                                            variant="primary"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                // findLR(searchFilters);
-                                            }}
-                                            className="btn btn-submit btn-sm text-nowrap m-1"
+                            </Col>
+                        </Row>
+                        <Row className="mx-3">
+                            <Col style={{ display: "relative", textAlign: "right" }}>
+                                <Form.Group className="chosen-single form-input chosen-container mb-3 pagination-panel">
+                                    <span
+                                        style={{ marginRight: "5px", fontWeight: "100" }}
+                                    >
+                                        Total Record: {totalRecords} |
+                                    </span>
+                                    <span style={{ fontWeight: "100" }}>Show:
+                                        <select
+                                            className="pagination-page-selector"
+                                            onChange={perPageHandler}
+                                            style={{ border: "1px solid black", padding: "1px", marginLeft: "5px" }}
                                         >
-                                            Filter
-                                        </Button>
-                                        <Button
-                                            variant="primary"
-                                            onClick={clearAll}
-                                            className="btn btn-secondary btn-sm text-nowrap mx-2"
-                                            style={{
-                                                minHeight: "40px",
-                                                padding: "0 20px"
-                                            }}
-                                        >
-                                            Clear
-                                        </Button>
-                                    </Form.Group>
-                                </Col> */}
-                                <Col style={{ display: "relative", textAlign: "right" }}>
-                                    <Form.Group className="chosen-single form-input chosen-container mb-3">
-                                        <Button
-                                            variant="success"
-                                            onClick={() => Router.push("/employers-dashboard/add-order")}
-                                            className="btn btn-add-lr btn-sm text-nowrap m-1"
-                                        >
-                                            Add Order
-                                        </Button>
-                                    </Form.Group>
-                                </Col>
-                            </Row>
-                        </div>
-                    </Form>
-                ) : ( "" 
-                )}
+                                            <option
+                                                value={JSON.stringify({
+                                                    start: 0,
+                                                    end: 50,
+                                                })}
+                                            >
+                                                50 Per page
+                                            </option>
+                                            <option
+                                                value={JSON.stringify({
+                                                    start: 0,
+                                                    end: 100,
+                                                })}
+                                            >
+                                                100 Per page
+                                            </option>
+                                            <option
+                                                value={JSON.stringify({
+                                                    start: 0,
+                                                    end: 300,
+                                                })}
+                                            >
+                                                300 Per page
+                                            </option>
+                                            <option
+                                                value={JSON.stringify({
+                                                    start: 0,
+                                                    end: 500,
+                                                })}
+                                            >
+                                                500 Per page
+                                            </option>
+                                        </select>
+                                    </span>
+                                    <span>
+                                            {!hidePagination ? (
+                                                <Pagination
+                                                    currentPage={currentPage}
+                                                    totalRecords={totalRecords}
+                                                    pageSize={pageSize}
+                                                    onPageChange={handlePageChange}
+                                                />
+                                            ) : null}
+                                        </span>
+                                    
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                    </div>
+                </Form>
                 {/* End filter top bar */}
 
                 <div
@@ -422,7 +509,7 @@ const CancelledOrderProcess = () => {
                         marginBottom: "10px",
                     }}
                 >
-                    Showing ({fetchedOpenOrderdata.length}) Order(s)
+                    Showing ({fetchedCancelOrderdata.length}) Order(s)
                     {/* Out of ({totalRecords}) <br /> Page: {currentPage} */}
                 </div>
 
@@ -457,7 +544,7 @@ const CancelledOrderProcess = () => {
                                 <th>Bills</th>
                             </tr>
                         </thead>
-                        {fetchedOpenOrderdata.length === 0 ? (
+                        {fetchedCancelOrderdata.length === 0 ? (
                             <tbody
                                 style={{
                                     fontSize: "1.5rem",
@@ -472,7 +559,7 @@ const CancelledOrderProcess = () => {
                             </tbody>
                         ) : (
                             <tbody>
-                                {Array.from(fetchedOpenOrderdata).map(
+                                {Array.from(fetchedCancelOrderdata).map(
                                     (order) => (
                                         <tr key={order.id}>
                                             <td>

@@ -19,6 +19,7 @@ import DateRangePickerComp from "../../../../date/DateRangePickerComp";
 import CalendarComp from "../../../../date/CalendarComp";
 import { InputGroup } from "react-bootstrap";
 import { format } from "date-fns";
+import Spinner from "../../../../spinner/spinner";
 
 const addSearchFilters = {
     consignorName: "",
@@ -50,12 +51,12 @@ const CompletedOrderProcess = () => {
     const [loadingText, setLoadingText] = useState("");
 
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
-    const [fetchedOpenOrderdata, setFetchedOpenOrderdata] = useState({});
+    const [fetchedCompletedOrderdata, setFetchedCompletedOrderdata] = useState({});
     const [fetchedOrderCommentData, setFetchedOrderCommentData] = useState([]);
     const [fetchedLRsData, setFetchedLRsData] = useState([]);
     const [fetchedInvoiceData, setFetchedInvoiceData] = useState({});
     const [fetchedInvoiceUserData, setFetchedInvoiceUserData] = useState({});
-    const [fetchedSelectedOpenOrderdata, setFetchedSelectedOpenOrderdata] = useState({});
+    const [fetchedSelectedCompletedOrderdata, setFetchedSelectedCompletedOrderdata] = useState({});
 
     const [invoiceDate, setInvoiceDate] = useState(new Date());
     const [totalAmount, setTotalAmount] = useState(0);
@@ -93,10 +94,10 @@ const CompletedOrderProcess = () => {
     const [orderDetails, setOrderDetails] = useState("");
 
     // For Pagination
-    // const [totalRecords, setTotalRecords] = useState(0);
-    // const [currentPage, setCurrentPage] = useState(1);
-    // const [hidePagination, setHidePagination] = useState(false);
-    // const [pageSize, setPageSize] = useState(10);
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hidePagination, setHidePagination] = useState(false);
+    const [pageSize, setPageSize] = useState(50);
 
     // for search filters
     const [searchFilters, setSearchFilters] = useState(
@@ -151,7 +152,7 @@ const CompletedOrderProcess = () => {
         // fetchedLR(JSON.parse(JSON.stringify(addSearchFilters)));
     };
 
-    async function fetchOpenOrder({
+    async function fetchCompletedOrder({
         consignorName,
         consigneeName,
         fromCity,
@@ -159,17 +160,8 @@ const CompletedOrderProcess = () => {
         driverName,
         status
     }) {
+        setIsLoading(true);
         try {
-            // call reference to get lrStatus options
-            const { data, error: e } = await supabase
-                .from("reference")
-                .select("*")
-                .eq("ref_nm", "orderStatus");
-
-            if (data) {
-                setLRStatusReferenceOptions(data);
-            }
-
             let query = supabase
                 .from("orders")
                 .select("*")
@@ -182,11 +174,11 @@ const CompletedOrderProcess = () => {
             let { data: orderData, error } = await query.order(
                 "order_created_at",
                 { ascending: false, nullsFirst: false }
+            )
+            .range(
+                (currentPage - 1) * pageSize,
+                currentPage * pageSize - 1
             );
-            // .range(
-            //     (currentPage - 1) * pageSize,
-            //     currentPage * pageSize - 1
-            // );
 
             // if (facility) {
             //     allApplicantsView = allApplicantsView.filter(
@@ -204,9 +196,14 @@ const CompletedOrderProcess = () => {
                 orderData.forEach(
                     (i) => (i.status_last_updated_at = dateTimeFormat(i.status_last_updated_at))
                 );
+
+                setFetchedCompletedOrderdata(orderData);
+                fetchedTotalCompletedOrdersCount();
+                setIsLoading(false);
+            } else {
+                setIsLoading(false);
             }
 
-            setFetchedOpenOrderdata(orderData);
         } catch (e) {
             toast.error(
                 "System is unavailable.  Please try again later or contact tech support!",
@@ -222,22 +219,41 @@ const CompletedOrderProcess = () => {
                 }
             );
             console.warn(e);
+            setIsLoading(false);
         }
-    }
-    // const handlePageChange = (newPage) => {
-    //     setCurrentPage(newPage);
-    // };
+    };
+    async function fetchedTotalCompletedOrdersCount() {
+        let query = supabase
+            .from("orders")
+            .select("*", { count: "exact", head: true })
+            .eq("status", "Completed");
 
-    // function perPageHandler(event) {
-    //     setCurrentPage(1);
-    //     const selectedValue = JSON.parse(event.target.value);
-    //     const end = selectedValue.end;
+        if (user.drop_branch) {
+            query.eq("order_city", user.drop_branch);
+        }
 
-    //     setPageSize(end);
-    // }
+        const countTotalCompletedOrders = await query;
+
+        setTotalRecords(countTotalCompletedOrders.count);
+    };
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    function perPageHandler(event) {
+        setIsLoading(true);
+
+        setCurrentPage(1);
+        const selectedValue = JSON.parse(event.target.value);
+        const end = selectedValue.end;
+
+        setPageSize(end);
+
+        setIsLoading(false);
+    };
 
     useEffect(() => {
-        fetchOpenOrder(searchFilters);
+        fetchCompletedOrder(searchFilters);
         // if (facility) {
         //     localStorage.setItem("facility", facility);
         // } else {
@@ -245,8 +261,8 @@ const CompletedOrderProcess = () => {
         // }
     }, [
         // facility,
-        // pageSize,
-        // currentPage
+        pageSize,
+        currentPage
     ]);
 
     const setInvoiceModalData = async (order) => {
@@ -255,7 +271,7 @@ const CompletedOrderProcess = () => {
         setTotalAmount(0);
         setInvoiceDate(new Date());
         setInvoiceErrors(JSON.parse(JSON.stringify(invoiceErrorFields)));
-        setFetchedSelectedOpenOrderdata(order);
+        setFetchedSelectedCompletedOrderdata(order);
 
         // fetch if invoice already created
         const { data: invoiceData, error: e } = await supabase
@@ -288,6 +304,7 @@ const CompletedOrderProcess = () => {
     function checkLRsStatus(lrData) {
         for(var i=0; i<lrData.length; i++){
             if(lrData[i].status === "Performa") {
+                setIsLoading(false);
                 return false;
             }
         }
@@ -314,50 +331,50 @@ const CompletedOrderProcess = () => {
             }
         }
     };
-    function checkRequiredFieldsForGenerateInvoice(selectedOpenOrderdata, lrData) {
-        if(!selectedOpenOrderdata.order_id) {
+    function checkRequiredFieldsForGenerateInvoice(selectedCompletedOrderdata, lrData) {
+        if(!selectedCompletedOrderdata.order_id) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 orderIdError: true
             }));
         }
-        if(!selectedOpenOrderdata.client_number) {
+        if(!selectedCompletedOrderdata.client_number) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 clientNumberError: true
             }));
         }
-        if(!selectedOpenOrderdata.pickup_location) {
+        if(!selectedCompletedOrderdata.pickup_location) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 pickupCityError: true
             }));
         }
-        if(!selectedOpenOrderdata.drop_location) {
+        if(!selectedCompletedOrderdata.drop_location) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 dropCityError: true
             }));
         }
-        if(!selectedOpenOrderdata.material) {
+        if(!selectedCompletedOrderdata.material) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 materialError: true
             }));
         }
-        if(!selectedOpenOrderdata.quantity) {
+        if(!selectedCompletedOrderdata.quantity) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 quantityError: true
             }));
         }
-        if(!selectedOpenOrderdata.order_number) {
+        if(!selectedCompletedOrderdata.order_number) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 orderNumberError: true
             }));
         }
-        if(!selectedOpenOrderdata.weight) {
+        if(!selectedCompletedOrderdata.weight) {
             setInvoiceErrors((previousState) => ({
                 ...previousState,
                 weightError: true
@@ -366,14 +383,14 @@ const CompletedOrderProcess = () => {
 
         if (
             // order data
-            selectedOpenOrderdata.order_id &&
-            selectedOpenOrderdata.client_number &&
-            selectedOpenOrderdata.pickup_location &&
-            selectedOpenOrderdata.drop_location &&
-            selectedOpenOrderdata.material &&
-            selectedOpenOrderdata.quantity &&
-            selectedOpenOrderdata.order_number &&
-            selectedOpenOrderdata.weight &&
+            selectedCompletedOrderdata.order_id &&
+            selectedCompletedOrderdata.client_number &&
+            selectedCompletedOrderdata.pickup_location &&
+            selectedCompletedOrderdata.drop_location &&
+            selectedCompletedOrderdata.material &&
+            selectedCompletedOrderdata.quantity &&
+            selectedCompletedOrderdata.order_number &&
+            selectedCompletedOrderdata.weight &&
 
             // lr data
             checkLRDetails(lrData)
@@ -383,17 +400,19 @@ const CompletedOrderProcess = () => {
             return false;
         }
     };
-    async function generateInvoice(selectedOpenOrderdata) {
+    async function generateInvoice(selectedCompletedOrderdata) {
+        setIsLoading(true);
+
         const { data: lrData, error: e } = await supabase
             .from("lr")
             .select("*")
 
             // Filters
-            .eq("order_id", selectedOpenOrderdata.order_id);
+            .eq("order_id", selectedCompletedOrderdata.order_id);
 
             if (checkLRsStatus(lrData)) {
                 if (totalAmount && invoiceDate) {
-                    if (checkRequiredFieldsForGenerateInvoice(selectedOpenOrderdata, lrData)) {
+                    if (checkRequiredFieldsForGenerateInvoice(selectedCompletedOrderdata, lrData)) {
                         try {
                             // Generate Invoice Number
                             const { data: sysKeyInvoiceData, error: sysKeyInvoiceError } = await supabase
@@ -418,7 +437,7 @@ const CompletedOrderProcess = () => {
                                     invoice_number: invoiceNumber,
                                     total_amount: totalAmount,
                                     invoice_date: format(invoiceDate, "yyyy-MM-dd"),
-                                    order_id: selectedOpenOrderdata.order_id,
+                                    order_id: selectedCompletedOrderdata.order_id,
                                     invoice_created_by: user.id
                                 },
                             ]);
@@ -437,6 +456,7 @@ const CompletedOrderProcess = () => {
                                         theme: "colored",
                                     }
                                 );
+                                setIsLoading(false);
                             } else {
                                 // open toast
                                 toast.success("New Invoice saved successfully", {
@@ -456,7 +476,7 @@ const CompletedOrderProcess = () => {
                                     keyname: "invoice_number",
                                 });
 
-                                document.getElementById("showCompletedOrderInvoiceModalCloseButton").click();
+                                setInvoiceModalData(selectedCompletedOrderdata);
 
                             }
                         } catch (err) {
@@ -475,6 +495,7 @@ const CompletedOrderProcess = () => {
                                 }
                             );
                             // console.warn(err);
+                            setIsLoading(false);
                         }
                     } else {
                         // open toast
@@ -488,6 +509,7 @@ const CompletedOrderProcess = () => {
                             progress: undefined,
                             theme: "colored",
                         });
+                        setIsLoading(false);
                     }
                 } else {
                     // open toast
@@ -572,6 +594,8 @@ const CompletedOrderProcess = () => {
     };
 
     const setOrderCommentModalData = async (orderId) => {
+        setIsLoading(true);
+
         const { data: orderCommentData, error: e } = await supabase
             .from("order_comments_view")
             .select("*")
@@ -580,12 +604,15 @@ const CompletedOrderProcess = () => {
             .eq("order_id", orderId)
             .order("order_comment_created_at", { ascending: false });
 
-            if (orderCommentData) {
-                orderCommentData.forEach(
-                    (orderComment) => (orderComment.order_comment_created_at = dateTimeFormat(orderComment.order_comment_created_at))
-                );
-                setFetchedOrderCommentData(orderCommentData);
-            }
+        if (orderCommentData) {
+            orderCommentData.forEach(
+                (orderComment) => (orderComment.order_comment_created_at = dateTimeFormat(orderComment.order_comment_created_at))
+            );
+            setFetchedOrderCommentData(orderCommentData);
+            setIsLoading(false);
+        } else {
+            setIsLoading(false);
+        }
     };
 
     const setLRsModalData = async (orderId) => {
@@ -612,73 +639,133 @@ const CompletedOrderProcess = () => {
 
     return (
         <>
+            <Spinner isLoading={isLoading} loadingText={loadingText} />
             {/* Search Filters */}
             <div>
-                { lRStatusReferenceOptions != null ? (
-                    <Form>
-                        {/* <Form.Label
-                            className="optional"
-                            style={{
-                                marginLeft: "24px",
-                                letterSpacing: "2px",
-                                fontSize: "12px",
-                            }}
-                        >
-                            SEARCH BY
-                        </Form.Label> */}
-                        <div style={{ fontSize: "14px", fontWeight: "bold" }}>
-                            {/* <Row className="mb-1 mx-3">
-                                <Form.Group as={Col} md="auto" controlId="validationCustom01">
-                                    <Form.Label style={{ marginBottom: "2px" }}>Order Created From Date</Form.Label><br />
-                                    <CalendarComp />
+                <Form>
+                    {/* <Form.Label
+                        className="optional"
+                        style={{
+                            marginLeft: "24px",
+                            letterSpacing: "2px",
+                            fontSize: "12px",
+                        }}
+                    >
+                        SEARCH BY
+                    </Form.Label> */}
+                    <div style={{ fontSize: "14px", fontWeight: "bold" }}>
+                        {/* <Row className="mb-1 mx-3">
+                            <Form.Group as={Col} md="auto" controlId="validationCustom01">
+                                <Form.Label style={{ marginBottom: "2px" }}>Order Created From Date</Form.Label><br />
+                                <CalendarComp />
+                            </Form.Group>
+                            <Form.Group as={Col} md="auto" controlId="validationCustom01">
+                                <Form.Label style={{ marginBottom: "2px" }}>Order Created To Date</Form.Label><br />
+                                <CalendarComp />
+                            </Form.Group>
+                        </Row> */}
+                        <Row className="mx-3">
+                            {/* <Col>
+                                <Form.Group className="chosen-single form-input chosen-container mb-3">
+                                    <Button
+                                        variant="primary"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            // findLR(searchFilters);
+                                        }}
+                                        className="btn btn-submit btn-sm text-nowrap m-1"
+                                    >
+                                        Filter
+                                    </Button>
+                                    <Button
+                                        variant="primary"
+                                        onClick={clearAll}
+                                        className="btn btn-secondary btn-sm text-nowrap mx-2"
+                                        style={{
+                                            minHeight: "40px",
+                                            padding: "0 20px"
+                                        }}
+                                    >
+                                        Clear
+                                    </Button>
                                 </Form.Group>
-                                <Form.Group as={Col} md="auto" controlId="validationCustom01">
-                                    <Form.Label style={{ marginBottom: "2px" }}>Order Created To Date</Form.Label><br />
-                                    <CalendarComp />
+                            </Col> */}
+                            <Col style={{ display: "relative", textAlign: "right" }}>
+                                <Form.Group className="chosen-single form-input chosen-container mb-3">
+                                    <Button
+                                        variant="success"
+                                        onClick={() => Router.push("/employers-dashboard/add-order")}
+                                        className="btn btn-add-lr btn-sm text-nowrap m-1"
+                                    >
+                                        Add Order
+                                    </Button>
                                 </Form.Group>
-                            </Row> */}
-                            <Row className="mx-3">
-                                {/* <Col>
-                                    <Form.Group className="chosen-single form-input chosen-container mb-3">
-                                        <Button
-                                            variant="primary"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                // findLR(searchFilters);
-                                            }}
-                                            className="btn btn-submit btn-sm text-nowrap m-1"
+                            </Col>
+                        </Row>
+                        <Row className="mx-3">
+                            <Col style={{ display: "relative", textAlign: "right" }}>
+                                <Form.Group className="chosen-single form-input chosen-container mb-3 pagination-panel">
+                                    <span
+                                        style={{ marginRight: "5px", fontWeight: "100" }}
+                                    >
+                                        Total Record: {totalRecords} |
+                                    </span>
+                                    <span style={{ fontWeight: "100" }}>Show:
+                                        <select
+                                            className="pagination-page-selector"
+                                            onChange={perPageHandler}
+                                            style={{ border: "1px solid black", padding: "1px", marginLeft: "5px" }}
                                         >
-                                            Filter
-                                        </Button>
-                                        <Button
-                                            variant="primary"
-                                            onClick={clearAll}
-                                            className="btn btn-secondary btn-sm text-nowrap mx-2"
-                                            style={{
-                                                minHeight: "40px",
-                                                padding: "0 20px"
-                                            }}
-                                        >
-                                            Clear
-                                        </Button>
-                                    </Form.Group>
-                                </Col> */}
-                                <Col style={{ display: "relative", textAlign: "right" }}>
-                                    <Form.Group className="chosen-single form-input chosen-container mb-3">
-                                        <Button
-                                            variant="success"
-                                            onClick={() => Router.push("/employers-dashboard/add-order")}
-                                            className="btn btn-add-lr btn-sm text-nowrap m-1"
-                                        >
-                                            Add Order
-                                        </Button>
-                                    </Form.Group>
-                                </Col>
-                            </Row>
-                        </div>
-                    </Form>
-                ) : ( "" 
-                )}
+                                            <option
+                                                value={JSON.stringify({
+                                                    start: 0,
+                                                    end: 50,
+                                                })}
+                                            >
+                                                50 Per page
+                                            </option>
+                                            <option
+                                                value={JSON.stringify({
+                                                    start: 0,
+                                                    end: 100,
+                                                })}
+                                            >
+                                                100 Per page
+                                            </option>
+                                            <option
+                                                value={JSON.stringify({
+                                                    start: 0,
+                                                    end: 300,
+                                                })}
+                                            >
+                                                300 Per page
+                                            </option>
+                                            <option
+                                                value={JSON.stringify({
+                                                    start: 0,
+                                                    end: 500,
+                                                })}
+                                            >
+                                                500 Per page
+                                            </option>
+                                        </select>
+                                    </span>
+                                    <span>
+                                            {!hidePagination ? (
+                                                <Pagination
+                                                    currentPage={currentPage}
+                                                    totalRecords={totalRecords}
+                                                    pageSize={pageSize}
+                                                    onPageChange={handlePageChange}
+                                                />
+                                            ) : null}
+                                        </span>
+                                    
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                    </div>
+                </Form>
                 {/* End filter top bar */}
 
                 <div
@@ -689,7 +776,7 @@ const CompletedOrderProcess = () => {
                         marginBottom: "10px",
                     }}
                 >
-                    Showing ({fetchedOpenOrderdata.length}) Order(s)
+                    Showing ({fetchedCompletedOrderdata.length}) Order(s)
                     {/* Out of ({totalRecords}) <br /> Page: {currentPage} */}
                 </div>
 
@@ -723,7 +810,7 @@ const CompletedOrderProcess = () => {
                                 <th>Bills</th>
                             </tr>
                         </thead>
-                        {fetchedOpenOrderdata.length === 0 ? (
+                        {fetchedCompletedOrderdata.length === 0 ? (
                             <tbody
                                 style={{
                                     fontSize: "1.5rem",
@@ -738,7 +825,7 @@ const CompletedOrderProcess = () => {
                             </tbody>
                         ) : (
                             <tbody>
-                                {Array.from(fetchedOpenOrderdata).map(
+                                {Array.from(fetchedCompletedOrderdata).map(
                                     (order) => (
                                         <tr key={order.id}>
                                             <td>
@@ -881,9 +968,6 @@ const CompletedOrderProcess = () => {
                                                         Verified
                                                     </span> : ""}
                                             </td>
-                                            <td>
-                                                {/* Bills - NA */}
-                                            </td>
                                         </tr>
                                     )
                                 )}
@@ -976,7 +1060,7 @@ const CompletedOrderProcess = () => {
                             <div className="apply-modal-content modal-content" style={{ overflow: "scroll" }}>
                                 <div className="text-center">
                                     <h3 className="title" style={{ marginBottom: "-5px" }}>Invoice</h3>
-                                    <span className="optional" style={{ letterSpacing: "1px" }}>#{fetchedSelectedOpenOrderdata.order_number}</span> 
+                                    <span className="optional" style={{ letterSpacing: "1px" }}>#{fetchedSelectedCompletedOrderdata.order_number}</span> 
                                     <button
                                         type="button"
                                         id="showCompletedOrderInvoiceModalCloseButton"
@@ -986,7 +1070,7 @@ const CompletedOrderProcess = () => {
                                     ></button>
                                 </div>
                                 {/* End modal-header */}
-                                { Object.keys(fetchedSelectedOpenOrderdata).length !== 0 ?
+                                { Object.keys(fetchedSelectedCompletedOrderdata).length !== 0 ?
                                     <div className="widget-content">
                                         { Object.keys(fetchedInvoiceData).length === 0 ?
                                             <div>
@@ -1021,7 +1105,7 @@ const CompletedOrderProcess = () => {
                                                             variant="success"
                                                             onClick={(e) => {
                                                                 e.preventDefault();
-                                                                generateInvoice(fetchedSelectedOpenOrderdata);
+                                                                generateInvoice(fetchedSelectedCompletedOrderdata);
                                                             }}
                                                             className="btn btn-add-lr btn-sm text-nowrap m-1"
                                                         >
