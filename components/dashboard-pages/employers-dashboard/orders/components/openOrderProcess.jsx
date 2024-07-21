@@ -6,7 +6,7 @@
 import candidatesData from "../../../../../data/candidates";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { supabase } from "../../../../../config/supabaseClient";
 import { toast } from "react-toastify";
 import { Typeahead } from "react-bootstrap-typeahead";
@@ -24,7 +24,6 @@ import Spinner from "../../../../spinner/spinner";
 import { InputGroup } from "react-bootstrap";
 import CalendarComp from "../../../../date/CalendarComp";
 import { format } from "date-fns";
-import { useRef } from "react";
 
 const addSearchFilters = {
     status: "",
