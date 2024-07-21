@@ -19,6 +19,7 @@ import Table from "react-bootstrap/Table";
 import { InputGroup } from "react-bootstrap";
 import { CSVLink } from "react-csv";
 import CalendarComp from "../../../../date/CalendarComp";
+import { convertToSearchFilterDateTimeFrom, convertToSearchFilterDateTimeTo } from "../../../../../utils/convertToSearchFilterDateTime";
 
 const addSearchFilters = {
     consignorName: "",
@@ -115,14 +116,14 @@ const LR = () => {
             .select("*");
 
         if (searchLRDateFrom) {
-            query.gte("lr_created_date", searchLRDateFrom.getTime());
+            query.gte("lr_created_date", convertToSearchFilterDateTimeFrom(searchLRDateFrom));
         }
         if (searchLRDateTo) {
-            query.lte("lr_created_date", searchLRDateTo.getTime());
+            query.lte("lr_created_date", convertToSearchFilterDateTimeTo(searchLRDateTo));
         }
         if (searchLRDateFrom && searchLRDateTo) {
-            query.gte("lr_created_date", searchLRDateFrom.getTime());
-            query.lte("lr_created_date", searchLRDateTo.getTime());
+            query.gte("lr_created_date", convertToSearchFilterDateTimeFrom(searchLRDateFrom));
+            query.lte("lr_created_date", convertToSearchFilterDateTimeTo(searchLRDateTo));
         }
         if (searchFilters.consignorName) {
             query.ilike("consignor", "%" + searchFilters.consignorName + "%");
@@ -548,7 +549,7 @@ const LR = () => {
                             </Row>
                             <Row className="mb-3 mx-3">
                                 <Form.Group as={Col} md="auto" controlId="validationCustom01">
-                                    <Form.Label style={{ marginBottom: "-5px" }}>Invoice Date</Form.Label><br />
+                                    <Form.Label style={{ marginBottom: "-5px" }}>LR Date</Form.Label><br />
                                     <div className="p-1" style={{ border: "1px solid #dee2e6", borderRadius: "3px" }}>
                                         <div className="pb-1">
                                             <span className="px-1">From</span>
