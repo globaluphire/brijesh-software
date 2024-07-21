@@ -128,7 +128,7 @@ const InvoiceDetails = () => {
     }, [invoiceNumber]);
 
     const SaveInvoiceChanges = async () => {
-        if (totalAmount && isPaid) {
+        if (totalAmount && totalAmount !== "0") {
             try {
                 const { data, error } = await supabase
                 .from("invoice")
