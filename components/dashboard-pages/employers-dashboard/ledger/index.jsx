@@ -64,7 +64,9 @@ const index = () => {
     const clearAll = () => {
         setSearchInvoiceDateFrom();
         setSearchInvoiceDateTo();
-        setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
+        setSelectedClient([]);
+        setFetchedLedgerData([]);
+        // setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
     };
 
     async function fetchedLedger(searchInvoiceDateFrom, searchInvoiceDateTo, searchFilters) {
