@@ -24,6 +24,7 @@ import Spinner from "../../../../spinner/spinner";
 import { InputGroup } from "react-bootstrap";
 import CalendarComp from "../../../../date/CalendarComp";
 import { format } from "date-fns";
+import { useRef } from "react";
 
 const addSearchFilters = {
     status: "",
@@ -56,11 +57,14 @@ const OpenOrderProcess = () => {
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
     const [fetchedOpenOrderdata, setFetchedOpenOrderdata] = useState({});
     const [fetchedSelectedOpenOrderdata, setFetchedSelectedOpenOrderdata] = useState({});
-    const [fetchedOpenOrderdataCSV, setFetchedOpenOrderdataCSV] = useState({});
     const [fetchedOrderCommentData, setFetchedOrderCommentData] = useState([]);
     const [fetchedLRsData, setFetchedLRsData] = useState([]);
     const [fetchedInvoiceData, setFetchedInvoiceData] = useState({});
     const [fetchedInvoiceUserData, setFetchedInvoiceUserData] = useState({});
+    
+    // csv states
+    const [fetchedOpenOrderdataCSV, setFetchedOpenOrderdataCSV] = useState([]);
+    const csvLink = useRef();
 
     const [invoiceDate, setInvoiceDate] = useState(new Date());
     const [totalAmount, setTotalAmount] = useState(0);
@@ -328,12 +332,37 @@ const OpenOrderProcess = () => {
         currentPage
     ]);
 
-    async function fetchedCSVData() {
+    async function fetchedCSVData(searchFilters) {
+        setIsLoading(true);
+        setLoadingText("Please Wait..., Your CSV is being generated");
         try {
-            
-            let { data: csvOrderData, error } = await supabase
-                    .from("csv_orders")
-                    .select("*");
+            let query = supabase
+                .from("csv_orders")
+                .select("*")
+                .neq("Status", "Completed")
+                .neq("Status", "Cancel");
+
+            if (user.drop_branch) {
+                query.eq("Order City", user.drop_branch);
+            }
+
+            if (searchFilters.status) {
+                query.ilike("Status", "%" + searchFilters.status + "%");
+            }
+
+            if (searchFilters.clientName) {
+                query.ilike("Client Name", "%" + searchFilters.clientName + "%");
+            }
+
+            if (searchFilters.orderCity) {
+                query.ilike("Order City", "%" + searchFilters.orderCity + "%");
+            }
+
+            if (searchFilters.orderNumber) {
+                query.ilike("ERP Order No", "%" + searchFilters.orderNumber + "%");
+            }
+
+            let { data: csvOrderData, error } = await query;
 
             if (csvOrderData) {
                 csvOrderData.forEach(
@@ -366,11 +395,15 @@ const OpenOrderProcess = () => {
             // console.warn(e);
             setIsLoading(false);
         }
-    }
+    };
 
     useEffect(() => {
-        fetchedCSVData(searchFilters);
-    }, []);
+        if (fetchedOpenOrderdataCSV && fetchedOpenOrderdataCSV.length > 0) {
+            csvLink.current.link.click();
+            setIsLoading(false);
+            setLoadingText("");
+        }
+    }, [ fetchedOpenOrderdataCSV ]);
 
     const setInvoiceModalData = async (order) => {
         setIsLoading(true);
@@ -988,15 +1021,22 @@ const OpenOrderProcess = () => {
                                 </Col>
                                 <Col style={{ display: "relative", textAlign: "right" }}>
                                     <Form.Group className="chosen-single form-input chosen-container mb-3">
-                                        { fetchedOpenOrderdataCSV.length > 0 ?
-                                            <CSVLink
-                                                data={fetchedOpenOrderdataCSV}
-                                                className="btn btn-export-csv btn-sm text-nowrap m-1"
-                                                filename={"Raftaar-Open_Orders-" + new Date().toLocaleDateString() + ".csv"}
-                                            >
-                                                Export to CSV
-                                            </CSVLink>
-                                        : "" }
+                                        <button
+                                            className="btn btn-export-csv btn-sm text-nowrap m-1"
+                                            onClick={(e) => { 
+                                                e.preventDefault();
+                                                fetchedCSVData(searchFilters);
+                                            }}
+                                        >
+                                            Export to CSV
+                                        </button>
+                                        <CSVLink
+                                            data={fetchedOpenOrderdataCSV}
+                                            filename={"Raftaar-Open_Orders-" + new Date().toLocaleDateString() + ".csv"}
+                                            className='hidden'
+                                            ref={csvLink}
+                                            target='_blank'
+                                        />
                                         <Button
                                             variant="success"
                                             onClick={() => Router.push("/employers-dashboard/add-order")}
