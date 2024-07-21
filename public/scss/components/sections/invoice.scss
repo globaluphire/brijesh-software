@@ -29,14 +29,14 @@ Invoice Section
 
 .invoice-wrap {
   position: relative;
-  -webkit-box-shadow: 0px 6px 15px rgba(64, 79, 104, 0.05);
-  box-shadow: 2px 6px 15px rgba(64, 79, 104, 0.05);
-  border: 0.1px solid #8b8b8f;
+  // -webkit-box-shadow: 0px 6px 15px rgba(64, 79, 104, 0.05);
+  // box-shadow: 2px 6px 15px rgba(64, 79, 104, 0.05);
+  // border: 0.1px solid #8b8b8f;
   background-color: #ffffff;
   padding-top: 5px;
 }
 .invoice-wrap:hover {
-  box-shadow: 0px 0px 20px 0px rgba(64, 79, 104, 0.3);
+  // box-shadow: 0px 0px 20px 0px rgba(64, 79, 104, 0.3);
 }
 
 .invoice-wrap .invoice-content {
