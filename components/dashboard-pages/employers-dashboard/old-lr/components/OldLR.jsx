@@ -313,7 +313,7 @@ const OldLR = () => {
     }
 
     useEffect(() => {
-        if (fetchedLRdataCSV.length > 0) {
+        if (fetchedLRdataCSV && fetchedLRdataCSV.length > 0) {
             csvLink.current.link.click();
             setIsLoading(false);
             setLoadingText("");
@@ -344,7 +344,10 @@ const OldLR = () => {
 
                                         <button
                                             className="btn btn-export-csv btn-sm text-nowrap m-1"
-                                            onClick={() => { fetchedCSV(searchFilters); }}
+                                            onClick={(e) => { 
+                                                e.preventDefault();
+                                                fetchedCSV(searchFilters);
+                                            }}
                                         >
                                             Export to CSV
                                         </button>
