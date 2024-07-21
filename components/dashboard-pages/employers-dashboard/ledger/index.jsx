@@ -21,6 +21,7 @@ import { format } from "date-fns";
 import { toast } from "react-toastify";
 import { supabase } from "../../../../config/supabaseClient";
 import { Typeahead } from "react-bootstrap-typeahead";
+import { convertToSearchFilterDateTimeFrom, convertToSearchFilterDateTimeTo } from "../../../../utils/convertToSearchFilterDateTime";
 
 const addSearchFilters = {
     clientName: ""
@@ -78,8 +79,8 @@ const index = () => {
                     .from("ledger_view")
                     .select("*")
                     .eq("client_name", selectedClient)
-                    .gte("invoice_created_at", format(searchInvoiceDateFrom, "yyyy-MM-dd"))
-                    .lte("invoice_created_at", format(searchInvoiceDateTo, "yyyy-MM-dd"));
+                    .gte("invoice_created_at", convertToSearchFilterDateTimeFrom(searchInvoiceDateFrom))
+                    .lte("invoice_created_at", convertToSearchFilterDateTimeTo(searchInvoiceDateTo));
 
                 let { data: ledgerData, error } = await query;
 
