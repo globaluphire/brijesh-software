@@ -40,7 +40,7 @@ const ClientOrdersTable = ({ fetchedOrdersData }) => {
                 <div className="table-outer">
                     <Row>
                         <Col>
-                            <b>Total Orders</b><span className="optional"> (Showing recent 5 Orders)</span>
+                            <b>Total Orders</b><span className="optional"> (Showing recent 5 orders{ fetchedOrdersData.length > 5 ? " out of " + fetchedOrdersData.length : ""})</span>
                         </Col>
                         <Col style={{ display: "relative", textAlign: "right" }}>
                             <Form.Group className="chosen-single form-input chosen-container mb-3">
@@ -83,7 +83,7 @@ const ClientOrdersTable = ({ fetchedOrdersData }) => {
                             </tbody>
                         ) : (
                             <tbody>
-                                {Array.from(fetchedOrdersData).map(
+                                {Array.from(fetchedOrdersData).slice(0, 5).map(
                                     (order) => (
                                         <tr key={order.id}>
                                             <td>

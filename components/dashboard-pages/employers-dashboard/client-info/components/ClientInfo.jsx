@@ -115,8 +115,7 @@ const ClientInfo = () => {
                         .order(
                             "order_created_at",
                             { ascending: false, nullsFirst: false }
-                        )
-                        .range(0, 4);
+                        );
         
                     if (ordersData && ordersData.length > 0) {
                         ordersData.forEach(
@@ -158,8 +157,7 @@ const ClientInfo = () => {
                             .order(
                                 "invoice_created_at",
                                 { ascending: false, nullsFirst: false }
-                            )
-                            .range(0, 4);
+                            );
             
                         if (invoiceData && invoiceData.length > 0) {
                             invoiceData.forEach(

@@ -31,7 +31,7 @@ const ClientInvoicesTable = ({ fetchedInvoiceData }) => {
                 <div className="table-outer">
                     <Row>
                         <Col>
-                            <b>Total Invoices</b><span className="optional"> (Showing recent 5 Invoices)</span>
+                            <b>Total Invoices</b><span className="optional"> (Showing recent 5 Invoices{ fetchedInvoiceData.length > 5 ? " out of" + fetchedInvoiceData.length : ""})</span>
                         </Col>
                         <Col style={{ display: "relative", textAlign: "right" }}>
                             <Form.Group className="chosen-single form-input chosen-container mb-3">
@@ -77,7 +77,7 @@ const ClientInvoicesTable = ({ fetchedInvoiceData }) => {
                             </tbody>
                         ) : (
                             <tbody>
-                                {Array.from(fetchedInvoiceData).map(
+                                {Array.from(fetchedInvoiceData).slice(0, 5).map(
                                     (invoice) => (
                                         <tr key={invoice.invoice_id}>
                                             <td>
