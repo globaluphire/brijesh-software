@@ -234,7 +234,7 @@ const ReportCounts = () => {
                                     }}
                                     className="btn btn-submit btn-sm text-nowrap m-1"
                                 >
-                                    Show
+                                    Search
                                 </Button>
                             </Form.Group>
                         </Col>

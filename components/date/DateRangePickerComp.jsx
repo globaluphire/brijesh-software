@@ -62,7 +62,7 @@ const DateRangePickerComp = ({ range, setRange, dateDisabled, maxDateLimit }) =>
       <div ref={refOne}>
         {open && 
           <DateRangePicker
-            onChange={(item) => { setRange([item.selection]) }}
+            onChange={(item) => { setRange([item.selection]); }}
             editableDateInputs={true}
             moveRangeOnFirstSelection={false}
             ranges={range}
