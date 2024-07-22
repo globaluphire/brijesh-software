@@ -5,8 +5,11 @@ import { useEffect, useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { BallTriangle } from "react-loader-spinner";
 import Link from "next/link";
-import { Col, Container, Row, Table } from "react-bootstrap";
+import { Button, Col, Container, Form, Row, Table } from "react-bootstrap";
 import Spinner from "../../../../spinner/spinner";
+import DateRangePickerComp from "../../../../date/DateRangePickerComp";
+import { addDays, subDays } from "date-fns";
+import { convertToSearchFilterDateTimeFrom, convertToSearchFilterDateTimeTo } from "../../../../../utils/convertToSearchFilterDateTime";
 
 const ReportCounts = () => {
     // global states
@@ -15,6 +18,16 @@ const ReportCounts = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [loadingText, setLoadingText] = useState("Dashboard Data is loading...");
+
+    // search filters
+    const [range, setRange] = useState([
+        {
+        startDate: subDays(new Date(), 7),
+        endDate: new Date(),
+        key: "selection"
+        }
+    ]);
+    const [maxDateLimit, setMaxDateLimit] = useState(new Date());
 
     // states for Orders
     const [totalOrders, setTotalOrders] = useState(0);
@@ -47,7 +60,9 @@ const ReportCounts = () => {
         const { data: ordersData, error: ordersError } = await supabase
             .from("orders")
             .select("*")
-            .neq("order_number", "DEFAULT");
+            .neq("order_number", "DEFAULT")
+            .gte("order_created_at", convertToSearchFilterDateTimeFrom(range[0].startDate))
+            .lte("order_created_at", convertToSearchFilterDateTimeTo(range[0].endDate));
 
         if (ordersData) {
             setTotalOrders(ordersData.length);
@@ -89,7 +104,9 @@ const ReportCounts = () => {
         const { data: lrData, error: lrError } = await supabase
             .from("lr")
             .select("*")
-            .neq("lr_number", "DEFAULT");
+            .neq("lr_number", "DEFAULT")
+            .gte("lr_created_date", convertToSearchFilterDateTimeFrom(range[0].startDate))
+            .lte("lr_created_date", convertToSearchFilterDateTimeTo(range[0].endDate));
 
         if (lrData) {
             setTotalLRs(lrData.length);
@@ -112,7 +129,9 @@ const ReportCounts = () => {
 
         const { data: invoiceData, error: invoiceError } = await supabase
             .from("invoice")
-            .select("*");
+            .select("*")
+            .gte("invoice_created_at", convertToSearchFilterDateTimeFrom(range[0].startDate))
+            .lte("invoice_created_at", convertToSearchFilterDateTimeTo(range[0].endDate));
 
         if (invoiceData) {
             setTotalInvoices(invoiceData.length);
@@ -199,209 +218,220 @@ const ReportCounts = () => {
 
     return (
         <>
-            <Container>
-                <Row>
-                    <Col>
-                        {/* total counts */}
-                        <div className="widget-content" style={{ maxWidth: "fit-content" }}>
-                            <Spinner isLoading={isLoading} loadingText={loadingText} />
+            <Spinner isLoading={isLoading} loadingText={loadingText} />
 
-                            <div className="table-outer dashboard-table">
-                                <b>
-                                    Total Counts
-                                    <a
-                                        className="la la-refresh"
-                                        onClick={() => { fetchDashboardData(); }}
-                                        style={{ marginLeft: "10px" }}>
-                                    </a>
-                                </b>
-                                <Table className="default-table manage-job-table" style={{ minWidth: "300px" }}>
-                                    <thead>
-                                        <tr>
-                                            <th style={{ fontSize: "14px" }}>#</th>
-                                            <th style={{ fontSize: "14px" }}>Counts</th>
-                                        </tr>
-                                    </thead>
-                                        <tbody style={{ fontSize: "14px" }}>
+            <div>
+                <Form>
+                    <Row className="mb-5" >
+                        <Col>
+                            <Form.Group as={Col} md="auto" controlId="validationCustom01">
+                                <DateRangePickerComp range={range} setRange={setRange} maxDateLimit={maxDateLimit} />
+                                <Button
+                                    variant="primary"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        fetchDashboardData();
+                                    }}
+                                    className="btn btn-submit btn-sm text-nowrap m-1"
+                                >
+                                    Show
+                                </Button>
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                    <div>
+                        <Row>
+                            <Form.Group as={Col} md="auto" controlId="validationCustom01">
+                                {/* total counts */}
+                                <div className="table-outer dashboard-table client-table">
+                                    <b>
+                                        Total Counts
+                                        <a
+                                            className="la la-refresh"
+                                            onClick={() => { fetchDashboardData(); }}
+                                            style={{ marginLeft: "10px" }}>
+                                        </a>
+                                    </b>
+                                    <Table className="default-table manage-job-table" style={{ minWidth: "300px" }}>
+                                        <thead>
                                             <tr>
-                                                <td>Total Orders</td>
-                                                <td>{totalOrders}</td>
+                                                <th style={{ fontSize: "14px" }}>#</th>
+                                                <th style={{ fontSize: "14px" }}>Counts</th>
                                             </tr>
+                                        </thead>
+                                            <tbody style={{ fontSize: "14px" }}>
+                                                <tr>
+                                                    <td>Total Orders</td>
+                                                    <td>{totalOrders}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Total LRs</td>
+                                                    <td>{totalLRs}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Total Invoices</td>
+                                                    <td>{totalInvoices}</td>
+                                                </tr>
+                                            </tbody>
+                                    </Table>
+                                </div>
+                            </Form.Group>
+                            <Form.Group as={Col} md="auto" controlId="validationCustom01">
+                                {/* number of order by status */}
+                                <div className="table-outer dashboard-table client-table">
+                                    <b>
+                                        # of Orders by Status
+                                        <a
+                                            className="la la-refresh"
+                                            onClick={() => { fetchOrderData(); }}
+                                            style={{ marginLeft: "10px" }}>
+                                        </a>
+                                    </b>
+                                    <Table className="default-table manage-job-table" style={{ minWidth: "300px" }}>
+                                        <thead>
                                             <tr>
-                                                <td>Total LRs</td>
-                                                <td>{totalLRs}</td>
+                                                <th style={{ fontSize: "14px" }}>#</th>
+                                                <th style={{ fontSize: "14px" }}>Counts</th>
                                             </tr>
+                                        </thead>
+                                            <tbody style={{ fontSize: "14px" }}>
+                                                <tr style={{ backgroundColor: determineBadgeColor("Under Pickup Process").color }}>
+                                                    <td style={{ color: determineBadgeColor("Under Pickup Process").textColor }}>
+                                                        {determineBadgeColor("Under Pickup Process").tag}
+                                                    </td>
+                                                    <td style={{ color: determineBadgeColor("Under Pickup Process").textColor }}>{totalUnderPickupProcess}</td>
+                                                </tr>
+                                                <tr style={{ backgroundColor: determineBadgeColor("Ready for pickup").color }}>
+                                                    <td style={{ color: determineBadgeColor("Ready for pickup").textColor }}>
+                                                        {determineBadgeColor("Ready for pickup").tag}
+                                                    </td>
+                                                    <td style={{ color: determineBadgeColor("Ready for pickup").textColor }}>{totalReadyForPickup}</td>
+                                                </tr>
+                                                <tr style={{ backgroundColor: determineBadgeColor("Tempo under the process").color }}>
+                                                    <td style={{ color: determineBadgeColor("Tempo under the process").textColor }}>
+                                                        {determineBadgeColor("Tempo under the process").tag}
+                                                    </td>
+                                                    <td style={{ color: determineBadgeColor("Tempo under the process").textColor }}>{totalTempoUnderProcess}</td>
+                                                </tr>
+                                                <tr style={{ backgroundColor: determineBadgeColor("In process of departure").color }}>
+                                                    <td style={{ color: determineBadgeColor("In process of departure").textColor }}>
+                                                        {determineBadgeColor("In process of departure").tag}
+                                                    </td>
+                                                    <td style={{ color: determineBadgeColor("In process of departure").textColor }}>{totalInProcessDeparture}</td>
+                                                </tr>
+                                                <tr style={{ backgroundColor: determineBadgeColor("At destination city warehouse").color }}>
+                                                    <td style={{ color: determineBadgeColor("At destination city warehouse").textColor }}>
+                                                        {determineBadgeColor("At destination city warehouse").tag}
+                                                    </td>
+                                                    <td style={{ color: determineBadgeColor("At destination city warehouse").textColor }}>{totalAtDestinationWarehouse}</td>
+                                                </tr>
+                                                <tr style={{ backgroundColor: determineBadgeColor("Ready for final delivery").color }}>
+                                                    <td style={{ color: determineBadgeColor("Ready for final delivery").textColor }}>
+                                                        {determineBadgeColor("Ready for final delivery").tag}
+                                                    </td>
+                                                    <td style={{ color: determineBadgeColor("Ready for final delivery").textColor }}>{totalReadyForDelivery}</td>
+                                                </tr>
+                                                <tr style={{ backgroundColor: determineBadgeColor("Completed").color }}>
+                                                    <td style={{ color: determineBadgeColor("Completed").textColor }}>
+                                                        {determineBadgeColor("Completed").tag}
+                                                    </td>
+                                                    <td style={{ color: determineBadgeColor("Completed").textColor }}>{totalCompleted}</td>
+                                                </tr>
+                                                <tr style={{ backgroundColor: determineBadgeColor("Cancel").color }}>
+                                                    <td style={{ color: determineBadgeColor("Cancel").textColor }}>
+                                                        {determineBadgeColor("Cancel").tag}
+                                                    </td>
+                                                    <td style={{ color: determineBadgeColor("Cancel").textColor }}>{totalCancelled}</td>
+                                                </tr>
+                                            </tbody>
+                                    </Table>
+                                </div>
+                            </Form.Group>
+
+                            <Form.Group as={Col} md="auto" controlId="validationCustom01">
+                                {/* number of LR by status */}
+                                <div className="table-outer dashboard-table client-table">
+                                    <b>
+                                        # of LRs by Status
+                                        <a
+                                            className="la la-refresh"
+                                            onClick={() => { fetchLRsData(); }}
+                                            style={{ marginLeft: "10px" }}>
+                                        </a>
+                                    </b>
+                                    <Table className="default-table manage-job-table" style={{ minWidth: "300px" }}>
+                                        <thead>
                                             <tr>
-                                                <td>Total Invoices</td>
-                                                <td>{totalInvoices}</td>
+                                                <th style={{ fontSize: "14px" }}>#</th>
+                                                <th style={{ fontSize: "14px" }}>Counts</th>
                                             </tr>
-                                        </tbody>
-                                </Table>
-                            </div>
-                        </div>
+                                        </thead>
+                                            <tbody style={{ fontSize: "14px" }}>
+                                                <tr style={{ backgroundColor: determineBadgeColor("Performa").color }}>
+                                                    <td style={{ color: determineBadgeColor("Performa").textColor }}>
+                                                        {determineBadgeColor("Performa").tag}
+                                                    </td>
+                                                    <td style={{ color: determineBadgeColor("Performa").textColor }}>{totalPerforma}</td>
+                                                </tr>
+                                                <tr style={{ backgroundColor: determineBadgeColor("Final").color }}>
+                                                    <td style={{ color: determineBadgeColor("Final").textColor }}>
+                                                        {determineBadgeColor("Final").tag}
+                                                    </td>
+                                                    <td style={{ color: determineBadgeColor("Final").textColor }}>{totalFinal}</td>
+                                                </tr>
+                                                <tr style={{ backgroundColor: determineBadgeColor("Unknown").color }}>
+                                                    <td style={{ color: determineBadgeColor("Unknown").textColor }}>
+                                                        {determineBadgeColor("Unknown").tag}
+                                                    </td>
+                                                    <td style={{ color: determineBadgeColor("Unknown").textColor }}>{totalLRs - totalPerforma - totalFinal}</td>
+                                                </tr>
+                                            </tbody>
+                                    </Table>
+                                </div>
+                            </Form.Group>
 
-                        {/* number of order by status */}
-                        <div className="widget-content" style={{ maxWidth: "fit-content" }}>
-                            <Spinner isLoading={isLoading} loadingText={loadingText} />
-
-                            <div className="table-outer dashboard-table">
-                                <b>
-                                    # of Orders by Status
-                                    <a
-                                        className="la la-refresh"
-                                        onClick={() => { fetchOrderData(); }}
-                                        style={{ marginLeft: "10px" }}>
-                                    </a>
-                                </b>
-                                <Table className="default-table manage-job-table" style={{ minWidth: "300px" }}>
-                                    <thead>
-                                        <tr>
-                                            <th style={{ fontSize: "14px" }}>#</th>
-                                            <th style={{ fontSize: "14px" }}>Counts</th>
-                                        </tr>
-                                    </thead>
-                                        <tbody style={{ fontSize: "14px" }}>
-                                            <tr style={{ backgroundColor: determineBadgeColor("Under Pickup Process").color }}>
-                                                <td style={{ color: determineBadgeColor("Under Pickup Process").textColor }}>
-                                                    {determineBadgeColor("Under Pickup Process").tag}
-                                                </td>
-                                                <td style={{ color: determineBadgeColor("Under Pickup Process").textColor }}>{totalUnderPickupProcess}</td>
+                            <Form.Group as={Col} md="auto" controlId="validationCustom01">
+                                {/* number of invoice by status */}
+                                <div className="table-outer dashboard-table client-table">
+                                    <b>
+                                        # of Invoices by Status
+                                        <a
+                                            className="la la-refresh"
+                                            onClick={() => { fetchInvoicesData(); }}
+                                            style={{ marginLeft: "10px" }}>
+                                        </a>
+                                    </b>
+                                    <Table className="default-table manage-job-table" style={{ minWidth: "300px" }}>
+                                        <thead>
+                                            <tr>
+                                                <th style={{ fontSize: "14px" }}>#</th>
+                                                <th style={{ fontSize: "14px" }}>Counts</th>
+                                                <th style={{ fontSize: "14px" }}>Total Amount</th>
                                             </tr>
-                                            <tr style={{ backgroundColor: determineBadgeColor("Ready for pickup").color }}>
-                                                <td style={{ color: determineBadgeColor("Ready for pickup").textColor }}>
-                                                    {determineBadgeColor("Ready for pickup").tag}
-                                                </td>
-                                                <td style={{ color: determineBadgeColor("Ready for pickup").textColor }}>{totalReadyForPickup}</td>
-                                            </tr>
-                                            <tr style={{ backgroundColor: determineBadgeColor("Tempo under the process").color }}>
-                                                <td style={{ color: determineBadgeColor("Tempo under the process").textColor }}>
-                                                    {determineBadgeColor("Tempo under the process").tag}
-                                                </td>
-                                                <td style={{ color: determineBadgeColor("Tempo under the process").textColor }}>{totalTempoUnderProcess}</td>
-                                            </tr>
-                                            <tr style={{ backgroundColor: determineBadgeColor("In process of departure").color }}>
-                                                <td style={{ color: determineBadgeColor("In process of departure").textColor }}>
-                                                    {determineBadgeColor("In process of departure").tag}
-                                                </td>
-                                                <td style={{ color: determineBadgeColor("In process of departure").textColor }}>{totalInProcessDeparture}</td>
-                                            </tr>
-                                            <tr style={{ backgroundColor: determineBadgeColor("At destination city warehouse").color }}>
-                                                <td style={{ color: determineBadgeColor("At destination city warehouse").textColor }}>
-                                                    {determineBadgeColor("At destination city warehouse").tag}
-                                                </td>
-                                                <td style={{ color: determineBadgeColor("At destination city warehouse").textColor }}>{totalAtDestinationWarehouse}</td>
-                                            </tr>
-                                            <tr style={{ backgroundColor: determineBadgeColor("Ready for final delivery").color }}>
-                                                <td style={{ color: determineBadgeColor("Ready for final delivery").textColor }}>
-                                                    {determineBadgeColor("Ready for final delivery").tag}
-                                                </td>
-                                                <td style={{ color: determineBadgeColor("Ready for final delivery").textColor }}>{totalReadyForDelivery}</td>
-                                            </tr>
-                                            <tr style={{ backgroundColor: determineBadgeColor("Completed").color }}>
-                                                <td style={{ color: determineBadgeColor("Completed").textColor }}>
-                                                    {determineBadgeColor("Completed").tag}
-                                                </td>
-                                                <td style={{ color: determineBadgeColor("Completed").textColor }}>{totalCompleted}</td>
-                                            </tr>
-                                            <tr style={{ backgroundColor: determineBadgeColor("Cancel").color }}>
-                                                <td style={{ color: determineBadgeColor("Cancel").textColor }}>
-                                                    {determineBadgeColor("Cancel").tag}
-                                                </td>
-                                                <td style={{ color: determineBadgeColor("Cancel").textColor }}>{totalCancelled}</td>
-                                            </tr>
-                                        </tbody>
-                                </Table>
-                            </div>
-                        </div>
-                    </Col>
-                    <Col>
-                        {/* number of LR by status */}
-                        <div className="widget-content" style={{ maxWidth: "fit-content" }}>
-                            <Spinner isLoading={isLoading} loadingText={loadingText} />
-
-                            <div className="table-outer dashboard-table">
-                                <b>
-                                    # of LRs by Status
-                                    <a
-                                        className="la la-refresh"
-                                        onClick={() => { fetchLRsData(); }}
-                                        style={{ marginLeft: "10px" }}>
-                                    </a>
-                                </b>
-                                <Table className="default-table manage-job-table" style={{ minWidth: "300px" }}>
-                                    <thead>
-                                        <tr>
-                                            <th style={{ fontSize: "14px" }}>#</th>
-                                            <th style={{ fontSize: "14px" }}>Counts</th>
-                                        </tr>
-                                    </thead>
-                                        <tbody style={{ fontSize: "14px" }}>
-                                            <tr style={{ backgroundColor: determineBadgeColor("Performa").color }}>
-                                                <td style={{ color: determineBadgeColor("Performa").textColor }}>
-                                                    {determineBadgeColor("Performa").tag}
-                                                </td>
-                                                <td style={{ color: determineBadgeColor("Performa").textColor }}>{totalPerforma}</td>
-                                            </tr>
-                                            <tr style={{ backgroundColor: determineBadgeColor("Final").color }}>
-                                                <td style={{ color: determineBadgeColor("Final").textColor }}>
-                                                    {determineBadgeColor("Final").tag}
-                                                </td>
-                                                <td style={{ color: determineBadgeColor("Final").textColor }}>{totalFinal}</td>
-                                            </tr>
-                                            <tr style={{ backgroundColor: determineBadgeColor("Unknown").color }}>
-                                                <td style={{ color: determineBadgeColor("Unknown").textColor }}>
-                                                    {determineBadgeColor("Unknown").tag}
-                                                </td>
-                                                <td style={{ color: determineBadgeColor("Unknown").textColor }}>{totalLRs - totalPerforma - totalFinal}</td>
-                                            </tr>
-                                        </tbody>
-                                </Table>
-                            </div>
-                        </div>
-
-                        {/* number of invoice by status */}
-                        <div className="widget-content" style={{ maxWidth: "fit-content" }}>
-                            <Spinner isLoading={isLoading} loadingText={loadingText} />
-
-                            <div className="table-outer dashboard-table">
-                                <b>
-                                    # of Invoices by Status
-                                    <a
-                                        className="la la-refresh"
-                                        onClick={() => { fetchInvoicesData(); }}
-                                        style={{ marginLeft: "10px" }}>
-                                    </a>
-                                </b>
-                                <Table className="default-table manage-job-table" style={{ minWidth: "300px" }}>
-                                    <thead>
-                                        <tr>
-                                            <th style={{ fontSize: "14px" }}>#</th>
-                                            <th style={{ fontSize: "14px" }}>Counts</th>
-                                            <th style={{ fontSize: "14px" }}>Total Amount</th>
-                                        </tr>
-                                    </thead>
-                                        <tbody style={{ fontSize: "14px" }}>
-                                            <tr style={{ backgroundColor: determineBadgeColor("Paid").color }}>
-                                                <td style={{ color: determineBadgeColor("Paid").textColor }}>
-                                                    {determineBadgeColor("Paid").tag}
-                                                </td>
-                                                <td style={{ color: determineBadgeColor("Paid").textColor }}>{totalPaid}</td>
-                                                <td style={{ color: determineBadgeColor("Paid").textColor }}>{totalCreditAmount}</td>
-                                            </tr>
-                                            <tr style={{ backgroundColor: determineBadgeColor("Unpaid").color }}>
-                                                <td style={{ color: determineBadgeColor("Unpaid").textColor }}>
-                                                    {determineBadgeColor("Unpaid").tag}
-                                                </td>
-                                                <td style={{ color: determineBadgeColor("Unpaid").textColor }}>{totalUnpaid}</td>
-                                                <td style={{ color: determineBadgeColor("Unpaid").textColor }}>{totalDebitAmount}</td>
-                                            </tr>
-                                        </tbody>
-                                </Table>
-                            </div>
-                        </div>
-                    </Col>
-                </Row>
-            </Container>
+                                        </thead>
+                                            <tbody style={{ fontSize: "14px" }}>
+                                                <tr style={{ backgroundColor: determineBadgeColor("Paid").color }}>
+                                                    <td style={{ color: determineBadgeColor("Paid").textColor }}>
+                                                        {determineBadgeColor("Paid").tag}
+                                                    </td>
+                                                    <td style={{ color: determineBadgeColor("Paid").textColor }}>{totalPaid}</td>
+                                                    <td style={{ color: determineBadgeColor("Paid").textColor }}>{totalCreditAmount}</td>
+                                                </tr>
+                                                <tr style={{ backgroundColor: determineBadgeColor("Unpaid").color }}>
+                                                    <td style={{ color: determineBadgeColor("Unpaid").textColor }}>
+                                                        {determineBadgeColor("Unpaid").tag}
+                                                    </td>
+                                                    <td style={{ color: determineBadgeColor("Unpaid").textColor }}>{totalUnpaid}</td>
+                                                    <td style={{ color: determineBadgeColor("Unpaid").textColor }}>{totalDebitAmount}</td>
+                                                </tr>
+                                            </tbody>
+                                    </Table>
+                                </div>
+                            </Form.Group>
+                        </Row>
+                    </div>
+                </Form>
+            </div>
         </>
     );
 };

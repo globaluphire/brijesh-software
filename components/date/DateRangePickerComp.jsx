@@ -3,21 +3,20 @@ import { useEffect, useRef, useState } from "react";
 import { DateRangePicker } from "react-date-range";
 
 import format from "date-fns/format";
-import { addDays } from "date-fns";
 
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
-const DateRangePickerComp = () => {
+const DateRangePickerComp = ({ range, setRange, dateDisabled, maxDateLimit }) => {
 
   // date state
-  const [range, setRange] = useState([
-    {
-      startDate: new Date(),
-      endDate: addDays(new Date(), 7),
-      key: "selection"
-    }
-  ]);
+  // const [range, setRange] = useState([
+  //   {
+  //     startDate: new Date(),
+  //     endDate: addDays(new Date(), 7),
+  //     key: "selection"
+  //   }
+  // ]);
 
   // open close
   const [open, setOpen] = useState(false);
@@ -48,26 +47,31 @@ const DateRangePickerComp = () => {
     }
   };
 
+
   return (
     <div className="calendarWrap">
 
       <input
-        value={`${format(range[0].startDate, "yyyy-MM-dd")} to ${format(range[0].endDate, "yyyy-MM-dd")}`}
+        value={`${format(range[0].startDate, "dd MMM, yyyy")} - ${format(range[0].endDate, "dd MMM, yyyy")}`}
         readOnly
         className="inputBox"
         onClick={ () => setOpen(open => !open) }
+        disabled={dateDisabled}
       />
 
       <div ref={refOne}>
         {open && 
           <DateRangePicker
-            onChange={item => setRange([item.selection])}
+            onChange={(item) => { setRange([item.selection]) }}
             editableDateInputs={true}
             moveRangeOnFirstSelection={false}
             ranges={range}
             months={2}
             direction="horizontal"
             className="calendarElement"
+            dateDisplayFormat="dd MMM, yyyy"
+            // color="#004F8C"
+            maxDate={maxDateLimit}
           />
         }
       </div>
