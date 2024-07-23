@@ -5,7 +5,7 @@ import candidatesData from "../../../../../data/candidates";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { supabase } from "../../../../../config/supabaseClient";
 import { toast } from "react-toastify";
 import { Typeahead } from "react-bootstrap-typeahead";
@@ -20,6 +20,7 @@ import { InputGroup } from "react-bootstrap";
 import { CSVLink } from "react-csv";
 import CalendarComp from "../../../../date/CalendarComp";
 import { convertToSearchFilterDateTimeFrom, convertToSearchFilterDateTimeTo } from "../../../../../utils/convertToSearchFilterDateTime";
+import Spinner from "../../../../spinner/spinner";
 
 const addSearchFilters = {
     consignorName: "",
@@ -34,10 +35,14 @@ const LR = () => {
     const router = useRouter();
     const user = useSelector((state) => state.candidate.user);
 
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadingText, setLoadingText] = useState("");
+
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
     const [fetchedLRdata, setFetchedLRdata] = useState({});
     const [fetchedOrderData, setFetchedOrderData] = useState({});
-    const [fetchedLRdataCSV, setFetchedLRdataCSV] = useState({});
+    const [fetchedLRdataCSV, setFetchedLRdataCSV] = useState([]);
+    const csvLink = useRef();
 
     const [applicationStatus, setApplicationStatus] = useState("");
     const [
@@ -52,10 +57,10 @@ const LR = () => {
     const [applicationId, setApplicationId] = useState("");
 
     // For Pagination
-    // const [totalRecords, setTotalRecords] = useState(0);
-    // const [currentPage, setCurrentPage] = useState(1);
-    // const [hidePagination, setHidePagination] = useState(false);
-    // const [pageSize, setPageSize] = useState(10);
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hidePagination, setHidePagination] = useState(false);
+    const [pageSize, setPageSize] = useState(10);
 
     // for search filters
     const [searchLRDateFrom, setSearchLRDateFrom] = useState();
@@ -99,99 +104,25 @@ const LR = () => {
         fetchedLR(JSON.parse(JSON.stringify(addSearchFilters)));
     };
 
-    async function findLR(searchFilters, searchLRDateFrom, searchLRDateTo) {
-        // call reference to get applicantStatus options
-        // setCurrentPage(1);
-        // const { data: refData, error: e } = await supabase
-        //     .from("reference")
-        //     .select("*")
-        //     .eq("ref_nm", "applicantStatus");
-
-        // if (refData) {
-        //     setApplicationStatusReferenceOptions(refData);
-        // }
-
-        let query = supabase
-            .from("lr_view")
-            .select("*");
-
-        if (searchLRDateFrom) {
-            query.gte("lr_created_date", convertToSearchFilterDateTimeFrom(searchLRDateFrom));
-        }
-        if (searchLRDateTo) {
-            query.lte("lr_created_date", convertToSearchFilterDateTimeTo(searchLRDateTo));
-        }
-        if (searchLRDateFrom && searchLRDateTo) {
-            query.gte("lr_created_date", convertToSearchFilterDateTimeFrom(searchLRDateFrom));
-            query.lte("lr_created_date", convertToSearchFilterDateTimeTo(searchLRDateTo));
-        }
-        if (searchFilters.consignorName) {
-            query.ilike("consignor", "%" + searchFilters.consignorName + "%");
-        }
-        if (searchFilters.consigneeName) {
-            query.ilike("consignee", "%" + searchFilters.consigneeName + "%");
-        }
-        if (searchFilters.fromCity) {
-            query.ilike("from_city", "%" + searchFilters.fromCity + "%");
-        }
-        if (searchFilters.toCity) {
-            query.ilike("to_city", "%" + searchFilters.toCity + "%");
-        }
-        if (searchFilters.driverName) {
-            query.ilike("driver_name", "%" + searchFilters.driverName + "%");
-        }
-        if (searchFilters.status) {
-            query.ilike("status", "%" + searchFilters.status + "%");
-        }
-
-        // if (facility) {
-        //     query.ilike("facility_name", "%" + facility + "%");
-        // }
-
-        // setTotalRecords((await query).data.length);
-
-        let { data, error } = await query.order("lr_created_date", {
-            ascending: false,
-            nullsFirst: false,
-        });
-        // .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
-
-        // if (facility) {
-        //     data = data.filter((i) => i.facility_name === facility);
-        // }
+    async function getReferences() {
+        // call reference to get lrStatus options
+        const { data, error: e } = await supabase
+            .from("reference")
+            .select("*")
+            .eq("ref_nm", "lrStatus");
 
         if (data) {
-            data.forEach(
-                (lr) =>
-                    (lr.lr_created_date = dateFormat(lr.lr_created_date))
-            );
-            setFetchedLRdata(data);
-
-            // creating new array object for CSV export
-            const lrDataCSV = data.map(({ id, lr_created_by,...rest }) => ({ ...rest }));
-            setFetchedLRdataCSV(lrDataCSV);
+            setLRStatusReferenceOptions(data);
         }
-    }
+    };
 
-    async function fetchedLR({
-        consignorName,
-        consigneeName,
-        fromCity,
-        toCity,
-        driverName,
-        status
-    }) {
+    useEffect(() => {
+        getReferences();
+    }, []);
+
+    async function fetchedLR(searchFilters, searchLRDateFrom, searchLRDateTo) {
+        setIsLoading(true);
         try {
-            // call reference to get lrStatus options
-            const { data, error: e } = await supabase
-                .from("reference")
-                .select("*")
-                .eq("ref_nm", "lrStatus");
-
-            if (data) {
-                setLRStatusReferenceOptions(data);
-            }
-
             let query = supabase
                 .from("lr_view")
                 .select("*");
@@ -200,26 +131,43 @@ const LR = () => {
                 query.eq("order_city", user.drop_branch);
             }
     
-            // if (name) {
-            //     query.ilike("name", "%" + name + "%");
-            // }
-            // if (jobTitle) {
-            //     query.ilike("job_title", "%" + jobTitle + "%");
-            // }
-            // if (facility) {
-            //     query.ilike("facility_name", "%" + facility + "%");
-            // }
-
-            // setTotalRecords((await query).data.length);
+            if (searchLRDateFrom) {
+                query.gte("lr_created_date", convertToSearchFilterDateTimeFrom(searchLRDateFrom));
+            }
+            if (searchLRDateTo) {
+                query.lte("lr_created_date", convertToSearchFilterDateTimeTo(searchLRDateTo));
+            }
+            if (searchLRDateFrom && searchLRDateTo) {
+                query.gte("lr_created_date", convertToSearchFilterDateTimeFrom(searchLRDateFrom));
+                query.lte("lr_created_date", convertToSearchFilterDateTimeTo(searchLRDateTo));
+            }
+            if (searchFilters.consignorName) {
+                query.ilike("consignor_name", "%" + searchFilters.consignorName + "%");
+            }
+            if (searchFilters.consigneeName) {
+                query.ilike("consignee_name", "%" + searchFilters.consigneeName + "%");
+            }
+            if (searchFilters.fromCity) {
+                query.ilike("pickup_point_city", "%" + searchFilters.fromCity + "%");
+            }
+            if (searchFilters.toCity) {
+                query.ilike("drop_point_city", "%" + searchFilters.toCity + "%");
+            }
+            if (searchFilters.driverName) {
+                query.ilike("driver_details", "%" + searchFilters.driverName + "%");
+            }
+            if (searchFilters.status) {
+                query.ilike("status", "%" + searchFilters.status + "%");
+            }
 
             let { data: lrData, error } = await query.order(
                 "lr_created_date",
                 { ascending: false, nullsFirst: false }
+            )
+            .range(
+                (currentPage - 1) * pageSize,
+                currentPage * pageSize - 1
             );
-            // .range(
-            //     (currentPage - 1) * pageSize,
-            //     currentPage * pageSize - 1
-            // );
 
             // if (facility) {
             //     allApplicantsView = allApplicantsView.filter(
@@ -233,6 +181,161 @@ const LR = () => {
                 );
 
                 setFetchedLRdata(lrData);
+                fetchedTotalLRCounts(searchFilters);
+                setIsLoading(false);
+            } else {
+                setIsLoading(false);
+            }
+        } catch (e) {
+            toast.error(
+                "System is unavailable.  Please try again later or contact tech support!",
+                {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
+            console.warn(e);
+            setIsLoading(false);
+        }
+    };
+    async function fetchedTotalLRCounts(searchFilters) {
+
+        let query = supabase
+            .from("lr_view")
+            .select("*", { count: "exact", head: true });
+
+        if (user.drop_branch) {
+            query.eq("order_city", user.drop_branch);
+        }
+
+        if (searchLRDateFrom) {
+            query.gte("lr_created_date", convertToSearchFilterDateTimeFrom(searchLRDateFrom));
+        }
+        if (searchLRDateTo) {
+            query.lte("lr_created_date", convertToSearchFilterDateTimeTo(searchLRDateTo));
+        }
+        if (searchLRDateFrom && searchLRDateTo) {
+            query.gte("lr_created_date", convertToSearchFilterDateTimeFrom(searchLRDateFrom));
+            query.lte("lr_created_date", convertToSearchFilterDateTimeTo(searchLRDateTo));
+        }
+
+        if (searchFilters.consignorName) {
+            query.ilike("consignor_name", "%" + searchFilters.consignorName + "%");
+        }
+        if (searchFilters.consigneeName) {
+            query.ilike("consignee_name", "%" + searchFilters.consigneeName + "%");
+        }
+        if (searchFilters.fromCity) {
+            query.ilike("pickup_point_city", "%" + searchFilters.fromCity + "%");
+        }
+        if (searchFilters.toCity) {
+            query.ilike("drop_point_city", "%" + searchFilters.toCity + "%");
+        }
+        if (searchFilters.driverName) {
+            query.ilike("driver_details", "%" + searchFilters.driverName + "%");
+        }
+        if (searchFilters.status) {
+            query.ilike("status", "%" + searchFilters.status + "%");
+        }
+
+        const countTotalLR = await query;
+
+        setTotalRecords(countTotalLR.count);
+
+    };
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    function perPageHandler(event) {
+        setIsLoading(true);
+
+        setCurrentPage(1);
+        const selectedValue = JSON.parse(event.target.value);
+        const end = selectedValue.end;
+
+        setPageSize(end);
+
+        setIsLoading(false);
+    };
+
+    useEffect(() => {
+        fetchedLR(searchFilters);
+        // if (facility) {
+        //     localStorage.setItem("facility", facility);
+        // } else {
+        //     localStorage.setItem("facility", "");
+        // }
+    }, [
+        // facility,
+        pageSize,
+        currentPage
+    ]);
+
+    async function fetchedCSV(searchFilters) {
+        setIsLoading(true);
+        setLoadingText("Please Wait..., Your CSV is being generated");
+        try {
+            let query = supabase
+                .from("lr_view")
+                .select("*")
+                .neq("lr_id", "1e6d8fcf-9792-4c21-91c6-fb314c20def7");
+
+            if (user.drop_branch) {
+                query.eq("order_city", user.drop_branch);
+            }
+    
+            if (searchLRDateFrom) {
+                query.gte("lr_created_date", convertToSearchFilterDateTimeFrom(searchLRDateFrom));
+            }
+            if (searchLRDateTo) {
+                query.lte("lr_created_date", convertToSearchFilterDateTimeTo(searchLRDateTo));
+            }
+            if (searchLRDateFrom && searchLRDateTo) {
+                query.gte("lr_created_date", convertToSearchFilterDateTimeFrom(searchLRDateFrom));
+                query.lte("lr_created_date", convertToSearchFilterDateTimeTo(searchLRDateTo));
+            }
+
+            if (searchFilters.consignorName) {
+                query.ilike("consignor_name", "%" + searchFilters.consignorName + "%");
+            }
+            if (searchFilters.consigneeName) {
+                query.ilike("consignee_name", "%" + searchFilters.consigneeName + "%");
+            }
+            if (searchFilters.fromCity) {
+                query.ilike("pickup_point_city", "%" + searchFilters.fromCity + "%");
+            }
+            if (searchFilters.toCity) {
+                query.ilike("drop_point_city", "%" + searchFilters.toCity + "%");
+            }
+            if (searchFilters.driverName) {
+                query.ilike("driver_details", "%" + searchFilters.driverName + "%");
+            }
+            if (searchFilters.status) {
+                query.ilike("status", "%" + searchFilters.status + "%");
+            }
+
+            let { data: lrData, error } = await query.order(
+                    "lr_created_date",
+                    { ascending: false, nullsFirst: false }
+                );
+
+            // if (facility) {
+            //     allApplicantsView = allApplicantsView.filter(
+            //         (i) => i.facility_name === facility
+            //     );
+            // }
+
+            if (lrData) {
+                lrData.forEach(
+                    (i) => (i.lr_created_date = dateFormat(i.lr_created_date))
+                );
 
                 // creating new array object for CSV export
                 const lrDataCSV = lrData.map(({ id, lr_created_by,...rest }) => ({ ...rest }));
@@ -254,169 +357,63 @@ const LR = () => {
                 }
             );
             console.warn(e);
+            setIsLoading(false);
+            setLoadingText("");
         }
     }
-    // const handlePageChange = (newPage) => {
-    //     setCurrentPage(newPage);
-    // };
-
-    // function perPageHandler(event) {
-    //     setCurrentPage(1);
-    //     const selectedValue = JSON.parse(event.target.value);
-    //     const end = selectedValue.end;
-
-    //     setPageSize(end);
-    // }
 
     useEffect(() => {
-        fetchedLR(searchFilters);
-        // if (facility) {
-        //     localStorage.setItem("facility", facility);
-        // } else {
-        //     localStorage.setItem("facility", "");
-        // }
-    }, [
-        // facility,
-        // pageSize,
-        // currentPage
-    ]);
-
-    const setNoteData = async (applicationId) => {
-        // reset NoteText
-        setNoteText("");
-        setApplicationId("");
-
-        const { data, error } = await supabase
-            .from("applicants_view")
-            .select("*")
-            .eq("application_id", applicationId);
-
-        if (data) {
-            setNoteText(data[0].notes);
-            setApplicationId(data[0].application_id);
+        if (fetchedLRdataCSV && fetchedLRdataCSV.length > 0) {
+            csvLink.current.link.click();
+            setIsLoading(false);
+            setLoadingText("");
         }
-    };
-
-    const ViewCV = async (applicationId) => {
-        const { data, error } = await supabase
-            .from("applicants_view")
-            .select("*")
-            .eq("application_id", applicationId);
-
-        if (data) {
-            window.open(
-                data[0].doc_dwnld_url.slice(14, -2),
-                "_blank",
-                "noreferrer"
-            );
-        }
-        if (error) {
-            toast.error(
-                "Error while retrieving CV.  Please try again later or contact tech support!",
-                {
-                    position: "bottom-right",
-                    autoClose: false,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                }
-            );
-        }
-    };
-
-    const DownloadHandler = async (applicant) => {
-        const { data, error } = await supabase
-            .from("applicants_view")
-            .select("*")
-            .eq("application_id", applicant.application_id);
-
-        if (data) {
-            const fileName = data[0].doc_dwnld_url.slice(14, -2);
-            fetch(fileName, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/pdf",
-                },
-            })
-                .then((response) => response.blob())
-                .then((blob) => {
-                    const url = window.URL.createObjectURL(new Blob([blob]));
-                    const link = document.createElement("a");
-                    link.href = url;
-                    link.download = fileName;
-                    document.body.appendChild(link);
-                    link.click();
-                    link.parentNode.removeChild(link);
-                });
-            // window.open(data[0].doc_dwnld_url.slice(14, -2), '_blank', 'noreferrer');
-        }
-        if (error) {
-            toast.error(
-                "Error while retrieving CV.  Please try again later or contact tech support!",
-                {
-                    position: "bottom-right",
-                    autoClose: true,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                }
-            );
-        }
-    };
-
-    const determineBadgeColor = (status) => {
-        switch (status?.toLowerCase()) {
-            case "sent":
-                return { color: "orange", tag: "Sent" };
-            case "read":
-                return { color: "#87CEEB", tag: "Read" };
-            case "completed":
-                return { color: "green", tag: "Signed" };
-            case "signed":
-                return { color: "green", tag: "Signed" };
-            default:
-                return { color: "red", tag: "Not Sent" };
-        }
-    };
-
-    const CSVSmartLinx = async (applicant) => {
-        fetch("/api/csv", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(applicant),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                toast.success("Sent to SmartLinx!");
-            })
-            .catch((error) => {
-                console.error("Fetch error:", error);
-                toast.error(
-                    "Error while sending CSV to SmartLinx.  Please try again later or contact tech support!"
-                );
-                // Handle errors here, such as displaying an error message to the user
-            });
-    };
+    }, [ fetchedLRdataCSV ]);
 
     return (
         <>
             <div>
-                <div
-                    className="widget-title"
-                    style={{ fontSize: "1.5rem", fontWeight: "500" }}
-                >
-                    <b>All LRs!</b>
-                </div>
+                <Form>
+                    <div style={{ fontSize: "1.5rem", fontWeight: "500", padding: "20px 20px 0px 20px" }}>
+                        <Row>
+                            <Col>
+                                <b>All LRs!</b>
+                            </Col>
+                            <Col style={{ display: "relative", textAlign: "right" }}>
+                                <Form.Group className="chosen-single form-input chosen-container mb-3">
+                                    { user.role === "SUPER_ADMIN" ?
+                                        <Button
+                                            variant="success"
+                                            onClick={() => Router.push("/employers-dashboard/add-lr")}
+                                            className="btn btn-add-lr btn-sm text-nowrap m-1"
+                                        >
+                                            Add LR
+                                        </Button>
+                                    : "" }
+                                    <button
+                                        className="btn btn-export-csv btn-sm text-nowrap m-1"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            fetchedCSV(searchFilters);
+                                        }}
+                                    >
+                                        Export to CSV
+                                    </button>
+                                    <CSVLink
+                                        data={fetchedLRdataCSV}
+                                        filename={"Raftaar-LR-" + new Date().toLocaleDateString() + ".csv"}
+                                        className='hidden'
+                                        ref={csvLink}
+                                        target='_blank'
+                                    />
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                    </div>
+                </Form>
+
+                <Spinner isLoading={isLoading} loadingText={loadingText} />
+
                 { lRStatusReferenceOptions != null ? (
                     <Form>
                         <Form.Label
@@ -468,7 +465,7 @@ const LR = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                fetchedLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -487,7 +484,7 @@ const LR = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                fetchedLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -506,7 +503,7 @@ const LR = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                fetchedLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -525,7 +522,7 @@ const LR = () => {
                                         }}
                                         onKeyDown={(e) => {
                                             if (e.key === "Enter") {
-                                                findLR(searchFilters);
+                                                fetchedLR(searchFilters);
                                             }
                                         }}
                                     />
@@ -569,7 +566,7 @@ const LR = () => {
                                             variant="primary"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                findLR(searchFilters, searchLRDateFrom, searchLRDateTo);
+                                                fetchedLR(searchFilters, searchLRDateFrom, searchLRDateTo);
                                             }}
                                             className="btn btn-submit btn-sm text-nowrap m-1"
                                         >
@@ -588,26 +585,66 @@ const LR = () => {
                                         </Button>
                                     </Form.Group>
                                 </Col>
+                            </Row>
+                            <Row className="mx-3">
                                 <Col style={{ display: "relative", textAlign: "right" }}>
-                                    <Form.Group className="chosen-single form-input chosen-container mb-3">
-                                        { fetchedLRdataCSV.length > 0 ?
-                                            <CSVLink
-                                                data={fetchedLRdataCSV}
-                                                className="btn btn-export-csv btn-sm text-nowrap m-1"
-                                                filename={"Raftaar-LR-" + new Date().toLocaleDateString() + ".csv"}
+                                    <Form.Group className="chosen-single form-input chosen-container mb-3 pagination-panel">
+                                        <span
+                                            style={{ marginRight: "5px", fontWeight: "100" }}
+                                        >
+                                            Total Record: {totalRecords} |
+                                        </span>
+                                        <span style={{ fontWeight: "100" }}>Show:
+                                            <select
+                                                className="pagination-page-selector"
+                                                onChange={perPageHandler}
+                                                style={{ border: "1px solid black", padding: "1px", marginLeft: "5px" }}
                                             >
-                                                Export to CSV
-                                            </CSVLink>
-                                        : "" }
-                                        { user.id === "NnxOeP2axndJjCYRX74985oipdo2" ?
-                                            <Button
-                                                variant="success"
-                                                onClick={() => Router.push("/employers-dashboard/add-lr")}
-                                                className="btn btn-add-lr btn-sm text-nowrap m-1"
-                                            >
-                                                Add LR
-                                            </Button>
-                                        : "" }
+                                                <option
+                                                    value={JSON.stringify({
+                                                        start: 0,
+                                                        end: 10,
+                                                    })}
+                                                >
+                                                    10 Per page
+                                                </option>
+                                                <option
+                                                    value={JSON.stringify({
+                                                        start: 0,
+                                                        end: 30,
+                                                    })}
+                                                >
+                                                    30 Per page
+                                                </option>
+                                                <option
+                                                    value={JSON.stringify({
+                                                        start: 0,
+                                                        end: 50,
+                                                    })}
+                                                >
+                                                    50 Per page
+                                                </option>
+                                                <option
+                                                    value={JSON.stringify({
+                                                        start: 0,
+                                                        end: 100,
+                                                    })}
+                                                >
+                                                    100 Per page
+                                                </option>
+                                            </select>
+                                        </span>
+                                        <span>
+                                                {!hidePagination ? (
+                                                    <Pagination
+                                                        currentPage={currentPage}
+                                                        totalRecords={totalRecords}
+                                                        pageSize={pageSize}
+                                                        onPageChange={handlePageChange}
+                                                    />
+                                                ) : null}
+                                            </span>
+                                        
                                     </Form.Group>
                                 </Col>
                             </Row>

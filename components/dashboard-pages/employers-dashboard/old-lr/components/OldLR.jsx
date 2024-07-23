@@ -162,8 +162,9 @@ const OldLR = () => {
                 setFetchedLRdata(lrData);
                 fetchedTotalLRCounts(searchFilters);
                 setIsLoading(false);
+            } else {
+                setIsLoading(false);
             }
-            setIsLoading(false);
         } catch (e) {
             toast.error(
                 "System is unavailable.  Please try again later or contact tech support!",
