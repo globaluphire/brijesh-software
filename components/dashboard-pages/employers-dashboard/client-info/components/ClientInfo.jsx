@@ -268,7 +268,7 @@ const ClientInfo = () => {
                                     {/* End .job-info */}
 
                                     <ul className="job-other-info">
-                                        <li className="time">
+                                        <li className="privacy">
                                             GSTIN: {fetchedClientData.client_gst ? fetchedClientData.client_gst : "-"}
                                         </li>
                                         <li className="time">
