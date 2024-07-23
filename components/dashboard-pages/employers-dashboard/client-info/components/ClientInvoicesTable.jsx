@@ -12,7 +12,7 @@ import { convertToFullDateFormat } from "../../../../../utils/convertToFullDateF
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 
-const ClientInvoicesTable = ({ fetchedInvoiceData }) => {
+const ClientInvoicesTable = ({ fetchedInvoiceData, userKeyID }) => {
     const router = useRouter();
     const user = useSelector((state) => state.candidate.user);
 
@@ -35,7 +35,7 @@ const ClientInvoicesTable = ({ fetchedInvoiceData }) => {
                         </Col>
                         <Col style={{ display: "relative", textAlign: "right" }}>
                             <Form.Group className="chosen-single form-input chosen-container mb-3">
-                                { fetchedInvoiceData && fetchedInvoiceData.length > 0 ?
+                                { fetchedInvoiceData && fetchedInvoiceData.length > 0 && !userKeyID ?
                                     <Link
                                         href={`/employers-dashboard/clients/total-billings/${fetchedInvoiceData[0].client_number}`}
                                         style={{ textDecoration: "underline" }}

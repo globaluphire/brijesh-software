@@ -420,6 +420,29 @@ Job Section
   transition: all 300ms ease;
 }
 
+.show-initials {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 3.1ch;
+  // font-family: monospace;
+  font-size: 36px;
+  position: relative;
+  letter-spacing: 3ch; /*added*/
+  background-color: lightgrey;
+  margin-left: 20px;
+  border-radius: 50%;
+  padding: 20px;
+}
+.show-initials:after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  letter-spacing: 0; /*added*/
+}
+
 .job-block h4 {
   font-size: 18px;
   color: #202124;
@@ -1354,6 +1377,7 @@ Job Detail Section
   position: relative;
   padding-left: 120px;
   min-height: 51px;
+  margin: auto;
 }
 
 .job-block-seven.style-two .content {
@@ -1373,6 +1397,7 @@ Job Detail Section
 .job-block-seven .company-logo img {
   display: block;
   width: 100%;
+  border-radius: 50%;
 }
 
 .job-block-seven h4 {
@@ -1447,6 +1472,7 @@ Job Detail Section
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
+  margin-left: 20px;
 }
 
 .job-block-seven .btn-box .theme-btn {

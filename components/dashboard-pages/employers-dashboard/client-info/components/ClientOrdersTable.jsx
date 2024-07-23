@@ -11,7 +11,7 @@ import Spinner from "../../../../spinner/spinner";
 import { convertToFullDateFormat } from "../../../../../utils/convertToFullDateFormat";
 import Router, { useRouter } from "next/router";
 
-const ClientOrdersTable = ({ fetchedOrdersData }) => {
+const ClientOrdersTable = ({ fetchedOrdersData, userKeyID }) => {
 
     const determineBadgeColor = (status) => {
         switch (status) {
@@ -44,7 +44,7 @@ const ClientOrdersTable = ({ fetchedOrdersData }) => {
                         </Col>
                         <Col style={{ display: "relative", textAlign: "right" }}>
                             <Form.Group className="chosen-single form-input chosen-container mb-3">
-                                { fetchedOrdersData && fetchedOrdersData.length > 0 ?
+                                { fetchedOrdersData && fetchedOrdersData.length > 0 && !userKeyID ?
                                     <Link
                                         href={`/employers-dashboard/clients/total-orders/${fetchedOrdersData[0].client_number}`}
                                         style={{ textDecoration: "underline" }}

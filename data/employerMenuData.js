@@ -124,15 +124,16 @@ module.exports = [
     //     active: "",
     //     access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     // },
-    // {
-    //   id: 10,
-    //   name: "Change Password",
-    //   icon: "la-lock",
-    //   routePath: "/employers-dashboard/change-password",
-    //   active: "",
-    // },
     {
         id: 13,
+        name: "Users",
+        icon: "la-user-circle",
+        routePath: "/employers-dashboard/users",
+        access: ["SUPER_ADMIN"],
+        active: "",
+    },
+    {
+        id: 14,
         name: "Logout",
         icon: "la-sign-out",
         routePath: "/",
