@@ -32,7 +32,7 @@ const Users = () => {
     const user = useSelector((state) => state.candidate.user);
 
     const [isLoading, setIsLoading] = useState(true);
-    const [loadingText, setLoadingText] = useState("Client Data are loading...");
+    const [loadingText, setLoadingText] = useState("Users Data are loading...");
 
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
     const [fetchedUsersData, setFetchedUsersData] = useState({});
