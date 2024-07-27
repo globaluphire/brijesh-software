@@ -71,6 +71,14 @@ const OrdersChart = ({ orderData, range }) => {
         ],
     };
 
+    const options = {
+        scales: {
+            y: {
+                grace: 20
+            }
+        }
+    };
+
     ChartJS.register(
         CategoryScale,
         LinearScale,
@@ -138,7 +146,7 @@ const OrdersChart = ({ orderData, range }) => {
 
                 <div className="widget-content">
                     <div className="widget-content">
-                        <Bar data={data} />
+                        <Bar data={data} options={options} />
                     </div>
                 </div>
             </div>

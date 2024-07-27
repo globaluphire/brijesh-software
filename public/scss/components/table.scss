@@ -75,10 +75,11 @@ default table
 }
 
 .client-table {
-  padding-top: 10px !important;
+  padding: 10px !important;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.3) !important;
   margin-bottom: 30px;
+  background-color: #fff;
 }
 .client-table:hover {
   box-shadow: 0px 0px 10px 3px rgba(0,0,0,0.3) !important;
@@ -88,4 +89,5 @@ default table
   padding: 10px 0px 0px 10px !important;
   border-radius: 10px;
   box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.3) !important;
+  background-color: #efefef40;
 }
