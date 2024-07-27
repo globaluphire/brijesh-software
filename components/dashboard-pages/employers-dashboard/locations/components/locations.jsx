@@ -589,7 +589,7 @@ const Clients = () => {
                                                     <li>
                                                         <button>
                                                             <a onClick={() => router.push(`/employers-dashboard/location-details/${location.location_number}`)}>
-                                                                <span className="la la-edit" title="Edit Location"></span>
+                                                                <span className="la flaticon-edit" title="Edit Location"></span>
                                                             </a>
                                                         </button>
                                                     </li>
@@ -631,7 +631,7 @@ const Clients = () => {
                                                                     );
                                                                 }}
                                                             >
-                                                                <span className="la la-user"></span>
+                                                                <span className="la flaticon-man"></span>
                                                             </a>
                                                         </button>
                                                     </li>

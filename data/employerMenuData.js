@@ -2,7 +2,7 @@ module.exports = [
     {
         id: 1,
         name: "Dashboard",
-        icon: "la-home",
+        icon: "flaticon-home-1",
         routePath: "/employers-dashboard/dashboard",
         active: "",
         access: ["SUPER_ADMIN"],
@@ -10,7 +10,7 @@ module.exports = [
     {
         id: 2,
         name: "Clients",
-        icon: "la-users",
+        src: "../../images/icons/group.png",
         routePath: "/employers-dashboard/clients",
         active: "",
         access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
@@ -18,7 +18,7 @@ module.exports = [
     {
         id: 3,
         name: "Locations",
-        icon: "la-map-marker-alt",
+        icon: "flaticon-map-locator",
         routePath: "/employers-dashboard/locations",
         active: "",
         access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
@@ -42,7 +42,7 @@ module.exports = [
     {
         id: 6,
         name: "Orders",
-        icon: "la-paper-plane",
+        src: "../../images/icons/package.png",
         routePath: "/employers-dashboard/orders",
         active: "",
         access: ["ADMIN", "SUPER_ADMIN"],
@@ -50,7 +50,8 @@ module.exports = [
     {
         id: 7,
         name: "Billing",
-        icon: "la-file-invoice",
+        // src: "../../images/icons/invoice.png",
+        icon: "flaticon-money",
         routePath: "/employers-dashboard/billing",
         active: "",
         access: ["ADMIN", "SUPER_ADMIN"],
@@ -58,7 +59,8 @@ module.exports = [
     {
         id: 9,
         name: "LR",
-        icon: "la-receipt",
+        // src: "../../images/icons/receipt.png",
+        icon: "flaticon-certificate",
         routePath: "/employers-dashboard/lr",
         active: "",
         access: ["ADMIN", "SUPER_ADMIN"],
@@ -66,7 +68,8 @@ module.exports = [
     {
         id: 10,
         name: "Old Billing",
-        icon: "la-file-invoice",
+        // src: "../../images/icons/invoice.png",
+        icon: "flaticon-money",
         routePath: "/employers-dashboard/old-billing",
         active: "",
         access: ["SUPER_ADMIN"],
@@ -74,7 +77,7 @@ module.exports = [
     {
         id: 11,
         name: "Old LR",
-        icon: "la-receipt",
+        src: "../../images/icons/receipt.png",
         routePath: "/employers-dashboard/old-lr",
         active: "active",
         access: ["SUPER_ADMIN"],
@@ -82,8 +85,17 @@ module.exports = [
     {
         id: 12,
         name: "Ledger",
-        icon: "la-scroll",
+        // src: "../../images/icons/ledger.png",
+        icon: "flaticon-open-magazine",
         routePath: "/employers-dashboard/ledger",
+        active: "",
+        access: ["SUPER_ADMIN"],
+    },
+    {
+        id: 13,
+        name: "Outstanding",
+        icon: "flaticon-confirm-schedule",
+        routePath: "/employers-dashboard/outstanding",
         active: "",
         access: ["SUPER_ADMIN"],
     },
@@ -125,15 +137,15 @@ module.exports = [
     //     access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     // },
     {
-        id: 13,
+        id: 14,
         name: "Users",
-        icon: "la-user-circle",
+        icon: "flaticon-user",
         routePath: "/employers-dashboard/users",
         access: ["SUPER_ADMIN"],
         active: "",
     },
     {
-        id: 14,
+        id: 15,
         name: "Logout",
         icon: "la-sign-out",
         routePath: "/",

@@ -63,7 +63,10 @@ const DashboardEmployerSidebar = () => {
                                         }
                                     }}
                                 >
-                                    <i className={`la ${item.icon}`}></i>{" "}
+                                    { item.icon ?
+                                        <i className={`la ${item.icon}`}></i>
+                                    :   <><i style={{ marginLeft: "5px" }}><img src={item.src} alt="icon" className="" /></i></>   }  
+                                    {" "}
                                     {item.name}
                                 </Link>
                             </li>

@@ -448,6 +448,32 @@ Candidates Section Two
   transition: all 300ms ease;
 }
 
+// todo: replace this approach with tooltip migration
+.option-list li:first-child button:before,
+.option-list li:first-child a:before {
+  position: absolute;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  transform: translateX(-50%);
+  bottom: 100%;
+  margin-bottom: 10px;
+  background: #202124;
+  font-size: 12px;
+  line-height: 16px;
+  color: #ffffff;
+  content: attr(data-text);
+  white-space: nowrap;
+  padding: 5px 15px;
+  border-radius: 4px;
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transition: all 300ms ease;
+  -o-transition: all 300ms ease;
+  transition: all 300ms ease;
+  margin-left: 40px;
+}
+
 .option-list li button:after,
 .option-list li a:after {
   position: absolute;

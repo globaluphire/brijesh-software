@@ -1186,7 +1186,7 @@ const OpenOrderProcess = () => {
                                                                         );
                                                                     }}
                                                                 >
-                                                                    <span className="la la-file-invoice"></span>
+                                                                    <span className="la flaticon-money"></span>
                                                                 </a>
                                                             </button>
                                                         </li>

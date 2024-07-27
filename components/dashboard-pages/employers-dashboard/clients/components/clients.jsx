@@ -628,7 +628,7 @@ const Clients = () => {
                                                     <li>
                                                         <button>
                                                             <a onClick={() => router.push(`/employers-dashboard/client-details/${client.client_number}`)}>
-                                                                <span className="la la-edit" title="Edit Client"></span>
+                                                                <span className="la flaticon-edit" title="Edit Client"></span>
                                                             </a>
                                                         </button>
                                                     </li>
@@ -636,7 +636,7 @@ const Clients = () => {
                                                         <li>
                                                             <button>
                                                                 <a onClick={() => { addClientToLocation(client); }}>
-                                                                    <span className="la la-map-marker-alt" title="Add same Client as Location"></span>
+                                                                    <span className="la flaticon-map-locator" title="Add same Client as Location"></span>
                                                                 </a>
                                                             </button>
                                                         </li>
