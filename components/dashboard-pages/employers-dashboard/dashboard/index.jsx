@@ -8,8 +8,13 @@ import TopCardBlock from "./components/TopCardBlock";
 import CopyrightFooter from "../../CopyrightFooter";
 import MenuToggler from "../../MenuToggler";
 import ReportCounts from "./components/ReportCounts";
+import { useSelector } from "react-redux";
 
 const Index = () => {
+    const user = useSelector((state) => state.candidate.user);
+
+    const greetingTime = require("greeting-time");
+    
     return (
         <div className="page-wrapper dashboard">
             <span className="header-span"></span>
@@ -42,7 +47,7 @@ const Index = () => {
                             <div className="ls-widget">
                                 <div className="tabs-box">
                                     <div className="widget-title">
-                                        <h3><b>Admin Dashboard!</b></h3>
+                                        <h3><b>{ greetingTime(new Date()) }, {user.name}!</b></h3>
                                     </div>
 
                                     <div className="widget-content">
