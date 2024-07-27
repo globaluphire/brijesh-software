@@ -57,14 +57,14 @@ const MobileMenu = () => {
                                 data-bs-toggle="offcanvas"
                                 data-bs-target="#offcanvasMenu"
                             >
-                                <Image
+                                {/* <Image
                                     alt="avatar"
                                     className="thumb"
                                     src="/images/icons/user.svg"
                                     width={15}
                                     height={15}
                                     style={{ marginTop: "-5px" }}
-                                />
+                                /> */}
                                 <span
                                     style={{ marginLeft: "10px" }}
                                     className="name dropdown-toggle1"

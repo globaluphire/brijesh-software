@@ -92,6 +92,7 @@ const Index = () => {
             tabIndex="-1"
             id="offcanvasMenu"
             data-bs-scroll="true"
+            style={{ backgroundColor: "#E9EFFB" }}
         >
             <SidebarHeader />
             {/* End pro-header */}
