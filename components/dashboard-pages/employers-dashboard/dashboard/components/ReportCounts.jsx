@@ -3,13 +3,13 @@ import { supabase } from "../../../../../config/supabaseClient";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
-import { BallTriangle } from "react-loader-spinner";
 import Link from "next/link";
 import { Button, Col, Container, Form, Row, Table } from "react-bootstrap";
 import Spinner from "../../../../spinner/spinner";
 import DateRangePickerComp from "../../../../date/DateRangePickerComp";
 import { addDays, subDays } from "date-fns";
 import { convertToSearchFilterDateTimeFrom, convertToSearchFilterDateTimeTo } from "../../../../../utils/convertToSearchFilterDateTime";
+import OrdersChart from "./OrdersChart";
 
 const ReportCounts = () => {
     // global states
@@ -28,6 +28,11 @@ const ReportCounts = () => {
         }
     ]);
     const [maxDateLimit, setMaxDateLimit] = useState(new Date());
+
+    // states for LRs
+    const [totalUsers, setTotalUsers] = useState(0);
+    const [totalClients, setTotalClients] = useState(0);
+    const [totalLocations, setTotalLocations] = useState(0);
 
     // states for Orders
     const [totalOrders, setTotalOrders] = useState(0);
@@ -53,19 +58,40 @@ const ReportCounts = () => {
     const [totalCreditAmount, setTotalCreditAmount] = useState(0);
 
 
+    async function fetchTopCardData() {
+        // fetch total users
+        const countTotalUsers = await supabase
+            .from("users")
+            .select("*", { count: "exact", head: true });
+        setTotalUsers(countTotalUsers.count);
+
+        // fetch total clients
+        const countTotalClients = await supabase
+            .from("client")
+            .select("*", { count: "exact", head: true });
+        setTotalClients(countTotalClients.count);
+
+        // fetch total locations
+        const countTotalLocations = await supabase
+            .from("location")
+            .select("*", { count: "exact", head: true });
+        setTotalLocations(countTotalLocations.count);
+    };
+
     async function fetchOrderData() {
         setIsLoading(true);
 
         // fetch data for Orders
         const { data: ordersData, error: ordersError } = await supabase
             .from("orders")
-            .select("*")
+            .select("status, order_created_at")
             .neq("order_number", "DEFAULT")
             .gte("order_created_at", convertToSearchFilterDateTimeFrom(range[0].startDate))
-            .lte("order_created_at", convertToSearchFilterDateTimeTo(range[0].endDate));
+            .lte("order_created_at", convertToSearchFilterDateTimeTo(range[0].endDate))
+            .order("order_created_at", { ascending: false });
 
         if (ordersData) {
-            setTotalOrders(ordersData.length);
+            setTotalOrders(ordersData);
             
             // filter by status
             const underPickupProcessCount = ordersData.filter((i) => i.status === "Under pickup process");
@@ -103,7 +129,7 @@ const ReportCounts = () => {
 
         const { data: lrData, error: lrError } = await supabase
             .from("lr")
-            .select("*")
+            .select("status")
             .neq("lr_number", "DEFAULT")
             .gte("lr_created_date", convertToSearchFilterDateTimeFrom(range[0].startDate))
             .lte("lr_created_date", convertToSearchFilterDateTimeTo(range[0].endDate));
@@ -129,7 +155,7 @@ const ReportCounts = () => {
 
         const { data: invoiceData, error: invoiceError } = await supabase
             .from("invoice")
-            .select("*")
+            .select("is_paid, total_amount")
             .gte("invoice_created_at", convertToSearchFilterDateTimeFrom(range[0].startDate))
             .lte("invoice_created_at", convertToSearchFilterDateTimeTo(range[0].endDate));
 
@@ -164,6 +190,9 @@ const ReportCounts = () => {
 
     const fetchDashboardData = async () => {
         setIsLoading(true);
+
+        // fetch Top Card Data
+        fetchTopCardData();
 
         // fetch order data
         fetchOrderData();
@@ -216,30 +245,90 @@ const ReportCounts = () => {
         }
     };
 
+    const cardContent = [
+        {
+            id: 1,
+            icon: "flaticon-user",
+            countNumber: totalUsers,
+            metaName: "Total Registered Users",
+            uiClass: "ui-blue",
+            link: "/employers-dashboard/users",
+        },
+        {
+            id: 2,
+            icon: "flaticon-briefcase",
+            countNumber: totalClients,
+            metaName: "Total Clients",
+            link: "/employers-dashboard/clients",
+            uiClass: "ui-green",
+        },
+        {
+            id: 3,
+            icon: "flaticon-map-locator",
+            countNumber: totalLocations,
+            metaName: "Total Locations",
+            link: "/employers-dashboard/locations",
+            uiClass: "ui-yellow",
+        },
+    ];
+
     return (
         <>
             <Spinner isLoading={isLoading} loadingText={loadingText} />
 
             <div>
                 <Form>
-                    <Row className="mb-5" >
-                        <Col>
-                            <Form.Group as={Col} md="auto" controlId="validationCustom01">
-                                <DateRangePickerComp range={range} setRange={setRange} maxDateLimit={maxDateLimit} />
-                                <Button
-                                    variant="primary"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        fetchDashboardData();
-                                    }}
-                                    className="btn btn-submit btn-sm text-nowrap m-1"
-                                >
-                                    Search
-                                </Button>
-                            </Form.Group>
-                        </Col>
+                    <Row>
+                        {cardContent.map((item) => (
+                            <div
+                                className="ui-block col-xl-3 col-lg-6 col-md-6 col-sm-12"
+                                key={item.id}
+                            >
+                                <Link href={item.link ? item.link : "#"}>
+                                    <div
+                                        className={`ui-item ${item.uiClass}`}
+                                    >
+                                        <div className="left">
+                                            <i className={`icon la ${item.icon}`}></i>
+                                        </div>
+                                        <div className="right">
+                                            <h4>{item.countNumber}</h4>
+                                            <p>{item.metaName}</p>
+                                        </div>
+                                    </div>
+                                </Link>
+                            </div>
+                        ))}
                     </Row>
-                    <div>
+
+                    <div className="report-box">
+                        <Row className="mb-5" >
+                            <Col>
+                                <Form.Group as={Col} md="auto" controlId="validationCustom01">
+                                    <Form.Label
+                                        className="optional"
+                                        style={{
+                                            letterSpacing: "2px",
+                                            fontSize: "12px",
+                                        }}
+                                    >
+                                        REPORTS (FROM - TO)
+                                    </Form.Label> <br />
+                                    <DateRangePickerComp range={range} setRange={setRange} maxDateLimit={maxDateLimit} />
+                                    <Button
+                                        variant="primary"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            fetchDashboardData();
+                                        }}
+                                        className="btn btn-submit btn-sm text-nowrap m-1"
+                                    >
+                                        Search
+                                    </Button>
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                    
                         <Row>
                             <Form.Group as={Col} md="auto" controlId="validationCustom01">
                                 {/* total counts */}
@@ -262,7 +351,7 @@ const ReportCounts = () => {
                                             <tbody style={{ fontSize: "14px" }}>
                                                 <tr>
                                                     <td>Total Orders</td>
-                                                    <td>{totalOrders}</td>
+                                                    <td>{totalOrders.length}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Total LRs</td>
@@ -427,6 +516,14 @@ const ReportCounts = () => {
                                             </tbody>
                                     </Table>
                                 </div>
+                            </Form.Group>
+                        </Row>
+
+                        <Row>
+                            <Form.Group as={Col} md="6" controlId="validationCustom01">
+                                { totalOrders ?
+                                    <OrdersChart orderData={totalOrders} range={range} />
+                                : "" }
                             </Form.Group>
                         </Row>
                     </div>
