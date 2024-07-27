@@ -369,13 +369,14 @@ Login Section
   font-size: 24px;
   line-height: 20px;
   color: #333;
-  background: #ffffff;
+  background: #fefefe;
   margin: 2rem 0 1rem;
 }
 
 .divider span {
   position: relative;
   z-index: 9;
+  background-color: #fefefe;
 }
 
 .divider:before {
@@ -395,7 +396,7 @@ Login Section
   top: 0px;
   height: 20px;
   width: 130px;
-  background: #fff;
+  background: #fefefe;
   // margin-left: -30px;
   content: "";
 }

@@ -193,14 +193,14 @@ const DashboardHeader = () => {
                                 data-bs-toggle="dropdown"
                                 aria-expanded="false"
                             >
-                                <Image
+                                {/* <Image
                                     alt="avatar"
                                     src="/images/icons/user.svg"
                                     width={20}
                                     height={20}
-                                />
+                                /> */}
                                 <span className="name"
-                                    style={{ padding: "12px 0px" }}
+                                    style={{ padding: "12px 0px", color: "#fff" }}
                                 >Hello, {user.name}</span>
                             </a>
 
