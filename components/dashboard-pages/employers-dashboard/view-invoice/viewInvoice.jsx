@@ -4,7 +4,7 @@ import { convertNumberToWords } from "../../../../utils/convertNumberToWords";
 import { ToWords } from "to-words";
 import { useEffect, useState } from "react";
 
-const ViewInvoice = ({ fetchedInvoiceData, fetchedClientData, fetchedOrderData, fetchedLrData }) => {
+const ViewInvoice = ({ fetchedInvoiceData, fetchedClientData, fetchedOrderData, fetchedLrData, fetchedPickupLocationData }) => {
     const [checkedAllStates, setCheckedAllStates] = useState(false);
 
     useEffect(() => {
@@ -12,6 +12,7 @@ const ViewInvoice = ({ fetchedInvoiceData, fetchedClientData, fetchedOrderData, 
     }, [(Object.keys(fetchedInvoiceData).length !== 0 && 
         Object.keys(fetchedOrderData).length !== 0 && 
         fetchedLrData.length !== 0 && 
+        fetchedPickupLocationData.length !== 0 && 
         Object.keys(fetchedClientData).length !== 0)]);
 
     const toWords = new ToWords({
@@ -57,6 +58,7 @@ const ViewInvoice = ({ fetchedInvoiceData, fetchedClientData, fetchedOrderData, 
                                     <span className="optional" style={{ color: "#444343" }}>{fetchedOrderData.pickup_location} to {fetchedOrderData.drop_location}</span> <br />
                                     <span className="optional" style={{ color: "#444343" }}>{fetchedOrderData.quantity}</span> <br />
                                     <span className="optional" style={{ color: "#444343" }}>{fetchedOrderData.material}</span> <br />
+                                    <span className="optional" style={{ color: "#444343" }}>{fetchedPickupLocationData.length > 0 ? fetchedPickupLocationData[0].name_of_pickup_point : ""}</span> <br />
                                     <span className="optional" style={{ color: "#444343" }}>{fetchedOrderData.order_number}</span> <br />
                                     <span className="optional" style={{ color: "#444343" }}>Eway Bill #{fetchedOrderData.eway_number}</span>
                                 </div>

@@ -22,6 +22,7 @@ const Index = () => {
     const [fetchedInvoiceData, setFetchedInvoiceData] = useState({});
     const [fetchedOrderData, setFetchedOrderData] = useState({});
     const [fetchedLrData, setFetchedLrData] = useState([]);
+    const [fetchedPickupLocationData, setFetchedPickupLocationData] = useState([]);
     const [fetchedClientData, setFetchedClientData] = useState({});
 
     const [checkedAllStates, setCheckedAllStates] = useState(false);
@@ -95,6 +96,19 @@ const Index = () => {
                     
                     if (lrData) {
                         setFetchedLrData(lrData);
+
+
+                        // fetch pickup data
+                        const { data: pickupLocationData, error } = await supabase
+                            .from("location")
+                            .select("*")
+
+                            // Filters
+                            .eq("location_id", lrData[0].pickup_location_id);
+                        
+                        if (pickupLocationData) {
+                            setFetchedPickupLocationData(pickupLocationData);
+                        }
                     }
 
                     // fetch order data
@@ -138,6 +152,7 @@ const Index = () => {
     }, [(Object.keys(fetchedInvoiceData).length !== 0 && 
         Object.keys(fetchedOrderData).length !== 0 && 
         fetchedLrData.length !== 0 && 
+        fetchedPickupLocationData.length !== 0 && 
         Object.keys(fetchedClientData).length !== 0)]);
 
     return (
@@ -188,10 +203,11 @@ const Index = () => {
 
                                     <div className="table-outer">
                                         <ViewInvoice
-                                            fetchedInvoiceData={ fetchedInvoiceData }
-                                            fetchedClientData={ fetchedClientData }
-                                            fetchedOrderData={ fetchedOrderData }
-                                            fetchedLrData={ fetchedLrData }
+                                            fetchedInvoiceData = { fetchedInvoiceData }
+                                            fetchedClientData = { fetchedClientData }
+                                            fetchedOrderData = { fetchedOrderData }
+                                            fetchedLrData = { fetchedLrData }
+                                            fetchedPickupLocationData = { fetchedPickupLocationData }
                                         />
                                     </div>
 
