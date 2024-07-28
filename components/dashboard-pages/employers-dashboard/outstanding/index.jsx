@@ -687,6 +687,16 @@ const index = () => {
                                                                                         <td>{getTotalAmountGreaterThanOneDayByClient(outstandingClient)}.00 Dr</td>
                                                                                         <td></td>
                                                                                     </tr>
+                                                                                    <tr>
+                                                                                        <td>&nbsp;</td>
+                                                                                        <td></td>
+                                                                                        <td></td>
+                                                                                        <td></td>
+                                                                                        <td></td>
+                                                                                        <td></td>
+                                                                                        <td></td>
+                                                                                        <td></td>
+                                                                                    </tr>
                                                                                 </>
                                                                             );
                                                                         })}
