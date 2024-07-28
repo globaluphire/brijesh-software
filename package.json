@@ -77,7 +77,9 @@
     "suneditor": "^2.44.10",
     "suneditor-react": "^3.5.0",
     "to-words": "^4.0.1",
-    "twilio": "^4.16.0"
+    "twilio": "^4.16.0",
+    "xlsx": "^0.18.5",
+    "xlsx-populate": "^1.21.0"
   },
   "devDependencies": {
     "eslint": "^8.0.1",

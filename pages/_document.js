@@ -24,7 +24,7 @@ export default function Document() {
 
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-                <script src="//unpkg.com/xlsx/dist/xlsx.full.min.js" type="text/javascript"></script>
+                {/* <script src="//unpkg.com/xlsx/dist/xlsx.full.min.js" type="text/javascript"></script> */}
             </Head>
             <body>
                 <Main />
