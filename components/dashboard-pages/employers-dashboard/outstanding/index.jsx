@@ -671,7 +671,7 @@ const index = () => {
                                                                                                 }
                                                                                                 <td>{outstanding.invoice_created_at ? convertToFullDateFormat(format(outstanding.invoice_created_at, "yyyy-MM-dd"), false) : ""}</td>
                                                                                             </tr>
-                                                                                        )
+                                                                                        );
                                                                                     })}
                                                                                     <tr>
                                                                                         <td></td>
@@ -688,7 +688,7 @@ const index = () => {
                                                                                         <td></td>
                                                                                     </tr>
                                                                                 </>
-                                                                            )
+                                                                            );
                                                                         })}
                                                                         <tr>
                                                                             <td></td>
