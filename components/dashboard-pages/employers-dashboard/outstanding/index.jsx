@@ -2,6 +2,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable prefer-const */
 /* eslint-disable dot-notation */
+/* eslint-disable no-irregular-whitespace */
 import MobileMenu from "../../../header/MobileMenu";
 import DashboardHeader from "../../../header/DashboardHeader";
 import LoginPopup from "../../../common/form/login/LoginPopup";
@@ -22,8 +23,8 @@ import { toast } from "react-toastify";
 import { supabase } from "../../../../config/supabaseClient";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { convertToSearchFilterDateTimeFrom, convertToSearchFilterDateTimeTo } from "../../../../utils/convertToSearchFilterDateTime";
-import * as XLSX from 'xlsx';
-import * as XlsxPopulate from 'xlsx-populate/browser/xlsx-populate';
+import * as XLSX from "xlsx";
+import * as XlsxPopulate from "xlsx-populate/browser/xlsx-populate";
 
 const addSearchFilters = {
     clientName: ""
@@ -80,7 +81,7 @@ const index = () => {
         let lessThanOneDay = 0;
         for (let i=0; i<outstandingClient.length; i++) {
             if (((todayDate.getTime() - new Date(outstandingClient[i].invoice_created_at).getTime()) / (1000 * 60 * 60 * 24)) < 1) {
-                lessThanOneDay += outstandingClient[i].total_amount
+                lessThanOneDay += outstandingClient[i].total_amount;
             }
         }
 
@@ -91,7 +92,7 @@ const index = () => {
         let greaterThanOneDay = 0;
         for (let i=0; i<outstandingClient.length; i++) {
             if (((todayDate.getTime() - new Date(outstandingClient[i].invoice_created_at).getTime()) / (1000 * 60 * 60 * 24)) > 1) {
-                greaterThanOneDay += outstandingClient[i].total_amount
+                greaterThanOneDay += outstandingClient[i].total_amount;
             }
         }
 
@@ -103,9 +104,9 @@ const index = () => {
         let greaterThanOneDay = 0;
         for (let i=0; i<outstandingData.length; i++) {
             if (((todayDate.getTime() - new Date(outstandingData[i].invoice_created_at).getTime()) / (1000 * 60 * 60 * 24)) < 1) {
-                lessThanOneDay += outstandingData[i].total_amount
+                lessThanOneDay += outstandingData[i].total_amount;
             } else {
-                greaterThanOneDay += outstandingData[i].total_amount
+                greaterThanOneDay += outstandingData[i].total_amount;
             }
         }
 
@@ -116,7 +117,7 @@ const index = () => {
     function getTotalAmount (outstandingClient) {
         let totalAmount = 0;
         for (let i=0; i<outstandingClient.length; i++) {
-            totalAmount += outstandingClient[i].total_amount
+            totalAmount += outstandingClient[i].total_amount;
         }
         return totalAmount;
     };
@@ -137,19 +138,19 @@ const index = () => {
                     .lte("invoice_created_at", convertToSearchFilterDateTimeTo(searchInvoiceDateTo));
 
                     if (selectedClient.length > 0) {
-                        query.eq("client_name", selectedClient)
+                        query.eq("client_name", selectedClient);
                     }
 
                 let { data: outstandingData, error } = await query;
 
                 if (outstandingData) {
-                    getDateComparedTotalAmount(outstandingData)
+                    getDateComparedTotalAmount(outstandingData);
                     setTbodyCellCounter(outstandingData.length);
 
                     const sortedOutstandingData = outstandingData.reduce((acc, cv) => {
-                        if(acc[cv.client_name] && acc[cv.client_name].length > 0) acc[cv.client_name].push(cv)
+                        if(acc[cv.client_name] && acc[cv.client_name].length > 0) acc[cv.client_name].push(cv);
                         else acc[cv.client_name] = [cv];
-                        return acc
+                        return acc;
                     }, {});
 
                     console.log(sortedOutstandingData);
@@ -257,7 +258,7 @@ const index = () => {
         const view = new Uint8Array(buf);
 
         for (let i = 0; i !== s.length; ++i) {
-            view[i] = s.charCodeAt(i)
+            view[i] = s.charCodeAt(i);
         }
 
         return buf;
@@ -266,14 +267,14 @@ const index = () => {
     const workbook2blob = (workbook) => {
 
         const wopts = {
-            bookType: 'xlsx',
-            type: 'binary'
-        }
+            bookType: "xlsx",
+            type: "binary"
+        };
 
         const wbout = XLSX.write(workbook, wopts);
 
         const blob = new Blob([s2ab(wbout)], {
-            type: 'application/octet-stream',
+            type: "application/octet-stream",
         });
 
         return blob;
@@ -282,9 +283,9 @@ const index = () => {
     const createDownloadData = () => {
         handleExport().then(url => {
             console.log(url);
-            const downloadFile = document.createElement('a');
-            downloadFile.setAttribute('href', url);
-            downloadFile.setAttribute('download', 'Outstanding-report.xlsx');
+            const downloadFile = document.createElement("a");
+            downloadFile.setAttribute("href", url);
+            downloadFile.setAttribute("download", "Outstanding-report.xlsx");
             downloadFile.click();
             downloadFile.remove();
         });
@@ -299,14 +300,14 @@ const index = () => {
             skipHeader: true,
         });
 
-        XLSX.utils.book_append_sheet(wb, sheet, 'Outstanding Report');
+        XLSX.utils.book_append_sheet(wb, sheet, "Outstanding Report");
 
         const workbookBlob = workbook2blob(wb);
 
         const dataInfo = {
-            titleCell: 'A2:A3',
-            firstTitleRange: 'A4:H4',
-            lastTitleRange: 'A5:H5',
+            titleCell: "A2:A3",
+            firstTitleRange: "A4:H4",
+            lastTitleRange: "A5:H5",
             tbodyRange: `A6:H${6 + tbodyCellCounter + (Object.values(fetchedOutstandingData).length * 2)}`,
             tbodyDateRange: `A6:A${6 + tbodyCellCounter + (Object.values(fetchedOutstandingData).length * 2)}`,
             tbodyPartyNameRange: `C6:C${6 + tbodyCellCounter + (Object.values(fetchedOutstandingData).length * 2)}`,
@@ -331,56 +332,56 @@ const index = () => {
         return XlsxPopulate.fromDataAsync(workbookBlob).then(workbook => {
             workbook.sheets().forEach(sheet => {
                 // sheet.useRange.style({
-                //     fontFamily: 'Arial',
-                //     verticalAlignment: 'center',
+                //     fontFamily: "Arial",
+                //     verticalAlignment: "center",
                 // });
                 
-                sheet.column('A').width(25);
-                sheet.column('B').width(10);
-                sheet.column('C').width(35);
-                sheet.column('D').width(10);
-                sheet.column('E').width(10);
-                sheet.column('F').width(10);
-                sheet.column('G').width(10);
-                sheet.column('H').width(10);
+                sheet.column("A").width(25);
+                sheet.column("B").width(10);
+                sheet.column("C").width(35);
+                sheet.column("D").width(10);
+                sheet.column("E").width(10);
+                sheet.column("F").width(10);
+                sheet.column("G").width(10);
+                sheet.column("H").width(10);
 
                 // top 2 cells - company name and date
                 sheet.range(dataInfo.titleCell).style({
-                    fontFamily: 'Arial',
+                    fontFamily: "Arial",
                     fontSize: "12px",
                     bold: true,
-                    horizontalAlignment: 'center',
-                    verticalAlignment: 'center',
-                    // fill: 'FFFD04',
+                    horizontalAlignment: "center",
+                    verticalAlignment: "center",
+                    // fill: "FFFD04",
                     border: true
                 });
 
                 // header
                 sheet.range(dataInfo.firstTitleRange).style({
-                    fontFamily: 'Arial',
+                    fontFamily: "Arial",
                     fontSize: "10px",
                     bold: true,
-                    horizontalAlignment: 'center',
-                    verticalAlignment: 'center',
+                    horizontalAlignment: "center",
+                    verticalAlignment: "center",
                     topBorder: true,
-                    // fill: 'FFFD04'
+                    // fill: "FFFD04"
                 });
                 sheet.range(dataInfo.lastTitleRange).style({
-                    fontFamily: 'Arial',
+                    fontFamily: "Arial",
                     fontSize: "10px",
                     bold: true,
-                    horizontalAlignment: 'center',
-                    verticalAlignment: 'center',
+                    horizontalAlignment: "center",
+                    verticalAlignment: "center",
                     bottomBorder: true,
-                    // fill: 'FFFD04'
+                    // fill: "FFFD04"
                 });
 
                 // body
                 sheet.range(dataInfo.tbodyRange).style({
-                    fontFamily: 'Arial',
+                    fontFamily: "Arial",
                     fontSize: "10px",
-                    horizontalAlignment: 'center',
-                    verticalAlignment: 'center',
+                    horizontalAlignment: "center",
+                    verticalAlignment: "center",
                 });
                 // body due amounts
                 sheet.range(dataInfo.tbodyDueAmountRange).style({
@@ -409,19 +410,19 @@ const index = () => {
     };
 
     // exportCSV(headers, values, fileName) {
-    //           let csv = '';
-    //           const header = headers.join(',');
-    //           const value = values.map((o) => Object.values(o).join(',')).join('\n');
+    //           let csv = "";
+    //           const header = headers.join(",");
+    //           const value = values.map((o) => Object.values(o).join(",")).join("\n");
     //      
-    //           csv += header + '\n' + value;
-    //           const link = document.createElement('a');
-    //           link.id = 'download-csv';
-    //           link.setAttribute('href', 'data:text/plain;charset=utf-8,%EF%BB%BF' + encodeURIComponent(csv));
-    //           // link.setAttribute('download', this.locale ? 'accounts.csv' : 'comptes.csv');
-    //           link.setAttribute('download', fileName);
+    //           csv += header + "\n" + value;
+    //           const link = document.createElement("a");
+    //           link.id = "download-csv";
+    //           link.setAttribute("href", "data:text/plain;charset=utf-8,%EF%BB%BF" + encodeURIComponent(csv));
+    //           // link.setAttribute("download", this.locale ? "accounts.csv" : "comptes.csv");
+    //           link.setAttribute("download", fileName);
     //           document.body.appendChild(link);
-    //           document.querySelector('#download-csv').click();
-    //           document.querySelector('#download-csv').remove();
+    //           document.querySelector("#download-csv").click();
+    //           document.querySelector("#download-csv").remove();
     //         },
     return (
         <div className="page-wrapper dashboard">
