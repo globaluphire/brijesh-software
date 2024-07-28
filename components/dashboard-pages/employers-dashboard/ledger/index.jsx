@@ -208,6 +208,7 @@ const index = () => {
 
         const wopts = {
             bookType: "xlsx",
+            bookSST: false,
             type: "binary"
         };
 
