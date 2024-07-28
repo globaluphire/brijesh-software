@@ -22,6 +22,8 @@ import { toast } from "react-toastify";
 import { supabase } from "../../../../config/supabaseClient";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { convertToSearchFilterDateTimeFrom, convertToSearchFilterDateTimeTo } from "../../../../utils/convertToSearchFilterDateTime";
+import * as XLSX from "xlsx";
+import * as XlsxPopulate from "xlsx-populate/browser/xlsx-populate";
 
 const addSearchFilters = {
     clientName: ""
@@ -73,7 +75,7 @@ const index = () => {
         setIsLoading(true);
         setLoadingText("Finding Ledger...");
 
-        if (searchInvoiceDateFrom && searchInvoiceDateTo && selectedClient) {
+        if (searchInvoiceDateFrom && searchInvoiceDateTo && selectedClient.length > 0) {
             // fetch Ledger
             try {
 
@@ -190,14 +192,174 @@ const index = () => {
         fetchedClientNames();
     }, []);
 
-    const handleSubmit = (e) => {
-        var wb = XLSX.utils.table_to_book(document.getElementById("ledgerTable"));
-        XLSX.writeFile(
-            wb,
-            "Ledger-" + selectedClient + "-" + format(searchInvoiceDateFrom, "yyyy_MM_dd") + "-" + format(searchInvoiceDateTo, "yyyy_MM_dd") + ".xlsx"
-            // {cellStyles: true}
-        );
-        return false;
+    const s2ab = (s) => {
+        const buf = new ArrayBuffer(s.length);
+
+        const view = new Uint8Array(buf);
+
+        for (let i = 0; i !== s.length; ++i) {
+            view[i] = s.charCodeAt(i);
+        }
+
+        return buf;
+    };
+
+    const workbook2blob = (workbook) => {
+
+        const wopts = {
+            bookType: "xlsx",
+            type: "binary"
+        };
+
+        const wbout = XLSX.write(workbook, wopts);
+
+        const blob = new Blob([s2ab(wbout)], {
+            type: "application/octet-stream",
+        });
+
+        return blob;
+    };
+
+    const createDownloadData = () => {
+        handleExport().then(url => {
+            console.log(url);
+            const downloadFile = document.createElement("a");
+            downloadFile.setAttribute("href", url);
+            downloadFile.setAttribute("download", "Raftaar-Ledger.xlsx");
+            downloadFile.click();
+            downloadFile.remove();
+        });
+    };
+
+    const handleExport = (e) => {
+        
+        var wb = XLSX.utils.book_new();
+        
+        // create a worksheet
+        const sheet = XLSX.utils.table_to_sheet(document.getElementById("ledgerTable"), {
+            skipHeader: true,
+        });
+
+        XLSX.utils.book_append_sheet(wb, sheet, "Ledger");
+
+        const workbookBlob = workbook2blob(wb);
+
+        const dataInfo = {
+            titleCell: "A2:A3",
+            firstTitleRange: "C4:C6",
+            lastTitleRange: "C8:C10",
+            theaderRange: "A12:F12",
+            tbodyRange: `A13:F${13 + fetchedLedgerData.length + 2}`,
+            // tbodyDateRange: `A6:A${6 + tbodyCellCounter + (Object.values(fetchedOutstandingData).length * 2)}`,
+            // tbodyPartyNameRange: `C6:C${6 + tbodyCellCounter + (Object.values(fetchedOutstandingData).length * 2)}`,
+            // tbodyDueAmountRange: `E4:G${6 + tbodyCellCounter + (Object.values(fetchedOutstandingData).length * 2)}`,
+            // tbodyClientTotalDueAmountRange: `D${6 + tbodyCellCounter + (Object.values(fetchedOutstandingData).length * 3)}
+            //                                 :G${6 + tbodyCellCounter + (Object.values(fetchedOutstandingData).length * 3)}`,
+            tbodyLastRowRange: `A${13 + fetchedLedgerData.length + 2}:F${13 + fetchedLedgerData.length + 2}`,
+        };
+
+        return addStyles(workbookBlob, dataInfo);
+
+
+        // XLSX.writeFile(
+        //     wb,
+        //     "Outstanding-" + selectedClient + "-" + format(searchInvoiceDateFrom, "yyyy_MM_dd") + "-" + format(searchInvoiceDateTo, "yyyy_MM_dd") + ".xlsx"
+        //     // {cellStyles: true}
+        // );
+        // return false;
+    };
+
+    const addStyles = (workbookBlob, dataInfo) => {
+        return XlsxPopulate.fromDataAsync(workbookBlob).then(workbook => {
+            workbook.sheets().forEach(sheet => {
+
+                sheet.column("A").width(15);
+                sheet.column("B").width(20);
+                sheet.column("C").width(15);
+                sheet.column("D").width(15);
+                sheet.column("E").width(15);
+                sheet.column("F").width(15);
+
+                sheet.row("3").height(60);
+                sheet.row("5").height(30);
+                sheet.row("9").height(100);
+
+                // top 2 cells - company name and date
+                sheet.range(dataInfo.titleCell).style({
+                    fontFamily: "Arial",
+                    fontSize: "12px",
+                    bold: true,
+                    horizontalAlignment: "center",
+                    verticalAlignment: "center",
+                    // fill: "FFFD04",
+                    wrapText: true
+                });
+
+                // header
+                sheet.range(dataInfo.firstTitleRange).style({
+                    fontFamily: "Arial",
+                    fontSize: "10px",
+                    bold: true,
+                    horizontalAlignment: "center",
+                    verticalAlignment: "center",
+                    // topBorder: true,
+                    // fill: "FFFD04",
+                    wrapText: true
+                });
+                sheet.range(dataInfo.lastTitleRange).style({
+                    fontFamily: "Arial",
+                    fontSize: "10px",
+                    bold: true,
+                    horizontalAlignment: "center",
+                    verticalAlignment: "center",
+                    // bottomBorder: true,
+                    // fill: "FFFD04",
+                    wrapText: true
+                });
+                sheet.range(dataInfo.theaderRange).style({
+                    fontFamily: "Arial",
+                    fontSize: "10px",
+                    bold: true,
+                    horizontalAlignment: "center",
+                    verticalAlignment: "center",
+                    // bottomBorder: true,
+                    fill: "FFFD04",
+                    wrapText: true,
+                    topBorder: true,
+                    bottomBorder: true,
+                });
+
+                // body
+                sheet.range(dataInfo.tbodyRange).style({
+                    fontFamily: "Arial",
+                    fontSize: "10px",
+                    horizontalAlignment: "center",
+                    verticalAlignment: "center",
+                });
+                // body due amounts
+                // sheet.range(dataInfo.tbodyDueAmountRange).style({
+                //     bold: true,
+                // });
+                // body party names
+                // sheet.range(dataInfo.tbodyPartyNameRange).style({
+                //     bold: true,
+                // });
+                // body date
+                // sheet.range(dataInfo.tbodyDateRange).style({
+                //     bold: true,
+                // });
+                // body last row
+                sheet.range(dataInfo.tbodyLastRowRange).style({
+                    bold: true,
+                    topBorder: true,
+                    bottomBorder: true,
+                });
+
+
+            });
+
+            return workbook.outputAsync().then(workbookBlob => URL.createObjectURL(workbookBlob));
+        });
     };
 
     return (
@@ -337,6 +499,23 @@ const index = () => {
                                                         {/* End job steps form */}
                                                         { fetchedLedgerData.length > 0 ?
                                                             <>
+                                                                {/* Form Submit Buttons Block Starts */}
+                                                                <Row className="mt-3">
+                                                                    <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mx-3 mb-1">
+                                                                        <Button
+                                                                            type="submit"
+                                                                            variant="success"
+                                                                            onClick={(e) => {
+                                                                                e.preventDefault();
+                                                                                createDownloadData(e);
+                                                                            }}
+                                                                            className="btn btn-add-lr btn-sm text-nowrap m-1"
+                                                                        >
+                                                                            Export Ledger
+                                                                        </Button>
+                                                                    </Form.Group>
+                                                                </Row>
+
                                                                 <table id="ledgerTable" class="default-table manage-job-table ledger-table">
                                                                     <thead>
                                                                     </thead>
@@ -357,7 +536,7 @@ const index = () => {
                                                                             <td></td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <td colspan="2">{fetchedLedgerData.length > 0 ? fetchedLedgerData[0].client_name.toUpperCase() : ""} LEDGER ACCOUNT:
+                                                                            <td colspan="2">{fetchedLedgerData.length > 0 ? fetchedLedgerData[0].client_name.toUpperCase() : ""} - LEDGER ACCOUNT:
                                                                                 {searchInvoiceDateFrom ? " " + convertToFullDateFormat(format(searchInvoiceDateFrom, "yyyy-MM-dd"), false) : ""}
                                                                                 {searchInvoiceDateTo ? " to " + convertToFullDateFormat(format(searchInvoiceDateTo, "yyyy-MM-dd"), false) : ""}
                                                                             </td>
@@ -498,7 +677,7 @@ const index = () => {
                                                                             variant="success"
                                                                             onClick={(e) => {
                                                                                 e.preventDefault();
-                                                                                handleSubmit(e);
+                                                                                createDownloadData(e);
                                                                             }}
                                                                             className="btn btn-add-lr btn-sm text-nowrap m-1"
                                                                         >
@@ -506,9 +685,8 @@ const index = () => {
                                                                         </Button>
                                                                     </Form.Group>
                                                                 </Row>
-                                                                {/* Form Submit Buttons Block Ends */}
                                                             </>
-                                                        : "" }
+                                                        : <h5>There is no invoice exists in given Search Criteria.</h5> }
                                                     </div>
                                                 </div>
                                             </div>

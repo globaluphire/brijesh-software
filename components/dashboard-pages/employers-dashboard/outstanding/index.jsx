@@ -285,7 +285,7 @@ const index = () => {
             console.log(url);
             const downloadFile = document.createElement("a");
             downloadFile.setAttribute("href", url);
-            downloadFile.setAttribute("download", "Outstanding-report.xlsx");
+            downloadFile.setAttribute("download", "Raftaar-Outstanding-report.xlsx");
             downloadFile.click();
             downloadFile.remove();
         });
@@ -622,7 +622,7 @@ const index = () => {
                                                                             <td>Party's Name</td>
                                                                             <td>Opening</td>
                                                                             <td>Pending</td>
-                                                                            <td>(1 day)</td>
+                                                                            <td>(&lt;1 day)</td>
                                                                             <td>(1-31 day)</td>
                                                                             <td>Due On</td>
                                                                         </tr>
@@ -721,7 +721,7 @@ const index = () => {
                                                                 </Row>
                                                                 {/* Form Submit Buttons Block Ends */}
                                                             </>
-                                                        : "" }
+                                                        : <h5>There is no Outstanding in given Search Criteria.</h5> }
                                                     </div>
                                                 </div>
                                             </div>
