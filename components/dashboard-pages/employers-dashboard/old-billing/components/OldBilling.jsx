@@ -228,7 +228,7 @@ const OldBilling = () => {
                 query = supabase
                     .from("invoice")
                     .select("*")
-                    .eq("order_id", "24189c03-dfd1-4a71-8b4e-6ea96bceaa2e")
+                    .eq("order_id", "24189c03-dfd1-4a71-8b4e-6ea96bceaa2e");
                     // .lt("invoice_created_at", "2024-07-28");
             }
 
