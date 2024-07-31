@@ -141,7 +141,7 @@ const EditLR = () => {
                 ""
             )}
         </>
-    )
+    );
 };
 
 export default EditLR;
