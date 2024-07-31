@@ -22,7 +22,7 @@ const index = () => {
                 } else {
                     setAuthenticated(true);
                 }
-            })
+            });
     }, []);
 
     return (

@@ -31,7 +31,7 @@ const ClientInformation = () => {
                 } else {
                     setAuthenticated(true);
                 }
-            })
+            });
     }, []);
 
     async function fetchClientOrders() {

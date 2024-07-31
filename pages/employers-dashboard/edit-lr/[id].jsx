@@ -38,7 +38,7 @@ const EditLR = () => {
                 } else {
                     setAuthenticated(true);
                 }
-            })
+            });
     }, []);
 
     const fetchLR = async () => {

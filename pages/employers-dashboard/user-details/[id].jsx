@@ -375,7 +375,7 @@ const UserDetails = () => {
                             <div className="ls-widget">
                                 <div className="tabs-box">
                                     <div className="widget-title">
-                                        <h3><b>Client Details</b></h3>
+                                        <h3><b>User Details</b></h3>
                                     </div>
 
                                     <div className="widget-content">

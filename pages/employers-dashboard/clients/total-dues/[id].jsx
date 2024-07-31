@@ -39,7 +39,7 @@ const ClientBillDue = () => {
                 } else {
                     setAuthenticated(true);
                 }
-            })
+            });
     }, []);
 
     async function fetchClientBilling() {

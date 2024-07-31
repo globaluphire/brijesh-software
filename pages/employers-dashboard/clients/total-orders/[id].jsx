@@ -40,7 +40,7 @@ const ClientOrders = () => {
                 } else {
                     setAuthenticated(true);
                 }
-            })
+            });
     }, []);
 
     async function fetchClientOrders() {
