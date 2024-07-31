@@ -4,8 +4,9 @@ import Router, { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Seo from "../../../components/common/Seo";
 import ClientInfo from "../../../components/dashboard-pages/employers-dashboard/client-info";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { supabase } from "../../../config/supabaseClient";
+import { authenticate } from "../../../utils/authenticate";
 
 const ClientInformation = () => {
 
@@ -17,13 +18,20 @@ const ClientInformation = () => {
     const [loadingText, setLoadingText] = useState("");
 
     const [fetchedClientData, setFetchedClientData] = useState({});
+    const dispatch = useDispatch();
 
+    const [authenticated, setAuthenticated] = useState(false);
     const isEmployer = ["SUPER_ADMIN", "ADMIN", "MEMBER"].includes(user.role);
 
     useEffect(() => {
-        if (!isEmployer) {
-            Router.push("/404");
-        }
+        authenticate(user.id, dispatch)
+            .then((res) => {
+                if (!isEmployer || res === "NO ACCESS") {
+                    Router.push("/404");
+                } else {
+                    setAuthenticated(true);
+                }
+            })
     }, []);
 
     async function fetchClientOrders() {
@@ -46,7 +54,7 @@ const ClientInformation = () => {
     return (
         <>
             {" "}
-            {isEmployer ? (
+            {authenticated ? (
                 <>
                     {" "}
                     <Seo pageTitle="Client Info" />

@@ -1,25 +1,35 @@
 /* eslint-disable no-unused-vars */
 import dynamic from "next/dynamic";
 import Router from "next/router";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Seo from "../../../components/common/Seo";
 import AddClient from "../../../components/dashboard-pages/employers-dashboard/add-client";
 import AddLocation from "../../../components/dashboard-pages/employers-dashboard/add-location";
+import { authenticate } from "../../../utils/authenticate";
 
 const index = () => {
     const user = useSelector((state) => state.candidate.user);
+    const dispatch = useDispatch();
+
+    const [authenticated, setAuthenticated] = useState(false);
     const isEmployer = ["SUPER_ADMIN", "ADMIN", "MEMBER"].includes(user.role);
 
     useEffect(() => {
-        if (!isEmployer) {
-            Router.push("/404");
-        }
+        authenticate(user.id, dispatch)
+            .then((res) => {
+                if (!isEmployer || res === "NO ACCESS") {
+                    Router.push("/404");
+                } else {
+                    setAuthenticated(true);
+                }
+            })
     }, []);
 
     return (
         <>
-            {isEmployer ? (
+            {" "}
+            {authenticated ? (
                 <>
                     {" "}
                     <Seo pageTitle="Add Location" />

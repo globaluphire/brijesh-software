@@ -4,8 +4,9 @@ import Router, { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Seo from "../../../components/common/Seo";
 import UserInfo from "../../../components/dashboard-pages/employers-dashboard/user-info";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { supabase } from "../../../config/supabaseClient";
+import { authenticate } from "../../../utils/authenticate";
 
 const UserInformation = () => {
 
@@ -18,12 +19,20 @@ const UserInformation = () => {
 
     const [fetchedUserData, setFetchedUserData] = useState({});
 
+    const dispatch = useDispatch();
+
+    const [authenticated, setAuthenticated] = useState(false);
     const isEmployer = ["SUPER_ADMIN"].includes(user.role);
 
     useEffect(() => {
-        if (!isEmployer) {
-            Router.push("/404");
-        }
+        authenticate(user.id, dispatch)
+            .then((res) => {
+                if (!isEmployer || res === "NO ACCESS") {
+                    Router.push("/404");
+                } else {
+                    setAuthenticated(true);
+                }
+            })
     }, []);
 
     async function fetchUser() {
@@ -46,7 +55,7 @@ const UserInformation = () => {
     return (
         <>
             {" "}
-            {isEmployer ? (
+            {authenticated ? (
                 <>
                     {" "}
                     <Seo pageTitle="User Info" />

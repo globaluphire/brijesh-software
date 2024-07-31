@@ -463,8 +463,8 @@ const UserDetails = () => {
                                                                     required
                                                                 >
                                                                     <option value="ADMIN">Admin</option>
-                                                                    <option value="CANDIDATE">Candidate</option>
                                                                     <option value="SUPER_ADMIN">Super Admin</option>
+                                                                    <option value="NO ACCESS">NO ACCESS</option>
                                                                 </Form.Select>
                                                             </Form.Group>
                                                         </Row>

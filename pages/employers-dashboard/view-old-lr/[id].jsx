@@ -3,7 +3,7 @@
 import Select from "react-select";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
 import { useState, useEffect, useRef, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LoginPopup from "../../../components/common/form/login/LoginPopup";
@@ -17,6 +17,7 @@ import Router, { useRouter } from "next/router";
 import DefaulHeader2 from "../../../components/header/DefaulHeader2";
 import Index from "../../../components/dashboard-pages/employers-dashboard/view-old-lr/index";
 import { supabase } from "../../../config/supabaseClient";
+import { authenticate } from "../../../utils/authenticate";
 
 const ViewOldLR = () => {
     const user = useSelector((state) => state.candidate.user);
@@ -24,40 +25,58 @@ const ViewOldLR = () => {
     const [fetchedJobData, setFetchedJobData] = useState({});
     const router = useRouter();
     const id = router.query.id;
+    const dispatch = useDispatch();
+
+    const [authenticated, setAuthenticated] = useState(false);
     const isEmployer = ["SUPER_ADMIN", "ADMIN", "MEMBER"].includes(user.role);
 
-    return isEmployer ? (
-        <div className="page-wrapper dashboard">
-            <span className="header-span"></span>
-            {/* <!-- Header Span for hight --> */}
+    useEffect(() => {
+        authenticate(user.id, dispatch)
+            .then((res) => {
+                if (!isEmployer || res === "NO ACCESS") {
+                    Router.push("/404");
+                } else {
+                    setAuthenticated(true);
+                }
+            })
+    }, []);
 
-            <LoginPopup />
-            {/* End Login Popup Modal */}
+    return (
+        <>
+            {" "}
+            {authenticated ? (
+                <div className="page-wrapper dashboard">
+                    <span className="header-span"></span>
+                    {/* <!-- Header Span for hight --> */}
 
-            {showLoginButton ? <DefaulHeader2 /> : <DashboardHeader />}
-            {/* <!--End Main Header --> */}
+                    <LoginPopup />
+                    {/* End Login Popup Modal */}
 
-            <MobileMenu />
-            {/* End MobileMenu */}
+                    {showLoginButton ? <DefaulHeader2 /> : <DashboardHeader />}
+                    {/* <!--End Main Header --> */}
 
-            <DashboardEmployerSidebar />
-            {/* <!-- End User Sidebar Menu --> */}
+                    <MobileMenu />
+                    {/* End MobileMenu */}
 
-            {/* <!-- Dashboard --> */}
-            <section className="user-dashboard">
-                <div className="dashboard-outer">
-                    <Index />   
+                    <DashboardEmployerSidebar />
+                    {/* <!-- End User Sidebar Menu --> */}
+
+                    {/* <!-- Dashboard --> */}
+                    <section className="user-dashboard">
+                        <div className="dashboard-outer">
+                            <Index />   
+                        </div>
+                        {/* End dashboard-outer */}
+                    </section>
+                    {/* <!-- End Dashboard --> */}
+
+                    <CopyrightFooter />
+                    {/* <!-- End Copyright --> */}
                 </div>
-                {/* End dashboard-outer */}
-            </section>
-            {/* <!-- End Dashboard --> */}
-
-            <CopyrightFooter />
-            {/* <!-- End Copyright --> */}
-        </div>
-    ) : (
-        // End page-wrapper
-        ""
+            ) : (
+                ""
+            )};
+        </>
     );
 };
 

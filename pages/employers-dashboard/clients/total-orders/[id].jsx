@@ -3,7 +3,7 @@
 import Select from "react-select";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
 import { useState, useEffect, useRef, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LoginPopup from "../../../../components/common/form/login/LoginPopup";
@@ -17,20 +17,30 @@ import Router, { useRouter } from "next/router";
 import DefaulHeader2 from "../../../../components/header/DefaulHeader2";
 import ClientTotalOrders from "../../../../components/dashboard-pages/employers-dashboard/clients/total-orders/ClientTotalOrders";
 import { supabase } from "../../../../config/supabaseClient";
+import { authenticate } from "../../../../utils/authenticate";
 
 const ClientOrders = () => {
     const user = useSelector((state) => state.candidate.user);
     const showLoginButton = useMemo(() => !user?.id, [user]);
     const router = useRouter();
     const clientNumber = router.query.id;
-    const isEmployer = ["SUPER_ADMIN", "ADMIN"].includes(user.role);
 
     const[fetchedClientData, setFetchedClientData] = useState({});
 
+    const dispatch = useDispatch();
+
+    const [authenticated, setAuthenticated] = useState(false);
+    const isEmployer = ["SUPER_ADMIN", "ADMIN", "MEMBER"].includes(user.role);
+
     useEffect(() => {
-        if (!isEmployer) {
-            Router.push("/404");
-        }
+        authenticate(user.id, dispatch)
+            .then((res) => {
+                if (!isEmployer || res === "NO ACCESS") {
+                    Router.push("/404");
+                } else {
+                    setAuthenticated(true);
+                }
+            })
     }, []);
 
     async function fetchClientOrders() {
@@ -53,7 +63,7 @@ const ClientOrders = () => {
     return (
         <>
             {" "}
-            { isEmployer ? (
+            { authenticated ? (
                 <div className="page-wrapper dashboard">
                     <span className="header-span"></span>
                     {/* <!-- Header Span for hight --> */}
