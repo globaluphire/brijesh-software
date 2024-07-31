@@ -32,7 +32,7 @@ const UserInformation = () => {
                 } else {
                     setAuthenticated(true);
                 }
-            })
+            });
     }, []);
 
     async function fetchUser() {

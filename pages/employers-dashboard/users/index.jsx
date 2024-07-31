@@ -24,7 +24,7 @@ const ClientInformation = () => {
                 } else {
                     setAuthenticated(true);
                 }
-            })
+            });
     }, []);
 
     return (

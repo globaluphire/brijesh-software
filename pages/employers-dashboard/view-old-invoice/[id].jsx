@@ -38,7 +38,7 @@ const ViewLR = () => {
                 } else {
                     setAuthenticated(true);
                 }
-            })
+            });
     }, []);
 
     return (
