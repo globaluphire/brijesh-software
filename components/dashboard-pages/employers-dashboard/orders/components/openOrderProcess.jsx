@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
 /* eslint-disable no-undef */
+/* eslint-disable no-unneeded-ternary */
 /* eslint-disable no-unreachable-loop */
 import candidatesData from "../../../../../data/candidates";
 import Link from "next/link";
@@ -315,7 +316,7 @@ const OpenOrderProcess = () => {
 
         setPageSize(end);
 
-        //set the local storage for pagesize
+        // set the local storage for pagesize
         localStorage.setItem("openOrdersPageSize", end);
 
         setIsLoading(false);
