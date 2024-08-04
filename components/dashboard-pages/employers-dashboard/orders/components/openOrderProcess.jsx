@@ -83,7 +83,7 @@ const OpenOrderProcess = () => {
     const [totalRecords, setTotalRecords] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [hidePagination, setHidePagination] = useState(false);
-    const [pageSize, setPageSize] = useState(50);
+    const [pageSize, setPageSize] = useState(localStorage.getItem("openOrdersPageSize") ? Number(localStorage.getItem("openOrdersPageSize")) : 50);
 
     // for search filters
     const [searchFilters, setSearchFilters] = useState(
@@ -314,6 +314,9 @@ const OpenOrderProcess = () => {
         const end = selectedValue.end;
 
         setPageSize(end);
+
+        //set the local storage for pagesize
+        localStorage.setItem("openOrdersPageSize", end);
 
         setIsLoading(false);
     }
@@ -1058,6 +1061,10 @@ const OpenOrderProcess = () => {
                                             <select
                                                 className="pagination-page-selector"
                                                 onChange={perPageHandler}
+                                                value={JSON.stringify({
+                                                    start: 0,
+                                                    end: pageSize ? pageSize : 50,
+                                                })}
                                                 style={{ border: "1px solid black", padding: "1px", marginLeft: "5px" }}
                                             >
                                                 <option
