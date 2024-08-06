@@ -1087,7 +1087,6 @@ const AddOrder = () => {
                     </div>
                 </div>
                 {/* Drop Details Block ends */}
-
                 
                 {/* Consignor Details Block starts */}
                 <div>
@@ -1330,7 +1329,7 @@ const AddOrder = () => {
                                     >
                                         *
                                     </span>
-                                    Weight(Kg)
+                                    Weight (Kg)
                                 </Form.Label>
                                 <InputGroup>
                                     <Form.Control

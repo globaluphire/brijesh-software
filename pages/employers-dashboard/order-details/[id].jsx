@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-undef */
+/* eslint-disable prefer-const */
 // import Map from "../../../../Map";
 import Select from "react-select";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
