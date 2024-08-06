@@ -816,6 +816,19 @@ const OpenOrderProcess = () => {
         }
     };
 
+    const determinePriorityColor = (priority) => {
+        switch (priority) {
+            case "Low":
+                return { style: "inset 3px 0px 0px 0px green" };
+            case "Normal":
+                return { style: "inset 3px 0px 0px 0px orange" };
+            case "High":
+                return { style: "inset 3px 0px 0px 0px red" };
+            default:
+                return { style: "inset 3px 0px 0px 0px transparent" };
+        }
+    };
+
     const ordersCSV = async (orderData) => {
         fetch("/api/orders/orderCSV", {
             method: "POST",
@@ -1296,7 +1309,7 @@ const OpenOrderProcess = () => {
                                             <td>
                                                 {order.weight? order.weight + "Kg" : "-" }
                                             </td>
-                                            <td>
+                                            <td style={{ boxShadow: determinePriorityColor(order.priority).style }}>
                                                 {order.quantity ? order.quantity : "-" }
                                             </td>
                                             <td>
