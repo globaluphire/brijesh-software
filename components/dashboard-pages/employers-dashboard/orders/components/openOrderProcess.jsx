@@ -1307,7 +1307,7 @@ const OpenOrderProcess = () => {
                                                 {order.company_name ? order.company_name : "-" }
                                             </td>
                                             <td>
-                                                {order.weight? order.weight + "Kg" : "-" }
+                                                {order.weight? order.weight + " Kg" : "-" }
                                             </td>
                                             <td style={{ boxShadow: determinePriorityColor(order.priority).style }}>
                                                 {order.quantity ? order.quantity : "-" }
