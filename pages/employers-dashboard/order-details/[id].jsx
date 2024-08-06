@@ -23,6 +23,14 @@ import { Button, Col, Collapse, Container, Form, InputGroup, Row, Table } from "
 import Spinner from "../../../components/spinner/spinner";
 
 
+const editedOrderFields = {
+    editedQuantity: "",
+    editedMaterial: "",
+    editedPriority: "",
+    editedSize: "",
+    editedWeight: null
+};
+
 const cancelOrderDataFields = {
     cancelReason: "",
     cancelNote: ""
@@ -47,9 +55,24 @@ const OrderDetails = (orderDetails) => {
     const [cancelOrderData, setCancelOrderData] = useState(JSON.parse(JSON.stringify(cancelOrderDataFields)));
     const { cancelReason, cancelNote } = useMemo(() => cancelOrderData, [cancelOrderData]);
 
+    const [editedOrderData, setEditedOrderData] = useState(
+        JSON.parse(JSON.stringify(editedOrderFields))
+    );
+    const {
+        editedQuantity,
+        editedMaterial,
+        editedPriority,
+        editedSize,
+        editedWeight
+    } = useMemo(() => editedOrderData, [editedOrderData]);
+
     // all references state
+    const [checkAllRefs, setCheckAllRefs] = useState(false);
     const [sortedCancelReasonRefs, setSortedCancelReasonRefs] = useState([]);
     const [cancelReasonReferenceOptions, setCancelReasonReferenceOptions] = useState(null);
+    const [sizeReferenceOptions, setSizeReferenceOptions] = useState(null);
+    const [materialTypeReferenceOptions, setMaterialTypeReferenceOptions] = useState(null);
+    const [priorityReferenceOptions, setPriorityReferenceOptions] = useState(null);
 
     const router = useRouter();
     const id = router.query.id;
@@ -87,11 +110,62 @@ const OrderDetails = (orderDetails) => {
             cancelReasons.sort();
             setSortedCancelReasonRefs(cancelReasons);
         }
+
+        // call reference to get materialType options
+        const { data: materialTypeRefData, error: materialErr } = await supabase
+            .from("reference")
+            .select("*")
+            .eq("ref_nm", "materialType");
+
+        if (materialTypeRefData) {
+            setMaterialTypeReferenceOptions(materialTypeRefData);
+        }
+
+        // call reference to get size options
+        const { data: sizeRefData, error: sizeErr } = await supabase
+            .from("reference")
+            .select("*")
+            .eq("ref_nm", "size");
+
+        if (sizeRefData) {
+            setSizeReferenceOptions(sizeRefData);
+        }
+
+        // call reference to get priority options
+        const { data: priorityRefData, error: priorityErr } = await supabase
+            .from("reference")
+            .select("*")
+            .eq("ref_nm", "priority");
+
+        if (priorityRefData) {
+            setPriorityReferenceOptions(priorityRefData);
+        }
+    };
+
+    async function checkAllRefsData() {
+        setIsLoading(true);
+        if (
+            materialTypeReferenceOptions &&
+            sizeReferenceOptions &&
+            priorityReferenceOptions
+        ) {
+            setCheckAllRefs(true);
+            setIsLoading(false);
+        }
     };
 
     useEffect(() => {
         getReferences();
     }, []);
+
+    useEffect(() => {
+        // validate refs data
+        checkAllRefsData();
+    }, [
+        materialTypeReferenceOptions &&
+        sizeReferenceOptions &&
+        priorityReferenceOptions]
+    );
 
     const fetchOrderData = async () => {
         try {
@@ -105,6 +179,13 @@ const OrderDetails = (orderDetails) => {
 
                 if (orderData) {
                     setFetchedOrderData(orderData[0]);
+                    setEditedOrderData({
+                        editedQuantity: orderData[0].quantity,
+                        editedMaterial: orderData[0].material,
+                        editedPriority: orderData[0].priority,
+                        editedSize: orderData[0].size,
+                        editedWeight: orderData[0].weight
+                    });
                     orderData[0].order_created_at = dateFormat(orderData[0].order_created_at);
 
                     if (orderData[0].order_updated_at) {
@@ -195,6 +276,7 @@ const OrderDetails = (orderDetails) => {
                     cancel_reason: cancelOrderData.cancelReason,
                     cancel_note: cancelOrderData.cancelNote,
                     order_updated_at: new Date(),
+                    order_updated_by: user.id,
                     cancel_date: new Date()
                 })
                 .eq("order_id", id)
@@ -415,6 +497,100 @@ const OrderDetails = (orderDetails) => {
         }
     };
 
+    const updateOrderRequiredFields = async (editedOrderData) => {
+        setIsLoading(true);
+
+        if(fetchedOrderData.status !== "Cancel") {
+            if(fetchedOrderData.status !== "Completed") {
+                if(editedOrderData.editedQuantity && editedOrderData.editedMaterial && editedOrderData.editedPriority &&
+                    editedOrderData.editedSize && editedOrderData.editedWeight) {
+                    const{ data, error } = await supabase
+                            .from("orders")
+                            .update({
+                                quantity: editedOrderData.editedQuantity,
+                                material: editedOrderData.editedMaterial,
+                                size: editedOrderData.editedSize,
+                                priority: editedOrderData.editedPriority,
+                                weight: editedOrderData.editedWeight,
+                                order_updated_at: new Date(),
+                                order_updated_by: user.id
+                            })
+                            .eq("order_id", id)
+                            .select();
+
+                    if(data) {
+                        fetchOrderData();
+                        toast.success("Changes saved successfully.", {
+                            position: "bottom-right",
+                            autoClose: 8000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        setIsLoading(false);
+                    } else {
+                        toast.error("Error while saving your changes!", {
+                            position: "bottom-right",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        setIsLoading(false);
+                    }
+                } else {
+                    let quantityErr = !editedOrderData.editedQuantity ? "Quantity " : "";
+                    let materialErr = !editedOrderData.editedMaterial ? "Material " : "";
+                    let priorityErr = !editedOrderData.editedPriority ? "Priority " : "";
+                    let sizeErr = !editedOrderData.editedSize ? "Size " : "";
+                    let weightErr = !editedOrderData.editedWeight ? "Weight " : "";
+
+                    toast.error("Please fill " + quantityErr + materialErr + priorityErr + sizeErr + weightErr, {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                    setIsLoading(false);
+                }
+            } else {
+                toast.info("This order is already Completed! You cannot save your changes.", {
+                    position: "top-center",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+                setIsLoading(false);
+            }
+        } else {
+            toast.info("This order is already Cancelled! You cannot save your changes.", {
+                position: "top-center",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+            setIsLoading(false);
+        }
+    };
+
     const updateEwayBillNumber = async (newEwayNumber, isVerified) => {
         setIsLoading(true);
 
@@ -426,7 +602,8 @@ const OrderDetails = (orderDetails) => {
                             .update({
                                 eway_number: newEwayNumber,
                                 eway_verified: isVerified,
-                                order_updated_at: new Date()
+                                order_updated_at: new Date(),
+                                order_updated_by: user.id
                             })
                             .eq("order_id", id)
                             .select();
@@ -510,7 +687,8 @@ const OrderDetails = (orderDetails) => {
                             .from("orders")
                             .update({
                                 company_name: newCompanyName,
-                                order_updated_at: new Date()
+                                order_updated_at: new Date(),
+                                order_updated_by: user.id
                             })
                             .eq("order_id", id)
                             .select();
@@ -593,7 +771,8 @@ const OrderDetails = (orderDetails) => {
                             .from("orders")
                             .update({
                                 local_transport: newLocalTransport,
-                                order_updated_at: new Date()
+                                order_updated_at: new Date(),
+                                order_updated_by: user.id
                             })
                             .eq("order_id", id)
                             .select();
@@ -676,7 +855,8 @@ const OrderDetails = (orderDetails) => {
                             .from("orders")
                             .update({
                                 truck_details: newTruckDetails,
-                                order_updated_at: new Date()
+                                order_updated_at: new Date(),
+                                order_updated_by: user.id
                             })
                             .eq("order_id", id)
                             .select();
@@ -936,73 +1116,240 @@ const OrderDetails = (orderDetails) => {
                                         {/* End Main fields */}
 
                                         {/* Start Required fields */}
-                                        <div className="pb-4">
-                                            <Row className="pb-3">
-                                                <Form.Group as={Col} md="12" controlId="validationCustomPhonenumber">
-                                                    <InputGroup size="sm">
-                                                        <InputGroup.Text id="inputGroupPrepend">Quantity</InputGroup.Text>
-                                                        <textarea
-                                                            type="text"
-                                                            // placeholder="Username"
-                                                            aria-describedby="inputGroupPrepend"
-                                                            disabled
-                                                            value={fetchedOrderData.quantity}
-                                                            cols="85"
-                                                            rows="2"
-                                                            style={{
-                                                                resize: "both",
-                                                                overflowY: "scroll",
-                                                                border: "1px solid #dee2e6",
-                                                                padding: "10px",
-                                                                fontSize: "14px",
-                                                                color: "#212529",
-                                                                backgroundColor: "#e9ecef",
+                                        { user.role !== "SUPER_ADMIN" ?
+                                            <div className="pb-4">
+                                                <Row className="pb-3">
+                                                    <Form.Group as={Col} md="12" controlId="validationCustomPhonenumber">
+                                                        <InputGroup size="sm">
+                                                            <InputGroup.Text id="inputGroupPrepend">Quantity</InputGroup.Text>
+                                                            <textarea
+                                                                type="text"
+                                                                // placeholder="Username"
+                                                                aria-describedby="inputGroupPrepend"
+                                                                disabled
+                                                                value={fetchedOrderData.quantity}
+                                                                cols="85"
+                                                                rows="2"
+                                                                style={{
+                                                                    resize: "both",
+                                                                    overflowY: "scroll",
+                                                                    border: "1px solid #dee2e6",
+                                                                    padding: "10px",
+                                                                    fontSize: "14px",
+                                                                    color: "#212529",
+                                                                    backgroundColor: "#e9ecef",
+                                                                }}
+                                                            />
+                                                        </InputGroup>
+                                                    </Form.Group>
+                                                </Row>
+                                                <Row>
+                                                    <Form.Group as={Col} md="auto" controlId="validationCustomPhonenumber">
+                                                        <InputGroup size="sm">
+                                                            <InputGroup.Text id="inputGroupPrepend">Material</InputGroup.Text>
+                                                            <Form.Control
+                                                                type="text"
+                                                                // placeholder="Username"
+                                                                aria-describedby="inputGroupPrepend"
+                                                                disabled
+                                                                value={editedMaterial}
+                                                            />
+                                                        </InputGroup>
+                                                    </Form.Group>
+                                                    <Form.Group as={Col} md="auto" controlId="validationCustomPhonenumber">
+                                                        <InputGroup size="sm">
+                                                            <InputGroup.Text id="inputGroupPrepend">Weight</InputGroup.Text>
+                                                            <Form.Control
+                                                                type="text"
+                                                                // placeholder="Username"
+                                                                aria-describedby="inputGroupPrepend"
+                                                                disabled
+                                                                value={editedWeight + " Kg"}
+                                                            />
+                                                        </InputGroup>
+                                                    </Form.Group>
+                                                    <Form.Group as={Col} md="auto" controlId="validationCustomPhonenumber">
+                                                        <InputGroup size="sm">
+                                                            <InputGroup.Text id="inputGroupPrepend">Size</InputGroup.Text>
+                                                            <Form.Control
+                                                                type="text"
+                                                                // placeholder="Username"
+                                                                aria-describedby="inputGroupPrepend"
+                                                                disabled
+                                                                value={editedSize}
+                                                            />
+                                                        </InputGroup>
+                                                    </Form.Group>
+                                                    <Form.Group as={Col} md="auto" controlId="validationCustomPhonenumber">
+                                                        <InputGroup size="sm">
+                                                            <InputGroup.Text id="inputGroupPrepend">Priority</InputGroup.Text>
+                                                            <Form.Control
+                                                                type="text"
+                                                                // placeholder="Username"
+                                                                aria-describedby="inputGroupPrepend"
+                                                                disabled
+                                                                value={editedPriority}
+                                                            />
+                                                        </InputGroup>
+                                                    </Form.Group>
+                                                </Row>
+                                                <span className="horizontal-divider">
+                                                </span>
+                                            </div>
+                                        : 
+                                            <div className="pb-4">
+                                                <Row className="pb-3">
+                                                    <Form.Group as={Col} md="12" controlId="validationCustomPhonenumber">
+                                                        <InputGroup size="sm">
+                                                            <InputGroup.Text id="inputGroupPrepend">Quantity</InputGroup.Text>
+                                                            <textarea
+                                                                type="text"
+                                                                // placeholder="Username"
+                                                                aria-describedby="inputGroupPrepend"
+                                                                value={editedQuantity}
+                                                                required
+                                                                onChange={(e) => {
+                                                                    setEditedOrderData((previousState) => ({
+                                                                        ...previousState,
+                                                                        editedQuantity: e.target.value,
+                                                                    }));
+                                                                }}
+                                                                cols="85"
+                                                                rows="2"
+                                                                style={{
+                                                                    resize: "both",
+                                                                    overflowY: "scroll",
+                                                                    border: "1px solid #dee2e6",
+                                                                    padding: "10px",
+                                                                    fontSize: "14px",
+                                                                    color: "#212529",
+                                                                }}
+                                                            />
+                                                        </InputGroup>
+                                                    </Form.Group>
+                                                </Row>
+                                                <Row>
+                                                    <Form.Group as={Col} md="auto" controlId="validationCustomPhonenumber">
+                                                        <InputGroup size="sm">
+                                                            <InputGroup.Text id="inputGroupPrepend">Material</InputGroup.Text>
+                                                            <Form.Select
+                                                                required
+                                                                className="chosen-single form-select"
+                                                                size="md"
+                                                                onChange={(e) => {
+                                                                    setEditedOrderData((previousState) => ({
+                                                                        ...previousState,
+                                                                        editedMaterial: e.target.value,
+                                                                    }));
+                                                                }}
+                                                                value={editedMaterial}
+                                                            >
+                                                                <option value=""></option>
+                                                                {materialTypeReferenceOptions ? materialTypeReferenceOptions.map(
+                                                                    (option) => (
+                                                                        <option key={option.ref_cd} value={option.ref_dspl}>
+                                                                            {option.ref_dspl}
+                                                                        </option>
+                                                                    )
+                                                                ) : "" }
+                                                            </Form.Select>
+                                                        </InputGroup>
+                                                    </Form.Group>
+                                                    <Form.Group as={Col} md="auto" controlId="validationCustomPhonenumber">
+                                                        <InputGroup size="sm">
+                                                            <InputGroup.Text id="inputGroupPrepend">Weight (Kg)</InputGroup.Text>
+                                                            <Form.Control
+                                                                type="number"
+                                                                name="order-weight"
+                                                                // placeholder="Weight"
+                                                                // defaultValue="Otto"
+                                                                required
+                                                                value={editedWeight}
+                                                                onChange={(e) => {
+                                                                    setEditedOrderData((previousState) => ({
+                                                                        ...previousState,
+                                                                        editedWeight: e.target.value,
+                                                                    }));
+                                                                }}
+                                                            />
+                                                        </InputGroup>
+                                                    </Form.Group>
+                                                    <Form.Group as={Col} md="auto" controlId="validationCustomPhonenumber">
+                                                        <InputGroup size="sm">
+                                                            <InputGroup.Text id="inputGroupPrepend">Size</InputGroup.Text>
+                                                            <Form.Select
+                                                                required
+                                                                className="chosen-single form-select"
+                                                                size="md"
+                                                                onChange={(e) => {
+                                                                    setEditedOrderData((previousState) => ({
+                                                                        ...previousState,
+                                                                        editedSize: e.target.value,
+                                                                    }));
+                                                                }}
+                                                                value={editedSize}
+                                                            >
+                                                                <option value=""></option>
+                                                                { sizeReferenceOptions ? sizeReferenceOptions.map(
+                                                                    (option) => (
+                                                                        <option key={option.ref_cd} value={option.ref_dspl}>
+                                                                            {option.ref_dspl}
+                                                                        </option>
+                                                                    )
+                                                                )
+                                                                : "" }
+                                                            </Form.Select>
+                                                        </InputGroup>
+                                                    </Form.Group>
+                                                    <Form.Group as={Col} md="auto" controlId="validationCustomPhonenumber">
+                                                        <InputGroup size="sm">
+                                                            <InputGroup.Text id="inputGroupPrepend">Priority</InputGroup.Text>
+                                                            <Form.Select
+                                                                required
+                                                                className="chosen-single form-select"
+                                                                size="md"
+                                                                onChange={(e) => {
+                                                                    setEditedOrderData((previousState) => ({
+                                                                        ...previousState,
+                                                                        editedPriority: e.target.value,
+                                                                    }));
+                                                                }}
+                                                                value={editedPriority}
+                                                            >
+                                                                <option value=""></option>
+                                                                { priorityReferenceOptions ? priorityReferenceOptions.map(
+                                                                    (option) => (
+                                                                        <option key={option.ref_cd} value={option.ref_dspl}>
+                                                                            {option.ref_dspl}
+                                                                        </option>
+                                                                    )
+                                                                )
+                                                                : "" }
+                                                            </Form.Select>
+                                                        </InputGroup>
+                                                    </Form.Group>
+                                                </Row>
+                                                <Row>
+                                                    <Form.Group as={Col} md="1" className="chosen-single form-input chosen-container mb-3">
+                                                        <Button
+                                                            type="submit"
+                                                            variant="success"
+                                                            size="sm"
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                updateOrderRequiredFields(editedOrderData);
                                                             }}
-                                                        />
-                                                    </InputGroup>
-                                                </Form.Group>
-                                            </Row>
-                                            <Row>
-                                                <Form.Group as={Col} md="auto" controlId="validationCustomPhonenumber">
-                                                    <InputGroup size="sm">
-                                                        <InputGroup.Text id="inputGroupPrepend">Material</InputGroup.Text>
-                                                        <Form.Control
-                                                            type="text"
-                                                            // placeholder="Username"
-                                                            aria-describedby="inputGroupPrepend"
-                                                            disabled
-                                                            value={fetchedOrderData.material}
-                                                        />
-                                                    </InputGroup>
-                                                </Form.Group>
-                                                <Form.Group as={Col} md="auto" controlId="validationCustomPhonenumber">
-                                                    <InputGroup size="sm">
-                                                        <InputGroup.Text id="inputGroupPrepend">Weight</InputGroup.Text>
-                                                        <Form.Control
-                                                            type="text"
-                                                            // placeholder="Username"
-                                                            aria-describedby="inputGroupPrepend"
-                                                            disabled
-                                                            value={fetchedOrderData.weight + " Kg"}
-                                                        />
-                                                    </InputGroup>
-                                                </Form.Group>
-                                                <Form.Group as={Col} md="auto" controlId="validationCustomPhonenumber">
-                                                    <InputGroup size="sm">
-                                                        <InputGroup.Text id="inputGroupPrepend">Size</InputGroup.Text>
-                                                        <Form.Control
-                                                            type="text"
-                                                            // placeholder="Username"
-                                                            aria-describedby="inputGroupPrepend"
-                                                            disabled
-                                                            value={fetchedOrderData.size}
-                                                        />
-                                                    </InputGroup>
-                                                </Form.Group>
-                                            </Row>
-                                            <span className="horizontal-divider">
-                                            </span>
-                                        </div>
+                                                            className="mt-2"
+                                                            style={{ marginBottom: "-24px" }}
+                                                        >
+                                                            Save
+                                                        </Button>
+                                                    </Form.Group>
+                                                </Row>
+                                                <span className="horizontal-divider">
+                                                </span>
+                                            </div>
+                                        }
                                         {/* End Required fields */}
 
                                         {/* Start Eway Bill fields */}
