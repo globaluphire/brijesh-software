@@ -1528,7 +1528,9 @@ const OpenOrderProcess = () => {
                         <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                             <div className="apply-modal-content modal-content" style={{ overflow: "scroll" }}>
                                 <div className="text-center">
-                                    <h3 className="title" style={{ marginBottom: "-5px" }}>Invoice</h3>
+                                    <h3 className="title" style={{ marginBottom: "-5px" }}>
+                                        { Object.keys(fetchedInvoiceData).length === 0 ? "Generate Invoice" : "Invoice" }
+                                    </h3>
                                     <span className="optional" style={{ letterSpacing: "1px" }}>#{fetchedSelectedOpenOrderdata.order_number}</span> 
                                     <button
                                         type="button"
