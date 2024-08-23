@@ -11,7 +11,7 @@ const ViewLR = ({ fetchedLRdata }) => {
                 <div class="company_name item">
                     <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
                     <span><b>Head Office: </b>51 and 52 Sinde Colony, S R P Road, Navapura, Vadodara, Gujarat 390001</span> <br />
-                    <span><b>Mobile No: </b>7016229891</span>
+                    <span><b>Mobile No: </b>7227002803</span>
                     <span>
                     <t></t> | <t></t><b>Email: </b>raftaarlogistic@gmail.com
                     </span>
@@ -134,7 +134,7 @@ const ViewLR = ({ fetchedLRdata }) => {
                 <div class="company_name item">
                     <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
                     <span><b>Head Office: </b>51 and 52 Sinde Colony, S R P Road, Navapura, Vadodara, Gujarat 390001</span> <br />
-                    <span><b>Mobile No: </b>7016229891</span>
+                    <span><b>Mobile No: </b>7227002803</span>
                     <span>
                     <t></t> | <t></t><b>Email: </b>raftaarlogistic@gmail.com
                     </span>
@@ -257,7 +257,7 @@ const ViewLR = ({ fetchedLRdata }) => {
                 <div class="company_name item">
                     <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
                     <span><b>Head Office: </b>51 and 52 Sinde Colony, S R P Road, Navapura, Vadodara, Gujarat 390001</span> <br />
-                    <span><b>Mobile No: </b>7016229891</span>
+                    <span><b>Mobile No: </b>7227002803</span>
                     <span>
                     <t></t> | <t></t><b>Email: </b>raftaarlogistic@gmail.com
                     </span>
