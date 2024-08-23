@@ -6,7 +6,7 @@ import candidatesData from "../../../../../data/candidates";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { supabase } from "../../../../../config/supabaseClient";
 import { toast } from "react-toastify";
 import { Typeahead } from "react-bootstrap-typeahead";
@@ -40,8 +40,11 @@ const Billing = () => {
     const [loadingText, setLoadingText] = useState("");
 
     const [fetchedInvoicedata, setFetchedInvoicedata] = useState({});
-    const [fetchedInvoicedataCSV, setFetchedInvoicedataCSV] = useState({});
     const [fetchedLRsData, setFetchedLRsData] = useState([]);
+
+    // csv states
+    const [fetchedInvoicedataCSV, setFetchedInvoicedataCSV] = useState([]);
+    const csvLink = useRef();
 
     const [applicationStatus, setApplicationStatus] = useState("");
     const [
@@ -174,9 +177,6 @@ const Billing = () => {
             );
             setFetchedInvoicedata(data);
 
-            // creating new array object for CSV export
-            const invoiceDataCSV = data.map(({ invoice_id, order_id, lr_id, invoice_date, ...rest }) => ({ ...rest }));
-            setFetchedInvoicedataCSV(invoiceDataCSV);
         }
 
         setIsLoading(false);
@@ -252,9 +252,6 @@ const Billing = () => {
 
                 setFetchedInvoicedata(invoiceData);
 
-                // creating new array object for CSV export
-                const invoiceDataCSV = invoiceData.map(({ invoice_id, order_id, lr_id, invoice_date, ...rest }) => ({ ...rest }));
-                setFetchedInvoicedataCSV(invoiceDataCSV);
             }
         } catch (e) {
             toast.error(
@@ -300,6 +297,75 @@ const Billing = () => {
         // pageSize,
         // currentPage
     ]);
+
+    async function fetchedCSVData(searchFilters) {
+        setIsLoading(true);
+        setLoadingText("Please Wait..., Your CSV is being generated");
+        try {
+            let query = supabase
+                .from("csv_invoices")
+                .select("*");
+
+            if (user.drop_branch) {
+                query.eq("Order City", user.drop_branch);
+            }
+
+            if (searchFilters.clientName) {
+                query.ilike("Client Name", "%" + searchFilters.clientName + "%");
+            }
+
+            if (searchFilters.orderCity) {
+                query.ilike("Order City", "%" + searchFilters.orderCity + "%");
+            }
+
+            let { data: csvInvoicesData, error } = await query;
+
+            if (csvInvoicesData) {
+                csvInvoicesData.forEach(
+                    (i) => (i["Created On"] = dateTimeFormat(i["Created On"]))
+                );
+                csvInvoicesData.forEach(
+                    (i) => (i["Updated On"] = dateTimeFormat(i["Updated On"]))
+                );
+                csvInvoicesData.forEach(
+                    (i) => (i["Order Created On"] = dateTimeFormat(i["Order Created On"]))
+                );
+                csvInvoicesData.forEach(
+                    (i) => (i["Status Last Updated On"] = dateTimeFormat(i["Status Last Updated On"]))
+                );
+
+                setFetchedInvoicedataCSV(csvInvoicesData);
+
+                setIsLoading(false);
+            } else {
+                setIsLoading(false);
+            }
+        } catch (e) {
+            toast.error(
+                "System is unavailable.  Please try again later or contact tech support!",
+                {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
+            // console.warn(e);
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (fetchedInvoicedataCSV && fetchedInvoicedataCSV.length > 0) {
+            csvLink.current.link.click();
+            setIsLoading(false);
+            setLoadingText("");
+        }
+    }, [ fetchedInvoicedataCSV ]);
 
     async function updateInvoiceStatus(invoice) {
         setIsLoading(true);
@@ -721,15 +787,22 @@ const Billing = () => {
                                 </Col>
                                 <Col style={{ display: "relative", textAlign: "right" }}>
                                     <Form.Group className="chosen-single form-input chosen-container mb-3">
-                                        { fetchedInvoicedataCSV.length > 0 ?
-                                            <CSVLink
-                                                data={fetchedInvoicedataCSV}
-                                                className="btn btn-export-csv btn-sm text-nowrap m-1"
-                                                filename={"Raftaar-Invoice-" + new Date().toLocaleDateString() + ".csv"}
-                                            >
-                                                Export to CSV
-                                            </CSVLink>
-                                        : "" }
+                                        <button
+                                            className="btn btn-export-csv btn-sm text-nowrap m-1"
+                                            onClick={(e) => { 
+                                                e.preventDefault();
+                                                fetchedCSVData(searchFilters);
+                                            }}
+                                        >
+                                            Export to CSV
+                                        </button>
+                                        <CSVLink
+                                            data={fetchedInvoicedataCSV}
+                                            filename={"Raftaar-Invoices-" + new Date().toLocaleDateString() + ".csv"}
+                                            className='hidden'
+                                            ref={csvLink}
+                                            target='_blank'
+                                        />
 
                                         { user.id === "NnxOeP2axndJjCYRX74985oipdo2" ?
                                             <Button
