@@ -21,6 +21,8 @@ import EditJobView from "../../../components/dashboard-pages/employers-dashboard
 import { supabase } from "../../../config/supabaseClient";
 import { Button, Col, Collapse, Container, Form, InputGroup, Row, Table } from "react-bootstrap";
 import Spinner from "../../../components/spinner/spinner";
+import CalendarComp from "../../../components/date/CalendarComp";
+import { format } from "date-fns";
 
 
 const cancelOrderDataFields = {
@@ -39,6 +41,7 @@ const InvoiceDetails = () => {
     const [open, setOpen] = useState(false);
     const [isPaid, setIsPaid] = useState(false);
     const [totalAmount, setTotalAmount] = useState(0);
+    const [invoiceDate, setInvoiceDate] = useState(new Date());
 
     // all references state
     const [sortedCancelReasonRefs, setSortedCancelReasonRefs] = useState([]);
@@ -76,6 +79,7 @@ const InvoiceDetails = () => {
                             setFetchedInvoiceData(invoiceData[0]);
                             setIsPaid(invoiceData[0].is_paid);
                             setTotalAmount(invoiceData[0].total_amount);
+                            setInvoiceDate(new Date(invoiceData[0].invoice_date + "T04:00:00Z"));
 
                             invoiceData[0].invoice_created_at = dateFormat(invoiceData[0].invoice_created_at);
 
@@ -128,14 +132,15 @@ const InvoiceDetails = () => {
     }, [invoiceNumber]);
 
     const SaveInvoiceChanges = async () => {
-        if (totalAmount && totalAmount !== "0") {
+        if (totalAmount && totalAmount !== "0" && invoiceDate) {
             try {
                 const { data, error } = await supabase
                 .from("invoice")
                 .update({
                     total_amount: totalAmount,
                     is_paid: isPaid,
-                    invoice_updated_at : new Date()
+                    invoice_updated_at : new Date(),
+                    invoice_date: format(invoiceDate, "yyyy-MM-dd")
                 })
                 .eq("invoice_number", invoiceNumber);
 
@@ -336,6 +341,21 @@ const InvoiceDetails = () => {
                                                             <option value="true">PAID</option>
                                                             <option value="false">UNPAID</option>
                                                         </Form.Select>
+                                                </Form.Group>
+                                            </Row>
+                                            <span className="horizontal-divider">
+                                            </span>
+                                        </div>
+                                        {/* End Order Locations and Status fields */}
+
+                                        {/* Start Order Locations and Status fields */}
+                                        <div className="pb-4">
+                                            <Row>
+                                                <Form.Group as={Col} md="auto" controlId="validationCustom01">
+                                                    <Form.Label>Invoice Date</Form.Label><br />
+                                                    { invoiceDate?
+                                                        <CalendarComp setDate={setInvoiceDate} date1={invoiceDate} />
+                                                    : "" }
                                                 </Form.Group>
                                             </Row>
                                             <span className="horizontal-divider">
