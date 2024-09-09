@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { supabase } from "../../../../config/supabaseClient";
 import { convertToFullDateFormat } from "../../../../utils/convertToFullDateFormat";
+import Spinner from "../../../spinner/spinner";
 import InfoBox from "./infoBox";
 import ViewInvoice from "./viewInvoice";
 
@@ -26,6 +27,9 @@ const Index = () => {
     const [fetchedClientData, setFetchedClientData] = useState({});
 
     const [checkedAllStates, setCheckedAllStates] = useState(false);
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadingText, setLoadingText] = useState("");
 
     async function savePDF() {
         var element = document.getElementById("export-invoice");
@@ -56,6 +60,7 @@ const Index = () => {
     };
 
     const fetchInvoice = async () => {
+        setIsLoading(true);
         // fetch order, invoice, lr for all required details to show in invoice
         try {
             if (id) {
@@ -121,6 +126,7 @@ const Index = () => {
                     
                     if (clientData) {
                         setFetchedClientData(clientData[0]);
+                        setIsLoading(false);
                     }
 
                 }
@@ -140,6 +146,7 @@ const Index = () => {
                 }
             );
             console.warn(e);
+            setIsLoading(false);
         }
     };
 
@@ -169,6 +176,8 @@ const Index = () => {
                     </button>
                 </div>
                 {/* End auto-container */}
+
+                <Spinner isLoading={isLoading} loadingText={loadingText} />
 
                 { checkedAllStates ? 
                     <div id="export-invoice">
