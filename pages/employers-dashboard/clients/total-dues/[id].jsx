@@ -32,15 +32,17 @@ const ClientBillDue = () => {
     const[fetchedClientData, setFetchedClientData] = useState({});
 
     useEffect(() => {
-        authenticate(user.id, dispatch)
-            .then((res) => {
-                if (!isEmployer || res === "NO ACCESS") {
-                    Router.push("/404");
-                } else {
-                    setAuthenticated(true);
-                }
-            });
-    }, []);
+        if (user.id) {
+            authenticate(user.id, dispatch)
+                .then((res) => {
+                    if (!isEmployer || res === "NO ACCESS") {
+                        Router.push("/404");
+                    } else {
+                        setAuthenticated(true);
+                    }
+                });
+        }
+    }, [user.id]);
 
     async function fetchClientBilling() {
         const { data, error } = await supabase
