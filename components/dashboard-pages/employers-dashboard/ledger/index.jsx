@@ -84,7 +84,11 @@ const index = () => {
                     .select("*")
                     .eq("client_name", selectedClient)
                     .gte("invoice_created_at", convertToSearchFilterDateTimeFrom(searchInvoiceDateFrom))
-                    .lte("invoice_created_at", convertToSearchFilterDateTimeTo(searchInvoiceDateTo));
+                    .lte("invoice_created_at", convertToSearchFilterDateTimeTo(searchInvoiceDateTo))
+                    .order(
+                        "invoice_created_at",
+                        { ascending: false, nullsFirst: false }
+                    );
 
                 let { data: ledgerData, error } = await query;
 
