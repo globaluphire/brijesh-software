@@ -86,7 +86,7 @@ const index = () => {
                     .gte("invoice_created_at", convertToSearchFilterDateTimeFrom(searchInvoiceDateFrom))
                     .lte("invoice_created_at", convertToSearchFilterDateTimeTo(searchInvoiceDateTo))
                     .order(
-                        "invoice_created_at",
+                        "invoice_number",
                         { ascending: false, nullsFirst: false }
                     );
 
