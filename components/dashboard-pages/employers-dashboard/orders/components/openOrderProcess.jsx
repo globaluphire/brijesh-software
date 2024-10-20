@@ -190,7 +190,7 @@ const OpenOrderProcess = () => {
         setIsLoading(true);
         try {
             let query = supabase
-                .from("orders")
+                .from("order_view")
                 .select("*")
                 .neq("status", "Completed")
                 .neq("status", "Cancel");
@@ -272,7 +272,7 @@ const OpenOrderProcess = () => {
     async function fetchedTotalOpenOrdersCount(searchFilters) {
 
         let query = supabase
-            .from("orders")
+            .from("order_view")
             .select("*", { count: "exact", head: true })
             .neq("status", "Completed")
             .neq("status", "Cancel");
@@ -1196,7 +1196,7 @@ const OpenOrderProcess = () => {
                                                 <div className="option-box">
                                                     <ul className="option-list">
                                                         <li>
-                                                            <button data-text="Generate Invoice">
+                                                            <button>
                                                                 <a
                                                                     href="#"
                                                                     data-bs-toggle="modal"
@@ -1206,8 +1206,16 @@ const OpenOrderProcess = () => {
                                                                             order
                                                                         );
                                                                     }}
+                                                                    style={{ lineHeight: "16px", padding: "3px" }}
                                                                 >
-                                                                    <span className="la flaticon-money"></span>
+                                                                    { !order.invoice_number ?
+                                                                        <span className="required">
+                                                                            Generate Invoice
+                                                                        </span>
+                                                                    : <span className="optional">
+                                                                        View Invoice
+                                                                      </span>
+                                                                    }
                                                                 </a>
                                                             </button>
                                                         </li>
