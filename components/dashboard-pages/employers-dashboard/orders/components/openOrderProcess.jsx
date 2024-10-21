@@ -1236,7 +1236,8 @@ const OpenOrderProcess = () => {
                                                             color: "white",
                                                             margin: "auto",
                                                             fontSize: "10px",
-                                                            lineHeight: "15px"}}
+                                                            lineHeight: "15px"
+                                                        }}
                                                     >
                                                         {order.order_created_by_name}
                                                     </span> <br />
@@ -1246,7 +1247,8 @@ const OpenOrderProcess = () => {
                                                             color: "black",
                                                             margin: "auto",
                                                             fontSize: "10px",
-                                                            lineHeight: "15px"}}
+                                                            lineHeight: "15px"
+                                                        }}
                                                     >
                                                         {order.order_updated_by_name ? order.order_updated_by_name : "-"}
                                                     </span>
