@@ -1156,6 +1156,7 @@ const OpenOrderProcess = () => {
                         <thead>
                             <tr>
                                 <th>Action</th>
+                                <th><span>Created</span> <br /> <span>/Updated By</span></th>
                                 <th><span>Created</span> <br /> <span>/Updated On</span></th>
                                 <th>Pickup Date</th>
                                 <th>ERP Order No</th>
@@ -1227,6 +1228,30 @@ const OpenOrderProcess = () => {
                                                     </ul>
                                                 </div>
                                             </td>
+                                            { user.role === "SUPER_ADMIN" ?
+                                                <td>
+                                                    <span className="badge"
+                                                        style={{
+                                                            backgroundColor: "darkgrey",
+                                                            color: "white",
+                                                            margin: "auto",
+                                                            fontSize: "10px",
+                                                            lineHeight: "15px"}}
+                                                    >
+                                                        {order.order_created_by_name}
+                                                    </span> <br />
+                                                    <span className="badge my-1"
+                                                        style={{
+                                                            backgroundColor: "lightgrey",
+                                                            color: "black",
+                                                            margin: "auto",
+                                                            fontSize: "10px",
+                                                            lineHeight: "15px"}}
+                                                    >
+                                                        {order.order_updated_by_name ? order.order_updated_by_name : "-"}
+                                                    </span>
+                                                </td>
+                                            : "" }
                                             <td>
                                                 <span>{order.order_created_at}</span> <br />
                                                 <span className="optional">{order.order_updated_at ? order.order_updated_at : order.order_created_at}</span>
