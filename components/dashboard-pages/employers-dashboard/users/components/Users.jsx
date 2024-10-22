@@ -1,5 +1,10 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-unused-vars */
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Button } from 'primereact/button';
+
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import candidatesData from "../../../../../data/candidates";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import Link from "next/link";
@@ -8,14 +13,8 @@ import { useEffect, useState, useMemo } from "react";
 import { supabase } from "../../../../../config/supabaseClient";
 import { toast } from "react-toastify";
 import { Typeahead } from "react-bootstrap-typeahead";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+
 import { useSelector } from "react-redux";
-import Pagination from "../../../../common/Pagination";
-import Table from "react-bootstrap/Table";
-import { InputGroup } from "react-bootstrap";
 import Spinner from "../../../../spinner/spinner";
 
 const addSearchFilters = {
@@ -59,9 +58,9 @@ const Users = () => {
         toCity,
         driverName,
         status } = useMemo(
-        () => searchFilters,
-        [searchFilters]
-    );
+            () => searchFilters,
+            [searchFilters]
+        );
 
     const [query, setQuery] = useState("");
     // global states
@@ -368,89 +367,53 @@ const Users = () => {
 
     const addClientToLocation = async (client) => {
         // setIsLoading(true);
-            try {
-                // Generate location number
-                const today = new Date();
-                let date = today.getDate();
-                if (date < 10) {
-                    date = "0" + date;
-                }
-                let month = today.getMonth() + 1;
-                if (month < 10) {
-                    month = "0" + month;
-                }
-                var year = today.getFullYear();
+        try {
+            // Generate location number
+            const today = new Date();
+            let date = today.getDate();
+            if (date < 10) {
+                date = "0" + date;
+            }
+            let month = today.getMonth() + 1;
+            if (month < 10) {
+                month = "0" + month;
+            }
+            var year = today.getFullYear();
 
-                const { data: sysKeyLocationData, error: sysKeyLocationError } = await supabase
-                    .from("sys_key")
-                    .select("sys_seq_nbr")
-                    .eq("key_name", "location_number");
+            const { data: sysKeyLocationData, error: sysKeyLocationError } = await supabase
+                .from("sys_key")
+                .select("sys_seq_nbr")
+                .eq("key_name", "location_number");
 
-                let locationSeqNbr = sysKeyLocationData[0].sys_seq_nbr + 1;
-                if (locationSeqNbr < 10) {
-                    locationSeqNbr = "00" + locationSeqNbr;
-                } else if(locationSeqNbr < 100) {
-                    locationSeqNbr = "0" + locationSeqNbr;
-                }
-                const locationNumber = "LOC" + "" + date + "" + month + "" + year.toString().substring(2) + "" + locationSeqNbr;
+            let locationSeqNbr = sysKeyLocationData[0].sys_seq_nbr + 1;
+            if (locationSeqNbr < 10) {
+                locationSeqNbr = "00" + locationSeqNbr;
+            } else if (locationSeqNbr < 100) {
+                locationSeqNbr = "0" + locationSeqNbr;
+            }
+            const locationNumber = "LOC" + "" + date + "" + month + "" + year.toString().substring(2) + "" + locationSeqNbr;
 
-                // saving data
-                const { data: locationData, error: locationError } = await supabase.from("location").insert([
-                    {
-                        // client
-                        location_number: locationNumber,
-                        location_type: "Pickup",
-                        name_of_pickup_point: client.client_name,
-                        location_city: client.city,
-                        address1: client.address1,
-                        address2: client.address2,
-                        area: client.area,
-                        city: client.city,
-                        pin: client.pin,
-                        state: client.state,
-                        location_created_by: user.id
-                    },
-                ]);
-                if (locationError) {
-                    // open toast
-                    toast.error(
-                        "Error while adding Location data, Please try again later or contact tech support",
-                        {
-                            position: "bottom-right",
-                            autoClose: false,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: undefined,
-                            theme: "colored",
-                        }
-                    );
-                    // setIsLoading(false);
-                } else {
-                    // open toast
-                    toast.success("'" + client.client_name + "'" + " saved as Location successfully", {
-                        position: "bottom-right",
-                        autoClose: 8000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
-
-                    // increment location_number key
-                    await supabase.rpc("increment_sys_key", {
-                        x: 1,
-                        keyname: "location_number",
-                    });
-                    // setIsLoading(false);
-                }
-            } catch (err) {
+            // saving data
+            const { data: locationData, error: locationError } = await supabase.from("location").insert([
+                {
+                    // client
+                    location_number: locationNumber,
+                    location_type: "Pickup",
+                    name_of_pickup_point: client.client_name,
+                    location_city: client.city,
+                    address1: client.address1,
+                    address2: client.address2,
+                    area: client.area,
+                    city: client.city,
+                    pin: client.pin,
+                    state: client.state,
+                    location_created_by: user.id
+                },
+            ]);
+            if (locationError) {
                 // open toast
                 toast.error(
-                    "Error while adding Location details, Please try again later or contact tech support",
+                    "Error while adding Location data, Please try again later or contact tech support",
                     {
                         position: "bottom-right",
                         autoClose: false,
@@ -462,11 +425,68 @@ const Users = () => {
                         theme: "colored",
                     }
                 );
-                // console.warn(err);
+                // setIsLoading(false);
+            } else {
+                // open toast
+                toast.success("'" + client.client_name + "'" + " saved as Location successfully", {
+                    position: "bottom-right",
+                    autoClose: 8000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+
+                // increment location_number key
+                await supabase.rpc("increment_sys_key", {
+                    x: 1,
+                    keyname: "location_number",
+                });
                 // setIsLoading(false);
             }
+        } catch (err) {
+            // open toast
+            toast.error(
+                "Error while adding Location details, Please try again later or contact tech support",
+                {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
+            // console.warn(err);
+            // setIsLoading(false);
+        }
     };
 
+    const [filters, setFilters] = useState({
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        'country.name': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        representative: { value: null, matchMode: FilterMatchMode.IN },
+        status: { value: null, matchMode: FilterMatchMode.EQUALS },
+        verified: { value: null, matchMode: FilterMatchMode.EQUALS }
+    });
+
+    const actionButtonRender = (rowData) => {
+        return <Button icon="pi pi-pen-to-square" rounded size="small"/>
+            // <div className="action-btns">
+            //      <Button>
+            //         {/* <a onClick={() => router.push(`/employers-dashboard/user-details/${user.user_key_id}`)}>
+            //             <span className="la la-edit" title="Edit User"></span>
+            //         </a> */}
+            //          { rowData.name }
+            //     </Button>
+            // </div>
+    }
+   
     return (
         <>
             <div>
@@ -495,7 +515,7 @@ const Users = () => {
             {/* Start table widget content */}
             <div className="widget-content">
                 <div className="table-outer">
-                    <Table className="default-table manage-job-table">
+                    {/* <Table className="default-table manage-job-table">
                         <thead>
                             <tr>
                                 <th>Actions</th>
@@ -556,7 +576,26 @@ const Users = () => {
                                 )}
                             </tbody>
                         )}
-                    </Table>
+                    </Table> */}
+                    <DataTable 
+                        value={fetchedUsersData} 
+                        size="normal"
+                        showGridlines 
+                        stripedRows 
+                        removableSort 
+                        sortMode="multiple" 
+                        tableStyle={{ minWidth: '50rem' }}
+                        filters={filters} 
+                        filterDisplay="row"
+                        emptyMessage="No Users found!"
+                    >
+                        <Column field="uer_key_id" sortable header="Action" body={actionButtonRender} />
+                        <Column field="created_at" sortable header="Created at"></Column>
+                        <Column filter filterPlaceholder="Search by name" field="name" sortable header="Name"></Column>
+                        <Column field="role" sortable header="Role"></Column>
+                        <Column field="email" sortable header="Email"></Column>
+                    </DataTable>
+                    
                 </div>
             </div>
             {/* End table widget content */}
