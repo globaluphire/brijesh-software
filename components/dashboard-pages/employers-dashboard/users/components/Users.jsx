@@ -85,16 +85,7 @@ const Users = () => {
 
     const dateTimeFormat = (val) => {
         if (val) {
-            const date = new Date(val);
-            return (
-                date.toLocaleDateString("en-IN", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit"
-                })
-            );
+            return new Date(val);
         }
     };
 
@@ -501,7 +492,13 @@ const Users = () => {
             </div>
         )
     }
-   
+
+    const createdDateRender = (rowData) => {
+        return (
+            rowData.created_at.toLocaleString("en-IN")
+        )
+    }
+
     const roleBodyTemplate = (rowData) => {
         return <Tag value={rowData.role} severity={getSeverity(rowData.role)} />;
     };
@@ -618,14 +615,14 @@ const Users = () => {
                         filters={filters}
                         filterDisplay="row"
                         scrollable
-                        scrollHeight="700px"
+                        scrollHeight="80vh"
                         emptyMessage="No Users found!"
                     >
                         <Column field="uer_key_id" header="Action" body={actionButtonRender} align="center" style={{ maxWidth: '5rem' }} />
                         <Column filter filterPlaceholder="Search by name" field="name" sortable header="Name"></Column>
                         <Column field="role" sortable header="Role" showFilterMenu={false} filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={roleBodyTemplate} filter filterElement={roleRowFilterTemplate}></Column>
                         <Column filter filterPlaceholder="Search by email" field="email" sortable header="Email"></Column>
-                        <Column field="created_at" sortable header="Created at"></Column>
+                        <Column field="created_at" sortable header="Created at" body={createdDateRender}></Column>
                     </DataTable>
                     
                 </div>

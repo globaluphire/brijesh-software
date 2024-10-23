@@ -41,6 +41,7 @@ function MyApp({ Component, pageProps }) {
     }, []);
     const value = {
         appendTo: 'self',
+        ripple: true,
     };
     return (
         <PrimeReactProvider value={value}>
