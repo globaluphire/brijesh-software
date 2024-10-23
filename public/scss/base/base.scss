@@ -197,3 +197,17 @@ li {
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
 }
+
+.p-datatable.p-datatable-striped .p-datatable-tbody > tr.p-row-odd {
+    // background-color: #E0E9F3;
+}
+.p-datatable .p-datatable-tbody > tr{
+    color: black;
+}
+.p-datatable.p-datatable-striped .p-datatable-tbody > tr:hover {
+    background-color: #D4E1F8;
+}
+.p-datatable.p-datatable-striped .p-datatable-tbody > tr > td:not(:first-of-type):hover {
+    background-color: #013778;
+    color: white;
+}
