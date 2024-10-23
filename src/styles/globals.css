@@ -1,0 +1,16 @@
+.img-background {
+    background-image: url('/login-background.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+}
+
+.img-background .surface-card {
+    backdrop-filter: blur(50px);
+    background: transparent !important;
+}
+
+body {
+    margin: 0;
+    font-family: Helvetica, Arial, sans-serif;
+}
