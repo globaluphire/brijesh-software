@@ -20,9 +20,6 @@ module.exports = {
         ecmaVersion: 12,
     },
     rules: {
-        semi: ["error", "always"],
-        quotes: ["error", "double"],
-        "object-curly-spacing": ["error", "always"],
     },
     settings: {
         react: {
