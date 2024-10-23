@@ -18,6 +18,7 @@ import { Typeahead } from "react-bootstrap-typeahead";
 
 import { useSelector } from "react-redux";
 import Spinner from "../../../../spinner/spinner";
+import { he } from 'date-fns/locale';
 
 const addSearchFilters = {
     consignorName: "",
@@ -471,10 +472,8 @@ const Users = () => {
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-        'country.name': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-        representative: { value: null, matchMode: FilterMatchMode.IN },
-        status: { value: null, matchMode: FilterMatchMode.EQUALS },
-        verified: { value: null, matchMode: FilterMatchMode.EQUALS }
+        email: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        role: { value: null, matchMode: FilterMatchMode.EQUALS },
     });
     
     const [roles] = useState(['SUPER_ADMIN', 'ADMIN', 'CANDIDATE', 'NO ACCESS']);
@@ -499,9 +498,9 @@ const Users = () => {
         return ( //<Button icon="pi pi-pen-to-square" rounded size="small"/>
         <>
                         {/* <Badge value="Edit" severity="info" onClick={() =>  router.push(`/employers-dashboard/user-details/${user.user_key_id}`)}></Badge> */}
-
-                <Button label="Edit" link onClick={() => router.push(`/employers-dashboard/user-details/${user.user_key_id}`)} size="small" />
-                </>
+                <Button icon="pi pi-pen-to-square" rounded raised text size="small" aria-label="Filter" style={{height: "2rem", width: "2rem"}} onClick={() => router.push(`/employers-dashboard/user-details/${user.user_key_id}`)} />
+                {/* <Button label="Edit" link onClick={() => router.push(`/employers-dashboard/user-details/${user.user_key_id}`)} size="small" /> */}
+        </>
             // <div className="action-btns">
             //      <Button>
             //         {/* <a onClick={() => router.push(`/employers-dashboard/user-details/${user.user_key_id}`)}>
@@ -632,11 +631,11 @@ const Users = () => {
                         scrollHeight="700px"
                         emptyMessage="No Users found!"
                     >
-                        <Column field="uer_key_id" sortable header="Action" body={actionButtonRender} />
-                        <Column field="created_at" sortable header="Created at"></Column>
                         <Column filter filterPlaceholder="Search by name" field="name" sortable header="Name"></Column>
                         <Column field="role" sortable header="Role" showFilterMenu={false} filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={roleBodyTemplate} filter filterElement={roleRowFilterTemplate}></Column>
                         <Column filter filterPlaceholder="Search by email" field="email" sortable header="Email"></Column>
+                        <Column field="created_at" sortable header="Created at"></Column>
+                        <Column field="uer_key_id" sortable header="Action" body={actionButtonRender} align="center" />
                     </DataTable>
                     
                 </div>
