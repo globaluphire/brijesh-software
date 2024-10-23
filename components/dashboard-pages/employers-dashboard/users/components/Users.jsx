@@ -621,7 +621,7 @@ const Users = () => {
                         scrollHeight="700px"
                         emptyMessage="No Users found!"
                     >
-                        <Column field="uer_key_id" sortable header="Action" body={actionButtonRender} align="center" style={{ maxWidth: '5rem' }} />
+                        <Column field="uer_key_id" header="Action" body={actionButtonRender} align="center" style={{ maxWidth: '5rem' }} />
                         <Column filter filterPlaceholder="Search by name" field="name" sortable header="Name"></Column>
                         <Column field="role" sortable header="Role" showFilterMenu={false} filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={roleBodyTemplate} filter filterElement={roleRowFilterTemplate}></Column>
                         <Column filter filterPlaceholder="Search by email" field="email" sortable header="Email"></Column>
