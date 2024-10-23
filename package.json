@@ -84,15 +84,5 @@
     "twilio": "^4.16.0",
     "xlsx": "^0.18.5",
     "xlsx-populate": "^1.21.0"
-  },
-  "devDependencies": {
-    "eslint": "^8.0.1",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-n": "^15.0.0",
-    "eslint-plugin-promise": "^6.0.0",
-    "prettier": "^3.0.3",
-    "prisma": "^5.5.0"
   }
 }
