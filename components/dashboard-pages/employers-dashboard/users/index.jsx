@@ -11,13 +11,13 @@ import Users from "./components/Users";
 const index = () => {
     return (
         <div className="page-wrapper dashboard">
-            <span className="header-span"></span>
+            {/* <span className="header-span"></span> */}
             {/* <!-- Header Span for hight --> */}
 
-            <LoginPopup />
+            {/* <LoginPopup /> */}
             {/* End Login Popup Modal */}
 
-            <DashboardHeader />
+            {/* <DashboardHeader /> */}
             {/* End Header */}
 
             <MobileMenu />

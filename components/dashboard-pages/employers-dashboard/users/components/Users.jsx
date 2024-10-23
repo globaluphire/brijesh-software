@@ -3,7 +3,9 @@
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-
+import { Badge } from 'primereact/badge';
+import { Tag } from 'primereact/tag';
+import { Dropdown } from 'primereact/dropdown';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import candidatesData from "../../../../../data/candidates";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
@@ -474,9 +476,32 @@ const Users = () => {
         status: { value: null, matchMode: FilterMatchMode.EQUALS },
         verified: { value: null, matchMode: FilterMatchMode.EQUALS }
     });
+    
+    const [roles] = useState(['SUPER_ADMIN', 'ADMIN', 'CANDIDATE', 'NO ACCESS']);
+
+    const getSeverity = (role) => {
+        switch (role) {
+            case 'SUPER_ADMIN':
+                return 'info';
+
+            case 'CANDIDATE':
+                return 'warning';
+
+            case 'ADMIN':
+                return 'success';
+
+            case 'NO ACCESS':
+                return 'danger';
+        }
+    };
 
     const actionButtonRender = (rowData) => {
-        return <Button icon="pi pi-pen-to-square" rounded size="small"/>
+        return ( //<Button icon="pi pi-pen-to-square" rounded size="small"/>
+        <>
+                        {/* <Badge value="Edit" severity="info" onClick={() =>  router.push(`/employers-dashboard/user-details/${user.user_key_id}`)}></Badge> */}
+
+                <Button label="Edit" link onClick={() => router.push(`/employers-dashboard/user-details/${user.user_key_id}`)} size="small" />
+                </>
             // <div className="action-btns">
             //      <Button>
             //         {/* <a onClick={() => router.push(`/employers-dashboard/user-details/${user.user_key_id}`)}>
@@ -485,8 +510,23 @@ const Users = () => {
             //          { rowData.name }
             //     </Button>
             // </div>
+        )
     }
    
+    const roleBodyTemplate = (rowData) => {
+        return <Tag value={rowData.role} severity={getSeverity(rowData.role)} />;
+    };
+
+    const roleItemTemplate = (option) => {
+        return <Tag value={option} severity={getSeverity(option)} />;
+    };
+
+    const roleRowFilterTemplate = (options) => {
+        return (
+            <Dropdown value={options.value} options={roles} onChange={(e) => options.filterApplyCallback(e.value)} itemTemplate={roleItemTemplate} placeholder="Select One" className="p-column-filter" showClear style={{ minWidth: '12rem' }} />
+        );
+    };
+
     return (
         <>
             <div>
@@ -578,22 +618,25 @@ const Users = () => {
                         )}
                     </Table> */}
                     <DataTable 
-                        value={fetchedUsersData} 
-                        size="normal"
-                        showGridlines 
-                        stripedRows 
-                        removableSort 
-                        sortMode="multiple" 
+                        value={fetchedUsersData}
+                        size="small"
+                        showGridlines
+                        stripedRows
+                        rowHover
+                        removableSort
+                        sortMode="multiple"
                         tableStyle={{ minWidth: '50rem' }}
-                        filters={filters} 
+                        filters={filters}
                         filterDisplay="row"
+                        scrollable
+                        scrollHeight="700px"
                         emptyMessage="No Users found!"
                     >
                         <Column field="uer_key_id" sortable header="Action" body={actionButtonRender} />
                         <Column field="created_at" sortable header="Created at"></Column>
                         <Column filter filterPlaceholder="Search by name" field="name" sortable header="Name"></Column>
-                        <Column field="role" sortable header="Role"></Column>
-                        <Column field="email" sortable header="Email"></Column>
+                        <Column field="role" sortable header="Role" showFilterMenu={false} filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={roleBodyTemplate} filter filterElement={roleRowFilterTemplate}></Column>
+                        <Column filter filterPlaceholder="Search by email" field="email" sortable header="Email"></Column>
                     </DataTable>
                     
                 </div>

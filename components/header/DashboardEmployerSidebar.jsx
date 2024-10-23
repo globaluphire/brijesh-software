@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { menuToggle } from "../../features/toggle/toggleSlice";
 import { logout } from "../../utils/logout";
 import { Image } from "react-bootstrap";
+import { Badge } from 'primereact/badge';
 
 const DashboardEmployerSidebar = () => {
     const router = useRouter();
@@ -31,7 +32,7 @@ const DashboardEmployerSidebar = () => {
 
             <div className="sidebar-inner">
                 <ul className="navigation">
-                    <li className="pb-3 text-center">
+                    <li className="text-center">
                         <Image
                             alt="brand"
                             src="/images/logo-1.svg"
@@ -39,6 +40,9 @@ const DashboardEmployerSidebar = () => {
                             height={50}
                             priority
                         />
+                    </li>
+                    <li className="pb-1 text-center">
+                        <Badge value={"Hi, " + user.name} severity="info"></Badge>
                     </li>
                     {employerMenuData.map((item) => {
                         const isUserAllowed = item.access.includes(user.role);

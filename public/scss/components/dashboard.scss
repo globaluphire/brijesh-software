@@ -872,7 +872,7 @@ User Sidebar
   bottom: 0;
   height: calc(100%);
   // width: 365px;
-  padding-top: 24px;
+  // padding-top: 24px;
   background: #E9EFFB;
   overflow: auto;
   -webkit-transition: all 300ms ease;
@@ -916,7 +916,7 @@ User Sidebar
 
 .user-sidebar .sidebar-inner {
   position: relative;
-  padding-top: 20px;
+  // padding-top: 20px;
 }
 
 .user-sidebar .sidebar-header {
@@ -1583,8 +1583,7 @@ Chat Widget
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
   background: transparent;
-  padding: 20px 30px 30px;
-  min-height: 60px;
+  padding: 20px;
 }
 
 .ls-widget .widget-title h4 {
