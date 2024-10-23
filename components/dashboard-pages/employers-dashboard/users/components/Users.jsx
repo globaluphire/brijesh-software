@@ -495,20 +495,10 @@ const Users = () => {
     };
 
     const actionButtonRender = (rowData) => {
-        return ( //<Button icon="pi pi-pen-to-square" rounded size="small"/>
-        <>
-                        {/* <Badge value="Edit" severity="info" onClick={() =>  router.push(`/employers-dashboard/user-details/${user.user_key_id}`)}></Badge> */}
-                <Button icon="pi pi-pen-to-square" rounded raised text size="small" aria-label="Filter" style={{height: "2rem", width: "2rem"}} onClick={() => router.push(`/employers-dashboard/user-details/${user.user_key_id}`)} />
-                {/* <Button label="Edit" link onClick={() => router.push(`/employers-dashboard/user-details/${user.user_key_id}`)} size="small" /> */}
-        </>
-            // <div className="action-btns">
-            //      <Button>
-            //         {/* <a onClick={() => router.push(`/employers-dashboard/user-details/${user.user_key_id}`)}>
-            //             <span className="la la-edit" title="Edit User"></span>
-            //         </a> */}
-            //          { rowData.name }
-            //     </Button>
-            // </div>
+        return (
+            <div className="flex flex-wrap justify-content-center">
+                <Button style={{height: "2rem", width: "2rem"}} icon="pi pi-pen-to-square" text size="small" aria-label="Filter" onClick={() => router.push(`/employers-dashboard/user-details/${user.user_key_id}`)} />
+            </div>
         )
     }
    
@@ -631,11 +621,11 @@ const Users = () => {
                         scrollHeight="700px"
                         emptyMessage="No Users found!"
                     >
+                        <Column field="uer_key_id" sortable header="Action" body={actionButtonRender} align="center" style={{ maxWidth: '5rem' }} />
                         <Column filter filterPlaceholder="Search by name" field="name" sortable header="Name"></Column>
                         <Column field="role" sortable header="Role" showFilterMenu={false} filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={roleBodyTemplate} filter filterElement={roleRowFilterTemplate}></Column>
                         <Column filter filterPlaceholder="Search by email" field="email" sortable header="Email"></Column>
                         <Column field="created_at" sortable header="Created at"></Column>
-                        <Column field="uer_key_id" sortable header="Action" body={actionButtonRender} align="center" />
                     </DataTable>
                     
                 </div>
