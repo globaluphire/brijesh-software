@@ -10,6 +10,7 @@ import { Button } from "primereact/button";
 import { useDispatch } from "react-redux";
 import { useRef } from "react";
 import { Toast } from "primereact/toast";
+import Router from "next/router";
 
 const provider = new firebase.auth.GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
@@ -53,14 +54,15 @@ const LoginWithSocial = () => {
         })
       );
 
-      // Router.push("/employers-dashboard/orders");
-
       toast.current.show({
         severity: "success",
         summary: "Success",
         detail: "Successfully logged in. \nWelcome " + user.displayName,
-        life: 5000,
       });
+
+      setTimeout(() => {
+        Router.push("/dashboard");
+      }, 2000);
     } catch (err) {
       toast.current.show({
         severity: "error",
