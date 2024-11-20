@@ -1,15 +1,17 @@
 import Router, { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { logoutUtils } from "../../utils/logout";
+import dynamic from "next/dynamic";
 
-const logout = () => {
-  const router = useRouter();
-  const dispatch = useDispatch();
+const logout = dynamic(
+    () => {
+        const router = useRouter();
+        const dispatch = useDispatch();
 
-  logoutUtils(dispatch);
+        logoutUtils(dispatch);
 
-  Router.push("/");
-};
-
+        Router.push("/");
+    },
+    { ssr: false }
+);
 export default logout;
-
