@@ -1,0 +1,339 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--text-color);
+  background-color: var(--surface-ground);
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: underline;
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.no-underline {
+  text-decoration: none;
+}
+
+.layout-wrapper {
+  min-height: 100vh;
+}
+
+.img-background {
+  background-image: url("/login-background.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+}
+
+.img-background .surface-card {
+  backdrop-filter: blur(50px);
+  background: transparent !important;
+}
+
+.p-selectbutton .p-button {
+  font-size: 0.75rem;
+  padding: 0.5rem;
+}
+
+.p-dialog .p-dialog-content {
+  background-color: #eee;
+}
+.p-dialog .p-dialog-footer {
+  padding-top: 1rem;
+}
+
+// Custom CSS for Loading modal
+@media (max-width: 3600px) {
+  .loading-modal {
+    display: block; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 10000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  }
+
+  /* Modal Content/Box */
+  .loading-modal-content {
+    background: #d7dbe4;
+    border: none;
+    // margin: 25% 50%; /* 15% from the top and centered */
+    margin-top: 20%;
+    margin-left: 45%;
+    padding: 2rem 0;
+    // border: 1px solid #888;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    max-width: 20%;
+    min-width: 20%;
+    border-radius: 15px;
+
+    .loading-modal-text {
+      color: black;
+      font-size: 14px;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}
+
+@media (max-width: 575px) {
+  .loading-modal {
+    display: block; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 10000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  }
+
+  /* Modal Content/Box */
+  .loading-modal-content {
+    background: #d7dbe4;
+    border: none;
+    // margin: 25% 50%; /* 15% from the top and centered */
+    margin-top: 90%;
+    margin-left: 25%;
+    padding: 2rem 0;
+    // border: 1px solid #888;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    max-width: 50%;
+    min-width: 50%;
+    border-radius: 15px;
+
+    .loading-modal-text {
+      color: black;
+      font-size: 14px;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}
+
+// view invoice box
+.exportClass {
+  min-height: 1100px !important;
+  height: auto !important;
+  width: auto !important;
+
+  .header {
+    padding-left: 200px !important;
+    max-height: auto !important;
+    height: auto !important;
+  }
+  .header .header-content {
+    top: 10px !important;
+  }
+  .header p {
+    max-width: 50% !important;
+  }
+  .content {
+    padding-top: 220px !important;
+  }
+}
+
+#export-invoice {
+  margin: 0 auto;
+  height: 1600px;
+  width: 1131px;
+  background-color: white;
+  background-image: url(/letter-head.png);
+  background-size: cover;
+}
+
+.header {
+  padding-left: 300px;
+  position: relative;
+  max-height: 300px;
+  height: 300px;
+}
+
+.header .header-content {
+  position: absolute;
+  top: 20%;
+}
+
+.header p {
+  max-width: 70%;
+  margin: 0;
+}
+
+// view LR box
+.hide-lr-block {
+  display: none;
+}
+.hide-old-lr-block {
+  display: none;
+}
+
+.lr-grid {
+  display: grid;
+  margin-bottom: 10px;
+  border: 1px solid black;
+  grid-template-areas:
+    "logo company_name company_name company_name copy"
+    "lr_date fina_lr fina_lr lr_number last_modified_date"
+    "pickup_address pickup_address from_to delivery_address delivery_address"
+    "consignor consignor vehicle consignee consignee"
+    "material_detail material_detail material_detail weight total_amount"
+    "terms_condition terms_condition terms_condition material_receiver_sign authorized_sign";
+}
+
+.item {
+  padding: 5px;
+  font-size: 10px;
+  line-height: normal;
+  border: 1px solid black;
+}
+.logo1 {
+  grid-area: logo;
+  border: none !important;
+  display: block;
+}
+.company_name {
+  grid-area: company_name;
+  display: block;
+  font-size: 12px;
+}
+.copy {
+  display: block;
+  grid-area: copy;
+  font-size: 12px;
+}
+.lr_date {
+  display: block;
+  grid-area: lr_date;
+}
+.fina_lr {
+  display: block;
+  grid-area: fina_lr;
+  color: green;
+  font-size: 12px !important;
+  font-weight: bold;
+  text-align: center;
+  text-transform: u;
+}
+.lr_number {
+  display: block;
+  grid-area: lr_number;
+}
+.last_modified_date {
+  display: block;
+  grid-area: last_modified_date;
+}
+.pickup_address {
+  display: block;
+  grid-area: pickup_address;
+}
+.from_to {
+  display: block;
+  grid-area: from_to;
+}
+.delivery_address {
+  display: block;
+  grid-area: delivery_address;
+}
+.consignor {
+  display: block;
+  grid-area: consignor;
+}
+.vehicle {
+  display: block;
+  grid-area: vehicle;
+}
+.consignee {
+  display: block;
+  grid-area: consignee;
+}
+.material_detail {
+  display: block;
+  grid-area: material_detail;
+}
+.weight {
+  display: block;
+  grid-area: weight;
+}
+.total_amount {
+  display: block;
+  grid-area: total_amount;
+}
+.terms_condition {
+  display: block;
+  grid-area: terms_condition;
+  font-size: 8px;
+}
+.material_receiver_sign {
+  display: block;
+  grid-area: material_receiver_sign;
+}
+.authorized_sign {
+  display: block;
+  grid-area: authorized_sign;
+}
+
+// ledger block
+.ledger-table {
+  border: 1px solid black;
+  border-collapse: collapse;
+  font-size: 16px;
+  color: black;
+  font-weight: 400;
+}
+
+.ledger-table tr {
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding: 2rem;
+}
+.ledger-table tr:hover {
+  background-color: #6366f1;
+  color: white;
+}
+
+.ledger-table td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+.ledger-table td:hover {
+  background-color: #8083f4;
+}
+
+// .ledger-table tr td {
+//   position: relative;
+//   font-size: 16px;
+//   color: black;
+//   font-weight: 400;
+//   border: 1px solid #01549A;
+//   background-color: transparent;
+//   padding: 2px 7px;
+// }

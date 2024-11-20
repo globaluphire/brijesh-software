@@ -1,22 +1,19 @@
-import { toast } from "react-toastify";
-import { setUserData } from "../features/candidate/candidateSlice";
-const logout = (dispatch) => {
-    dispatch(setUserData({ name: "", id: "", email: "", role: "", pickup_branch: "", drop_branch: "" }));
-    localStorage.clear();
+import { setUserData } from "../features/slice/initialStatesSlice";
+const logoutUtils = (dispatch) => {
+  dispatch(
+    setUserData({
+      name: "",
+      id: "",
+      email: "",
+      role: "",
+      pickup_branch: "",
+      drop_branch: "",
+    })
+  );
 
-    // open toast
-    toast.success("Successfully Logout!", {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-    });
+  localStorage.clear();
 
-    // useRouter().push("/")
+  // useRouter().push("/")
 };
 
-export { logout };
+export { logoutUtils };

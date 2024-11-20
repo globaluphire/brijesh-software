@@ -1,65 +1,51 @@
-/* eslint-disable no-unused-vars */
-import Aos from "aos";
-import "aos/dist/aos.css";
-import "../styles/index.scss";
-import { useEffect } from "react";
-import ScrollToTop from "../components/common/ScrollTop";
+import React, { useEffect } from "react";
+import { LayoutProvider } from "../layout/context/layoutcontext";
+import Layout from "../layout/layout";
+import "primereact/resources/primereact.css";
+import "primeflex/primeflex.css";
+import "primeicons/primeicons.css";
+import "../styles/layout/layout.scss";
+import "../styles/demo/Demos.scss";
 import { Provider } from "react-redux";
 import { store } from "../app/store";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 import { getDecryptedItem } from "../utils/encryptedStorage";
-import { setUserData } from "../features/candidate/candidateSlice";
-import "react-tooltip/dist/react-tooltip.css";
-import ErrorBoundary from "../components/error-boundry/errorBoundry";
+import { setUserData } from "../features/slice/initialStatesSlice";
+import Router from "next/router";
 
-if (typeof window !== "undefined") {
-    require("bootstrap/dist/js/bootstrap");
-}
-
-function MyApp({ Component, pageProps }) {
-    // aos animation activation
-
-    useEffect(() => {
-        Aos.init({
-            duration: 1400,
-            once: true,
-        });
-        try {
-            const user = JSON.parse(getDecryptedItem("user"));
-            if (user.id) {
-                store.dispatch(setUserData(user));
-            }
-        } catch (e) {
-            console.warn(e);
+export default function MyApp({ Component, pageProps }) {
+  useEffect(() => {
+    if (window.location.pathname !== "/") {
+      try {
+        const user = JSON.parse(getDecryptedItem("user"));
+        if (user.id) {
+          store.dispatch(setUserData(user));
+        } else {
+          console.log("Login first to access portal ", user);
+          Router.push("/access");
         }
-    }, []);
+      } catch (e) {
+        console.warn(e);
+        console.log("Login first to access direct link ");
+        Router.push("/access");
+      }
+    }
+  }, []);
 
+  if (Component.getLayout) {
     return (
-        <Provider store={store}>
-            <div className="page-wrapper">
-                <ErrorBoundary>
-                    <Component {...pageProps} />
-                </ErrorBoundary>
-
-                {/* Toastify */}
-                <ToastContainer
-                    position="bottom-right"
-                    autoClose={500}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick
-                    rtl={false}
-                    pauseOnFocusLoss
-                    draggable
-                    pauseOnHover
-                    theme="colored"
-                />
-                {/* <!-- Scroll To Top --> */}
-                <ScrollToTop />
-            </div>
-        </Provider>
+      <LayoutProvider>
+        {Component.getLayout(<Component {...pageProps} />)}
+      </LayoutProvider>
     );
+  } else {
+    return (
+      <LayoutProvider>
+        <Provider store={store}>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </Provider>
+      </LayoutProvider>
+    );
+  }
 }
-
-export default MyApp;
