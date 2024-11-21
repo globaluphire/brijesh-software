@@ -4,7 +4,7 @@ export const LayoutContext = React.createContext();
 
 export const LayoutProvider = (props) => {
     const [layoutConfig, setLayoutConfig] = useState({
-        ripple: false,
+        ripple: true,
         inputStyle: 'outlined',
         menuMode: 'static',
         colorScheme: 'light',
