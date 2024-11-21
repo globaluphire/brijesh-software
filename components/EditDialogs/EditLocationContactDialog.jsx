@@ -2,34 +2,31 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputNumber } from "primereact/inputnumber";
 import { InputText } from "primereact/inputtext";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../../config/supabaseClient";
 import { Toast } from "primereact/toast";
 import { Message } from "primereact/message";
 
-export default function AddLocationContactDialog({
-    addLocationContactDialogVisible,
-    setAddLocationContactDialogVisible,
-    references,
+export default function EditLocationContactDialog({
+    editLocationContactDialogVisible,
+    setEditLocationContactDialogVisible,
     user,
     setRefreshLocationContactData,
-    selectedContactType,
-    setSelectedContactType,
-    locationNumber,
+    selectedLocationContact,
 }) {
     const [loading, setLoading] = useState(false);
     const toast = useRef(null);
 
     // form states
     // initialize form field
-    const addLocationContactFields = {
+    const editLocationContactFields = {
         // contact details
         contactName: "",
         contactPhone: null,
         contactEmail: "",
     };
     const [locationContactFormData, setLocationContactFormData] = useState(
-        JSON.parse(JSON.stringify(addLocationContactFields))
+        JSON.parse(JSON.stringify(editLocationContactFields))
     );
     const {
         // contact details
@@ -39,14 +36,14 @@ export default function AddLocationContactDialog({
     } = useMemo(() => locationContactFormData, [locationContactFormData]);
 
     // initialize form error fields
-    const addLocationContactErrorFields = {
+    const editLocationContactErrorFields = {
         // contact details
         contactNameError: "",
         contactPhoneError: "",
         contactEmailError: "",
     };
     const [locationContactErrorFormData, setLocationContactErrorFormData] =
-        useState(JSON.parse(JSON.stringify(addLocationContactErrorFields)));
+        useState(JSON.parse(JSON.stringify(editLocationContactErrorFields)));
     const {
         // contact details
         contactNameError,
@@ -56,6 +53,18 @@ export default function AddLocationContactDialog({
         () => locationContactErrorFormData,
         [locationContactErrorFormData]
     );
+
+    // set pre loaded values
+    useEffect(() => {
+        if (selectedLocationContact) {
+            setLocationContactFormData((previousState) => ({
+                ...previousState,
+                contactName: selectedLocationContact.contact_name,
+                contactPhone: selectedLocationContact.contact_phone,
+                contactEmail: selectedLocationContact.contact_email,
+            }));
+        }
+    }, [selectedLocationContact]);
 
     const validateForm = () => {
         let isValid = true;
@@ -98,28 +107,30 @@ export default function AddLocationContactDialog({
 
     const resetForm = () => {
         setLocationContactFormData(
-            JSON.parse(JSON.stringify(addLocationContactFields))
+            JSON.parse(JSON.stringify(editLocationContactFields))
         );
         setLocationContactErrorFormData(
-            JSON.parse(JSON.stringify(addLocationContactErrorFields))
+            JSON.parse(JSON.stringify(editLocationContactErrorFields))
         );
     };
 
-    const addNewLocationContact = async () => {
+    const saveEditedChanges = async () => {
         try {
             // saving data
             const { data: locationContactData, error: locationContactError } =
-                await supabase.from("location_contact").insert([
-                    {
-                        // location contact details
-                        location_number: locationNumber,
-                        contact_type: selectedContactType,
+                await supabase
+                    .from("location_contact")
+                    .update({
                         contact_name: contactName,
                         contact_phone: contactPhone,
                         contact_email: contactEmail,
-                        location_contact_created_by: user.id,
-                    },
-                ]);
+                        location_contact_updated_at: new Date(),
+                        location_contact_updated_by: user.id,
+                    })
+                    .eq(
+                        "location_contact_id",
+                        selectedLocationContact.location_contact_id
+                    );
             if (locationContactError) {
                 // open toast
                 toast.current.show({
@@ -132,10 +143,7 @@ export default function AddLocationContactDialog({
                 toast.current.show({
                     severity: "success",
                     summary: "Success",
-                    detail:
-                        "New " +
-                        selectedContactType +
-                        " contact saved successfully",
+                    detail: " Location contact updated successfully",
                 });
                 resetForm();
             }
@@ -154,8 +162,8 @@ export default function AddLocationContactDialog({
 
         if (validateForm()) {
             try {
-                addNewLocationContact().then(() => {
-                    setAddLocationContactDialogVisible(false);
+                saveEditedChanges().then(() => {
+                    setEditLocationContactDialogVisible(false);
                     setLoading(false);
                     setRefreshLocationContactData(true);
                 });
@@ -179,7 +187,7 @@ export default function AddLocationContactDialog({
                 />
             </span>
             <Button
-                label="Add Location Contact"
+                label="Save Changes"
                 outlined
                 icon="pi pi-check"
                 autoFocus
@@ -194,19 +202,19 @@ export default function AddLocationContactDialog({
             <Toast ref={toast} appendTo={null} />
 
             <Dialog
-                header={"Add New Location Contact"}
-                visible={addLocationContactDialogVisible}
+                header={"Edit Location Contact"}
+                visible={editLocationContactDialogVisible}
                 style={{
-                    width: "80vw",
+                    width: "70vw",
                     height: "70vh",
                     backgroundColor: "#eee",
                 }}
                 onHide={() => {
-                    if (!addLocationContactDialogVisible) return;
-                    setAddLocationContactDialogVisible(false);
+                    if (!editLocationContactDialogVisible) return;
+                    setEditLocationContactDialogVisible(false);
                     setLocationContactErrorFormData(
                         JSON.parse(
-                            JSON.stringify(addLocationContactErrorFields)
+                            JSON.stringify(editLocationContactErrorFields)
                         )
                     );
                 }}
@@ -221,7 +229,9 @@ export default function AddLocationContactDialog({
                                 <div className="field col-12 lg:col-6 md:col-6">
                                     <label htmlFor="">Contact Type*</label>
                                     <InputText
-                                        value={selectedContactType}
+                                        value={
+                                            selectedLocationContact.contact_type
+                                        }
                                         disabled
                                     />
                                 </div>

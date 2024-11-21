@@ -13,9 +13,15 @@ import { useSelector } from "react-redux";
 import { Tooltip } from "primereact/tooltip";
 import AddLocationDialog from "../../components/dialogs/AddLocationDialog";
 import Seo from "../../components/seo";
+import Spinner from "../../components/spinner";
+import { Toast } from "primereact/toast";
+import EditLocationDialog from "../../components/EditDialogs/EditLocationDialog";
 
 const Locations = () => {
     const user = useSelector((state) => state.initialState.user);
+    const toast = useRef(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingText, setIsLoadingText] = useState("");
 
     const [fetchedLocationsData, setFetchedLocationsData] = useState([]);
 
@@ -30,6 +36,9 @@ const Locations = () => {
         useState(false);
     const [refreshLocationData, setRefreshLocationData] = useState(false);
     const [selectedLocationType, setSelectedLocationType] = useState("");
+    const [editLocationDialogVisible, setEditLocationDialogVisible] =
+        useState(false);
+    const [selectedLocation, setSelectedLocation] = useState([]);
 
     const clearFilter1 = () => {
         initFilters1();
@@ -283,7 +292,10 @@ const Locations = () => {
                     icon="pi pi-pen-to-square"
                     text
                     aria-label="Filter"
-                    onClick={() => setAddLocationDialogVisible(true)}
+                    onClick={() => {
+                        setEditLocationDialogVisible(true);
+                        setSelectedLocation(rowData);
+                    }}
                 />
             </div>
         );
@@ -425,6 +437,9 @@ const Locations = () => {
     return (
         <>
             <Seo pageTitle="Locations" />
+            <Toast ref={toast} appendTo={null} />
+            <Spinner isLoading={isLoading} isLoadingText={isLoadingText} />
+
             <div className="grid">
                 <div className="col-12">
                     <div className="card">
@@ -517,6 +532,15 @@ const Locations = () => {
                     setRefreshLocationData={setRefreshLocationData}
                     selectedLocationType={selectedLocationType}
                     setSelectedLocationType={setSelectedLocationType}
+                />
+
+                <EditLocationDialog
+                    editLocationDialogVisible={editLocationDialogVisible}
+                    setEditLocationDialogVisible={setEditLocationDialogVisible}
+                    references={references}
+                    user={user}
+                    setRefreshLocationData={setRefreshLocationData}
+                    selectedLocation={selectedLocation}
                 />
             </div>
         </>
