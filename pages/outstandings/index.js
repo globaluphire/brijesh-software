@@ -290,7 +290,7 @@ const Outstandings = () => {
 
     const createDownloadData = () => {
         handleExport().then((url) => {
-            console.log(url);
+            // console.log(url);
             const downloadFile = document.createElement("a");
             downloadFile.setAttribute("href", url);
             downloadFile.setAttribute(

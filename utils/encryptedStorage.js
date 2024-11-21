@@ -20,7 +20,7 @@ const setEncryptedItem = (name, data) => {
         // stored item data with encryptedName
         localStorage.setItem(encryptedName, encryptedData);
     } catch (e) {
-        console.log("setEncryptedItem error", e);
+        // console.log("setEncryptedItem error", e);
         // forceLogOut()
     }
 };
@@ -42,7 +42,7 @@ const getDecryptedItem = (name) => {
             : encryptedData;
         return decryptedData;
     } catch (e) {
-        console.log("getDecryptedItem error", e);
+        // console.log("getDecryptedItem error", e);
         // forceLogOut()
     }
 };
@@ -55,7 +55,7 @@ const removeEncryptedItem = (name) => {
         // removed item data with encryptedName
         localStorage.removeItem(encryptedName);
     } catch (e) {
-        console.log("removeEncryptedItem error", e);
+        // console.log("removeEncryptedItem error", e);
         // forceLogOut()
     }
 };

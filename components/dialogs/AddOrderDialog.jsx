@@ -24,6 +24,7 @@ export default function AddOrderDialog({
 }) {
     const [loading, setLoading] = useState(false);
     const toast = useRef(null);
+    const [pickupDate, setPickupDate] = useState(new Date());
 
     // all dialog states
     const [addClientDialogVisible, setAddClientDialogVisible] = useState(false);
@@ -46,7 +47,6 @@ export default function AddOrderDialog({
     const addOrderFields = {
         orderCity: null,
         clientName: null,
-        pickupDate: new Date(),
         pickupLocation: null,
         dropLocation: null,
         nameOfPickupPoint: null,
@@ -68,7 +68,6 @@ export default function AddOrderDialog({
     const {
         orderCity,
         clientName,
-        pickupDate,
         pickupLocation,
         dropLocation,
         nameOfPickupPoint,
