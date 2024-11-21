@@ -2,23 +2,12 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
-import { InputSwitch } from "primereact/inputswitch";
 import { InputText } from "primereact/inputtext";
-import { InputTextarea } from "primereact/inputtextarea";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../../config/supabaseClient";
-import { Splitter, SplitterPanel } from "primereact/splitter";
-import { Timeline } from "primereact/timeline";
-import { Form, Field } from "react-final-form";
-import { classNames } from "primereact/utils";
-import { Calendar } from "primereact/calendar";
-import { Checkbox } from "primereact/checkbox";
-import { Tag } from "primereact/tag";
-import { Divider } from "primereact/divider";
 import { Toast } from "primereact/toast";
 import { Message } from "primereact/message";
 import { getLocationNumber } from "../../utils/generateUniqueNumber";
-import { format } from "date-fns";
 import { RadioButton } from "primereact/radiobutton";
 
 export default function AddLocationDialog({
@@ -480,6 +469,7 @@ export default function AddLocationDialog({
                                 : dropCity.ref_dspl,
                         pin: radioSelection === "Pickup" ? pin : dropPin,
                         state: radioSelection === "Pickup" ? state : dropState,
+                        location_created_by: user.id,
                     },
                 ]);
             if (locationError) {
@@ -514,6 +504,7 @@ export default function AddLocationDialog({
                             radioSelection === "Pickup"
                                 ? contactEmail
                                 : dropContactEmail,
+                        location_contact_created_by: user.id,
                     },
                 ]);
                 if (locationContactError) {

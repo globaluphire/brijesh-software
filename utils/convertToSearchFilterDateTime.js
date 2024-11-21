@@ -1,6 +1,4 @@
-
 const convertToSearchFilterDateTimeFrom = (dateFrom) => {
-
     const formattedDateFrom = new Date(dateFrom);
     formattedDateFrom.setHours(0);
     formattedDateFrom.setMinutes(0);
@@ -10,7 +8,6 @@ const convertToSearchFilterDateTimeFrom = (dateFrom) => {
 };
 
 const convertToSearchFilterDateTimeTo = (dateTo) => {
-
     const formattedDateTo = new Date(dateTo);
     formattedDateTo.setHours(23);
     formattedDateTo.setMinutes(59);

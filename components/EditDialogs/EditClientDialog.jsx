@@ -2,23 +2,11 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
-import { InputSwitch } from "primereact/inputswitch";
 import { InputText } from "primereact/inputtext";
-import { InputTextarea } from "primereact/inputtextarea";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../../config/supabaseClient";
-import { Splitter, SplitterPanel } from "primereact/splitter";
-import { Timeline } from "primereact/timeline";
-import { Form, Field } from "react-final-form";
-import { classNames } from "primereact/utils";
-import { Calendar } from "primereact/calendar";
-import { Checkbox } from "primereact/checkbox";
-import { Tag } from "primereact/tag";
-import { Divider } from "primereact/divider";
 import { Toast } from "primereact/toast";
 import { Message } from "primereact/message";
-import { getClientNumber } from "../../utils/generateUniqueNumber";
-import { format } from "date-fns";
 
 export default function EditClientDialog({
     editClientDialogVisible,

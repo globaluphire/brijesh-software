@@ -7,7 +7,6 @@ import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../../config/supabaseClient";
-import { Splitter, SplitterPanel } from "primereact/splitter";
 import { Timeline } from "primereact/timeline";
 import AddOrderCommentDialog from "../../components/dialogs/AddOrderCommentDialog";
 import CancelOrderDialog from "../../components/dialogs/CancelOrderDialog";

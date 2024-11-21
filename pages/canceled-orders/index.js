@@ -1,24 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { classNames } from "primereact/utils";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { Dropdown } from "primereact/dropdown";
-import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
-import { ProgressBar } from "primereact/progressbar";
 import { Calendar } from "primereact/calendar";
-import { MultiSelect } from "primereact/multiselect";
-import { Slider } from "primereact/slider";
-import { TriStateCheckbox } from "primereact/tristatecheckbox";
-import { ToggleButton } from "primereact/togglebutton";
-import { Rating } from "primereact/rating";
-import { CustomerService } from "../../demo/service/CustomerService";
-import { ProductService } from "../../demo/service/ProductService";
-import { SelectButton } from "primereact/selectbutton";
 import { InputText } from "primereact/inputtext";
 import { Tag } from "primereact/tag";
-import { addDays, subDays } from "date-fns";
+import { subDays } from "date-fns";
 
 import { supabase } from "../../config/supabaseClient";
 import { Toast } from "primereact/toast";
@@ -32,7 +20,6 @@ import AddOrderDialog from "../../components/dialogs/AddOrderDialog";
 import CreateInvoiceDialog from "../../components/dialogs/CreateInvoiceDialog";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { useSelector } from "react-redux";
-import { getLrNumber } from "../../utils/generateUniqueNumber";
 import Spinner from "../../components/spinner";
 
 const CanceledOrders = () => {
@@ -40,12 +27,10 @@ const CanceledOrders = () => {
 
     const [dateRange, setDateRange] = useState(null);
 
-    const [products, setProducts] = useState([]);
     const [fetchedCanceledOrderData, setFetchedCanceledOrderData] = useState(
         []
     );
     const [xlsxData, setXlsxData] = useState([]);
-    const [expandedRows, setExpandedRows] = useState(null);
     const [loading1, setLoading1] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [loadingText, setLoadingText] = useState("");

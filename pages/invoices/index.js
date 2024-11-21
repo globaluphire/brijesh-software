@@ -1,21 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { classNames } from "primereact/utils";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { Dropdown } from "primereact/dropdown";
-import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
-import { ProgressBar } from "primereact/progressbar";
 import { Calendar } from "primereact/calendar";
-import { MultiSelect } from "primereact/multiselect";
-import { Slider } from "primereact/slider";
-import { TriStateCheckbox } from "primereact/tristatecheckbox";
-import { ToggleButton } from "primereact/togglebutton";
-import { Rating } from "primereact/rating";
-import { CustomerService } from "../../demo/service/CustomerService";
-import { ProductService } from "../../demo/service/ProductService";
-import { SelectButton } from "primereact/selectbutton";
 import { InputText } from "primereact/inputtext";
 import { Tag } from "primereact/tag";
 
@@ -23,8 +11,6 @@ import { supabase } from "../../config/supabaseClient";
 import { useSelector } from "react-redux";
 
 import { Tooltip } from "primereact/tooltip";
-import AddClientDialog from "../../components/dialogs/AddClientDialog";
-import AddLocationDialog from "../../components/dialogs/AddLocationDialog";
 import CreateInvoiceDialog from "../../components/dialogs/CreateInvoiceDialog";
 import InvoiceDetailsDialog from "../../components/EditDialogs/InvoiceDetailsDialog";
 import { Toast } from "primereact/toast";

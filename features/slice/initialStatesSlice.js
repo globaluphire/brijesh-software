@@ -7,7 +7,7 @@ const initialState = {
         id: "",
         role: "",
         pickup_branch: "",
-        drop_branch: ""
+        drop_branch: "",
     },
     loggedIn: false,
 };
@@ -24,7 +24,5 @@ export const initialStatesSlice = createSlice({
     },
 });
 
-export const {
-    setUserData,
-} = initialStatesSlice.actions;
+export const { setUserData } = initialStatesSlice.actions;
 export default initialStatesSlice.reducer;
