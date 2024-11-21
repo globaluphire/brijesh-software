@@ -21,6 +21,7 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { useSelector } from "react-redux";
 import { getLrNumber } from "../../utils/generateUniqueNumber";
 import Spinner from "../../components/spinner";
+import { InputText } from "primereact/inputtext";
 
 const OpenOrders = () => {
     const user = useSelector((state) => state.initialState.user);
