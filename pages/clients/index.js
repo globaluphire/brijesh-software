@@ -18,6 +18,7 @@ import Spinner from "../../components/spinner";
 import EditClientDialog from "../../components/EditDialogs/EditClientDialog";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import ClientInfoDialog from "../../components/InfoDialogs/ClientInfoDialog";
+import Seo from "../../components/seo";
 
 const Clients = () => {
     const user = useSelector((state) => state.initialState.user);
@@ -591,6 +592,7 @@ const Clients = () => {
 
     return (
         <>
+            <Seo pageTitle="Clients" />
             <Toast ref={toast} appendTo={null} />
             <Spinner isLoading={isLoading} loadingText={loadingText} />
             <ConfirmDialog />

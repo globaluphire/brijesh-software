@@ -15,6 +15,7 @@ import {
 import * as XLSX from "xlsx";
 import * as XlsxPopulate from "xlsx-populate/browser/xlsx-populate";
 import { Message } from "primereact/message";
+import Seo from "../../components/seo";
 
 const Ledger = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -363,6 +364,7 @@ const Ledger = () => {
 
     return (
         <>
+            <Seo pageTitle="Ledger" />
             <Spinner isLoading={isLoading} loadingText={loadingText} />
             <Toast ref={toast} appendTo={null} />
 

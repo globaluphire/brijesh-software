@@ -9,6 +9,7 @@ import { SelectButton } from "primereact/selectbutton";
 import { InputText } from "primereact/inputtext";
 
 import { supabase } from "../../config/supabaseClient";
+import Seo from "../../components/seo";
 
 const Users = () => {
     const [fetchedUsersData, setFetchedUsersData] = useState([]);
@@ -241,82 +242,87 @@ const Users = () => {
     };
 
     return (
-        <div className="grid">
-            <div className="col-12">
-                <div className="card">
-                    <div className="flex align-items-baseline">
-                        <h5>All Users</h5>
-                        <small>&nbsp;(Total: {fetchedUsersData.length})</small>
+        <>
+            <Seo pageTitle="Users" />
+            <div className="grid">
+                <div className="col-12">
+                    <div className="card">
+                        <div className="flex align-items-baseline">
+                            <h5>All Users</h5>
+                            <small>
+                                &nbsp;(Total: {fetchedUsersData.length})
+                            </small>
+                        </div>
+                        <DataTable
+                            value={fetchedUsersData}
+                            size={size}
+                            paginator
+                            rowsPerPageOptions={[5, 10, 25, 50]}
+                            className="p-datatable-gridlines"
+                            rows={10}
+                            dataKey="id"
+                            loading={loading1}
+                            responsiveLayout="scroll"
+                            showGridlines
+                            stripedRows
+                            rowHover
+                            removableSort
+                            scrollable
+                            scrollHeight="65vh"
+                            sortMode="multiple"
+                            tableStyle={{ minWidth: "50rem" }}
+                            filters={filters1}
+                            header={header1}
+                            filterDisplay="menu"
+                            resizableColumns
+                            columnResizeMode="expand"
+                            emptyMessage="No users found."
+                        >
+                            <Column
+                                field="user_key_id"
+                                header="Action"
+                                body={actionButtonRender}
+                                align="center"
+                                style={{ maxWidth: "5rem" }}
+                            />
+                            <Column
+                                filter
+                                filterPlaceholder="Search by name"
+                                field="name"
+                                sortable
+                                header="Name"
+                            ></Column>
+                            <Column
+                                field="role"
+                                sortable
+                                header="Role"
+                                filterMenuStyle={{ width: "14rem" }}
+                                style={{ minWidth: "12rem" }}
+                                body={roleBodyTemplate}
+                                filter
+                                filterElement={roleFilterTemplate}
+                            ></Column>
+                            <Column
+                                filter
+                                filterPlaceholder="Search by email"
+                                field="email"
+                                sortable
+                                header="Email"
+                            ></Column>
+                            <Column
+                                field="created_at"
+                                sortable
+                                filter
+                                filterPlaceholder="Search by date"
+                                header="Created at"
+                                body={createdDateRender}
+                                filterElement={dateFilterTemplate}
+                            ></Column>
+                        </DataTable>
                     </div>
-                    <DataTable
-                        value={fetchedUsersData}
-                        size={size}
-                        paginator
-                        rowsPerPageOptions={[5, 10, 25, 50]}
-                        className="p-datatable-gridlines"
-                        rows={10}
-                        dataKey="id"
-                        loading={loading1}
-                        responsiveLayout="scroll"
-                        showGridlines
-                        stripedRows
-                        rowHover
-                        removableSort
-                        scrollable
-                        scrollHeight="65vh"
-                        sortMode="multiple"
-                        tableStyle={{ minWidth: "50rem" }}
-                        filters={filters1}
-                        header={header1}
-                        filterDisplay="menu"
-                        resizableColumns
-                        columnResizeMode="expand"
-                        emptyMessage="No users found."
-                    >
-                        <Column
-                            field="user_key_id"
-                            header="Action"
-                            body={actionButtonRender}
-                            align="center"
-                            style={{ maxWidth: "5rem" }}
-                        />
-                        <Column
-                            filter
-                            filterPlaceholder="Search by name"
-                            field="name"
-                            sortable
-                            header="Name"
-                        ></Column>
-                        <Column
-                            field="role"
-                            sortable
-                            header="Role"
-                            filterMenuStyle={{ width: "14rem" }}
-                            style={{ minWidth: "12rem" }}
-                            body={roleBodyTemplate}
-                            filter
-                            filterElement={roleFilterTemplate}
-                        ></Column>
-                        <Column
-                            filter
-                            filterPlaceholder="Search by email"
-                            field="email"
-                            sortable
-                            header="Email"
-                        ></Column>
-                        <Column
-                            field="created_at"
-                            sortable
-                            filter
-                            filterPlaceholder="Search by date"
-                            header="Created at"
-                            body={createdDateRender}
-                            filterElement={dateFilterTemplate}
-                        ></Column>
-                    </DataTable>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

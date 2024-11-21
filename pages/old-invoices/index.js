@@ -15,6 +15,7 @@ import { Toast } from "primereact/toast";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import AddInvoiceDialog from "../../components/dialogs/AddInvoiceDialog";
 import EditInvoiceDialog from "../../components/EditDialogs/EditInvoiceDialog";
+import Seo from "../../components/seo";
 
 const OldInvoices = () => {
     const toast = useRef(null);
@@ -439,6 +440,7 @@ const OldInvoices = () => {
 
     return (
         <>
+            <Seo pageTitle="Old Invoices" />
             <Toast ref={toast} />
             <ConfirmDialog />
 

@@ -21,6 +21,7 @@ import CreateInvoiceDialog from "../../components/dialogs/CreateInvoiceDialog";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { useSelector } from "react-redux";
 import Spinner from "../../components/spinner";
+import Seo from "../../components/seo";
 
 const CompletedOrders = () => {
     const user = useSelector((state) => state.initialState.user);
@@ -951,262 +952,268 @@ const CompletedOrders = () => {
     const header1 = renderHeader1();
 
     return (
-        <div className="grid">
-            <Spinner isLoading={isLoading} loadingText={loadingText} />
+        <>
+            <Seo pageTitle="Completed Orders" />
+            <div className="grid">
+                <Spinner isLoading={isLoading} loadingText={loadingText} />
 
-            <div className="col-12">
-                <div className="card">
-                    <div className="flex align-items-baseline">
-                        <h5>All Completed Orders</h5>
-                        <small>
-                            &nbsp;(Total: {fetchedCompletedOrderData.length})
-                        </small>
+                <div className="col-12">
+                    <div className="card">
+                        <div className="flex align-items-baseline">
+                            <h5>All Completed Orders</h5>
+                            <small>
+                                &nbsp;(Total: {fetchedCompletedOrderData.length}
+                                )
+                            </small>
 
-                        {/* <SelectButton
+                            {/* <SelectButton
           value={size}
           onChange={(e) => setSize(e.value)}
           options={sizeOptions}
         /> */}
-                    </div>
+                        </div>
 
-                    <DataTable
-                        value={fetchedCompletedOrderData}
-                        size={size}
-                        paginator
-                        rowsPerPageOptions={[10, 25, 50, 100]}
-                        className="p-datatable-gridlines"
-                        rows={10}
-                        dataKey="order_id"
-                        loading={loading1}
-                        responsiveLayout="scroll"
-                        showGridlines
-                        stripedRows
-                        rowHover
-                        removableSort
-                        scrollable
-                        scrollHeight="65vh"
-                        sortMode="multiple"
-                        tableStyle={{ minWidth: "50rem" }}
-                        filters={filters1}
-                        header={header1}
-                        filterDisplay="menu"
-                        resizableColumns
-                        columnResizeMode="expand"
-                        emptyMessage="No completed orders found."
-                    >
-                        <Column
-                            field="order_key_id"
-                            header="Invoice"
-                            body={actionButtonRender1}
-                            align="center"
-                            style={{ minWidth: "6rem" }}
-                        />
-                        {user.role === "SUPER_ADMIN" ? (
+                        <DataTable
+                            value={fetchedCompletedOrderData}
+                            size={size}
+                            paginator
+                            rowsPerPageOptions={[10, 25, 50, 100]}
+                            className="p-datatable-gridlines"
+                            rows={10}
+                            dataKey="order_id"
+                            loading={loading1}
+                            responsiveLayout="scroll"
+                            showGridlines
+                            stripedRows
+                            rowHover
+                            removableSort
+                            scrollable
+                            scrollHeight="65vh"
+                            sortMode="multiple"
+                            tableStyle={{ minWidth: "50rem" }}
+                            filters={filters1}
+                            header={header1}
+                            filterDisplay="menu"
+                            resizableColumns
+                            columnResizeMode="expand"
+                            emptyMessage="No completed orders found."
+                        >
                             <Column
-                                field="order_created_updated_by_name"
-                                header="Created/Updated By"
-                                body={orderCreatedInfoRender}
-                                filterField="order_created_by_name"
+                                field="order_key_id"
+                                header="Invoice"
+                                body={actionButtonRender1}
+                                align="center"
+                                style={{ minWidth: "6rem" }}
+                            />
+                            {user.role === "SUPER_ADMIN" ? (
+                                <Column
+                                    field="order_created_updated_by_name"
+                                    header="Created/Updated By"
+                                    body={orderCreatedInfoRender}
+                                    filterField="order_created_by_name"
+                                    filter
+                                    filterPlaceholder="Search created by"
+                                    sortable
+                                />
+                            ) : (
+                                ""
+                            )}
+                            <Column
+                                field="order_created_at"
+                                header="Created/Updated On"
+                                body={createdUpdatedDateRender}
                                 filter
-                                filterPlaceholder="Search created by"
+                                filterPlaceholder="Search by order created on"
+                                filterElement={dateFilterTemplate}
                                 sortable
                             />
-                        ) : (
-                            ""
-                        )}
-                        <Column
-                            field="order_created_at"
-                            header="Created/Updated On"
-                            body={createdUpdatedDateRender}
-                            filter
-                            filterPlaceholder="Search by order created on"
-                            filterElement={dateFilterTemplate}
-                            sortable
-                        />
-                        <Column
-                            field="pickup_date"
-                            header="Pickup Date"
-                            body={orderPickupDateInfoRender}
-                            filter
-                            filterPlaceholder="Search by Pickup Date"
-                            filterElement={dateFilterTemplate}
-                            sortable
-                        />
-                        <Column
-                            field="order_number"
-                            header="ERP Order No"
-                            body={orderDetailsDialogRender}
-                            filter
-                            filterPlaceholder="Search by ERP Order No"
-                            sortable
-                        />
-                        <Column
-                            field="order_number"
-                            header="LR No"
-                            body={orderLRDialogRender}
-                            filter
-                            filterPlaceholder="Search by LR No"
-                            sortable
-                        />
-                        <Column
-                            field="route"
-                            header="Route"
-                            body={orderRouteInfoRender}
-                            filter
-                            filterPlaceholder="Search by route"
-                            sortable
-                        />
-                        <Column
-                            field="status"
-                            header="Status"
-                            body={orderStatusInfoRender}
-                            filter
-                            filterPlaceholder="Search by status"
-                            sortable
-                        />
-                        <Column
-                            field=""
-                            header="Comment"
-                            body={orderCommentDialogRender}
-                            filter
-                            filterPlaceholder="Search by comment"
-                            sortable
-                        />
-                        <Column
-                            filterField="client_name"
-                            header="Client Name"
-                            body={clientInfoRender}
-                            filter
-                            filterPlaceholder="Search by client name"
-                            sortable
-                        />
-                        <Column
-                            field="company_name"
-                            header="Company"
-                            body={companyInfoRender}
-                            filter
-                            filterPlaceholder="Search by company"
-                            sortable
-                        />
-                        <Column
-                            field="weight"
-                            header="Total Weight"
-                            body={orderWeightInfoRender}
-                            filter
-                            filterPlaceholder="Search by weight"
-                            sortable
-                        />
-                        <Column
-                            field="quantity"
-                            header="Order Details"
-                            body={quantityInfoRender}
-                            filter
-                            filterPlaceholder="Search by quatity"
-                            sortable
-                        />
-                        <Column
-                            field="notes"
-                            header="Order Notes"
-                            body={notesInfoRender}
-                            filter
-                            filterPlaceholder="Search by order notes"
-                            sortable
-                        />
-                        <Column
-                            field="local_transport"
-                            header="Local Transport"
-                            body={localTransportInfoRender}
-                            filter
-                            filterPlaceholder="Search by local transport"
-                            sortable
-                        />
-                        <Column
-                            field="truck_details"
-                            header="Truck Details"
-                            body={truckDetailsInfoRender}
-                            filter
-                            filterPlaceholder="Search by truck details"
-                            sortable
-                        />
-                        <Column
-                            field="eway_number"
-                            header="EWay Bill Number"
-                            body={orderEwayInfoRender}
-                            filter
-                            filterPlaceholder="Search by Eway bill number"
-                            sortable
-                        />
-                        <Column
-                            field="bills"
-                            header="Bills"
-                            body={billsInfoRender}
-                            filter
-                            filterPlaceholder="Search by bills"
-                            sortable
-                        />
-                    </DataTable>
+                            <Column
+                                field="pickup_date"
+                                header="Pickup Date"
+                                body={orderPickupDateInfoRender}
+                                filter
+                                filterPlaceholder="Search by Pickup Date"
+                                filterElement={dateFilterTemplate}
+                                sortable
+                            />
+                            <Column
+                                field="order_number"
+                                header="ERP Order No"
+                                body={orderDetailsDialogRender}
+                                filter
+                                filterPlaceholder="Search by ERP Order No"
+                                sortable
+                            />
+                            <Column
+                                field="order_number"
+                                header="LR No"
+                                body={orderLRDialogRender}
+                                filter
+                                filterPlaceholder="Search by LR No"
+                                sortable
+                            />
+                            <Column
+                                field="route"
+                                header="Route"
+                                body={orderRouteInfoRender}
+                                filter
+                                filterPlaceholder="Search by route"
+                                sortable
+                            />
+                            <Column
+                                field="status"
+                                header="Status"
+                                body={orderStatusInfoRender}
+                                filter
+                                filterPlaceholder="Search by status"
+                                sortable
+                            />
+                            <Column
+                                field=""
+                                header="Comment"
+                                body={orderCommentDialogRender}
+                                filter
+                                filterPlaceholder="Search by comment"
+                                sortable
+                            />
+                            <Column
+                                filterField="client_name"
+                                header="Client Name"
+                                body={clientInfoRender}
+                                filter
+                                filterPlaceholder="Search by client name"
+                                sortable
+                            />
+                            <Column
+                                field="company_name"
+                                header="Company"
+                                body={companyInfoRender}
+                                filter
+                                filterPlaceholder="Search by company"
+                                sortable
+                            />
+                            <Column
+                                field="weight"
+                                header="Total Weight"
+                                body={orderWeightInfoRender}
+                                filter
+                                filterPlaceholder="Search by weight"
+                                sortable
+                            />
+                            <Column
+                                field="quantity"
+                                header="Order Details"
+                                body={quantityInfoRender}
+                                filter
+                                filterPlaceholder="Search by quatity"
+                                sortable
+                            />
+                            <Column
+                                field="notes"
+                                header="Order Notes"
+                                body={notesInfoRender}
+                                filter
+                                filterPlaceholder="Search by order notes"
+                                sortable
+                            />
+                            <Column
+                                field="local_transport"
+                                header="Local Transport"
+                                body={localTransportInfoRender}
+                                filter
+                                filterPlaceholder="Search by local transport"
+                                sortable
+                            />
+                            <Column
+                                field="truck_details"
+                                header="Truck Details"
+                                body={truckDetailsInfoRender}
+                                filter
+                                filterPlaceholder="Search by truck details"
+                                sortable
+                            />
+                            <Column
+                                field="eway_number"
+                                header="EWay Bill Number"
+                                body={orderEwayInfoRender}
+                                filter
+                                filterPlaceholder="Search by Eway bill number"
+                                sortable
+                            />
+                            <Column
+                                field="bills"
+                                header="Bills"
+                                body={billsInfoRender}
+                                filter
+                                filterPlaceholder="Search by bills"
+                                sortable
+                            />
+                        </DataTable>
+                    </div>
                 </div>
+
+                <Toast ref={toast} />
+
+                {/* Start of All Dialogs Blocks */}
+                <AddOrderDialog
+                    addOrderDialogVisible={addOrderDialogVisible}
+                    setAddOrderDialogVisible={setAddOrderDialogVisible}
+                    references={references}
+                    user={user}
+                    setRefreshData={setRefreshData}
+                />
+
+                <ConfirmDialog />
+
+                <OpenOrderDialog
+                    orderDetailsDialogVisible={orderDetailsDialogVisible}
+                    setOrderDetailsDialogVisible={setOrderDetailsDialogVisible}
+                    selectedOrder={selectedOrder}
+                    selectedOrderDetails={selectedOrderDetails}
+                    setSelectedOrderDetails={setSelectedOrderDetails}
+                    references={references}
+                    user={user}
+                    setRefreshData={setRefreshData}
+                />
+
+                <LrDialog
+                    lrDetailsDialogVisible={lrDetailsDialogVisible}
+                    setLrDetailsDialogVisible={setLrDetailsDialogVisible}
+                    references={references}
+                    user={user}
+                    setRefreshData={setRefreshData}
+                    fetchedOrderData={fetchedOrderData}
+                    fetchedLRData={fetchedLRData}
+                    fetchedClientData={fetchedClientData}
+                    fetchedPickupLocationData={fetchedPickupLocationData}
+                    fetchedPickupLocationMarketingData={
+                        fetchedPickupLocationMarketingData
+                    }
+                    fetchedpickupLocationDispatchData={
+                        fetchedpickupLocationDispatchData
+                    }
+                    fetchedDropLocationData={fetchedDropLocationData}
+                    fetchedDropLocationMarketingData={
+                        fetchedDropLocationMarketingData
+                    }
+                    fetchedDropLocationDispatchData={
+                        fetchedDropLocationDispatchData
+                    }
+                    fetchedConsignorClientsData={fetchedConsignorClientsData}
+                    fetchedConsigneeClientsData={fetchedConsigneeClientsData}
+                />
+
+                <CreateInvoiceDialog
+                    createInvoiceDialogVisible={createInvoiceDialogVisible}
+                    setCreateInvoiceDialogVisible={
+                        setCreateInvoiceDialogVisible
+                    }
+                    selectedOrder={selectedOrder}
+                    setRefreshData={setRefreshData}
+                    user={user}
+                />
             </div>
-
-            <Toast ref={toast} />
-
-            {/* Start of All Dialogs Blocks */}
-            <AddOrderDialog
-                addOrderDialogVisible={addOrderDialogVisible}
-                setAddOrderDialogVisible={setAddOrderDialogVisible}
-                references={references}
-                user={user}
-                setRefreshData={setRefreshData}
-            />
-
-            <ConfirmDialog />
-
-            <OpenOrderDialog
-                orderDetailsDialogVisible={orderDetailsDialogVisible}
-                setOrderDetailsDialogVisible={setOrderDetailsDialogVisible}
-                selectedOrder={selectedOrder}
-                selectedOrderDetails={selectedOrderDetails}
-                setSelectedOrderDetails={setSelectedOrderDetails}
-                references={references}
-                user={user}
-                setRefreshData={setRefreshData}
-            />
-
-            <LrDialog
-                lrDetailsDialogVisible={lrDetailsDialogVisible}
-                setLrDetailsDialogVisible={setLrDetailsDialogVisible}
-                references={references}
-                user={user}
-                setRefreshData={setRefreshData}
-                fetchedOrderData={fetchedOrderData}
-                fetchedLRData={fetchedLRData}
-                fetchedClientData={fetchedClientData}
-                fetchedPickupLocationData={fetchedPickupLocationData}
-                fetchedPickupLocationMarketingData={
-                    fetchedPickupLocationMarketingData
-                }
-                fetchedpickupLocationDispatchData={
-                    fetchedpickupLocationDispatchData
-                }
-                fetchedDropLocationData={fetchedDropLocationData}
-                fetchedDropLocationMarketingData={
-                    fetchedDropLocationMarketingData
-                }
-                fetchedDropLocationDispatchData={
-                    fetchedDropLocationDispatchData
-                }
-                fetchedConsignorClientsData={fetchedConsignorClientsData}
-                fetchedConsigneeClientsData={fetchedConsigneeClientsData}
-            />
-
-            <CreateInvoiceDialog
-                createInvoiceDialogVisible={createInvoiceDialogVisible}
-                setCreateInvoiceDialogVisible={setCreateInvoiceDialogVisible}
-                selectedOrder={selectedOrder}
-                setRefreshData={setRefreshData}
-                user={user}
-            />
-        </div>
+        </>
     );
 };
 

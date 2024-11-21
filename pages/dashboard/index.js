@@ -10,6 +10,7 @@ import Link from "next/link";
 import Spinner from "../../components/spinner";
 import { supabase } from "../../config/supabaseClient";
 import OrdersChart from "../../components/dashboard/OrdersChart";
+import Seo from "../../components/seo";
 
 const lineData = {
     labels: ["January", "February", "March", "April", "May", "June", "July"],
@@ -505,6 +506,7 @@ const Dashboard = () => {
 
     return (
         <>
+            <Seo pageTitle="Dashboard" />
             <Spinner isLoading={isLoading} loadingText={loadingText} />
 
             <div className="grid">

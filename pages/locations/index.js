@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 
 import { Tooltip } from "primereact/tooltip";
 import AddLocationDialog from "../../components/dialogs/AddLocationDialog";
+import Seo from "../../components/seo";
 
 const Locations = () => {
     const user = useSelector((state) => state.initialState.user);
@@ -422,100 +423,103 @@ const Locations = () => {
     };
 
     return (
-        <div className="grid">
-            <div className="col-12">
-                <div className="card">
-                    <div className="flex align-items-baseline">
-                        <h5>All Locations!</h5>
-                        <small>
-                            &nbsp;(Total: {fetchedLocationsData.length})
-                        </small>
+        <>
+            <Seo pageTitle="Locations" />
+            <div className="grid">
+                <div className="col-12">
+                    <div className="card">
+                        <div className="flex align-items-baseline">
+                            <h5>All Locations!</h5>
+                            <small>
+                                &nbsp;(Total: {fetchedLocationsData.length})
+                            </small>
+                        </div>
+                        <DataTable
+                            value={fetchedLocationsData}
+                            size="small"
+                            paginator
+                            rowsPerPageOptions={[5, 10, 25, 50]}
+                            className="p-datatable-gridlines"
+                            rows={10}
+                            dataKey="id"
+                            loading={loading1}
+                            responsiveLayout="scroll"
+                            showGridlines
+                            stripedRows
+                            rowHover
+                            removableSort
+                            scrollable
+                            scrollHeight="65vh"
+                            sortMode="multiple"
+                            tableStyle={{ minWidth: "50rem" }}
+                            filters={filters1}
+                            header={header1}
+                            filterDisplay="menu"
+                            resizableColumns
+                            columnResizeMode="expand"
+                            emptyMessage="No Locations found."
+                        >
+                            <Column
+                                field="location_key_id"
+                                header="Action"
+                                body={actionButtonRender}
+                                align="center"
+                                style={{ maxWidth: "5rem" }}
+                            />
+                            <Column
+                                field="location_created_at"
+                                sortable
+                                filter
+                                filterPlaceholder="Search by date"
+                                header="Created/Updated On"
+                                body={createdUpdatedDateRender}
+                                //   filterElement={dateFilterTemplate}
+                            ></Column>
+                            <Column
+                                field="location_type"
+                                header="Type"
+                                filter
+                                filterPlaceholder="Search by name"
+                                sortable
+                            ></Column>
+                            <Column
+                                field="city"
+                                header="City"
+                                filterMenuStyle={{ width: "14rem" }}
+                                style={{ minWidth: "12rem" }}
+                                sortable
+                            ></Column>
+                            <Column
+                                field="name_of_pickup_point"
+                                header="Location Name"
+                                //   body={clientNameRender}
+                                filter
+                                filterPlaceholder="Search by email"
+                                sortable
+                            ></Column>
+                            <Column
+                                field="address1"
+                                header="Address"
+                                body={locationAddressRender}
+                                filter
+                                filterPlaceholder="Search by email"
+                                sortable
+                            ></Column>
+                        </DataTable>
                     </div>
-                    <DataTable
-                        value={fetchedLocationsData}
-                        size="small"
-                        paginator
-                        rowsPerPageOptions={[5, 10, 25, 50]}
-                        className="p-datatable-gridlines"
-                        rows={10}
-                        dataKey="id"
-                        loading={loading1}
-                        responsiveLayout="scroll"
-                        showGridlines
-                        stripedRows
-                        rowHover
-                        removableSort
-                        scrollable
-                        scrollHeight="65vh"
-                        sortMode="multiple"
-                        tableStyle={{ minWidth: "50rem" }}
-                        filters={filters1}
-                        header={header1}
-                        filterDisplay="menu"
-                        resizableColumns
-                        columnResizeMode="expand"
-                        emptyMessage="No Locations found."
-                    >
-                        <Column
-                            field="location_key_id"
-                            header="Action"
-                            body={actionButtonRender}
-                            align="center"
-                            style={{ maxWidth: "5rem" }}
-                        />
-                        <Column
-                            field="location_created_at"
-                            sortable
-                            filter
-                            filterPlaceholder="Search by date"
-                            header="Created/Updated On"
-                            body={createdUpdatedDateRender}
-                            //   filterElement={dateFilterTemplate}
-                        ></Column>
-                        <Column
-                            field="location_type"
-                            header="Type"
-                            filter
-                            filterPlaceholder="Search by name"
-                            sortable
-                        ></Column>
-                        <Column
-                            field="city"
-                            header="City"
-                            filterMenuStyle={{ width: "14rem" }}
-                            style={{ minWidth: "12rem" }}
-                            sortable
-                        ></Column>
-                        <Column
-                            field="name_of_pickup_point"
-                            header="Location Name"
-                            //   body={clientNameRender}
-                            filter
-                            filterPlaceholder="Search by email"
-                            sortable
-                        ></Column>
-                        <Column
-                            field="address1"
-                            header="Address"
-                            body={locationAddressRender}
-                            filter
-                            filterPlaceholder="Search by email"
-                            sortable
-                        ></Column>
-                    </DataTable>
                 </div>
-            </div>
 
-            <AddLocationDialog
-                addLocationDialogVisible={addLocationDialogVisible}
-                setAddLocationDialogVisible={setAddLocationDialogVisible}
-                references={references}
-                user={user}
-                setRefreshLocationData={setRefreshLocationData}
-                selectedLocationType={selectedLocationType}
-                setSelectedLocationType={setSelectedLocationType}
-            />
-        </div>
+                <AddLocationDialog
+                    addLocationDialogVisible={addLocationDialogVisible}
+                    setAddLocationDialogVisible={setAddLocationDialogVisible}
+                    references={references}
+                    user={user}
+                    setRefreshLocationData={setRefreshLocationData}
+                    selectedLocationType={selectedLocationType}
+                    setSelectedLocationType={setSelectedLocationType}
+                />
+            </div>
+        </>
     );
 };
 

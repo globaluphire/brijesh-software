@@ -15,6 +15,7 @@ import CreateInvoiceDialog from "../../components/dialogs/CreateInvoiceDialog";
 import InvoiceDetailsDialog from "../../components/EditDialogs/InvoiceDetailsDialog";
 import { Toast } from "primereact/toast";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
+import Seo from "../../components/seo";
 
 const Invoices = () => {
     const toast = useRef(null);
@@ -446,6 +447,7 @@ const Invoices = () => {
 
     return (
         <>
+            <Seo pageTitle="Invoices" />
             <Toast ref={toast} />
             <ConfirmDialog />
 

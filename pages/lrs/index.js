@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 
 import { Tooltip } from "primereact/tooltip";
 import AddLocationDialog from "../../components/dialogs/AddLocationDialog";
+import Seo from "../../components/seo";
 
 const LRs = () => {
     const user = useSelector((state) => state.initialState.user);
@@ -374,154 +375,157 @@ const LRs = () => {
     };
 
     return (
-        <div className="grid">
-            <div className="col-12">
-                <div className="card">
-                    <div className="flex align-items-baseline">
-                        <h5>All LRs!</h5>
-                        <small>&nbsp;(Total: {fetchedLRData.length})</small>
+        <>
+            <Seo pageTitle="LRs" />
+            <div className="grid">
+                <div className="col-12">
+                    <div className="card">
+                        <div className="flex align-items-baseline">
+                            <h5>All LRs!</h5>
+                            <small>&nbsp;(Total: {fetchedLRData.length})</small>
+                        </div>
+                        <DataTable
+                            value={fetchedLRData}
+                            size="small"
+                            paginator
+                            rowsPerPageOptions={[5, 10, 25, 50]}
+                            className="p-datatable-gridlines"
+                            rows={10}
+                            dataKey="id"
+                            loading={loading1}
+                            responsiveLayout="scroll"
+                            showGridlines
+                            stripedRows
+                            rowHover
+                            removableSort
+                            scrollable
+                            scrollHeight="65vh"
+                            sortMode="multiple"
+                            tableStyle={{ minWidth: "50rem" }}
+                            filters={filters1}
+                            header={header1}
+                            filterDisplay="menu"
+                            resizableColumns
+                            columnResizeMode="expand"
+                            emptyMessage="No LRs found."
+                        >
+                            <Column
+                                field="lr_key_id"
+                                header="Action"
+                                body={actionButtonRender}
+                                align="center"
+                                style={{ maxWidth: "5rem" }}
+                            />
+                            <Column
+                                field="lr_created_date"
+                                sortable
+                                filter
+                                filterPlaceholder="Search by date"
+                                header="Created/Updated On"
+                                body={createdUpdatedDateRender}
+                                //   filterElement={dateFilterTemplate}
+                            ></Column>
+                            <Column
+                                field="lr_number"
+                                header="LR No"
+                                filter
+                                filterPlaceholder="Search by name"
+                                sortable
+                            ></Column>
+                            <Column
+                                field="order_number"
+                                header="Order No"
+                                filterMenuStyle={{ width: "14rem" }}
+                                style={{ minWidth: "12rem" }}
+                                sortable
+                            ></Column>
+                            <Column
+                                field="consignor_name"
+                                header="Consignor"
+                                body={consignorRender}
+                                filter
+                                filterPlaceholder="Search by email"
+                                sortable
+                            ></Column>
+                            <Column
+                                field="consignee_name"
+                                header="Consignee"
+                                body={consigneeRender}
+                                filter
+                                filterPlaceholder="Search by email"
+                                sortable
+                            ></Column>
+                            <Column
+                                field="pickup_point_address1"
+                                header="Pickup Point"
+                                body={pickupPointRender}
+                                filter
+                                filterPlaceholder="Search by email"
+                                sortable
+                            ></Column>
+                            <Column
+                                field="drop_point_address1"
+                                header="Drop Point"
+                                body={dropPointRender}
+                                filter
+                                filterPlaceholder="Search by email"
+                                sortable
+                            ></Column>
+                            <Column
+                                field="material"
+                                header="Item"
+                                body={itemRender}
+                                filter
+                                filterPlaceholder="Search by email"
+                                sortable
+                            ></Column>
+                            <Column
+                                field="weight"
+                                header="Weight(Kg)"
+                                //   body={locationAddressRender}
+                                filter
+                                filterPlaceholder="Search by email"
+                                sortable
+                            ></Column>
+                            <Column
+                                field="vehical_number"
+                                header="Truck No"
+                                //   body={locationAddressRender}
+                                filter
+                                filterPlaceholder="Search by email"
+                                sortable
+                            ></Column>
+                            <Column
+                                field="driver_details"
+                                header="Driver Details"
+                                //   body={locationAddressRender}
+                                filter
+                                filterPlaceholder="Search by email"
+                                sortable
+                            ></Column>
+                            <Column
+                                field="status"
+                                header="Status"
+                                //   body={locationAddressRender}
+                                filter
+                                filterPlaceholder="Search by email"
+                                sortable
+                            ></Column>
+                        </DataTable>
                     </div>
-                    <DataTable
-                        value={fetchedLRData}
-                        size="small"
-                        paginator
-                        rowsPerPageOptions={[5, 10, 25, 50]}
-                        className="p-datatable-gridlines"
-                        rows={10}
-                        dataKey="id"
-                        loading={loading1}
-                        responsiveLayout="scroll"
-                        showGridlines
-                        stripedRows
-                        rowHover
-                        removableSort
-                        scrollable
-                        scrollHeight="65vh"
-                        sortMode="multiple"
-                        tableStyle={{ minWidth: "50rem" }}
-                        filters={filters1}
-                        header={header1}
-                        filterDisplay="menu"
-                        resizableColumns
-                        columnResizeMode="expand"
-                        emptyMessage="No LRs found."
-                    >
-                        <Column
-                            field="lr_key_id"
-                            header="Action"
-                            body={actionButtonRender}
-                            align="center"
-                            style={{ maxWidth: "5rem" }}
-                        />
-                        <Column
-                            field="lr_created_date"
-                            sortable
-                            filter
-                            filterPlaceholder="Search by date"
-                            header="Created/Updated On"
-                            body={createdUpdatedDateRender}
-                            //   filterElement={dateFilterTemplate}
-                        ></Column>
-                        <Column
-                            field="lr_number"
-                            header="LR No"
-                            filter
-                            filterPlaceholder="Search by name"
-                            sortable
-                        ></Column>
-                        <Column
-                            field="order_number"
-                            header="Order No"
-                            filterMenuStyle={{ width: "14rem" }}
-                            style={{ minWidth: "12rem" }}
-                            sortable
-                        ></Column>
-                        <Column
-                            field="consignor_name"
-                            header="Consignor"
-                            body={consignorRender}
-                            filter
-                            filterPlaceholder="Search by email"
-                            sortable
-                        ></Column>
-                        <Column
-                            field="consignee_name"
-                            header="Consignee"
-                            body={consigneeRender}
-                            filter
-                            filterPlaceholder="Search by email"
-                            sortable
-                        ></Column>
-                        <Column
-                            field="pickup_point_address1"
-                            header="Pickup Point"
-                            body={pickupPointRender}
-                            filter
-                            filterPlaceholder="Search by email"
-                            sortable
-                        ></Column>
-                        <Column
-                            field="drop_point_address1"
-                            header="Drop Point"
-                            body={dropPointRender}
-                            filter
-                            filterPlaceholder="Search by email"
-                            sortable
-                        ></Column>
-                        <Column
-                            field="material"
-                            header="Item"
-                            body={itemRender}
-                            filter
-                            filterPlaceholder="Search by email"
-                            sortable
-                        ></Column>
-                        <Column
-                            field="weight"
-                            header="Weight(Kg)"
-                            //   body={locationAddressRender}
-                            filter
-                            filterPlaceholder="Search by email"
-                            sortable
-                        ></Column>
-                        <Column
-                            field="vehical_number"
-                            header="Truck No"
-                            //   body={locationAddressRender}
-                            filter
-                            filterPlaceholder="Search by email"
-                            sortable
-                        ></Column>
-                        <Column
-                            field="driver_details"
-                            header="Driver Details"
-                            //   body={locationAddressRender}
-                            filter
-                            filterPlaceholder="Search by email"
-                            sortable
-                        ></Column>
-                        <Column
-                            field="status"
-                            header="Status"
-                            //   body={locationAddressRender}
-                            filter
-                            filterPlaceholder="Search by email"
-                            sortable
-                        ></Column>
-                    </DataTable>
                 </div>
-            </div>
 
-            <AddLocationDialog
-                addLocationDialogVisible={addLocationDialogVisible}
-                setAddLocationDialogVisible={setAddLocationDialogVisible}
-                references={references}
-                user={user}
-                setRefreshLocationData={setRefreshLocationData}
-                selectedLocationType={selectedLocationType}
-                setSelectedLocationType={setSelectedLocationType}
-            />
-        </div>
+                <AddLocationDialog
+                    addLocationDialogVisible={addLocationDialogVisible}
+                    setAddLocationDialogVisible={setAddLocationDialogVisible}
+                    references={references}
+                    user={user}
+                    setRefreshLocationData={setRefreshLocationData}
+                    selectedLocationType={selectedLocationType}
+                    setSelectedLocationType={setSelectedLocationType}
+                />
+            </div>
+        </>
     );
 };
 

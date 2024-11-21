@@ -22,6 +22,7 @@ import { useSelector } from "react-redux";
 import { getLrNumber } from "../../utils/generateUniqueNumber";
 import Spinner from "../../components/spinner";
 import { InputText } from "primereact/inputtext";
+import Seo from "../../components/seo";
 
 const OpenOrders = () => {
     const user = useSelector((state) => state.initialState.user);
@@ -837,6 +838,7 @@ const OpenOrders = () => {
     const orderCommentDialogRender = (rowData) => {
         return (
             <>
+                <Seo pageTitle="Open Orders" />
                 <div className="flex flex-wrap justify-content-center">
                     <Button
                         onClick={() => {

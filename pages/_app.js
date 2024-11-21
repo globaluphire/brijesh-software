@@ -20,12 +20,10 @@ export default function MyApp({ Component, pageProps }) {
                 if (user.id) {
                     store.dispatch(setUserData(user));
                 } else {
-                    console.log("Login first to access portal ", user);
                     Router.push("/access");
                 }
             } catch (e) {
                 console.warn(e);
-                console.log("Login first to access direct link ");
                 Router.push("/access");
             }
         }
