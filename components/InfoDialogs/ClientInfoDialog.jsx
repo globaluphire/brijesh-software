@@ -17,6 +17,7 @@ import OpenOrderDialog from "../dialogs/OpenOrderDialog";
 import LrDialog from "../dialogs/LrDialog";
 import CreateInvoiceDialog from "../dialogs/CreateInvoiceDialog";
 import Spinner from "../spinner";
+import { Tag } from "primereact/tag";
 
 export default function ClientInfoDialog({
     clientInfoDialogVisible,
@@ -657,6 +658,55 @@ export default function ClientInfoDialog({
         );
     };
 
+    const getStatusSeverity = (status) => {
+        switch (status) {
+            case "Under pickup process":
+                return { color: "#B55385", textColor: "#fff" };
+
+            case "Ready for pickup":
+                return { color: "#87CEEB", textColor: "#333" };
+
+            case "Tempo under the process":
+                return { color: "#FFA500", textColor: "#333" };
+
+            case "In process of departure":
+                return { color: "#8f83c3", textColor: "#fff" };
+
+            case "At destination city warehouse":
+                return { color: "#FFE284", textColor: "#333" };
+
+            case "Ready for final delivery":
+                return { color: "green", textColor: "#fff" };
+
+            case "Completed":
+                return { color: "grey", textColor: "#fff" };
+
+            default:
+                return { color: "red", textColor: "#fff" };
+        }
+    };
+
+    const orderStatusInfoRender = (rowData) => {
+        return (
+            <>
+                <Tag
+                    className="badge"
+                    style={{
+                        backgroundColor: getStatusSeverity(rowData.status)
+                            .color,
+                        color: getStatusSeverity(rowData.status).textColor,
+                        padding: "0.2rem 0.5rem",
+                    }}
+                >
+                    {rowData.status} <br />
+                    {rowData.status_last_updated_at
+                        ? rowData.status_last_updated_at.toLocaleString("en-IN")
+                        : rowData.order_created_at.toLocaleString("en-IN")}
+                </Tag>
+            </>
+        );
+    };
+
     return (
         <>
             <Toast ref={toast} appendTo={null} />
@@ -674,6 +724,7 @@ export default function ClientInfoDialog({
                 onHide={() => {
                     if (!clientInfoDialogVisible) return;
                     setClientInfoDialogVisible(false);
+                    setRefreshClientData(true);
                 }}
                 maximizable
             >
@@ -860,6 +911,8 @@ export default function ClientInfoDialog({
                             emptyMessage="No orders found"
                             responsiveLayout="scroll"
                             sortMode="multiple"
+                            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} orders"
                         >
                             <Column
                                 field="order_key_id"
@@ -903,6 +956,14 @@ export default function ClientInfoDialog({
                                 body={orderLRDialogRender}
                                 // filter
                                 // filterPlaceholder="Search by LR No"
+                                sortable
+                            />
+                            <Column
+                                field="status"
+                                header="Status"
+                                body={orderStatusInfoRender}
+                                // filter
+                                // filterPlaceholder="Search by status"
                                 sortable
                             />
                         </DataTable>
