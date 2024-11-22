@@ -139,6 +139,20 @@ const OldInvoices = () => {
         }
     };
 
+    const convertInvoiceDateFormat = (val) => {
+        if (val) {
+            return new Date(
+                val.split("-")[0],
+                val.split("-")[1] - 1,
+                val.split("-")[2]
+            ).toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+            });
+        }
+    };
+
     async function getReferences() {
         // call reference to get dropdown options
         const { data: refData, error: refDataErr } = await supabase
@@ -175,6 +189,12 @@ const OldInvoices = () => {
                     (i) =>
                         (i.invoice_updated_at = dateTimeFormat(
                             i.invoice_updated_at
+                        ))
+                );
+                invoiceData.forEach(
+                    (i) =>
+                        (i.invoice_date = convertInvoiceDateFormat(
+                            i.invoice_date
                         ))
                 );
 
@@ -404,20 +424,20 @@ const OldInvoices = () => {
         );
     };
 
-    const invoiceDateInfoRender = (rowData) => {
-        return (
-            <>
-                <span>
-                    {new Date(
-                        rowData.invoice_date.split("-")[0],
-                        rowData.invoice_date.split("-")[1] - 1,
-                        rowData.invoice_date.split("-")[2]
-                    ).toLocaleDateString("en-IN")}
-                </span>{" "}
-                <br />
-            </>
-        );
-    };
+    // const invoiceDateInfoRender = (rowData) => {
+    //     return (
+    //         <>
+    //             <span>
+    //                 {new Date(
+    //                     rowData.invoice_date.split("-")[0],
+    //                     rowData.invoice_date.split("-")[1] - 1,
+    //                     rowData.invoice_date.split("-")[2]
+    //                 ).toLocaleDateString("en-IN")}
+    //             </span>{" "}
+    //             <br />
+    //         </>
+    //     );
+    // };
 
     const routeRender = (rowData) => {
         return (
@@ -507,7 +527,7 @@ const OldInvoices = () => {
                             <Column
                                 field="invoice_date"
                                 header="Invoice Date"
-                                body={invoiceDateInfoRender}
+                                // body={invoiceDateInfoRender}
                                 filter
                                 filterPlaceholder="Search by name"
                                 sortable

@@ -118,6 +118,20 @@ const OpenOrders = () => {
         }
     };
 
+    const convertPickupDateFormat = (val) => {
+        if (val) {
+            return new Date(
+                val.split("-")[0],
+                val.split("-")[1] - 1,
+                val.split("-")[2]
+            ).toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+            });
+        }
+    };
+
     async function getReferences() {
         // call reference to get dropdown options
         const { data: refData, error: refDataErr } = await supabase
@@ -213,6 +227,11 @@ const OpenOrders = () => {
 
                 // sortedOpenOrdersDataArr = Object.values(sortedOpenOrdersData);
 
+                orderData.forEach(
+                    (i) =>
+                        (i.pickup_date = convertPickupDateFormat(i.pickup_date))
+                );
+
                 setFetchedOpenOrderData(orderData);
                 setLoading1(false);
                 setRefreshData(false);
@@ -256,6 +275,12 @@ const OpenOrders = () => {
                 operator: FilterOperator.AND,
                 constraints: [
                     { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+                ],
+            },
+            pickup_date: {
+                operator: FilterOperator.AND,
+                constraints: [
+                    { value: null, matchMode: FilterMatchMode.DATE_IS },
                 ],
             },
         });
@@ -571,20 +596,13 @@ const OpenOrders = () => {
         );
     };
 
-    const orderPickupDateInfoRender = (rowData) => {
-        return (
-            <>
-                <span>
-                    {new Date(
-                        rowData.pickup_date.split("-")[0],
-                        rowData.pickup_date.split("-")[1] - 1,
-                        rowData.pickup_date.split("-")[2]
-                    ).toLocaleDateString("en-IN")}
-                </span>{" "}
-                <br />
-            </>
-        );
-    };
+    // const orderPickupDateInfoRender = (rowData) => {
+    //     return (
+    //         <>
+    //             <span>{rowData.pickup_date}</span>
+    //         </>
+    //     );
+    // };
 
     const orderDetailsDialogRender = (rowData) => {
         return (
@@ -1123,7 +1141,8 @@ const OpenOrders = () => {
                         <Column
                             field="pickup_date"
                             header="Pickup Date"
-                            body={orderPickupDateInfoRender}
+                            // body={orderPickupDateInfoRender}
+                            dataType="date"
                             filter
                             filterPlaceholder="Search by Pickup Date"
                             filterElement={dateFilterTemplate}
@@ -1138,7 +1157,7 @@ const OpenOrders = () => {
                             sortable
                         />
                         <Column
-                            field="order_number"
+                            field="lr_number"
                             header="LR No"
                             body={orderLRDialogRender}
                             filter
