@@ -451,8 +451,8 @@ const OldLRs = () => {
                             <Column
                                 field="lr_created_date"
                                 sortable
-                                filter
-                                filterPlaceholder="Search by date"
+                                // filter
+                                // filterPlaceholder="Search by date"
                                 header="Created/Updated On"
                                 body={createdUpdatedDateRender}
                                 //   filterElement={dateFilterTemplate}
@@ -460,14 +460,14 @@ const OldLRs = () => {
                             <Column
                                 field="lr_number"
                                 header="LR No"
-                                filter
-                                filterPlaceholder="Search by name"
+                                // filter
+                                // filterPlaceholder="Search by name"
                                 sortable
                             ></Column>
                             <Column
                                 field="order_number"
                                 header="Order No"
-                                filterMenuStyle={{ width: "14rem" }}
+                                // filterMenuStyle={{ width: "14rem" }}
                                 style={{ minWidth: "12rem" }}
                                 sortable
                             ></Column>
@@ -475,69 +475,69 @@ const OldLRs = () => {
                                 field="consignor"
                                 header="Consignor"
                                 body={consignorRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="consignee"
                                 header="Consignee"
                                 body={consigneeRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="pickup_address"
                                 header="Pickup Point"
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="drop_address"
                                 header="Drop Point"
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="material_details"
                                 header="Item"
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="weight"
                                 header="Weight(Kg)"
                                 //   body={locationAddressRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="vehical_number"
                                 header="Truck No"
                                 //   body={locationAddressRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="driver_name"
                                 header="Driver Details"
                                 body={driverDetailsRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="status"
                                 header="Status"
                                 //   body={locationAddressRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                         </DataTable>

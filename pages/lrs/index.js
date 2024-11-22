@@ -419,8 +419,8 @@ const LRs = () => {
                             <Column
                                 field="lr_created_date"
                                 sortable
-                                filter
-                                filterPlaceholder="Search by date"
+                                // filter
+                                // filterPlaceholder="Search by date"
                                 header="Created/Updated On"
                                 body={createdUpdatedDateRender}
                                 //   filterElement={dateFilterTemplate}
@@ -428,14 +428,14 @@ const LRs = () => {
                             <Column
                                 field="lr_number"
                                 header="LR No"
-                                filter
-                                filterPlaceholder="Search by name"
+                                // filter
+                                // filterPlaceholder="Search by name"
                                 sortable
                             ></Column>
                             <Column
                                 field="order_number"
                                 header="Order No"
-                                filterMenuStyle={{ width: "14rem" }}
+                                // filterMenuStyle={{ width: "14rem" }}
                                 style={{ minWidth: "12rem" }}
                                 sortable
                             ></Column>
@@ -443,72 +443,72 @@ const LRs = () => {
                                 field="consignor_name"
                                 header="Consignor"
                                 body={consignorRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="consignee_name"
                                 header="Consignee"
                                 body={consigneeRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="pickup_point_address1"
                                 header="Pickup Point"
                                 body={pickupPointRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="drop_point_address1"
                                 header="Drop Point"
                                 body={dropPointRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="material"
                                 header="Item"
                                 body={itemRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="weight"
                                 header="Weight(Kg)"
                                 //   body={locationAddressRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="vehical_number"
                                 header="Truck No"
                                 //   body={locationAddressRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="driver_details"
                                 header="Driver Details"
                                 //   body={locationAddressRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="status"
                                 header="Status"
                                 //   body={locationAddressRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                         </DataTable>

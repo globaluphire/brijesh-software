@@ -515,15 +515,15 @@ const Invoices = () => {
                             <Column
                                 field="total_amount"
                                 header="Amount"
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="invoice_created_at"
                                 sortable
-                                filter
-                                filterPlaceholder="Search by date"
+                                // filter
+                                // filterPlaceholder="Search by date"
                                 header="Created/Updated On"
                                 body={createdUpdatedDateRender}
                                 //   filterElement={dateFilterTemplate}
@@ -532,15 +532,15 @@ const Invoices = () => {
                                 field="invoice_date"
                                 header="Invoice Date"
                                 // body={invoiceDateInfoRender}
-                                filter
-                                filterPlaceholder="Search by name"
+                                // filter
+                                // filterPlaceholder="Search by name"
                                 sortable
                             ></Column>
                             <Column
                                 field="pickup_date"
                                 header="Pickup Date"
                                 body={invoicePickupDateInfoRender}
-                                filterMenuStyle={{ width: "14rem" }}
+                                // filterMenuStyle={{ width: "14rem" }}
                                 style={{ minWidth: "12rem" }}
                                 sortable
                             ></Column>
@@ -548,48 +548,48 @@ const Invoices = () => {
                                 field="invoice_number"
                                 header="Invoice No"
                                 body={invoiceNumberRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="order_number"
                                 header="Order No"
                                 // body={locationAddressRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="order_city"
                                 header="Order City"
                                 // body={locationAddressRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="client_name"
                                 header="Client Name"
                                 // body={locationAddressRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="route"
                                 header="Route"
                                 body={routeRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="weight"
                                 header="Weight (Kg)"
                                 // body={routeRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                         </DataTable>

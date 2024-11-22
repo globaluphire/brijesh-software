@@ -484,8 +484,8 @@ const Locations = () => {
                             <Column
                                 field="location_created_at"
                                 sortable
-                                filter
-                                filterPlaceholder="Search by date"
+                                // filter
+                                // filterPlaceholder="Search by date"
                                 header="Created/Updated On"
                                 body={createdUpdatedDateRender}
                                 //   filterElement={dateFilterTemplate}
@@ -493,14 +493,14 @@ const Locations = () => {
                             <Column
                                 field="location_type"
                                 header="Type"
-                                filter
-                                filterPlaceholder="Search by name"
+                                // filter
+                                // filterPlaceholder="Search by name"
                                 sortable
                             ></Column>
                             <Column
                                 field="city"
                                 header="City"
-                                filterMenuStyle={{ width: "14rem" }}
+                                // filterMenuStyle={{ width: "14rem" }}
                                 style={{ minWidth: "12rem" }}
                                 sortable
                             ></Column>
@@ -508,16 +508,16 @@ const Locations = () => {
                                 field="name_of_pickup_point"
                                 header="Location Name"
                                 //   body={clientNameRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="address1"
                                 header="Address"
                                 body={locationAddressRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                         </DataTable>

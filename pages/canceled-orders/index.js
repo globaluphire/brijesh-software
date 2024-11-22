@@ -975,12 +975,12 @@ const CanceledOrders = () => {
                         >
                             {user.role === "SUPER_ADMIN" ? (
                                 <Column
-                                    field="order_created_updated_by_name"
+                                    field="order_created_by_name"
                                     header="Created/Updated By"
                                     body={orderCreatedInfoRender}
-                                    filterField="order_created_by_name"
-                                    filter
-                                    filterPlaceholder="Search created by"
+                                    // filterField="order_created_by_name"
+                                    // filter
+                                    // filterPlaceholder="Search created by"
                                     sortable
                                 />
                             ) : (
@@ -990,144 +990,144 @@ const CanceledOrders = () => {
                                 field="order_created_at"
                                 header="Created/Updated On"
                                 body={createdUpdatedDateRender}
-                                filter
-                                filterPlaceholder="Search by order created on"
-                                filterElement={dateFilterTemplate}
+                                // filter
+                                // filterPlaceholder="Search by order created on"
+                                // filterElement={dateFilterTemplate}
                                 sortable
                             />
                             <Column
                                 field="pickup_date"
                                 header="Pickup Date"
                                 // body={orderPickupDateInfoRender}
-                                filter
-                                filterPlaceholder="Search by Pickup Date"
-                                filterElement={dateFilterTemplate}
+                                // filter
+                                // filterPlaceholder="Search by Pickup Date"
+                                // filterElement={dateFilterTemplate}
                                 sortable
                             />
                             <Column
                                 field="order_number"
                                 header="ERP Order No"
                                 body={orderDetailsDialogRender}
-                                filter
-                                filterPlaceholder="Search by ERP Order No"
+                                // filter
+                                // filterPlaceholder="Search by ERP Order No"
                                 sortable
                             />
                             <Column
                                 field="lr_number"
                                 header="LR No"
                                 body={orderLRDialogRender}
-                                filter
-                                filterPlaceholder="Search by LR No"
+                                // filter
+                                // filterPlaceholder="Search by LR No"
                                 sortable
                             />
                             <Column
                                 field="route"
                                 header="Route"
                                 body={orderRouteInfoRender}
-                                filter
-                                filterPlaceholder="Search by route"
+                                // filter
+                                // filterPlaceholder="Search by route"
                                 sortable
                             />
                             <Column
                                 field="status"
                                 header="Status"
                                 body={orderStatusInfoRender}
-                                filter
-                                filterPlaceholder="Search by status"
+                                // filter
+                                // filterPlaceholder="Search by status"
                                 sortable
                             />
                             <Column
                                 field="cancel_reason"
                                 header="Cancel Reason"
-                                filter
-                                filterPlaceholder="Search by status"
+                                // filter
+                                // filterPlaceholder="Search by status"
                                 sortable
                             />
                             <Column
                                 field="cancel_note"
                                 header="Cancel Note"
-                                filter
-                                filterPlaceholder="Search by status"
+                                // filter
+                                // filterPlaceholder="Search by status"
                                 sortable
                             />
                             <Column
                                 field=""
                                 header="Comment"
                                 body={orderCommentDialogRender}
-                                filter
-                                filterPlaceholder="Search by comment"
+                                // filter
+                                // filterPlaceholder="Search by comment"
                                 sortable
                             />
                             <Column
                                 filterField="client_name"
                                 header="Client Name"
                                 body={clientInfoRender}
-                                filter
-                                filterPlaceholder="Search by client name"
+                                // filter
+                                // filterPlaceholder="Search by client name"
                                 sortable
                             />
                             <Column
                                 field="company_name"
                                 header="Company"
                                 body={companyInfoRender}
-                                filter
-                                filterPlaceholder="Search by company"
+                                // filter
+                                // filterPlaceholder="Search by company"
                                 sortable
                             />
                             <Column
                                 field="weight"
                                 header="Total Weight"
                                 body={orderWeightInfoRender}
-                                filter
-                                filterPlaceholder="Search by weight"
+                                // filter
+                                // filterPlaceholder="Search by weight"
                                 sortable
                             />
                             <Column
                                 field="quantity"
                                 header="Order Details"
                                 body={quantityInfoRender}
-                                filter
-                                filterPlaceholder="Search by quatity"
+                                // filter
+                                // filterPlaceholder="Search by quatity"
                                 sortable
                             />
                             <Column
                                 field="notes"
                                 header="Order Notes"
                                 body={notesInfoRender}
-                                filter
-                                filterPlaceholder="Search by order notes"
+                                // filter
+                                // filterPlaceholder="Search by order notes"
                                 sortable
                             />
                             <Column
                                 field="local_transport"
                                 header="Local Transport"
                                 body={localTransportInfoRender}
-                                filter
-                                filterPlaceholder="Search by local transport"
+                                // filter
+                                // filterPlaceholder="Search by local transport"
                                 sortable
                             />
                             <Column
                                 field="truck_details"
                                 header="Truck Details"
                                 body={truckDetailsInfoRender}
-                                filter
-                                filterPlaceholder="Search by truck details"
+                                // filter
+                                // filterPlaceholder="Search by truck details"
                                 sortable
                             />
                             <Column
                                 field="eway_number"
                                 header="EWay Bill Number"
                                 body={orderEwayInfoRender}
-                                filter
-                                filterPlaceholder="Search by Eway bill number"
+                                // filter
+                                // filterPlaceholder="Search by Eway bill number"
                                 sortable
                             />
                             <Column
                                 field="bills"
                                 header="Bills"
                                 body={billsInfoRender}
-                                filter
-                                filterPlaceholder="Search by bills"
+                                // filter
+                                // filterPlaceholder="Search by bills"
                                 sortable
                             />
                         </DataTable>

@@ -641,8 +641,8 @@ const Clients = () => {
                             <Column
                                 field="client_created_at"
                                 sortable
-                                filter
-                                filterPlaceholder="Search by date"
+                                // filter
+                                // filterPlaceholder="Search by date"
                                 header="Created/Updated On"
                                 body={createdUpdatedDateRender}
                                 // filterElement={dateFilterTemplate}
@@ -650,14 +650,14 @@ const Clients = () => {
                             <Column
                                 field="client_type"
                                 header="Type"
-                                filter
-                                filterPlaceholder="Search by name"
+                                // filter
+                                // filterPlaceholder="Search by name"
                                 sortable
                             ></Column>
                             <Column
                                 field="city"
                                 header="City"
-                                filterMenuStyle={{ width: "14rem" }}
+                                // filterMenuStyle={{ width: "14rem" }}
                                 style={{ minWidth: "12rem" }}
                                 sortable
                             ></Column>
@@ -665,70 +665,70 @@ const Clients = () => {
                                 field="client_name"
                                 header="Client Name"
                                 body={clientNameRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="total_orders"
                                 header="Total Orders"
                                 body={totalOrdersRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="total_billings"
                                 header="Total Billing"
                                 body={totalBillingsRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="total_billings_due"
                                 header="Due Payment"
                                 body={totalBillingsDueRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="address1"
                                 header="Address"
                                 body={clientAddressRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="client_gst"
                                 header="GSTIN"
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="client_pan"
                                 header="PAN No"
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="client_contact_name"
                                 header="Contact"
                                 body={clientContactInfoRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                             <Column
                                 field="client_status"
                                 header="Status"
                                 body={clientStatusRender}
-                                filter
-                                filterPlaceholder="Search by email"
+                                // filter
+                                // filterPlaceholder="Search by email"
                                 sortable
                             ></Column>
                         </DataTable>
