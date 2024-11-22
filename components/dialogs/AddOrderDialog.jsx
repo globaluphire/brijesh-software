@@ -21,6 +21,7 @@ export default function AddOrderDialog({
     references,
     user,
     setRefreshData,
+    clientDetails,
 }) {
     const [loading, setLoading] = useState(false);
     const toast = useRef(null);
@@ -234,6 +235,20 @@ export default function AddOrderDialog({
             fetchLocationsContacts();
         }
     }, [refreshLocationContactData]);
+
+    useEffect(() => {
+        if (clientDetails) {
+            setOrderFormData((previousState) => ({
+                ...previousState,
+                orderCity: references.filter(
+                    (i) =>
+                        i.ref_nm === "city" &&
+                        i.ref_dspl === clientDetails.editedClientCity.ref_dspl
+                )[0],
+            }));
+            setSelectedClient(clientDetails);
+        }
+    }, [clientDetails]);
 
     // get client name on change order city block
     async function getClientDetails() {
@@ -458,9 +473,9 @@ export default function AddOrderDialog({
                     consignor_client_id: !Array.isArray(selectedPickupPoint)
                         ? selectedPickupPoint.location_id
                         : null,
-                    consignee_client_id: selectedClient
+                    consignee_client_id: !clientDetails
                         ? selectedClient.client_id
-                        : null,
+                        : clientDetails.editedClientId,
                 },
             ]);
             if (error) {
@@ -506,8 +521,12 @@ export default function AddOrderDialog({
                     {
                         order_number: orderNumber,
                         pickup_date: format(pickupDate, "yyyy-MM-dd"),
-                        order_city: orderCity.ref_dspl,
-                        client_name: selectedClient.client_name,
+                        order_city: !clientDetails
+                            ? orderCity.ref_dspl
+                            : clientDetails.editedClientCity.ref_dspl,
+                        client_name: !clientDetails
+                            ? selectedClient.client_name
+                            : clientDetails.editedClientName,
                         pickup_location: pickupLocation
                             ? pickupLocation.ref_dspl
                             : "",
@@ -524,7 +543,9 @@ export default function AddOrderDialog({
                         freight_notes: freightNotes,
                         status: "Under pickup process",
                         order_created_by: user.id,
-                        client_number: selectedClient.client_number,
+                        client_number: !clientDetails
+                            ? selectedClient.client_number
+                            : clientDetails.editedClientNumber,
                     },
                 ])
                 .select();
@@ -687,132 +708,138 @@ export default function AddOrderDialog({
                 maximizable
             >
                 <div className="grid p-fluid mt-1">
-                    <div className="col-12">
-                        <div className="card">
-                            {/* <h5>Advanced</h5> */}
-                            <div className="p-fluid formgrid grid">
-                                <div className="field col-12 lg:col-3 md:col-6">
-                                    <label htmlFor="orderCity">
-                                        Order City*
-                                    </label>
-                                    <Dropdown
-                                        showClear
-                                        id="orderCity"
-                                        options={orderCityRefs}
-                                        optionLabel="ref_dspl"
-                                        placeholder="Select order city"
-                                        filter
-                                        onChange={(e) => {
-                                            setOrderFormData(
-                                                (previousState) => ({
-                                                    ...previousState,
-                                                    orderCity: e.target.value,
-                                                })
-                                            );
-                                            setSelectedClient([]);
-                                        }}
-                                        value={orderCity}
-                                    />
-                                    {orderCityError ? (
-                                        <Message
-                                            severity="error"
-                                            text={orderCityError}
+                    {!clientDetails ? (
+                        <div className="col-12">
+                            <div className="card">
+                                {/* <h5>Advanced</h5> */}
+                                <div className="p-fluid formgrid grid">
+                                    <div className="field col-12 lg:col-3 md:col-6">
+                                        <label htmlFor="orderCity">
+                                            Order City*
+                                        </label>
+                                        <Dropdown
+                                            showClear
+                                            id="orderCity"
+                                            options={orderCityRefs}
+                                            optionLabel="ref_dspl"
+                                            placeholder="Select order city"
+                                            filter
+                                            onChange={(e) => {
+                                                setOrderFormData(
+                                                    (previousState) => ({
+                                                        ...previousState,
+                                                        orderCity:
+                                                            e.target.value,
+                                                    })
+                                                );
+                                                setSelectedClient([]);
+                                            }}
+                                            value={orderCity}
                                         />
-                                    ) : (
-                                        ""
-                                    )}
-                                </div>
-                                <div className="field col-12 lg:col-6 md:col-6">
-                                    <label htmlFor="clientName">
-                                        Client Name*
-                                        {orderCity ? (
-                                            <Button
-                                                className="mx-2 action-badge add-dialog-action-badge"
-                                                icon="pi pi-plus"
-                                                style={{
-                                                    marginTop: "-7px",
-                                                    height: "1rem",
-                                                    width: "2rem",
-                                                }}
-                                                onClick={() => {
-                                                    setAddClientDialogVisible(
-                                                        true
-                                                    );
-                                                }}
-                                            ></Button>
+                                        {orderCityError ? (
+                                            <Message
+                                                severity="error"
+                                                text={orderCityError}
+                                            />
                                         ) : (
                                             ""
                                         )}
-                                    </label>
-                                    <Dropdown
-                                        showClear
-                                        id="clientName"
-                                        disabled={!orderCity}
-                                        value={selectedClient}
-                                        options={clientNames}
-                                        optionLabel="client_name"
-                                        placeholder="Select a client"
-                                        filter
-                                        onChange={(e) => {
-                                            setSelectedClient(e.target.value);
-                                        }}
-                                    />
-                                    {clientNameError ? (
-                                        <Message
-                                            severity="error"
-                                            text={clientNameError}
+                                    </div>
+                                    <div className="field col-12 lg:col-6 md:col-6">
+                                        <label htmlFor="clientName">
+                                            Client Name*
+                                            {orderCity ? (
+                                                <Button
+                                                    className="mx-2 action-badge add-dialog-action-badge"
+                                                    icon="pi pi-plus"
+                                                    style={{
+                                                        marginTop: "-7px",
+                                                        height: "1rem",
+                                                        width: "2rem",
+                                                    }}
+                                                    onClick={() => {
+                                                        setAddClientDialogVisible(
+                                                            true
+                                                        );
+                                                    }}
+                                                ></Button>
+                                            ) : (
+                                                ""
+                                            )}
+                                        </label>
+                                        <Dropdown
+                                            showClear
+                                            id="clientName"
+                                            disabled={!orderCity}
+                                            value={selectedClient}
+                                            options={clientNames}
+                                            optionLabel="client_name"
+                                            placeholder="Select a client"
+                                            filter
+                                            onChange={(e) => {
+                                                setSelectedClient(
+                                                    e.target.value
+                                                );
+                                            }}
                                         />
-                                    ) : (
-                                        ""
-                                    )}
-                                    {selectedClient ? (
-                                        <>
-                                            <div className="text-color-secondary text-sm px-3 pt-1">
-                                                <span>
-                                                    {selectedClient.address1
-                                                        ? selectedClient.address1 +
-                                                          ", "
-                                                        : ""}
-                                                </span>
-                                                <span>
-                                                    {selectedClient.address2
-                                                        ? selectedClient.address2 +
-                                                          ", "
-                                                        : ""}
-                                                </span>
-                                                <span>
-                                                    {selectedClient.area
-                                                        ? selectedClient.area +
-                                                          ", "
-                                                        : ""}
-                                                </span>
-                                                <span>
-                                                    {selectedClient.city
-                                                        ? selectedClient.city +
-                                                          ", "
-                                                        : ""}
-                                                </span>
-                                                <span>
-                                                    {selectedClient.state
-                                                        ? selectedClient.state +
-                                                          ", "
-                                                        : ""}
-                                                </span>
-                                                <span>
-                                                    {selectedClient.pin
-                                                        ? selectedClient.pin
-                                                        : ""}
-                                                </span>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        ""
-                                    )}
+                                        {clientNameError ? (
+                                            <Message
+                                                severity="error"
+                                                text={clientNameError}
+                                            />
+                                        ) : (
+                                            ""
+                                        )}
+                                        {selectedClient ? (
+                                            <>
+                                                <div className="text-color-secondary text-sm px-3 pt-1">
+                                                    <span>
+                                                        {selectedClient.address1
+                                                            ? selectedClient.address1 +
+                                                              ", "
+                                                            : ""}
+                                                    </span>
+                                                    <span>
+                                                        {selectedClient.address2
+                                                            ? selectedClient.address2 +
+                                                              ", "
+                                                            : ""}
+                                                    </span>
+                                                    <span>
+                                                        {selectedClient.area
+                                                            ? selectedClient.area +
+                                                              ", "
+                                                            : ""}
+                                                    </span>
+                                                    <span>
+                                                        {selectedClient.city
+                                                            ? selectedClient.city +
+                                                              ", "
+                                                            : ""}
+                                                    </span>
+                                                    <span>
+                                                        {selectedClient.state
+                                                            ? selectedClient.state +
+                                                              ", "
+                                                            : ""}
+                                                    </span>
+                                                    <span>
+                                                        {selectedClient.pin
+                                                            ? selectedClient.pin
+                                                            : ""}
+                                                    </span>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            ""
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
+                    ) : (
+                        ""
+                    )}
                     <div className="col-12">
                         <div className="card">
                             <h5>Pickup Details</h5>

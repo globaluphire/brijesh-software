@@ -40,6 +40,7 @@ const Clients = () => {
     const [editClientDialogVisible, setEditClientDialogVisible] =
         useState(false);
     const [clientDetails, setClientDetails] = useState({
+        editedClientId: "",
         editedClientNumber: "",
         editedClientType: "",
         editedClientName: "",
@@ -91,7 +92,7 @@ const Clients = () => {
                         type="button"
                         icon="pi pi-filter-slash"
                         label="Clear"
-                        outlined
+                        severity="secondary"
                         onClick={clearFilter1}
                     />
                 </div>
@@ -154,7 +155,18 @@ const Clients = () => {
         const { data: refData, error: refDataErr } = await supabase
             .from("reference")
             .select("*")
-            .in("ref_nm", ["city", "clientType"]);
+            .in("ref_nm", [
+                "materialType",
+                "size",
+                "priority",
+                "orderCity",
+                "city",
+                "cancelReason",
+                "clientType",
+                "clientContactType",
+                "transportVehicleType",
+                "lrStatus",
+            ]);
 
         if (refData) {
             setReferences(refData);
@@ -443,6 +455,7 @@ const Clients = () => {
                             setClientInfoDialogVisible(true);
                             setClientDetails((previousState) => ({
                                 ...previousState,
+                                editedClientId: rowData.client_id,
                                 editedClientNumber: rowData.client_number,
                                 editedClientType: references.filter(
                                     (i) =>

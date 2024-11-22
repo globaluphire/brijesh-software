@@ -7,6 +7,16 @@ import { Chip } from "primereact/chip";
 import { Badge } from "primereact/badge";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { getLrNumber } from "../../utils/generateUniqueNumber";
+import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
+import { FilterMatchMode, FilterOperator } from "primereact/api";
+import AddOrderDialog from "../dialogs/AddOrderDialog";
+import OpenOrderDialog from "../dialogs/OpenOrderDialog";
+import LrDialog from "../dialogs/LrDialog";
+import CreateInvoiceDialog from "../dialogs/CreateInvoiceDialog";
+import Spinner from "../spinner";
 
 export default function ClientInfoDialog({
     clientInfoDialogVisible,
@@ -19,10 +29,76 @@ export default function ClientInfoDialog({
 }) {
     const [loading1, setLoading1] = useState(false);
     const toast = useRef(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadingText, setLoadingText] = useState("");
 
     const [fetchedOrdersData, setFetchedOrdersData] = useState([]);
     const [totalDebitAmount, setTotalDebitAmount] = useState(0);
     const [totalCreditAmount, setTotalCreditAmount] = useState(0);
+
+    const [filters1, setFilters1] = useState(null);
+    const [globalFilterValue1, setGlobalFilterValue1] = useState("");
+
+    // All dialog states
+    const [refreshData, setRefreshData] = useState(false);
+    const [orderDetailsDialogVisible, setOrderDetailsDialogVisible] =
+        useState(false);
+    const [selectedOrder, setSelectedOrder] = useState([]);
+    const [selectedOrderDetails, setSelectedOrderDetails] = useState({
+        editedOrderId: "",
+        editedOrderNumber: "",
+        editedQuantity: "",
+        editedMaterial: {},
+        editedPriority: {},
+        editedSize: {},
+        editedWeight: null,
+        editedEwayNumber: "",
+        editedEwayVerified: null,
+        editedCompanyName: "",
+        editedLocalTransport: "",
+        editedTruckDetails: "",
+        editedOrderCreatedDate: "",
+        editedOrderUpdatedDate: "",
+        editedOrderNotes: "",
+        editedOrderLocation: "",
+        editedStatus: "",
+        editedPickupLocation: "",
+        editedDropLocation: "",
+    });
+    const [lrDetailsDialogVisible, setLrDetailsDialogVisible] = useState(false);
+    const [addOrderDialogVisible, setAddOrderDialogVisible] = useState(false);
+    const [createInvoiceDialogVisible, setCreateInvoiceDialogVisible] =
+        useState(false);
+
+    // LR Details states
+    const [fetchedOrderData, setFetchedOrderData] = useState([]);
+    const [fetchedLRData, setFetchedLRData] = useState([]);
+    const [fetchedClientData, setFetchedClientData] = useState([]);
+    const [fetchedPickupLocationData, setFetchedPickupLocationData] = useState(
+        []
+    );
+    const [
+        fetchedPickupLocationMarketingData,
+        setFetchedPickupLocationMarketingData,
+    ] = useState([]);
+    const [
+        fetchedpickupLocationDispatchData,
+        setFetchedPickupLocationDispatchData,
+    ] = useState([]);
+    const [fetchedDropLocationData, setFetchedDropLocationData] = useState([]);
+    const [
+        fetchedDropLocationMarketingData,
+        setFetchedDropLocationMarketingData,
+    ] = useState([]);
+    const [
+        fetchedDropLocationDispatchData,
+        setFetchedDropLocationDispatchData,
+    ] = useState([]);
+
+    const [fetchedConsignorClientsData, setFetchedConsignorClientsData] =
+        useState([]);
+    const [fetchedConsigneeClientsData, setFetchedConsigneeClientsData] =
+        useState([]);
 
     const dateFormat = (val) => {
         if (val) {
@@ -40,15 +116,28 @@ export default function ClientInfoDialog({
 
     const dateTimeFormat = (val) => {
         if (val) {
-            const date = new Date(val);
-            return date.toLocaleDateString("en-IN", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-            });
+            return new Date(val);
         }
+    };
+
+    const clearFilter1 = () => {
+        initFilters1();
+    };
+
+    const onGlobalFilterChange1 = (e) => {
+        const value = e.target.value;
+        let _filters1 = { ...filters1 };
+        _filters1["global"].value = value;
+
+        setFilters1(_filters1);
+        setGlobalFilterValue1(value);
+    };
+
+    const initFilters1 = () => {
+        setFilters1({
+            global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        });
+        setGlobalFilterValue1("");
     };
 
     async function fetchData() {
@@ -68,13 +157,13 @@ export default function ClientInfoDialog({
                 if (ordersData && ordersData.length > 0) {
                     ordersData.forEach(
                         (order) =>
-                            (order.order_created_at = dateFormat(
+                            (order.order_created_at = dateTimeFormat(
                                 order.order_created_at
                             ))
                     );
                     ordersData.forEach(
                         (order) =>
-                            (order.order_updated_at = dateFormat(
+                            (order.order_updated_at = dateTimeFormat(
                                 order.order_updated_at
                             ))
                     );
@@ -86,6 +175,7 @@ export default function ClientInfoDialog({
                     );
 
                     setFetchedOrdersData(ordersData);
+                    setRefreshData(false);
 
                     // fetch invoices
                     let { data: invoiceData, error } = await supabase
@@ -134,9 +224,208 @@ export default function ClientInfoDialog({
 
     useEffect(() => {
         fetchData();
+        initFilters1();
     }, [clientDetails.editedClientNumber]);
 
-    // all recent order render blocks
+    useEffect(() => {
+        if (refreshData) fetchData();
+    }, [refreshData]);
+
+    const renderHeader1 = () => {
+        return (
+            <div className="p-fluid formgrid grid">
+                <div className="field col-12 lg:col-1">
+                    <Button
+                        type="button"
+                        icon="pi pi-filter-slash"
+                        label="Clear"
+                        severity="secondary"
+                        onClick={clearFilter1}
+                    />
+                </div>
+                <div className="field col-12 lg:col-4">
+                    <span className="p-input-icon-left">
+                        <i className="pi pi-search" />
+                        <InputText
+                            value={globalFilterValue1}
+                            onChange={onGlobalFilterChange1}
+                            placeholder="Keyword Search"
+                        />
+                    </span>
+                </div>
+                <div className="field col-12 lg:col-2">
+                    <Button
+                        type="button"
+                        icon="pi pi-file-excel"
+                        severity="success"
+                        raised
+                        // onClick={exportExcel}
+                        label="Export to Excel"
+                        className="mr-3"
+                        placeholder="Top"
+                        tooltip="Export to Excel"
+                        tooltipOptions={{ position: "top" }}
+                    />
+                </div>
+                <div className="field col-12 lg:col-2">
+                    <Button
+                        type="button"
+                        icon="pi pi-plus"
+                        label="Add Order"
+                        outlined
+                        onClick={() => {
+                            setAddOrderDialogVisible(true);
+                        }}
+                    />
+                </div>
+            </div>
+        );
+    };
+    const header1 = renderHeader1();
+
+    const handleAccept = async (orderId) => {
+        const lrNumber = await getLrNumber();
+
+        try {
+            const { data, error } = await supabase.from("lr").insert([
+                {
+                    lr_number: lrNumber,
+                    order_id: orderId,
+                    status: "Performa",
+                    lr_created_by: user.id,
+                },
+            ]);
+            if (error) {
+                // open toast
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Error while generating LR, Please try again later or contact tech support",
+                    life: 5000,
+                });
+            } else {
+                toast.current.show({
+                    severity: "success",
+                    summary: "Success",
+                    detail: "New LR generated successfully",
+                    life: 5000,
+                });
+
+                // increment lr_number key
+                await supabase.rpc("increment_sys_key", {
+                    x: 1,
+                    keyname: "lr_number",
+                });
+
+                setRefreshData(true);
+            }
+        } catch (e) {
+            // open toast
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Error while fetching required details to generate LR, Please try again later or contact tech support",
+                life: 5000,
+            });
+        }
+    };
+    const createLrConfirmPopup = (orderId, lrCount) => {
+        confirmDialog({
+            message:
+                "This order have " +
+                lrCount +
+                " LR(s)! Are you sure want to create new LR??",
+            header: "Confirmation",
+            icon: "pi pi-exclamation-triangle",
+            accept: () => {
+                handleAccept(orderId);
+            },
+        });
+    };
+
+    //    All Render Blocks
+    const actionButtonRender1 = (rowData) => {
+        return (
+            <div className="flex flex-wrap justify-content-center">
+                {!rowData.invoice_number ? (
+                    <Button
+                        className="action-badge"
+                        rounded
+                        text
+                        icon="pi pi-plus"
+                        style={{
+                            backgroundColor: "#BD2025",
+                            height: "2.25rem",
+                            width: "2.25rem",
+                            color: "white",
+                        }}
+                        onClick={() => {
+                            setCreateInvoiceDialogVisible(true);
+                            setSelectedOrder(rowData);
+                        }}
+                    ></Button>
+                ) : (
+                    <Button
+                        className="action-badge"
+                        rounded
+                        text
+                        icon="pi pi-eye"
+                        style={{
+                            backgroundColor: "#14A24A",
+                            height: "2.25rem",
+                            width: "2.25rem",
+                            color: "white",
+                        }}
+                        onClick={() => {
+                            setCreateInvoiceDialogVisible(true);
+                            setSelectedOrder(rowData);
+                        }}
+                    ></Button>
+                )}
+            </div>
+        );
+    };
+
+    const actionButtonRender2 = (rowData) => {
+        return (
+            <div className="flex flex-wrap justify-content-center">
+                <Button
+                    outlined
+                    className="action-badge mt-1"
+                    onClick={() => {
+                        createLrConfirmPopup(
+                            rowData.order_id,
+                            rowData.lr_number.split(", ").length
+                        );
+                    }}
+                    rounded
+                    style={{
+                        height: "2.25rem",
+                        width: "2.25rem",
+                    }}
+                    severity="info"
+                    icon="pi pi-plus"
+                ></Button>
+            </div>
+        );
+    };
+
+    const createdUpdatedDateRender = (rowData) => {
+        return (
+            <>
+                <span className="text-xs">
+                    {rowData.order_created_at.toLocaleString("en-IN")}
+                </span>{" "}
+                <br />
+                <span className="text-xs">
+                    {rowData.order_updated_at
+                        ? rowData.order_updated_at.toLocaleString("en-IN")
+                        : ""}
+                </span>
+            </>
+        );
+    };
+
     const orderCreatedInfoRender = (rowData) => {
         return (
             <>
@@ -150,16 +439,236 @@ export default function ClientInfoDialog({
         );
     };
 
+    const orderDetailsDialogRender = (rowData) => {
+        return (
+            <>
+                <a
+                    onClick={() => {
+                        setOrderDetailsDialogVisible(true);
+                        setSelectedOrder(rowData);
+                        setSelectedOrderDetails((previousState) => ({
+                            ...previousState,
+                            editedOrderId: rowData.order_id,
+                            editedOrderNumber: rowData.order_number,
+                            editedQuantity: rowData.quantity,
+                            editedMaterial: references.filter(
+                                (i) =>
+                                    i.ref_nm === "materialType" &&
+                                    i.ref_dspl === rowData.material
+                            )[0],
+                            editedPriority: references.filter(
+                                (i) =>
+                                    i.ref_nm === "priority" &&
+                                    i.ref_dspl === rowData.priority
+                            )[0],
+                            editedSize: references.filter(
+                                (i) =>
+                                    i.ref_nm === "size" &&
+                                    i.ref_dspl === rowData.size
+                            )[0],
+                            editedWeight: rowData.weight,
+                            editedEwayNumber: rowData.eway_number,
+                            editedEwayVerified: rowData.eway_verified,
+                            editedCompanyName: rowData.company_name,
+                            editedLocalTransport: rowData.local_transport,
+                            editedTruckDetails: rowData.truck_details,
+                            editedOrderCreatedDate: rowData.order_created_at,
+                            editedOrderUpdatedDate: rowData.order_updated_at,
+                            editedOrderNotes: rowData.notes,
+                            editedOrderLocation: rowData.order_city,
+                            editedStatus: rowData.status,
+                            editedPickupLocation: rowData.pickup_location,
+                            editedDropLocation: rowData.drop_location,
+                        }));
+                    }}
+                >
+                    {rowData.order_number}
+                </a>
+            </>
+        );
+    };
+
+    const preparingDataForLrDialog = async (lrNumber, row) => {
+        setIsLoading(true);
+        setLoadingText("Please wait... LR Details are loading");
+        try {
+            /**
+             *  Fetch LR Details
+             *  @lrNumber
+             */
+            let { data: lrData, error: lrError } = await supabase
+                .from("lr")
+                .select("*")
+                .eq("lr_number", lrNumber);
+
+            if (lrData) {
+                lrData = lrData[0];
+                setFetchedLRData(lrData);
+                setFetchedOrderData(row);
+
+                /**
+                 *  Fetch Client and Details
+                 *  @order.client_number
+                 */
+                if (row.client_number) {
+                    let { data: clientData, error: e } = await supabase
+                        .from("client")
+                        .select("*")
+                        .eq("client_number", row.client_number);
+                    if (clientData) {
+                        setFetchedClientData(
+                            clientData.filter(
+                                (i) => i.client_number === row.client_number
+                            )[0]
+                        );
+                    }
+                }
+
+                if (lrData && lrData.consignee_client_id) {
+                    let { data: consigneeClientData, error: er } =
+                        await supabase
+                            .from("client")
+                            .select("*")
+                            .eq("client_id", lrData.consignee_client_id);
+
+                    if (consigneeClientData) {
+                        setFetchedConsigneeClientsData(consigneeClientData[0]);
+                    }
+                }
+
+                /**
+                 *  Fetch Pick up Location, Drop Location, Consignor Details
+                 *  @order.pickup_location_number
+                 */
+                let locationQueryParamArray = [
+                    lrData.pickup_location_id,
+                    lrData.drop_location_id,
+                    lrData.consignor_client_id,
+                ].filter((value) => value !== null);
+
+                let { data: locationData, error: pickupLocationError } =
+                    await supabase
+                        .from("location")
+                        .select("*")
+                        .in("location_id", locationQueryParamArray);
+
+                if (locationData) {
+                    setFetchedPickupLocationData(
+                        locationData.filter(
+                            (i) => i.location_id === lrData.pickup_location_id
+                        )[0]
+                    );
+                    setFetchedDropLocationData(
+                        locationData.filter(
+                            (i) => i.location_id === lrData.drop_location_id
+                        )[0]
+                    );
+                    setFetchedConsignorClientsData(
+                        locationData.filter(
+                            (i) => i.location_id === lrData.consignor_client_id
+                        )[0]
+                    );
+                }
+
+                /**
+                 *  Fetch
+                 *    pickup Location Marketing Contact data,
+                 *    Pick up Location Dispatch Contact data,
+                 *    Drop Location Marketing Contact data,
+                 *    Drop Location Dispatch Contact data
+                 */
+                let locationContactQueryParamArray = [
+                    lrData.pickup_marketing_contact_id,
+                    lrData.pickup_dispatch_contact_id,
+                    lrData.drop_marketing_contact_id,
+                    lrData.drop_dispatch_contact_id,
+                ].filter((value) => value !== null);
+
+                let {
+                    data: locatinContactData,
+                    error: pickupLocationMarketingError,
+                } = await supabase
+                    .from("location_contact")
+                    .select("*")
+                    .in("location_contact_id", locationContactQueryParamArray);
+
+                if (locatinContactData) {
+                    setFetchedPickupLocationMarketingData(
+                        locatinContactData.filter(
+                            (i) =>
+                                i.location_contact_id ===
+                                lrData.pickup_marketing_contact_id
+                        )[0]
+                    );
+                    setFetchedPickupLocationDispatchData(
+                        locatinContactData.filter(
+                            (i) =>
+                                i.location_contact_id ===
+                                lrData.pickup_dispatch_contact_id
+                        )[0]
+                    );
+                    setFetchedDropLocationMarketingData(
+                        locatinContactData.filter(
+                            (i) =>
+                                i.location_contact_id ===
+                                lrData.drop_marketing_contact_id
+                        )[0]
+                    );
+                    setFetchedDropLocationDispatchData(
+                        locatinContactData.filter(
+                            (i) =>
+                                i.location_contact_id ===
+                                lrData.drop_dispatch_contact_id
+                        )[0]
+                    );
+                    setLrDetailsDialogVisible(true);
+
+                    setIsLoading(false);
+                    setLoadingText("");
+                }
+            } else {
+                setIsLoading(false);
+                setLoadingText("");
+            }
+        } catch (e) {
+            setIsLoading(false);
+            setLoadingText("");
+        }
+    };
+
+    const orderLRDialogRender = (rowData) => {
+        return (
+            <>
+                <span>
+                    {rowData.lr_number.split(", ").map((lrNumber) => (
+                        <>
+                            <a
+                                onClick={() => {
+                                    preparingDataForLrDialog(lrNumber, rowData);
+                                }}
+                            >
+                                {lrNumber}
+                            </a>
+                            <br />
+                        </>
+                    ))}
+                </span>
+            </>
+        );
+    };
+
     return (
         <>
             <Toast ref={toast} appendTo={null} />
+            <ConfirmDialog />
+            <Spinner isLoading={isLoading} loadingText={loadingText} />
 
             <Dialog
                 header={"Client Info"}
                 visible={clientInfoDialogVisible}
                 style={{
-                    width: "80vw",
-                    height: "70vh",
+                    width: "95vw",
+                    height: "100vh",
                     backgroundColor: "#eee",
                 }}
                 onHide={() => {
@@ -339,7 +848,9 @@ export default function ClientInfoDialog({
                         <DataTable
                             value={fetchedOrdersData}
                             loading={loading1}
-                            rows={5}
+                            header={header1}
+                            filters={filters1}
+                            rows={10}
                             size="small"
                             paginator
                             dataKey="order_id"
@@ -348,18 +859,52 @@ export default function ClientInfoDialog({
                             rowHover
                             emptyMessage="No orders found"
                             responsiveLayout="scroll"
+                            sortMode="multiple"
                         >
+                            <Column
+                                field="order_key_id"
+                                header="Invoice"
+                                body={actionButtonRender1}
+                                align="center"
+                                style={{ minWidth: "6rem" }}
+                            />
+                            <Column
+                                field="order_key_id"
+                                header="LR"
+                                body={actionButtonRender2}
+                                align="center"
+                                style={{ minWidth: "6rem" }}
+                            />
+                            <Column
+                                field="order_created_at"
+                                header="Created/Updated On"
+                                body={createdUpdatedDateRender}
+                                // filter
+                                // filterPlaceholder="Search by order created on"
+                                // filterElement={dateFilterTemplate}
+                                sortable
+                            />
                             <Column
                                 field="order_created_updated_by_name"
                                 header="Created/Updated By"
                                 body={orderCreatedInfoRender}
                             />
-                            <Column field="client_name" header="Client Name" />
                             <Column
                                 field="order_number"
                                 header="ERP Order No"
+                                body={orderDetailsDialogRender}
+                                // filter
+                                // filterPlaceholder="Search by ERP Order No"
+                                sortable
                             />
-                            <Column field="lr_number" header="LR No" />
+                            <Column
+                                field="lr_number"
+                                header="LR No"
+                                body={orderLRDialogRender}
+                                // filter
+                                // filterPlaceholder="Search by LR No"
+                                sortable
+                            />
                         </DataTable>
                         {/* <DataTable
               value={fetchedOrdersData}
@@ -545,6 +1090,62 @@ export default function ClientInfoDialog({
                     </div>
                 </div>
             </Dialog>
+
+            {/* Start of All Dialogs Blocks */}
+            <AddOrderDialog
+                addOrderDialogVisible={addOrderDialogVisible}
+                setAddOrderDialogVisible={setAddOrderDialogVisible}
+                references={references}
+                user={user}
+                setRefreshData={setRefreshData}
+                clientDetails={clientDetails}
+            />
+
+            <OpenOrderDialog
+                orderDetailsDialogVisible={orderDetailsDialogVisible}
+                setOrderDetailsDialogVisible={setOrderDetailsDialogVisible}
+                selectedOrder={selectedOrder}
+                selectedOrderDetails={selectedOrderDetails}
+                setSelectedOrderDetails={setSelectedOrderDetails}
+                references={references}
+                user={user}
+                setRefreshData={setRefreshData}
+            />
+
+            <LrDialog
+                lrDetailsDialogVisible={lrDetailsDialogVisible}
+                setLrDetailsDialogVisible={setLrDetailsDialogVisible}
+                references={references}
+                user={user}
+                setRefreshData={setRefreshData}
+                fetchedOrderData={fetchedOrderData}
+                fetchedLRData={fetchedLRData}
+                fetchedClientData={fetchedClientData}
+                fetchedPickupLocationData={fetchedPickupLocationData}
+                fetchedPickupLocationMarketingData={
+                    fetchedPickupLocationMarketingData
+                }
+                fetchedpickupLocationDispatchData={
+                    fetchedpickupLocationDispatchData
+                }
+                fetchedDropLocationData={fetchedDropLocationData}
+                fetchedDropLocationMarketingData={
+                    fetchedDropLocationMarketingData
+                }
+                fetchedDropLocationDispatchData={
+                    fetchedDropLocationDispatchData
+                }
+                fetchedConsignorClientsData={fetchedConsignorClientsData}
+                fetchedConsigneeClientsData={fetchedConsigneeClientsData}
+            />
+
+            <CreateInvoiceDialog
+                createInvoiceDialogVisible={createInvoiceDialogVisible}
+                setCreateInvoiceDialogVisible={setCreateInvoiceDialogVisible}
+                selectedOrder={selectedOrder}
+                setRefreshData={setRefreshData}
+                user={user}
+            />
         </>
     );
 }

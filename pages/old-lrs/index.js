@@ -80,7 +80,7 @@ const OldLRs = () => {
                         type="button"
                         icon="pi pi-filter-slash"
                         label="Clear"
-                        outlined
+                        severity="secondary"
                         onClick={clearFilter1}
                     />
                 </div>
