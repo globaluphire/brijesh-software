@@ -254,6 +254,7 @@ export default function ClientInfoDialog({
                         />
                     </span>
                 </div>
+                <div className="field col-12 lg:col-3"></div>
                 <div className="field col-12 lg:col-2">
                     <Button
                         type="button"
