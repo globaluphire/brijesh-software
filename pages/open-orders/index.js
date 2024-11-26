@@ -208,7 +208,6 @@ const OpenOrders = () => {
                             i.status_last_updated_at
                         ))
                 );
-                setXlsxData(orderData);
                 // const sortedOpenOrdersData = orderData.reduce((acc, cv) => {
                 //   if (acc[cv.order_number] && acc[cv.order_number].length > 0)
                 //     acc[cv.order_number].push(cv);
@@ -232,6 +231,7 @@ const OpenOrders = () => {
                         (i.pickup_date = convertPickupDateFormat(i.pickup_date))
                 );
 
+                setXlsxData(orderData);
                 setFetchedOpenOrderData(orderData);
                 setLoading1(false);
                 setRefreshData(false);
@@ -313,42 +313,93 @@ const OpenOrders = () => {
 
     const exportExcel = () => {
         import("xlsx").then((xlsx) => {
-            const worksheet = xlsx.utils.json_to_sheet(xlsxData);
-            const workbook = {
-                Sheets: { data: worksheet },
-                SheetNames: ["data"],
-            };
-            const excelBuffer = xlsx.write(workbook, {
-                bookType: "xlsx",
-                type: "array",
-            });
+            // prepare sheet data
+            xlsxData.forEach(
+                (i) =>
+                    (i.order_created_at =
+                        i.order_created_at.toLocaleString("en-IN"))
+            );
+            xlsxData.forEach(
+                (i) =>
+                    (i.order_updated_at =
+                        i.order_updated_at.toLocaleString("en-IN"))
+            );
+            let ws = xlsxData.map(
+                ({
+                    order_id,
+                    pickup_location,
+                    drop_location,
+                    order_created_by,
+                    client_number,
+                    order_updated_by,
+                    ...rest
+                }) => {
+                    return {
+                        Route: `${pickup_location} - ${drop_location}`,
+                        ...rest,
+                    };
+                }
+            );
+            ws = ws.map(
+                ({
+                    order_created_at,
+                    order_updated_at,
+                    pickup_date,
+                    order_number,
+                    Route,
+                    status,
+                    client_name,
+                    pickup_point,
+                    drop_point,
+                    company_name,
+                    weight,
+                    quantity,
+                    material,
+                    size,
+                    priority,
+                    notes,
+                    lr_number,
+                    local_transport,
+                    truck_details,
+                    eway_number,
+                    order_city,
+                }) => ({
+                    "Created on": order_created_at,
+                    "Updated on": order_updated_at,
+                    "Pickup Date": pickup_date,
+                    "ERP Order No": order_number,
+                    Route,
+                    Status: status,
+                    "Client Name": client_name,
+                    "Pickup Point": pickup_point,
+                    "Drop Point": drop_point,
+                    "Company Name": company_name,
+                    "Total Weight(Kg)": weight,
+                    Quantity: quantity,
+                    Material: material,
+                    Size: size,
+                    Priority: priority,
+                    "Order Note": notes,
+                    "LR number": lr_number,
+                    "Local Transport": local_transport,
+                    "Truck Details": truck_details,
+                    "Eway Bill Number": eway_number,
+                    "Order City": order_city,
+                })
+            );
 
-            saveAsExcelFile(excelBuffer, "Raftaar");
-        });
-    };
-
-    const saveAsExcelFile = (buffer, fileName) => {
-        import("file-saver").then((module) => {
-            if (module && module.default) {
-                let EXCEL_TYPE =
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-                let EXCEL_EXTENSION = ".xlsx";
-                const data = new Blob([buffer], {
-                    type: EXCEL_TYPE,
-                });
-
-                module.default.saveAs(
-                    data,
-                    fileName +
-                        "-Open_Orders-" +
-                        ("0" + new Date().getDate()).slice(-2) +
-                        "_" +
-                        ("0" + (new Date().getMonth() + 1)).slice(-2) +
-                        "_" +
-                        new Date().getFullYear() +
-                        EXCEL_EXTENSION
-                );
-            }
+            const worksheet = xlsx.utils.json_to_sheet(ws);
+            /* create workbook and export */
+            var wb = xlsx.utils.book_new();
+            xlsx.utils.book_append_sheet(wb, worksheet, "Open orders");
+            xlsx.writeFile(
+                wb,
+                `Raftaar-Open_Orders-${("0" + new Date().getDate()).slice(
+                    -2
+                )}_${("0" + (new Date().getMonth() + 1)).slice(
+                    -2
+                )}_${new Date().getFullYear()}.xlsx`
+            );
         });
     };
 

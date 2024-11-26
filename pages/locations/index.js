@@ -24,6 +24,7 @@ const Locations = () => {
     const [isLoadingText, setIsLoadingText] = useState("");
 
     const [fetchedLocationsData, setFetchedLocationsData] = useState([]);
+    const [xlsxData, setXlsxData] = useState([]);
 
     const [filters1, setFilters1] = useState(null);
     const [loading1, setLoading1] = useState(true);
@@ -51,6 +52,72 @@ const Locations = () => {
 
         setFilters1(_filters1);
         setGlobalFilterValue1(value);
+    };
+
+    const exportExcel = () => {
+        import("xlsx").then((xlsx) => {
+            // prepare sheet data
+            xlsxData.forEach(
+                (i) =>
+                    (i.location_created_at =
+                        i.location_created_at.toLocaleString("en-IN"))
+            );
+            xlsxData.forEach(
+                (i) =>
+                    (i.location_updated_at =
+                        i.location_updated_at.toLocaleString("en-IN"))
+            );
+            let ws = xlsxData.map(({ location_id, ...rest }) => {
+                return {
+                    ...rest,
+                };
+            });
+            ws = ws.map(
+                ({
+                    location_created_at,
+                    location_number,
+                    location_type,
+                    name_of_pickup_point,
+                    address1,
+                    address2,
+                    area,
+                    city,
+                    state,
+                    pin,
+                    location_updated_at,
+                    location_city,
+                    location_created_by,
+                    location_updated_by,
+                }) => ({
+                    "Created On": location_created_at,
+                    "Updated On": location_updated_at,
+                    "Location City": location_city,
+                    "Location Number": location_number,
+                    Type: location_type,
+                    Name: name_of_pickup_point,
+                    "Address 1": address1,
+                    "Address 2": address2,
+                    Area: area,
+                    City: city,
+                    State: state,
+                    PIN: pin,
+                    "Created By": location_created_by,
+                    "Updated By": location_updated_by,
+                })
+            );
+
+            const worksheet = xlsx.utils.json_to_sheet(ws);
+            /* create workbook and export */
+            var wb = xlsx.utils.book_new();
+            xlsx.utils.book_append_sheet(wb, worksheet, "Location List");
+            xlsx.writeFile(
+                wb,
+                `Raftaar-Locations-${("0" + new Date().getDate()).slice(-2)}_${(
+                    "0" +
+                    (new Date().getMonth() + 1)
+                ).slice(-2)}_${new Date().getFullYear()}.xlsx`
+            );
+        });
     };
 
     const renderHeader1 = () => {
@@ -92,7 +159,7 @@ const Locations = () => {
                         icon="pi pi-file-excel"
                         severity="success"
                         raised
-                        // onClick={exportExcel}
+                        onClick={exportExcel}
                         label="Export to Excel"
                         className="mr-3"
                         placeholder="Top"
@@ -191,6 +258,7 @@ const Locations = () => {
                 }
 
                 if (filteredLocationData.length > 0) {
+                    setXlsxData(filteredLocationData);
                     setFetchedLocationsData(filteredLocationData);
                     setLoading1(false);
 
@@ -199,6 +267,7 @@ const Locations = () => {
                         setSelectedLocationType("");
                     }
                 } else {
+                    setXlsxData(locationData);
                     setFetchedLocationsData(locationData);
                     setLoading1(false);
 
