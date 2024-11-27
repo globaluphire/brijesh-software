@@ -22,6 +22,7 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { useSelector } from "react-redux";
 import Spinner from "../../components/spinner";
 import Seo from "../../components/seo";
+import { generateCSV } from "../../utils/exportToCSV";
 
 const CanceledOrders = () => {
     const user = useSelector((state) => state.initialState.user);
@@ -301,46 +302,86 @@ const CanceledOrders = () => {
         );
     };
 
-    const exportExcel = () => {
-        import("xlsx").then((xlsx) => {
-            const worksheet = xlsx.utils.json_to_sheet(xlsxData);
-            const workbook = {
-                Sheets: { data: worksheet },
-                SheetNames: ["data"],
-            };
-            const excelBuffer = xlsx.write(workbook, {
-                bookType: "xlsx",
-                type: "array",
-            });
-
-            saveAsExcelFile(excelBuffer, "Raftaar");
-        });
-    };
-
-    const saveAsExcelFile = (buffer, fileName) => {
-        import("file-saver").then((module) => {
-            if (module && module.default) {
-                let EXCEL_TYPE =
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-                let EXCEL_EXTENSION = ".xlsx";
-                const data = new Blob([buffer], {
-                    type: EXCEL_TYPE,
-                });
-
-                module.default.saveAs(
-                    data,
-                    fileName +
-                        "-Cancel_Orders-" +
-                        ("0" + new Date().getDate()).slice(-2) +
-                        "_" +
-                        ("0" + (new Date().getMonth() + 1)).slice(-2) +
-                        "_" +
-                        new Date().getFullYear() +
-                        EXCEL_EXTENSION
+    async function exportExcel() {
+        setIsLoading(true);
+        setLoadingText("Please Wait! Your CSV is being generated...");
+        try {
+            let query = supabase
+                .from("csv_orders")
+                .select("*")
+                .eq("Status", "Cancel")
+                .gte(
+                    "Created On",
+                    convertToSearchFilterDateTimeFrom(
+                        dateRange ? dateRange[0] : subDays(new Date(), 30)
+                    )
+                )
+                .lte(
+                    "Created On",
+                    convertToSearchFilterDateTimeTo(
+                        dateRange ? dateRange[1] : new Date()
+                    )
                 );
+
+            if (user.drop_branch) {
+                query.eq("Order City", user.drop_branch);
             }
-        });
-    };
+
+            let { data: csvOrderData, error } = await query;
+
+            if (csvOrderData) {
+                // prepare sheet data
+                csvOrderData.forEach(
+                    (i) =>
+                        (i["Created On"] = new Date(
+                            i["Created On"]
+                        ).toLocaleString("en-IN"))
+                );
+                csvOrderData.forEach(
+                    (i) =>
+                        (i["Updated On"] = new Date(
+                            i["Updated On"]
+                        ).toLocaleString("en-IN"))
+                );
+                csvOrderData.forEach(
+                    (i) =>
+                        (i["Pickup Date"] = convertPickupDateFormat(
+                            i["Pickup Date"]
+                        ))
+                );
+
+                generateCSV(csvOrderData, "Cancel_Order");
+
+                toast.current.show({
+                    severity: "success",
+                    summary: "Success",
+                    detail: "CSV Exported successfully.",
+                    life: 5000,
+                });
+                setIsLoading(false);
+                setLoadingText("");
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Error while fetching CSV, Please try again later or contact tech support",
+                    life: 5000,
+                });
+                setIsLoading(false);
+                setLoadingText("");
+            }
+        } catch (e) {
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Error while generating CSV, Please try again later or contact tech support",
+                life: 5000,
+            });
+            // console.warn(e);
+            setIsLoading(false);
+            setLoadingText("");
+        }
+    }
 
     const renderHeader1 = () => {
         return (
@@ -396,7 +437,7 @@ const CanceledOrders = () => {
                         icon="pi pi-file-excel"
                         severity="success"
                         raised
-                        onClick={exportExcel}
+                        onClick={() => exportExcel()}
                         label="Export to Excel"
                         className="mr-3"
                         placeholder="Top"

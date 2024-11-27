@@ -24,6 +24,7 @@ import Spinner from "../../components/spinner";
 import { InputText } from "primereact/inputtext";
 import Seo from "../../components/seo";
 import * as xlsx from "xlsx";
+import { generateCSV } from "../../utils/exportToCSV";
 
 const OpenOrders = () => {
     const user = useSelector((state) => state.initialState.user);
@@ -35,7 +36,6 @@ const OpenOrders = () => {
     // }, [date]);
 
     const [fetchedOpenOrderData, setFetchedOpenOrderData] = useState([]);
-    const [xlsxData, setXlsxData] = useState([]);
     const [loading1, setLoading1] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [loadingText, setLoadingText] = useState("");
@@ -360,82 +360,7 @@ const OpenOrders = () => {
                         ))
                 );
 
-                // let ws = xlsxData.map(
-                //     ({
-                //         order_id,
-                //         pickup_location,
-                //         drop_location,
-                //         order_created_by,
-                //         client_number,
-                //         order_updated_by,
-                //         ...rest
-                //     }) => {
-                //         return {
-                //             Route: `${pickup_location} - ${drop_location}`,
-                //             ...rest,
-                //         };
-                //     }
-                // );
-                // ws = ws.map(
-                //     ({
-                //         order_created_at,
-                //         order_updated_at,
-                //         pickup_date,
-                //         order_number,
-                //         Route,
-                //         status,
-                //         client_name,
-                //         pickup_point,
-                //         drop_point,
-                //         company_name,
-                //         weight,
-                //         quantity,
-                //         material,
-                //         size,
-                //         priority,
-                //         notes,
-                //         lr_number,
-                //         local_transport,
-                //         truck_details,
-                //         eway_number,
-                //         order_city,
-                //     }) => ({
-                //         "Created on": order_created_at,
-                //         "Updated on": order_updated_at,
-                //         "Pickup Date": pickup_date,
-                //         "ERP Order No": order_number,
-                //         Route,
-                //         Status: status,
-                //         "Client Name": client_name,
-                //         "Pickup Point": pickup_point,
-                //         "Drop Point": drop_point,
-                //         "Company Name": company_name,
-                //         "Total Weight(Kg)": weight,
-                //         Quantity: quantity,
-                //         Material: material,
-                //         Size: size,
-                //         Priority: priority,
-                //         "Order Note": notes,
-                //         "LR number": lr_number,
-                //         "Local Transport": local_transport,
-                //         "Truck Details": truck_details,
-                //         "Eway Bill Number": eway_number,
-                //         "Order City": order_city,
-                //     })
-                // );
-
-                const worksheet = xlsx.utils.json_to_sheet(csvOrderData);
-                /* create workbook and export */
-                var wb = xlsx.utils.book_new();
-                xlsx.utils.book_append_sheet(wb, worksheet, "Open orders");
-                xlsx.writeFile(
-                    wb,
-                    `Raftaar-Open_Orders-${("0" + new Date().getDate()).slice(
-                        -2
-                    )}_${("0" + (new Date().getMonth() + 1)).slice(
-                        -2
-                    )}_${new Date().getFullYear()}.xlsx`
-                );
+                generateCSV(csvOrderData, "Open_Order");
 
                 toast.current.show({
                     severity: "success",
