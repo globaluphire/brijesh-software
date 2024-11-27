@@ -16,6 +16,7 @@ import Seo from "../../components/seo";
 import Spinner from "../../components/spinner";
 import { Toast } from "primereact/toast";
 import EditLocationDialog from "../../components/EditDialogs/EditLocationDialog";
+import { generateCSV } from "../../utils/exportToCSV";
 
 const Locations = () => {
     const user = useSelector((state) => state.initialState.user);
@@ -106,17 +107,7 @@ const Locations = () => {
                 })
             );
 
-            const worksheet = xlsx.utils.json_to_sheet(ws);
-            /* create workbook and export */
-            var wb = xlsx.utils.book_new();
-            xlsx.utils.book_append_sheet(wb, worksheet, "Location List");
-            xlsx.writeFile(
-                wb,
-                `Raftaar-Locations-${("0" + new Date().getDate()).slice(-2)}_${(
-                    "0" +
-                    (new Date().getMonth() + 1)
-                ).slice(-2)}_${new Date().getFullYear()}.xlsx`
-            );
+            generateCSV(ws, "Locations");
         });
     };
 

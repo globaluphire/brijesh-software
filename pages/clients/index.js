@@ -19,6 +19,7 @@ import EditClientDialog from "../../components/EditDialogs/EditClientDialog";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import ClientInfoDialog from "../../components/InfoDialogs/ClientInfoDialog";
 import Seo from "../../components/seo";
+import { generateCSV } from "../../utils/exportToCSV";
 
 const Clients = () => {
     const user = useSelector((state) => state.initialState.user);
@@ -157,17 +158,7 @@ const Clients = () => {
                 })
             );
 
-            const worksheet = xlsx.utils.json_to_sheet(ws);
-            /* create workbook and export */
-            var wb = xlsx.utils.book_new();
-            xlsx.utils.book_append_sheet(wb, worksheet, "Client List");
-            xlsx.writeFile(
-                wb,
-                `Raftaar-Clients-${("0" + new Date().getDate()).slice(-2)}_${(
-                    "0" +
-                    (new Date().getMonth() + 1)
-                ).slice(-2)}_${new Date().getFullYear()}.xlsx`
-            );
+            generateCSV(ws, "Clients");
         });
     };
 
