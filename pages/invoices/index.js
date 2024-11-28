@@ -16,9 +16,17 @@ import InvoiceDetailsDialog from "../../components/EditDialogs/InvoiceDetailsDia
 import { Toast } from "primereact/toast";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import Seo from "../../components/seo";
+import { generateCSV } from "../../utils/exportToCSV";
+import Spinner from "../../components/spinner";
+import {
+    convertToSearchFilterDateTimeFrom,
+    convertToSearchFilterDateTimeTo,
+} from "../../utils/convertToSearchFilterDateTime";
 
 const Invoices = () => {
     const toast = useRef(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadingText, setLoadingText] = useState("");
 
     const user = useSelector((state) => state.initialState.user);
     const [selectedOrder, setSelectedOrder] = useState([]);
@@ -39,6 +47,20 @@ const Invoices = () => {
         useState(false);
     const [selectedInvoiceData, setSelectedInvoiceData] = useState("");
 
+    const convertPickupDateFormat = (val) => {
+        if (val) {
+            return new Date(
+                val.split("-")[0],
+                val.split("-")[1] - 1,
+                val.split("-")[2]
+            ).toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+            });
+        }
+    };
+
     const clearFilter1 = () => {
         initFilters1();
     };
@@ -51,6 +73,111 @@ const Invoices = () => {
         setFilters1(_filters1);
         setGlobalFilterValue1(value);
     };
+
+    async function exportExcel() {
+        setIsLoading(true);
+        setLoadingText("Please Wait! Your CSV is being generated...");
+        try {
+            let query = supabase.from("csv_invoices").select("*");
+            // .gte(
+            //     "Created On",
+            //     convertToSearchFilterDateTimeFrom(
+            //         dateRange ? dateRange[0] : subDays(new Date(), 30)
+            //     )
+            // )
+            // .lte(
+            //     "Created On",
+            //     convertToSearchFilterDateTimeTo(
+            //         dateRange ? dateRange[1] : new Date()
+            //     )
+            // );
+
+            if (user.drop_branch) {
+                query.eq("Order City", user.drop_branch);
+            }
+
+            let { data: csvInvoicesData, error } = await query;
+
+            if (csvInvoicesData) {
+                // prepare sheet data
+                csvInvoicesData.sort(function (a, b) {
+                    // here a , b is whole object, you can access its property
+                    // convert both to lowercase
+                    let x = a["Client Name"].toLowerCase();
+                    let y = b["Client Name"].toLowerCase();
+
+                    // compare the word which is comes first
+                    if (x > y) {
+                        return 1;
+                    }
+                    if (x < y) {
+                        return -1;
+                    }
+                    return 0;
+                });
+                csvInvoicesData.forEach(
+                    (i) =>
+                        (i["Created On"] = new Date(
+                            i["Created On"]
+                        ).toLocaleString("en-IN"))
+                );
+                csvInvoicesData.forEach(
+                    (i) =>
+                        (i["Updated On"] = new Date(
+                            i["Updated On"]
+                        ).toLocaleString("en-IN"))
+                );
+                csvInvoicesData.forEach(
+                    (i) =>
+                        (i["Order Created On"] = new Date(
+                            i["Order Created On"]
+                        ).toLocaleString("en-IN"))
+                );
+                csvInvoicesData.forEach(
+                    (i) =>
+                        (i["Status Last Updated On"] = new Date(
+                            i["Status Last Updated On"]
+                        ).toLocaleString("en-IN"))
+                );
+                csvInvoicesData.forEach(
+                    (i) =>
+                        (i["Invoice Date"] = convertPickupDateFormat(
+                            i["Invoice Date"]
+                        ))
+                );
+
+                generateCSV(csvInvoicesData, "Invoices");
+
+                toast.current.show({
+                    severity: "success",
+                    summary: "Success",
+                    detail: "CSV Exported successfully.",
+                    life: 5000,
+                });
+                setIsLoading(false);
+                setLoadingText("");
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Error while fetching CSV, Please try again later or contact tech support",
+                    life: 5000,
+                });
+                setIsLoading(false);
+                setLoadingText("");
+            }
+        } catch (e) {
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Error while generating CSV, Please try again later or contact tech support",
+                life: 5000,
+            });
+            // console.warn(e);
+            setIsLoading(false);
+            setLoadingText("");
+        }
+    }
 
     const renderHeader1 = () => {
         return (
@@ -91,7 +218,7 @@ const Invoices = () => {
                         icon="pi pi-file-excel"
                         severity="success"
                         raised
-                        // onClick={exportExcel}
+                        onClick={() => exportExcel()}
                         label="Export to Excel"
                         className="mr-3"
                         placeholder="Top"
@@ -469,6 +596,7 @@ const Invoices = () => {
         <>
             <Seo pageTitle="Invoices" />
             <Toast ref={toast} />
+            <Spinner isLoading={isLoading} loadingText={loadingText} />
             <ConfirmDialog />
 
             <div className="grid">

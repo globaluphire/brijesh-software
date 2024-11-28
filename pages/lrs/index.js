@@ -13,11 +13,13 @@ import { useSelector } from "react-redux";
 import { Tooltip } from "primereact/tooltip";
 import AddLocationDialog from "../../components/dialogs/AddLocationDialog";
 import Seo from "../../components/seo";
+import { generateCSV } from "../../utils/exportToCSV";
 
 const LRs = () => {
     const user = useSelector((state) => state.initialState.user);
 
     const [fetchedLRData, setFetchedLRData] = useState([]);
+    const [xlsxData, setXlsxData] = useState([]);
 
     const [filters1, setFilters1] = useState(null);
     const [loading1, setLoading1] = useState(true);
@@ -42,6 +44,97 @@ const LRs = () => {
 
         setFilters1(_filters1);
         setGlobalFilterValue1(value);
+    };
+
+    const exportExcel = () => {
+        // prepare sheet data
+        xlsxData.forEach(
+            (i) =>
+                (i.lr_created_date = i.lr_created_date.toLocaleString("en-IN"))
+        );
+        xlsxData.forEach(
+            (i) =>
+                (i.lr_last_modified_date =
+                    i.lr_last_modified_date.toLocaleString("en-IN"))
+        );
+        let ws = xlsxData.map(({ lr_id, order_id, ...rest }) => {
+            return {
+                ...rest,
+            };
+        });
+        ws = ws.map(
+            ({
+                lr_created_date,
+                lr_number,
+                vehical_number,
+                status,
+                driver_details,
+                lr_last_modified_date,
+                order_number,
+                order_city,
+                quantity,
+                weight,
+                material,
+                client_number,
+                pickup_point_name,
+                pickup_point_location_city,
+                pickup_point_address1,
+                pickup_point_address2,
+                pickup_point_area,
+                pickup_point_city,
+                pickup_point_state,
+                pickup_point_pin,
+                drop_point_name,
+                drop_point_location_city,
+                drop_point_address1,
+                drop_point_address2,
+                drop_point_area,
+                drop_point_city,
+                drop_point_state,
+                drop_point_pin,
+                consignor_name,
+                consignee_name,
+                consignee_phone,
+                consignee_email,
+                consignee_gst,
+            }) => ({
+                "Created On": lr_created_date,
+                "Updated On": lr_last_modified_date,
+                "LR Status": status,
+                "LR No": lr_number,
+                "Vehical Number": vehical_number,
+                "Driver Details": driver_details,
+                "Order No": order_number,
+                "Order City": order_city,
+                Quantity: quantity,
+                "Total Weight(Kg)": weight,
+                Material: material,
+                "Client Number": client_number,
+                "Pickup Point": pickup_point_name,
+                "Pickup City": pickup_point_location_city,
+                "Pickup Address 1": pickup_point_address1,
+                "Pickup Address 2": pickup_point_address2,
+                "Pickup Area": pickup_point_area,
+                "Pickup City": pickup_point_city,
+                "Pickup State": pickup_point_state,
+                "Pickup PIN": pickup_point_pin,
+                "Drop Point": drop_point_name,
+                "Drop City": drop_point_location_city,
+                "Drop Address 1": drop_point_address1,
+                "Drop Address 2": drop_point_address2,
+                "Drop Area": drop_point_area,
+                "Drop City": drop_point_city,
+                "Drop State": drop_point_state,
+                "Drop PIN": drop_point_pin,
+                "Consignor Name": consignor_name,
+                "Consignee Name": consignee_name,
+                "Consignee Phone": consignee_phone,
+                "Consignee Email": consignee_email,
+                "Consignee GSTIN": consignee_gst,
+            })
+        );
+
+        generateCSV(ws, "LRs");
     };
 
     const renderHeader1 = () => {
@@ -83,7 +176,7 @@ const LRs = () => {
                         icon="pi pi-file-excel"
                         severity="success"
                         raised
-                        // onClick={exportExcel}
+                        onClick={() => exportExcel()}
                         label="Export to Excel"
                         className="mr-3"
                         placeholder="Top"
@@ -152,7 +245,7 @@ const LRs = () => {
                             i.lr_last_modified_date
                         ))
                 );
-
+                setXlsxData(lrData);
                 setFetchedLRData(lrData);
                 setLoading1(false);
             }

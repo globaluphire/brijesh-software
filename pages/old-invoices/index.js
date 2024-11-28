@@ -16,9 +16,13 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import AddInvoiceDialog from "../../components/dialogs/AddInvoiceDialog";
 import EditInvoiceDialog from "../../components/EditDialogs/EditInvoiceDialog";
 import Seo from "../../components/seo";
+import Spinner from "../../components/spinner";
+import { generateCSV } from "../../utils/exportToCSV";
 
 const OldInvoices = () => {
     const toast = useRef(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadingText, setLoadingText] = useState("");
 
     const user = useSelector((state) => state.initialState.user);
     const [selectedOrder, setSelectedOrder] = useState([]);
@@ -26,6 +30,7 @@ const OldInvoices = () => {
         useState(false);
 
     const [fetchedInvoiceData, setFetchedInvoiceData] = useState([]);
+    const [xlsxData, setXlsxData] = useState([]);
 
     const [filters1, setFilters1] = useState(null);
     const [loading1, setLoading1] = useState(true);
@@ -71,6 +76,99 @@ const OldInvoices = () => {
         setGlobalFilterValue1(value);
     };
 
+    async function exportExcel() {
+        setIsLoading(true);
+        setLoadingText("Please Wait! Your CSV is being generated...");
+
+        // prepare sheet data
+        xlsxData.sort(function (a, b) {
+            // here a , b is whole object, you can access its property
+            // convert both to lowercase
+            let x = a.company_name.toLowerCase();
+            let y = b.company_name.toLowerCase();
+
+            // compare the word which is comes first
+            if (x > y) {
+                return 1;
+            }
+            if (x < y) {
+                return -1;
+            }
+            return 0;
+        });
+        xlsxData.forEach(
+            (i) =>
+                (i.invoice_created_at =
+                    i.invoice_created_at.toLocaleString("en-IN"))
+        );
+        xlsxData.forEach(
+            (i) =>
+                (i.invoice_updated_at =
+                    i.invoice_updated_at.toLocaleString("en-IN"))
+        );
+        let ws = xlsxData.map(({ invoice_id, order_id, lr_id, ...rest }) => {
+            return {
+                ...rest,
+            };
+        });
+        ws = ws.map(
+            ({
+                invoice_created_at,
+                invoice_updated_at,
+                invoice_number,
+                company_name,
+                company_gst,
+                company_address,
+                vehical_number,
+                lr_number,
+                order_number,
+                invoice_date,
+                from_city,
+                to_city,
+                material,
+                quantity,
+                eway_bill_number,
+                total_amount,
+                weight,
+                invoice_created_by,
+                is_paid,
+                invoice_updated_by,
+            }) => ({
+                "Created On": invoice_created_at,
+                "Updated On": invoice_updated_at,
+                "Invoice Date": invoice_date,
+                "Invoice Number": invoice_number,
+                "Invoice Paid?": is_paid,
+                "Company Name": company_name,
+                "Total Amount(Rs)": total_amount,
+                "Order No": order_number,
+                "LR No": lr_number,
+                Address: company_address,
+                GSTIN: company_gst,
+                "Vehical Number": vehical_number,
+                "Pickup Location": from_city,
+                "Drop Location": to_city,
+                Material: material,
+                Quantity: quantity,
+                "Total Weight(Kg)": weight,
+                "Eway Bill No": eway_bill_number,
+                "Created By": invoice_created_by,
+                "Updated By": invoice_updated_by,
+            })
+        );
+
+        generateCSV(ws, "Manual_Invoices");
+
+        toast.current.show({
+            severity: "success",
+            summary: "Success",
+            detail: "CSV Exported successfully.",
+            life: 5000,
+        });
+        setIsLoading(false);
+        setLoadingText("");
+    }
+
     const renderHeader1 = () => {
         return (
             <div className="p-fluid formgrid grid">
@@ -110,7 +208,7 @@ const OldInvoices = () => {
                         icon="pi pi-file-excel"
                         severity="success"
                         raised
-                        // onClick={exportExcel}
+                        onClick={() => exportExcel()}
                         label="Export to Excel"
                         className="mr-3"
                         placeholder="Top"
@@ -197,7 +295,7 @@ const OldInvoices = () => {
                             i.invoice_date
                         ))
                 );
-
+                setXlsxData(invoiceData);
                 setFetchedInvoiceData(invoiceData);
                 setLoading1(false);
                 setRefreshData(false);
@@ -462,6 +560,7 @@ const OldInvoices = () => {
         <>
             <Seo pageTitle="Old Invoices" />
             <Toast ref={toast} />
+            <Spinner isLoading={isLoading} loadingText={loadingText} />
             <ConfirmDialog />
 
             <div className="grid">
