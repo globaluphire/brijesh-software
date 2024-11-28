@@ -56,59 +56,57 @@ const Locations = () => {
     };
 
     const exportExcel = () => {
-        import("xlsx").then((xlsx) => {
-            // prepare sheet data
-            xlsxData.forEach(
-                (i) =>
-                    (i.location_created_at =
-                        i.location_created_at.toLocaleString("en-IN"))
-            );
-            xlsxData.forEach(
-                (i) =>
-                    (i.location_updated_at =
-                        i.location_updated_at.toLocaleString("en-IN"))
-            );
-            let ws = xlsxData.map(({ location_id, ...rest }) => {
-                return {
-                    ...rest,
-                };
-            });
-            ws = ws.map(
-                ({
-                    location_created_at,
-                    location_number,
-                    location_type,
-                    name_of_pickup_point,
-                    address1,
-                    address2,
-                    area,
-                    city,
-                    state,
-                    pin,
-                    location_updated_at,
-                    location_city,
-                    location_created_by,
-                    location_updated_by,
-                }) => ({
-                    "Created On": location_created_at,
-                    "Updated On": location_updated_at,
-                    "Location City": location_city,
-                    "Location Number": location_number,
-                    Type: location_type,
-                    Name: name_of_pickup_point,
-                    "Address 1": address1,
-                    "Address 2": address2,
-                    Area: area,
-                    City: city,
-                    State: state,
-                    PIN: pin,
-                    "Created By": location_created_by,
-                    "Updated By": location_updated_by,
-                })
-            );
-
-            generateCSV(ws, "Locations");
+        // prepare sheet data
+        xlsxData.forEach(
+            (i) =>
+                (i.location_created_at =
+                    i.location_created_at.toLocaleString("en-IN"))
+        );
+        xlsxData.forEach(
+            (i) =>
+                (i.location_updated_at =
+                    i.location_updated_at.toLocaleString("en-IN"))
+        );
+        let ws = xlsxData.map(({ location_id, ...rest }) => {
+            return {
+                ...rest,
+            };
         });
+        ws = ws.map(
+            ({
+                location_created_at,
+                location_number,
+                location_type,
+                name_of_pickup_point,
+                address1,
+                address2,
+                area,
+                city,
+                state,
+                pin,
+                location_updated_at,
+                location_city,
+                location_created_by,
+                location_updated_by,
+            }) => ({
+                "Created On": location_created_at,
+                "Updated On": location_updated_at,
+                "Location City": location_city,
+                "Location Number": location_number,
+                Type: location_type,
+                Name: name_of_pickup_point,
+                "Address 1": address1,
+                "Address 2": address2,
+                Area: area,
+                City: city,
+                State: state,
+                PIN: pin,
+                "Created By": location_created_by,
+                "Updated By": location_updated_by,
+            })
+        );
+
+        generateCSV(ws, "Locations");
     };
 
     const renderHeader1 = () => {

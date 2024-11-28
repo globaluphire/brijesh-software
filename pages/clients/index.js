@@ -87,79 +87,77 @@ const Clients = () => {
     };
 
     const exportExcel = () => {
-        import("xlsx").then((xlsx) => {
-            // prepare sheet data
-            xlsxData.forEach(
-                (i) =>
-                    (i.client_created_at =
-                        i.client_created_at.toLocaleString("en-IN"))
-            );
-            xlsxData.forEach(
-                (i) =>
-                    (i.client_last_updated_at =
-                        i.client_last_updated_at.toLocaleString("en-IN"))
-            );
-            let ws = xlsxData.map(({ client_id, ...rest }) => {
-                return {
-                    ...rest,
-                };
-            });
-            ws = ws.map(
-                ({
-                    client_created_at,
-                    client_name,
-                    client_type,
-                    client_email,
-                    client_phone,
-                    client_gst,
-                    client_status,
-                    client_last_updated_at,
-                    client_number,
-                    client_pan,
-                    address1,
-                    address2,
-                    area,
-                    city,
-                    state,
-                    pin,
-                    contact_name,
-                    contact_phone,
-                    contact_email,
-                    client_created_by,
-                    client_updated_by,
-                    total_orders,
-                    total_billings,
-                    total_billings_due,
-                }) => ({
-                    "Created On": client_created_at,
-                    "Updated On": client_last_updated_at,
-                    "Client Number": client_number,
-                    Type: client_type,
-                    Name: client_name,
-                    "Total Orders": total_orders,
-                    "Total Billings": total_billings,
-                    "Total Dues": total_billings_due,
-                    GSTIN: client_gst,
-                    "PAN No": client_pan,
-                    Phone: client_phone,
-                    Email: client_email,
-                    "Address 1": address1,
-                    "Address 2": address2,
-                    Area: area,
-                    City: city,
-                    State: state,
-                    PIN: pin,
-                    "Contact Name": contact_name,
-                    "Contact Phone No": contact_phone,
-                    "Contact Email": contact_email,
-                    "Created By": client_created_by,
-                    "Updated By": client_updated_by,
-                    Status: client_status,
-                })
-            );
-
-            generateCSV(ws, "Clients");
+        // prepare sheet data
+        xlsxData.forEach(
+            (i) =>
+                (i.client_created_at =
+                    i.client_created_at.toLocaleString("en-IN"))
+        );
+        xlsxData.forEach(
+            (i) =>
+                (i.client_last_updated_at =
+                    i.client_last_updated_at.toLocaleString("en-IN"))
+        );
+        let ws = xlsxData.map(({ client_id, ...rest }) => {
+            return {
+                ...rest,
+            };
         });
+        ws = ws.map(
+            ({
+                client_created_at,
+                client_name,
+                client_type,
+                client_email,
+                client_phone,
+                client_gst,
+                client_status,
+                client_last_updated_at,
+                client_number,
+                client_pan,
+                address1,
+                address2,
+                area,
+                city,
+                state,
+                pin,
+                contact_name,
+                contact_phone,
+                contact_email,
+                client_created_by,
+                client_updated_by,
+                total_orders,
+                total_billings,
+                total_billings_due,
+            }) => ({
+                "Created On": client_created_at,
+                "Updated On": client_last_updated_at,
+                "Client Number": client_number,
+                Type: client_type,
+                Name: client_name,
+                "Total Orders": total_orders,
+                "Total Billings": total_billings,
+                "Total Dues": total_billings_due,
+                GSTIN: client_gst,
+                "PAN No": client_pan,
+                Phone: client_phone,
+                Email: client_email,
+                "Address 1": address1,
+                "Address 2": address2,
+                Area: area,
+                City: city,
+                State: state,
+                PIN: pin,
+                "Contact Name": contact_name,
+                "Contact Phone No": contact_phone,
+                "Contact Email": contact_email,
+                "Created By": client_created_by,
+                "Updated By": client_updated_by,
+                Status: client_status,
+            })
+        );
+
+        generateCSV(ws, "Clients");
     };
 
     const renderHeader1 = () => {

@@ -12,12 +12,14 @@ import { useSelector } from "react-redux";
 import AddLRDialog from "../../components/dialogs/AddLRDialog";
 import EditLRDialog from "../../components/EditDialogs/EditLRDialog";
 import Seo from "../../components/seo";
+import { generateCSV } from "../../utils/exportToCSV";
 
 const OldLRs = () => {
     const user = useSelector((state) => state.initialState.user);
 
     const [fetchedLRData, setFetchedLRData] = useState([]);
     const [selectedLRData, setSelectedLRData] = useState([]);
+    const [xlsxData, setXlsxData] = useState([]);
 
     const [filters1, setFilters1] = useState(null);
     const [loading1, setLoading1] = useState(true);
@@ -72,6 +74,98 @@ const OldLRs = () => {
         setGlobalFilterValue1(value);
     };
 
+    const exportExcel = () => {
+        // prepare sheet data
+        xlsxData.forEach(
+            (i) =>
+                (i.lr_created_date = i.lr_created_date.toLocaleString("en-IN"))
+        );
+        xlsxData.forEach(
+            (i) =>
+                (i.lr_last_modified_date = i.lr_last_modified_date
+                    ? i.lr_last_modified_date.toLocaleString("en-IN")
+                    : "")
+        );
+        let ws = xlsxData.map(
+            ({
+                lr_id,
+                order_id,
+                transport_vehicle_type,
+                transport_vehicle_details,
+                consignor_client_id,
+                consignee_client_id,
+                pickup_location_id,
+                pickup_marketing_contact_id,
+                pickup_dispatch_contact_id,
+                drop_location_id,
+                drop_dispatch_contact_id,
+                drop_marketing_contact_id,
+                auto_generated,
+                driver_details,
+                ...rest
+            }) => {
+                return {
+                    ...rest,
+                };
+            }
+        );
+        ws = ws.map(
+            ({
+                lr_number,
+                lr_created_date,
+                order_number,
+                consignor,
+                consignee,
+                pickup_address,
+                drop_address,
+                material_details,
+                weight,
+                vehical_number,
+                driver_name,
+                status,
+                consignor_gst,
+                consignor_email,
+                consignor_phone,
+                consignee_gst,
+                consignee_email,
+                consignee_phone,
+                from_city,
+                to_city,
+                driver_phone,
+                lr_last_modified_date,
+                lr_created_by,
+                lr_updated_by,
+            }) => ({
+                "Created On": lr_created_date,
+                "Updated On": lr_last_modified_date,
+                "LR Status": status,
+                "LR No": lr_number,
+                "Order No": order_number,
+                "Cosignor Name": consignor,
+                "Consignee Name": consignee,
+                "Pickup Address": pickup_address,
+                "Drop Address": drop_address,
+                "Material Details": material_details,
+                "Total Weight(Kg)": weight,
+                "Pickup City": from_city,
+                "Drop City": to_city,
+                "Vehical No": vehical_number,
+                "Driver Name": driver_name,
+                "Driver Phone": driver_phone,
+                "Consignor GSTIN": consignor_gst,
+                "Consignor Email": consignor_email,
+                "Consignor Phone": consignor_phone,
+                "Consignee GSTIN": consignee_gst,
+                "Consignee Email": consignee_email,
+                "Consignee Phone": consignee_phone,
+                "Created By": lr_created_by,
+                "Updated By": lr_updated_by,
+            })
+        );
+
+        generateCSV(ws, "Manual-LRs");
+    };
+
     const renderHeader1 = () => {
         return (
             <div className="p-fluid formgrid grid">
@@ -111,7 +205,7 @@ const OldLRs = () => {
                         icon="pi pi-file-excel"
                         severity="success"
                         raised
-                        // onClick={exportExcel}
+                        onClick={exportExcel}
                         label="Export to Excel"
                         className="mr-3"
                         placeholder="Top"
@@ -174,6 +268,7 @@ const OldLRs = () => {
                         ))
                 );
 
+                setXlsxData(lrData);
                 setFetchedLRData(lrData);
                 setLoading1(false);
                 setRefreshLRData(false);
