@@ -18,6 +18,7 @@ import LrDialog from "../dialogs/LrDialog";
 import CreateInvoiceDialog from "../dialogs/CreateInvoiceDialog";
 import Spinner from "../spinner";
 import { Tag } from "primereact/tag";
+import { Divider } from "primereact/divider";
 
 export default function ClientInfoDialog({
     clientInfoDialogVisible,
@@ -335,7 +336,11 @@ export default function ClientInfoDialog({
             const worksheet = xlsx.utils.json_to_sheet(ws);
             /* create workbook and export */
             var wb = xlsx.utils.book_new();
-            xlsx.utils.book_append_sheet(wb, worksheet, "Open orders");
+            xlsx.utils.book_append_sheet(
+                wb,
+                worksheet,
+                clientDetails.clientName
+            );
             xlsx.writeFile(
                 wb,
                 `Raftaar-Open_Orders-${("0" + new Date().getDate()).slice(
@@ -350,7 +355,7 @@ export default function ClientInfoDialog({
     const renderHeader1 = () => {
         return (
             <div className="p-fluid formgrid grid">
-                <div className="field col-12 lg:col-1">
+                <div className="col-12 lg:col-1">
                     <Button
                         type="button"
                         icon="pi pi-filter-slash"
@@ -359,7 +364,7 @@ export default function ClientInfoDialog({
                         onClick={clearFilter1}
                     />
                 </div>
-                <div className="field col-12 lg:col-4">
+                <div className="col-12 lg:col-4">
                     <span className="p-input-icon-left">
                         <i className="pi pi-search" />
                         <InputText
@@ -369,8 +374,8 @@ export default function ClientInfoDialog({
                         />
                     </span>
                 </div>
-                <div className="field col-12 lg:col-3"></div>
-                <div className="field col-12 lg:col-2">
+                <div className="col-12 lg:col-3"></div>
+                <div className="col-12 lg:col-2">
                     <Button
                         type="button"
                         icon="pi pi-file-excel"
@@ -384,7 +389,7 @@ export default function ClientInfoDialog({
                         tooltipOptions={{ position: "top" }}
                     />
                 </div>
-                <div className="field col-12 lg:col-2">
+                <div className="col-12 lg:col-2">
                     <Button
                         type="button"
                         icon="pi pi-plus"
@@ -845,173 +850,202 @@ export default function ClientInfoDialog({
                 maximizable
             >
                 <div className="grid p-fluid mt-1">
-                    <div className="col-12 lg:col-5">
+                    <div className="col">
                         <div className="card">
                             {/* <h5>Details</h5> */}
-                            <div className="p-fluid formgrid grid">
-                                <div className="field col-12">
-                                    <Avatar
-                                        className="p-overlay-badge"
-                                        label={
-                                            clientDetails.editedClientName
-                                                ? clientDetails.editedClientName
-                                                      .match(/\b(\w)/g)
-                                                      .join("")
-                                                      .slice(0, 2)
-                                                : "?"
-                                        }
-                                        size="xlarge"
-                                        style={{
-                                            backgroundColor: "#9c27b0",
-                                            color: "#ffffff",
-                                        }}
-                                    >
-                                        <Badge
-                                            value={
-                                                clientDetails.editedClientStatus
-                                                    ? "Active"
-                                                    : "Inactive"
-                                            }
-                                            style={{
-                                                backgroundColor:
-                                                    clientDetails.editedClientStatus
-                                                        ? "green"
-                                                        : "red",
-                                            }}
-                                        />
-                                    </Avatar>
-                                    <span className="pl-4 font-bold text-base lg:text-2xl">
-                                        {clientDetails.editedClientName}
-                                    </span>
-                                </div>
-                                <div className="field col-12">
-                                    <span>
-                                        <Chip
-                                            icon="pi pi-map-marker"
-                                            label={[
-                                                clientDetails.editedClientAddress1,
-                                                clientDetails.editedClientAddress2,
-                                                clientDetails.editedClientArea,
-                                                clientDetails.editedClientCity
-                                                    .ref_dspl,
-                                                clientDetails.editedClientState,
-                                                clientDetails.editedClientPin,
-                                            ]
-                                                .filter(Boolean)
-                                                .join(", ")}
-                                        />
-                                    </span>
-                                </div>
-                                <div className="field col-12">
-                                    <span>
-                                        <Chip
-                                            icon="pi pi-briefcase"
-                                            label={
-                                                clientDetails.editedClientType
-                                                    .ref_dspl
-                                            }
-                                        />
-                                    </span>
-                                    <span className="pl-2">
-                                        <Chip
-                                            icon="pi pi-phone"
-                                            label={
-                                                "+91 " +
-                                                clientDetails.editedClientPhone
-                                            }
-                                        />
-                                    </span>
-                                    <span className="pl-2">
-                                        <Chip
-                                            icon="pi pi-envelope"
-                                            label={
-                                                clientDetails.editedClientEmail
-                                            }
-                                        />
-                                    </span>
-                                </div>
-                                <div className="field col-12">
-                                    <span>
-                                        <Chip
-                                            label={
-                                                clientDetails.editedClientGstin
-                                            }
-                                            style={{
-                                                backgroundColor: "#DBEDE4",
-                                                color: "#33A852",
-                                            }}
-                                        />
-                                    </span>
-                                    <span className="pl-2">
-                                        <Chip
-                                            label={
-                                                clientDetails.editedClientPan
-                                            }
-                                            style={{
-                                                backgroundColor: "#D4E1F6",
-                                                color: "#004F8C",
-                                            }}
-                                        />
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-12 lg:col-4 ">
-                        <div className="card min-h-full">
-                            {/* <h5>Details</h5> */}
-                            <div className="p-fluid formgrid grid">
-                                <div className="field col-12">
-                                    <span>
-                                        Client Number:{" "}
-                                        {clientDetails.editedClientNumber}
-                                    </span>
-                                </div>
-                                <div className="field col-12">
-                                    <span>
-                                        Client Contact Name:{" "}
-                                        {clientDetails.editedClientContactName}
-                                    </span>
-                                </div>
-                                <div className="field col-12">
-                                    <span>
-                                        Client Contact Number: +91{" "}
-                                        {clientDetails.editedClientContactPhone}
-                                    </span>
-                                </div>
-                                <div className="field col-12">
-                                    <span>
-                                        Client Contact Email:{" "}
-                                        {clientDetails.editedClientContactEmail}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-12 lg:col-3 ">
-                        <div className="card min-h-full">
-                            {/* <h5>Details</h5> */}
-                            <div className="p-fluid formgrid grid">
-                                <div className="field col-12">
-                                    <span>
-                                        Total Order: {fetchedOrdersData.length}
-                                    </span>
-                                </div>
-                                <div className="field col-12">
-                                    <span>
-                                        Total Sale:{" "}
-                                        {totalCreditAmount + totalDebitAmount}
-                                    </span>
-                                </div>
-                                <div className="field col-12">
-                                    <span>Total Due: {totalDebitAmount}</span>
+                            <div className="p-fluid">
+                                <div className="flex justify-content-between flex-column md:flex-row">
+                                    <div className="col">
+                                        <div className="flex col">
+                                            <Avatar
+                                                className="p-overlay-badge"
+                                                label={
+                                                    clientDetails.editedClientName
+                                                        ? clientDetails.editedClientName
+                                                              .match(/\b(\w)/g)
+                                                              .join("")
+                                                              .slice(0, 2)
+                                                        : "?"
+                                                }
+                                                size="xlarge"
+                                                style={{
+                                                    backgroundColor: "#9c27b0",
+                                                    color: "#ffffff",
+                                                }}
+                                            >
+                                                <Badge
+                                                    value={
+                                                        clientDetails.editedClientStatus
+                                                            ? "Active"
+                                                            : "Inactive"
+                                                    }
+                                                    style={{
+                                                        backgroundColor:
+                                                            clientDetails.editedClientStatus
+                                                                ? "green"
+                                                                : "red",
+                                                    }}
+                                                />
+                                            </Avatar>
+
+                                            <span className="flex flex-column pl-5 font-bold text-xl lg:text-2xl justify-content-center">
+                                                <span className="select-all">
+                                                    {
+                                                        clientDetails.editedClientName
+                                                    }
+                                                </span>
+                                                <span className="text-base font-light select-all">
+                                                    (
+                                                    {
+                                                        clientDetails.editedClientNumber
+                                                    }
+                                                    )
+                                                </span>
+                                            </span>
+                                        </div>
+                                        <div className="flex gap-2 flex-column md:flex-row col mb-0">
+                                            <span>
+                                                <Chip
+                                                    icon="pi pi-briefcase"
+                                                    className="select-all"
+                                                    label={
+                                                        clientDetails
+                                                            .editedClientType
+                                                            .ref_dspl
+                                                    }
+                                                />
+                                            </span>
+                                            <span>
+                                                <Chip
+                                                    icon="pi pi-phone"
+                                                    className="select-all"
+                                                    label={
+                                                        clientDetails.editedClientPhone
+                                                            ? "+91 " +
+                                                              clientDetails.editedClientPhone
+                                                            : "-"
+                                                    }
+                                                />
+                                            </span>
+                                            <span>
+                                                <Chip
+                                                    icon="pi pi-envelope"
+                                                    className="select-all"
+                                                    label={
+                                                        clientDetails.editedClientEmail
+                                                            ? clientDetails.editedClientEmail
+                                                            : "-"
+                                                    }
+                                                />
+                                            </span>
+                                            <span>
+                                                <Chip
+                                                    label={
+                                                        clientDetails.editedClientGstin
+                                                            ? "GSTIN: " +
+                                                              clientDetails.editedClientGstin
+                                                            : "GSTIN: -"
+                                                    }
+                                                    className="bg-green-200 text-green-800 select-all"
+                                                />
+                                            </span>
+                                            <span>
+                                                <Chip
+                                                    label={
+                                                        clientDetails.editedClientPan
+                                                            ? "PAN: " +
+                                                              clientDetails.editedClientPan
+                                                            : "PAN: -"
+                                                    }
+                                                    className="bg-cyan-200 text-cyan-800 select-all"
+                                                />
+                                            </span>
+                                        </div>
+                                        <div className="col mb-0">
+                                            <span>
+                                                <Chip
+                                                    icon="pi pi-map-marker"
+                                                    className="select-all"
+                                                    label={[
+                                                        clientDetails.editedClientAddress1,
+                                                        clientDetails.editedClientAddress2,
+                                                        clientDetails.editedClientArea,
+                                                        clientDetails
+                                                            .editedClientCity
+                                                            .ref_dspl,
+                                                        clientDetails.editedClientState,
+                                                        clientDetails.editedClientPin,
+                                                    ]
+                                                        .filter(Boolean)
+                                                        .join(", ")}
+                                                />
+                                            </span>
+                                        </div>
+                                        <div className="flex gap-2 flex-column md:flex-row col mb-0">
+                                            <span>
+                                                <Chip
+                                                    label={
+                                                        "Total Order: " +
+                                                        fetchedOrdersData.length
+                                                    }
+                                                    className="bg-orange-200 text-orange-800"
+                                                />
+                                            </span>
+                                            <span>
+                                                <Chip
+                                                    label={
+                                                        "Total Sale: ₹" +
+                                                        (totalCreditAmount +
+                                                            totalDebitAmount)
+                                                    }
+                                                    className="bg-blue-200 text-blue-800"
+                                                />
+                                            </span>
+                                            <span>
+                                                <Chip
+                                                    label={
+                                                        "Total Due: ₹" +
+                                                        totalDebitAmount
+                                                    }
+                                                    className="bg-red-200 text-red-800"
+                                                />
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="col md:col-3">
+                                        <div className="col">
+                                            <div className="card shadow-1">
+                                                <h5>Contact Details</h5>
+                                                <div>
+                                                    <p>
+                                                        Name:{" "}
+                                                        {clientDetails.editedClientContactName
+                                                            ? clientDetails.editedClientContactName
+                                                            : "-"}
+                                                    </p>
+                                                    <p>
+                                                        Phone:{" "}
+                                                        {clientDetails.editedClientContactPhone
+                                                            ? "+91 " +
+                                                              clientDetails.editedClientContactPhone
+                                                            : "-"}
+                                                    </p>
+                                                    <p>
+                                                        Email:{" "}
+                                                        {clientDetails.editedClientContactEmail
+                                                            ? clientDetails.editedClientContactEmail
+                                                            : "-"}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div className="col-12">
-                        {/* TODO: temporary table needs to replace with open order data table functionality so that we can manage order for a client from here only */}
                         <DataTable
                             value={fetchedOrdersData}
                             loading={loading1}
@@ -1083,187 +1117,6 @@ export default function ClientInfoDialog({
                                 sortable
                             />
                         </DataTable>
-                        {/* <DataTable
-              value={fetchedOrdersData}
-              size="small"
-              paginator
-              rowsPerPageOptions={[5, 10, 15, 30]}
-              className="p-datatable-gridlines"
-              rows={5}
-              dataKey="order_id"
-              loading={loading1}
-              responsiveLayout="scroll"
-              showGridlines
-              stripedRows
-              rowHover
-              removableSort
-              scrollable
-              scrollHeight="40vh"
-              sortMode="multiple"
-              tableStyle={{ minWidth: "50rem" }}
-              filterDisplay="menu"
-              resizableColumns
-              columnResizeMode="expand"
-              emptyMessage="No orders found."
-            >
-              <Column
-                field="order_key_id"
-                header="Invoice"
-                body={actionButtonRender1}
-                align="center"
-                style={{ minWidth: "6rem" }}
-              />
-              <Column
-                field="order_key_id"
-                header="LR"
-                body={actionButtonRender2}
-                align="center"
-                style={{ minWidth: "6rem" }}
-              />
-              {user.role === "SUPER_ADMIN" ? (
-                <Column
-                  field="order_created_updated_by_name"
-                  header="Created/Updated By"
-                  body={orderCreatedInfoRender}
-                  filterField="order_created_by_name"
-                  filter
-                  filterPlaceholder="Search created by"
-                  sortable
-                />
-              ) : (
-                ""
-              )}
-              <Column
-                field="order_created_updated_at"
-                header="Created/Updated On"
-                body={orderCreatedDateInfoRender}
-                filter
-                filterPlaceholder="Search by order created on"
-                filterElement={dateFilterTemplate}
-                sortable
-              />
-              <Column
-                field="pickup_date"
-                header="Pickup Date"
-                body={orderPickupDateInfoRender}
-                filter
-                filterPlaceholder="Search by Pickup Date"
-                filterElement={dateFilterTemplate}
-                sortable
-              />
-              <Column
-                field="order_number"
-                header="ERP Order No"
-                body={orderDetailsDialogRender}
-                filter
-                filterPlaceholder="Search by ERP Order No"
-                sortable
-              />
-              <Column
-                field="order_number"
-                header="LR No"
-                body={orderLRDialogRender}
-                filter
-                filterPlaceholder="Search by LR No"
-                sortable
-              />
-              <Column
-                field="route"
-                header="Route"
-                body={orderRouteInfoRender}
-                filter
-                filterPlaceholder="Search by route"
-                sortable
-              />
-              <Column
-                field="status"
-                header="Status"
-                body={orderStatusInfoRender}
-                filter
-                filterPlaceholder="Search by status"
-                sortable
-              />
-              <Column
-                field=""
-                header="Comment"
-                body={orderCommentDialogRender}
-                filter
-                filterPlaceholder="Search by comment"
-                sortable
-              />
-              <Column
-                filterField="client_name"
-                header="Client Name"
-                body={clientInfoRender}
-                filter
-                filterPlaceholder="Search by client name"
-                sortable
-              />
-              <Column
-                field="company_name"
-                header="Company"
-                body={companyInfoRender}
-                filter
-                filterPlaceholder="Search by company"
-                sortable
-              />
-              <Column
-                field="weight"
-                header="Total Weight"
-                body={orderWeightInfoRender}
-                filter
-                filterPlaceholder="Search by weight"
-                sortable
-              />
-              <Column
-                field="quantity"
-                header="Order Details"
-                body={quantityInfoRender}
-                filter
-                filterPlaceholder="Search by quatity"
-                sortable
-              />
-              <Column
-                field="notes"
-                header="Order Notes"
-                body={notesInfoRender}
-                filter
-                filterPlaceholder="Search by order notes"
-                sortable
-              />
-              <Column
-                field="local_transport"
-                header="Local Transport"
-                body={localTransportInfoRender}
-                filter
-                filterPlaceholder="Search by local transport"
-                sortable
-              />
-              <Column
-                field="truck_details"
-                header="Truck Details"
-                body={truckDetailsInfoRender}
-                filter
-                filterPlaceholder="Search by truck details"
-                sortable
-              />
-              <Column
-                field="eway_number"
-                header="EWay Bill Number"
-                body={orderEwayInfoRender}
-                filter
-                filterPlaceholder="Search by Eway bill number"
-                sortable
-              />
-              <Column
-                field="bills"
-                header="Bills"
-                body={billsInfoRender}
-                filter
-                filterPlaceholder="Search by bills"
-                sortable
-              />
-            </DataTable> */}
                     </div>
                 </div>
             </Dialog>
