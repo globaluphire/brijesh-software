@@ -19,6 +19,7 @@ import CreateInvoiceDialog from "../dialogs/CreateInvoiceDialog";
 import Spinner from "../spinner";
 import { Tag } from "primereact/tag";
 import { Divider } from "primereact/divider";
+import { generateCSV } from "../../utils/exportToCSV";
 
 export default function ClientInfoDialog({
     clientInfoDialogVisible,
@@ -33,7 +34,6 @@ export default function ClientInfoDialog({
     const toast = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
     const [loadingText, setLoadingText] = useState("");
-    const [xlsxData, setXlsxData] = useState([]);
 
     const [fetchedOrdersData, setFetchedOrdersData] = useState([]);
     const [totalDebitAmount, setTotalDebitAmount] = useState(0);
@@ -198,7 +198,6 @@ export default function ClientInfoDialog({
                             ))
                     );
 
-                    setXlsxData(ordersData);
                     setFetchedOrdersData(ordersData);
                     setRefreshData(false);
 
@@ -256,101 +255,78 @@ export default function ClientInfoDialog({
         if (refreshData) fetchData();
     }, [refreshData]);
 
-    const exportExcel = () => {
-        import("xlsx").then((xlsx) => {
-            // prepare sheet data
-            xlsxData.forEach(
-                (i) =>
-                    (i.order_created_at =
-                        i.order_created_at.toLocaleString("en-IN"))
-            );
-            xlsxData.forEach(
-                (i) =>
-                    (i.order_updated_at =
-                        i.order_updated_at.toLocaleString("en-IN"))
-            );
-            let ws = xlsxData.map(
-                ({
-                    order_id,
-                    pickup_location,
-                    drop_location,
-                    order_created_by,
-                    client_number,
-                    order_updated_by,
-                    ...rest
-                }) => {
-                    return {
-                        Route: `${pickup_location} - ${drop_location}`,
-                        ...rest,
-                    };
-                }
-            );
-            ws = ws.map(
-                ({
-                    order_created_at,
-                    order_updated_at,
-                    pickup_date,
-                    order_number,
-                    Route,
-                    status,
-                    client_name,
-                    pickup_point,
-                    drop_point,
-                    company_name,
-                    weight,
-                    quantity,
-                    material,
-                    size,
-                    priority,
-                    notes,
-                    lr_number,
-                    local_transport,
-                    truck_details,
-                    eway_number,
-                    order_city,
-                }) => ({
-                    "Created on": order_created_at,
-                    "Updated on": order_updated_at,
-                    "Pickup Date": pickup_date,
-                    "ERP Order No": order_number,
-                    Route,
-                    Status: status,
-                    "Client Name": client_name,
-                    "Pickup Point": pickup_point,
-                    "Drop Point": drop_point,
-                    "Company Name": company_name,
-                    "Total Weight(Kg)": weight,
-                    Quantity: quantity,
-                    Material: material,
-                    Size: size,
-                    Priority: priority,
-                    "Order Note": notes,
-                    "LR number": lr_number,
-                    "Local Transport": local_transport,
-                    "Truck Details": truck_details,
-                    "Eway Bill Number": eway_number,
-                    "Order City": order_city,
-                })
-            );
+    async function exportExcel() {
+        setIsLoading(true);
+        setLoadingText("Please Wait! Your CSV is being generated...");
+        try {
+            let query = supabase
+                .from("csv_orders")
+                .select("*")
+                .eq("Client Name", clientDetails.editedClientName);
 
-            const worksheet = xlsx.utils.json_to_sheet(ws);
-            /* create workbook and export */
-            var wb = xlsx.utils.book_new();
-            xlsx.utils.book_append_sheet(
-                wb,
-                worksheet,
-                clientDetails.clientName
-            );
-            xlsx.writeFile(
-                wb,
-                `Raftaar-Open_Orders-${("0" + new Date().getDate()).slice(
-                    -2
-                )}_${("0" + (new Date().getMonth() + 1)).slice(
-                    -2
-                )}_${new Date().getFullYear()}.xlsx`
-            );
-        });
-    };
+            if (user.drop_branch) {
+                query.eq("Order City", user.drop_branch);
+            }
+
+            let { data: csvOrderData, error } = await query;
+
+            if (csvOrderData) {
+                // prepare sheet data
+                csvOrderData.forEach(
+                    (i) =>
+                        (i["Created On"] = new Date(
+                            i["Created On"]
+                        ).toLocaleString("en-IN"))
+                );
+                csvOrderData.forEach(
+                    (i) =>
+                        (i["Updated On"] = new Date(
+                            i["Updated On"]
+                        ).toLocaleString("en-IN"))
+                );
+                csvOrderData.forEach(
+                    (i) =>
+                        (i["Pickup Date"] = convertPickupDateFormat(
+                            i["Pickup Date"]
+                        ))
+                );
+
+                generateCSV(
+                    csvOrderData,
+                    clientDetails.editedClientName,
+                    "All_Orders"
+                );
+
+                toast.current.show({
+                    severity: "success",
+                    summary: "Success",
+                    detail: "CSV Exported successfully.",
+                    life: 5000,
+                });
+                setIsLoading(false);
+                setLoadingText("");
+            } else {
+                toast.current.show({
+                    severity: "error",
+                    summary: "Error",
+                    detail: "Error while fetching CSV, Please try again later or contact tech support",
+                    life: 5000,
+                });
+                setIsLoading(false);
+                setLoadingText("");
+            }
+        } catch (e) {
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Error while generating CSV, Please try again later or contact tech support",
+                life: 5000,
+            });
+            // console.warn(e);
+            setIsLoading(false);
+            setLoadingText("");
+        }
+    }
 
     const renderHeader1 = () => {
         return (
@@ -381,7 +357,7 @@ export default function ClientInfoDialog({
                         icon="pi pi-file-excel"
                         severity="success"
                         raised
-                        onClick={exportExcel}
+                        onClick={() => exportExcel()}
                         label="Export to Excel"
                         className="mr-3"
                         placeholder="Top"
