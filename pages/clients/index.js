@@ -20,6 +20,7 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import ClientInfoDialog from "../../components/InfoDialogs/ClientInfoDialog";
 import Seo from "../../components/seo";
 import { generateCSV } from "../../utils/exportToCSV";
+import { Chip } from "primereact/chip";
 
 const Clients = () => {
     const user = useSelector((state) => state.initialState.user);
@@ -632,34 +633,20 @@ const Clients = () => {
 
     const totalOrdersRender = (rowData) => {
         return (
-            <div>
-                {rowData.total_orders ? (
-                    <Tag
-                        className="px-3 py-2 action-badge"
-                        rounded
-                        severity="warning"
-                        value={rowData.total_orders}
-                    ></Tag>
-                ) : (
-                    ""
-                )}
-            </div>
+            <Chip
+                label={rowData.total_orders}
+                className="bg-orange-200 text-orange-800"
+            />
         );
     };
 
     const totalBillingsRender = (rowData) => {
         return (
             <div>
-                {rowData.total_billings ? (
-                    <Tag
-                        className="px-3 py-2 action-badge"
-                        rounded
-                        severity="success"
-                        value={rowData.total_billings}
-                    ></Tag>
-                ) : (
-                    ""
-                )}
+                <Chip
+                    label={rowData.total_billings}
+                    className="bg-blue-200 text-blue-800"
+                />
             </div>
         );
     };
@@ -667,16 +654,10 @@ const Clients = () => {
     const totalBillingsDueRender = (rowData) => {
         return (
             <div>
-                {rowData.total_billings_due ? (
-                    <Tag
-                        className="px-3 py-2 action-badge"
-                        rounded
-                        severity="danger"
-                        value={rowData.total_billings_due}
-                    ></Tag>
-                ) : (
-                    ""
-                )}
+                <Chip
+                    label={rowData.total_billings_due}
+                    className="bg-red-200 text-red-800"
+                />
             </div>
         );
     };
