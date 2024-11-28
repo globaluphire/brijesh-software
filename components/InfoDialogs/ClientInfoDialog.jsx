@@ -1034,6 +1034,7 @@ export default function ClientInfoDialog({
                             showGridlines
                             stripedRows
                             rowHover
+                            removableSort
                             emptyMessage="No orders found"
                             responsiveLayout="scroll"
                             sortMode="multiple"
@@ -1041,7 +1042,7 @@ export default function ClientInfoDialog({
                             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} orders"
                         >
                             <Column
-                                field="order_key_id"
+                                field="invoice_number"
                                 header="Invoice"
                                 body={actionButtonRender1}
                                 align="center"

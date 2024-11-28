@@ -1144,7 +1144,7 @@ const OpenOrders = () => {
                         emptyMessage="No open orders found."
                     >
                         <Column
-                            field="order_key_id"
+                            field="invoice_number"
                             header="Invoice"
                             body={actionButtonRender1}
                             align="center"
