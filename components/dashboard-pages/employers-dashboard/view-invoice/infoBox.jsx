@@ -20,10 +20,10 @@ const infoBox = ({ fetchedInvoiceData, fetchedClientData, fetchedOrderData, fetc
                     <div className="left-column">
                         {/* <div className="company-details custom-border px-3 py-2">
                             <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
-                            <span><b>Head Office: </b>51 and 52 Sinde Colony, S R P Road, Navapura, Vadodara, Gujarat 390001</span> <br />
-                            <span><b>PAN: </b>GFSPS6256B</span>
+                            <span><b>Head Office: </b>CC-101 Saivandan Madan, Opp Azad Madan, Raopura, Vadodara, Gujarat 390001</span> <br />
+                            <span><b>PAN: </b>CUBPP3442C</span>
                             <span>
-                            <t></t> | <t></t><b>GSTIN: </b>24GFSPS6256B1Z1
+                            <t></t> | <t></t><b>GSTIN: </b>24CUBPP3442C1Z2
                             </span>
                         </div> */}
                         <div className="company-details px-3 py-2" style={{ border: "2px solid black" }}>

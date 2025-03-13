@@ -187,16 +187,16 @@ const Index = () => {
                                     <img src="../../images/letter-head.jpeg" alt="logo" />
                                 </div>
                                 <div className="info-box">
-                                    <div className="left-column" style={{ top: "10px", left: "150px" }}>
+                                    <div className="left-column" style={{ top: "10px", left: "150px", fontSize: "14px" }}>
                                         <div className="company-details px-3 py-2">
                                             <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
-                                            <span><b>Head Office: </b>51 and 52 Sinde Colony, S R P Road, Navapura, Vadodara, Gujarat 390001</span> <br />
-                                            <span><b>PAN: </b>GFSPS6256B</span> <br />
+                                            <span><b>Head Office: </b>CC-101 Saivandan Madan, Opp Azad Madan, Raopura, Vadodara, Gujarat 390001</span> <br />
+                                            <span><b>PAN: </b>CUBPP3442C</span> <br />
                                             {/* <span>
                                             <t></t> | <t></t><b>Email: </b>margisoni031@gmail.com
                                             </span> */}
                                             <span><b>Website: </b>raftaarlogistics.com</span> <br />
-                                            <span><b>GSTIN: </b>24GFSPS6256B1Z1</span>
+                                            <span><b>GSTIN: </b>24CUBPP3442C1Z2</span>
                                         </div>
                                     </div>
                                 </div>
