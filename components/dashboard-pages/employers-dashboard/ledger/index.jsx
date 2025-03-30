@@ -560,14 +560,14 @@ const index = () => {
                                                                         <tr>
                                                                             <td></td>
                                                                             <td></td>
-                                                                            <td colspan="2">CC-101 Saivandan Madan, Opp Azad Madan, Raopura, Vadodara, Gujarat 390001</td>
+                                                                            <td colspan="2">51 & 52 Sinde Colony S R P  Road Navapura Vadodara Gujarat - 39001</td>
                                                                             <td></td>
                                                                             <td></td>
                                                                         </tr>
                                                                         <tr>
                                                                             <td></td>
                                                                             <td></td>
-                                                                            <td colspan="2">GSTIN: 24CUBPP3442C1Z2</td>
+                                                                            <td colspan="2">GSTIN: 24GFSPS6256B1Z1</td>
                                                                             <td></td>
                                                                             <td></td>
                                                                         </tr>

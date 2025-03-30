@@ -133,9 +133,9 @@ const ViewOldInvoice = ({ fetchedInvoicedata }) => {
                         </b>
                         <div className="px-2 line-height-shrink">
                             <span><b>A/C Holder's Name: </b>Raftaar Logistics</span> <br />
-                            <span><b>Bank Name: </b>SBI HO - 13480</span> <br />
-                            <span><b>A/C No: </b>43766992801</span> <br />
-                            <span><b>Branch & IFS Code: </b>Jaya Ratna Building Brach Vadodara & SBIN0013480</span> <br />
+                            <span><b>Bank Name: </b>HDFC HO - 38410</span> <br />
+                            <span><b>A/C No: </b>50200093338410</span> <br />
+                            <span><b>Branch & IFS Code: </b>Baroda Raopura Branch & HDFC0000429</span> <br />
                             <span><b>SWIFT Code: </b></span>
                         </div>
                     </Col>

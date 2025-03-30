@@ -10,7 +10,7 @@ const ViewOldLR = ({ fetchedLRdata }) => {
                 </div>
                 <div class="company_name item">
                     <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
-                    <span><b>Head Office: </b>CC-101 Saivandan Madan, Opp Azad Madan, Raopura, Vadodara, Gujarat 390001</span> <br />
+                    <span><b>Head Office: </b>51 and 52 Sinde Colony, S R P Road, Navapura, Vadodara, Gujarat 390001</span> <br />
                     <span><b>Mobile No: </b>7227002803</span>
                     <span>
                     <t></t> | <t></t><b>Email: </b>raftaarlogistic@gmail.com
@@ -19,9 +19,9 @@ const ViewOldLR = ({ fetchedLRdata }) => {
                     <t></t> | <t></t><b>Website: </b>raftaarlogistics.com
                     </span>  */}
                     <br />
-                    <span><b>PAN No: </b>CUBPP3442C</span>
+                    <span><b>PAN No: </b>GFSPS6256B</span>
                     <span>
-                    <t></t> | <t></t><b>GST No: </b>24CUBPP3442C1Z2
+                    <t></t> | <t></t><b>GST No: </b>24GFSPS6256B1Z1
                     </span>
                 </div>
                 <div class="copy item">
@@ -107,7 +107,7 @@ const ViewOldLR = ({ fetchedLRdata }) => {
                 </div>
                 <div class="company_name item">
                     <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
-                    <span><b>Head Office: </b>CC-101 Saivandan Madan, Opp Azad Madan, Raopura, Vadodara, Gujarat 390001</span> <br />
+                    <span><b>Head Office: </b>51 and 52 Sinde Colony, S R P Road, Navapura, Vadodara, Gujarat 390001</span> <br />
                     <span><b>Mobile No: </b>7227002803</span>
                     <span>
                     <t></t> | <t></t><b>Email: </b>raftaarlogistic@gmail.com
@@ -116,9 +116,9 @@ const ViewOldLR = ({ fetchedLRdata }) => {
                     <t></t> | <t></t><b>Website: </b>raftaarlogistics.com
                     </span>  */}
                     <br />
-                    <span><b>PAN No: </b>CUBPP3442C</span>
+                    <span><b>PAN No: </b>GFSPS6256B</span>
                     <span>
-                    <t></t> | <t></t><b>GST No: </b>24CUBPP3442C1Z2
+                    <t></t> | <t></t><b>GST No: </b>24GFSPS6256B1Z1
                     </span>
                 </div>
                 <div class="copy item">
@@ -204,7 +204,7 @@ const ViewOldLR = ({ fetchedLRdata }) => {
                 </div>
                 <div class="company_name item">
                     <span><b>Comapny Name: RAFTAAR LOGISTICS </b></span><br />
-                    <span><b>Head Office: </b>CC-101 Saivandan Madan, Opp Azad Madan, Raopura, Vadodara, Gujarat 390001</span> <br />
+                    <span><b>Head Office: </b>51 and 52 Sinde Colony, S R P Road, Navapura, Vadodara, Gujarat 390001</span> <br />
                     <span><b>Mobile No: </b>7227002803</span>
                     <span>
                     <t></t> | <t></t><b>Email: </b>raftaarlogistic@gmail.com
@@ -213,9 +213,9 @@ const ViewOldLR = ({ fetchedLRdata }) => {
                     <t></t> | <t></t><b>Website: </b>raftaarlogistics.com
                     </span>  */}
                     <br />
-                    <span><b>PAN No: </b>CUBPP3442C</span>
+                    <span><b>PAN No: </b>GFSPS6256B</span>
                     <span>
-                    <t></t> | <t></t><b>GST No: </b>24CUBPP3442C1Z2
+                    <t></t> | <t></t><b>GST No: </b>24GFSPS6256B1Z1
                     </span>
                 </div>
                 <div class="copy item">
