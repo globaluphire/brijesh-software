@@ -1,15 +1,36 @@
-/* eslint-disable no-unused-vars */
-import dynamic from "next/dynamic";
-import Seo from "../components/common/Seo";
-import Login from "./login";
+import { useRouter } from "next/router";
+import React, { useContext, useState } from "react";
+import AppConfig from "../layout/AppConfig";
+import { LayoutContext } from "../layout/context/layoutcontext";
+import { classNames } from "primereact/utils";
+import Signin from "../components/signin";
+import { Provider } from "react-redux";
+import { store } from "../app/store";
 
-const index = () => {
+const LoginPage = () => {
+    const [password, setPassword] = useState("");
+    const [checked, setChecked] = useState(false);
+    const { layoutConfig } = useContext(LayoutContext);
+
+    const router = useRouter();
+    const containerClassName = classNames(
+        "surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden",
+        { "p-input-filled": layoutConfig.inputStyle === "filled" }
+    );
+
     return (
-        <>
-            <Seo pageTitle="Home" />
-            <Login />
-        </>
+        <Provider store={store}>
+            <Signin />
+        </Provider>
     );
 };
 
-export default dynamic(() => Promise.resolve(index), { ssr: false });
+LoginPage.getLayout = function getLayout(page) {
+    return (
+        <React.Fragment>
+            {page}
+            <AppConfig simple />
+        </React.Fragment>
+    );
+};
+export default LoginPage;
